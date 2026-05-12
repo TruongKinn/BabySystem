@@ -1,0 +1,368 @@
+server:
+  port: 4953
+
+spring:
+  application:
+    name: api-gateway
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  cloud:
+    gateway:
+      httpclient:
+        connect-timeout: ${GATEWAY_CONNECT_TIMEOUT_MS:3000}
+        response-timeout: ${GATEWAY_RESPONSE_TIMEOUT:5s}
+      default-filters:
+        - name: Retry
+          args:
+            retries: ${GATEWAY_RETRY_ATTEMPTS:2}
+            methods:
+              - GET
+              - HEAD
+            statuses:
+              - BAD_GATEWAY
+              - SERVICE_UNAVAILABLE
+              - GATEWAY_TIMEOUT
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin RETAIN_LAST
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns:
+              - ${GATEWAY_ALLOWED_ORIGIN:http://localhost:4200}
+            allowedMethods:
+              - GET
+              - HEAD
+              - POST
+              - PUT
+              - PATCH
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+            allowCredentials: true
+      routes:
+        # Route cho authentication-service
+        - id: authentication-service
+          uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/auth/**
+          filters:
+            - RewritePath=/auth/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: authenticationServiceGateway
+                fallbackUri: forward:/gateway/fallback/authentication-service
+
+        - id: account-service
+          uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+          predicates:
+            - Path=/account/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: authenticationServiceGateway
+                fallbackUri: forward:/gateway/fallback/authentication-service
+            
+        # Route cho logistics-service (Orchestrator)
+        - id: logistics-service
+          uri: ${LOGISTICS_SERVICE_URI:http://localhost:8093}
+          predicates:
+            - Path=/logistics/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: logisticsServiceGateway
+                fallbackUri: forward:/gateway/fallback/logistics-service
+
+        # Route cho frontend orchestrator page
+        - id: orchestrator-service
+          uri: ${LOGISTICS_SERVICE_URI:http://localhost:8093}
+          predicates:
+            - Path=/orchestrator/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: orchestratorGateway
+                fallbackUri: forward:/gateway/fallback/orchestrator-service
+            
+        # Route cho shipment-service
+        - id: shipment-service
+          uri: ${SHIPMENT_SERVICE_URI:http://localhost:8094}
+          predicates:
+            - Path=/shipment/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: shipmentServiceGateway
+                fallbackUri: forward:/gateway/fallback/shipment-service
+            
+        # Route cho tracking-service
+        - id: tracking-service
+          uri: ${TRACKING_SERVICE_URI:http://localhost:8095}
+          predicates:
+            - Path=/tracking/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: trackingServiceGateway
+                fallbackUri: forward:/gateway/fallback/tracking-service
+            
+        # Route cho driver-service
+        - id: driver-service
+          uri: ${DRIVER_SERVICE_URI:http://localhost:8096}
+          predicates:
+            - Path=/driver/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: driverServiceGateway
+                fallbackUri: forward:/gateway/fallback/driver-service
+            
+        # Route cho vehicle-service
+        - id: vehicle-service
+          uri: ${VEHICLE_SERVICE_URI:http://localhost:8097}
+          predicates:
+            - Path=/vehicle/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: vehicleServiceGateway
+                fallbackUri: forward:/gateway/fallback/vehicle-service
+
+        # Route cho batch-job
+        - id: batch-job
+          uri: ${BATCH_JOB_URI:http://localhost:8091}
+          predicates:
+            - Path=/batch-job/**
+          filters:
+            - RewritePath=/batch-job/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: batchJobGateway
+                fallbackUri: forward:/gateway/fallback/batch-job
+
+        # Route cho job-supervisor
+        - id: job-supervisor
+          uri: ${JOB_SUPERVISOR_URI:http://localhost:8090}
+          predicates:
+            - Path=/job-supervisor/**
+          filters:
+            - RewritePath=/job-supervisor/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: jobSupervisorGateway
+                fallbackUri: forward:/gateway/fallback/job-supervisor
+
+        # Route cho notification REST APIs
+        - id: notification-service-http
+          uri: ${NOTIFICATION_SERVICE_URI:http://localhost:8098}
+          predicates:
+            - Path=/notification/api/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: notificationServiceGateway
+                fallbackUri: forward:/gateway/fallback/notification-service
+
+        - id: finance-service
+          uri: ${FINANCE_SERVICE_URI:http://localhost:8103}
+          predicates:
+            - Path=/finance/**
+          filters:
+            - RewritePath=/finance/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: financeServiceGateway
+                fallbackUri: forward:/gateway/fallback/finance-service
+
+        - id: todo-service
+          uri: ${TODO_SERVICE_URI:http://localhost:8102}
+          predicates:
+            - Path=/todo/**
+          filters:
+            - RewritePath=/todo/(?<segment>.*), /$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: todoServiceGateway
+                fallbackUri: forward:/gateway/fallback/todo-service
+
+        # Route cho common-service OpenAPI docs
+        - id: common-service-docs
+          uri: ${COMMON_SERVICE_URI:http://localhost:8099}
+          predicates:
+            - Path=/common/v3/api-docs
+          filters:
+            - RewritePath=/common/v3/api-docs, /v3/api-docs
+            - name: CircuitBreaker
+              args:
+                name: commonServiceDocsGateway
+                fallbackUri: forward:/gateway/fallback/common-service
+
+        # Route cho common-service
+        - id: common-service
+          uri: ${COMMON_SERVICE_URI:http://localhost:8099}
+          predicates:
+            - Path=/common/**
+          metadata:
+            response-timeout: 30000
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: commonServiceGateway
+                fallbackUri: forward:/gateway/fallback/common-service
+
+        # Route cho notification WebSocket/SockJS endpoint
+        - id: notification-service-ws
+          uri: ws://localhost:8098
+          predicates:
+            - Path=/notification/ws/**
+            
+# OpenAPI Aggregation (Swagger)
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+    urls:
+      - name: Driver Service
+        url: /driver/v3/api-docs
+      - name: Vehicle Service
+        url: /vehicle/v3/api-docs
+      - name: Batch Job Service
+        url: /batch-job/v3/api-docs
+      - name: Shipment Service
+        url: /shipment/v3/api-docs
+      - name: Tracking Service
+        url: /tracking/v3/api-docs
+      - name: Logistics Orchestrator
+        url: /logistics/v3/api-docs
+      - name: Authentication Service
+        url: /auth/v3/api-docs
+      - name: Job Supervisor Service
+        url: /job-supervisor/v3/api-docs
+      - name: Common Service
+        url: /common/v3/api-docs
+      - name: Finance Service
+        url: /finance/v3/api-docs
+      - name: Todo Service
+        url: /todo/v3/api-docs
+
+gateway:
+  authorization:
+    enabled: ${GATEWAY_AUTHORIZATION_ENABLED:true}
+  rate-limit:
+    replenish-rate: ${GATEWAY_RATE_LIMIT_REPLENISH_RATE:20}
+    burst-capacity: ${GATEWAY_RATE_LIMIT_BURST_CAPACITY:40}
+    requested-tokens: ${GATEWAY_RATE_LIMIT_REQUESTED_TOKENS:1}
+
+jwt:
+  accessKey: ${JWT_ACCESS_KEY:c2VjcmV0QGtleS5hcGlfaGFzX2JlZW5fZGVzaWduZWRfYnlfVGF5TFE=}
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      authenticationServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      logisticsServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      orchestratorGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      shipmentServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      trackingServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      driverServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      vehicleServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      batchJobGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      jobSupervisorGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      notificationServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      financeServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      todoServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      commonServiceDocsGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      commonServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+  timelimiter:
+    instances:
+      commonServiceGateway:
+        timeoutDuration: 30s
+        cancelRunningFuture: true
+

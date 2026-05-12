@@ -1,0 +1,80 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: authentication-service
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+  keycloak:
+    url: ${KEYCLOAK_URL:http://localhost:8080}
+  cloud:
+    vault:
+      uri: ${VAULT_URI:http://localhost:8200}
+      authentication: TOKEN
+      token: ${VAULT_TOKEN:root}
+      kv:
+        enabled: true
+        backend: secret
+        default-context: authentication-service
+  config:
+    import: "optional:vault://"
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+
+grpc:
+  server:
+    port: 9091
+    inProcessName: auth-server
+
+management: # Health check
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+        # include: health,prometheus,metrics
+#  endpoint:
+#    health:
+#      probes:
+#        enabled: true
+#  health:
+#    livenessState:
+#      enabled: true
+#    readinessState:
+#      enabled: true
+#  prometheus:
+#    metrics:
+#      export:
+#        step: 5s
+#        enabled: true
+
+logging:
+  level:
+    root: INFO
+    web: INFO
+
+keycloak:
+  client:
+    connect-timeout-ms: ${KEYCLOAK_CONNECT_TIMEOUT_MS:3000}
+    response-timeout: ${KEYCLOAK_RESPONSE_TIMEOUT:5s}
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      keycloakUserInfo:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+  retry:
+    instances:
+      keycloakUserInfo:
+        maxAttempts: ${KEYCLOAK_RETRY_MAX_ATTEMPTS:3}
+        waitDuration: ${KEYCLOAK_RETRY_WAIT_DURATION:500ms}

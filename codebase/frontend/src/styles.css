@@ -1,0 +1,281 @@
+@import 'ng-zorro-antd/ng-zorro-antd.min.css';
+
+:root {
+    /* Light Theme Palette */
+    --app-bg: #f5f7fa;
+    --header-bg: #ffffff;
+    --sidebar-bg: #ffffff;
+    --content-bg: #ffffff;
+    --text-main: #262626;
+    --text-secondary: #595959;
+    --border-color: #f0f0f0;
+    --card-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    --primary-color: #1890ff;
+    --accent-color: #1890ff;
+    --surface-bg: #ffffff;
+    /* Explicitly define for light mode */
+}
+
+.dark-theme {
+    /* Premium Dark Theme Palette (Deep Surface System) */
+    --app-bg: #0d1117;
+    /* Level 0: Outer background */
+    --header-bg: #161b22;
+    /* Level 1: Elevated (Header/Sider) */
+    --sidebar-bg: #161b22;
+    --content-bg: #161b22;
+    --surface-bg: #21262d;
+    /* Level 2: Cards/Content Blocks */
+    --text-main: #c9d1d9;
+    /* Bright body text */
+    --text-secondary: #8b949e;
+    /* Dimmed secondary text */
+    --border-color: #30363d;
+    /* Subtle borders */
+    --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+    --primary-color: #58a6ff;
+    /* Brighter primary for dark */
+    --accent-color: #1f5ca4;
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: var(--app-bg);
+    color: var(--text-main);
+    transition: background-color 0.3s, color 0.3s;
+    margin: 0;
+}
+
+/* Global Transitions */
+*,
+*::before,
+*::after {
+    transition: background-color 0.3s ease, border-color 0.3s ease, color 0.2s ease;
+}
+
+/* Ensure Ant Design components use the font and inherit colors */
+.ant-btn,
+.ant-input,
+.ant-menu,
+.ant-typography,
+.ant-card,
+.ant-table,
+.ant-select-selection-item,
+.ant-select-placeholder,
+.ant-breadcrumb-link {
+    font-family: 'Inter', sans-serif;
+}
+
+/* --- Dark Mode Overrides for Ng-Zorro (Premium Refinement) --- */
+
+.dark-theme .ant-layout,
+.dark-theme nz-header,
+.dark-theme .ant-layout-sider {
+    background: var(--sidebar-bg) !important;
+}
+
+.dark-theme .ant-layout-sider-children {
+    border-right: 1px solid var(--border-color);
+}
+
+.dark-theme .ant-menu {
+    background: var(--sidebar-bg);
+    color: var(--text-main);
+    border-right: none;
+}
+
+.dark-theme .ant-menu-sub {
+    background: #0d1117 !important;
+}
+
+.dark-theme .ant-menu-item-selected {
+    background-color: var(--accent-color) !important;
+    color: #fff !important;
+}
+
+.dark-theme .ant-menu-submenu-title:hover,
+.dark-theme .ant-menu-item:hover {
+    color: var(--primary-color) !important;
+}
+
+.dark-theme .ant-breadcrumb-link,
+.dark-theme .ant-breadcrumb-separator {
+    color: var(--text-secondary) !important;
+}
+
+.dark-theme .ant-table {
+    background: var(--surface-bg);
+    color: var(--text-main);
+}
+
+.dark-theme .ant-table-thead>tr>th {
+    background: #1c2128;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--border-color);
+    font-weight: 600;
+}
+
+.dark-theme .ant-table-tbody>tr>td {
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dark-theme .ant-table-tbody>tr.ant-table-row:hover>td {
+    background: #2d333b !important;
+}
+
+.dark-theme .ant-table-expanded-row>td {
+    background: #0d1117 !important;
+    /* Level 0 background for expanded area */
+    border-bottom: 1px solid var(--border-color);
+}
+
+.dark-theme .ant-card {
+    background: var(--surface-bg);
+    border-color: var(--border-color);
+    box-shadow: var(--card-shadow);
+}
+
+.dark-theme .ant-card-head {
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-main);
+    background: #1c2128;
+}
+
+.dark-theme .ant-select-selector {
+    background-color: #1c2128 !important;
+    /* Stand out from deep background */
+    color: var(--text-main) !important;
+    border-color: #444c56 !important;
+    /* More visible border */
+}
+
+.dark-theme .ant-select-arrow {
+    color: var(--text-secondary);
+}
+
+.dark-theme .ant-select-dropdown {
+    background-color: #1c2128;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--card-shadow);
+}
+
+.dark-theme .ant-select-item {
+    color: var(--text-main);
+}
+
+.dark-theme .ant-select-item-option-active {
+    background-color: #2d333b;
+}
+
+.dark-theme .ant-select-item-option-selected {
+    background-color: var(--accent-color);
+    color: #fff;
+}
+
+.dark-theme .ant-picker {
+    background-color: #1c2128 !important;
+    color: var(--text-main) !important;
+    border-color: #444c56 !important;
+}
+
+.dark-theme .ant-picker-input>input {
+    color: var(--text-main);
+}
+
+.dark-theme .ant-picker-suffix {
+    color: var(--text-secondary);
+}
+
+/* Global Input Override for Dark */
+.dark-theme .ant-input {
+    background-color: #1c2128;
+    color: var(--text-main);
+    border-color: #444c56;
+}
+
+.dark-theme .ant-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(88, 166, 255, 0.2);
+}
+
+.dark-theme .ant-radio-button-wrapper {
+    background-color: #161b22;
+    color: var(--text-main);
+    border-color: var(--border-color);
+}
+
+.dark-theme .ant-radio-button-wrapper-checked {
+    background-color: var(--accent-color);
+    color: #fff;
+}
+
+.dark-theme .ant-pagination-item,
+.dark-theme .ant-pagination-prev,
+.dark-theme .ant-pagination-next {
+    background: transparent;
+    border-color: var(--border-color);
+}
+
+.dark-theme .ant-pagination-item a {
+    color: var(--text-secondary);
+}
+
+.dark-theme .ant-pagination-item-active {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.dark-theme .ant-pagination-item-active a {
+    color: #fff !important;
+}
+
+/* --- Common Management Page System --- */
+.page-container {
+    padding: 24px;
+    background-color: var(--app-bg);
+    min-height: calc(100vh - 64px);
+    /* Adjust for header height */
+    display: block;
+}
+
+.header-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    color: var(--text-main);
+    letter-spacing: -0.5px;
+}
+
+.page-subtitle {
+    color: var(--text-secondary);
+    margin-bottom: 0;
+    font-size: 14px;
+}
+
+.table-card {
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+}
+
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
+    font-size: 13px;
+}
+
+.total-text b {
+    color: var(--text-main);
+}

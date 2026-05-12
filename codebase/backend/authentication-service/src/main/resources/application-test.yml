@@ -1,0 +1,39 @@
+spring:
+  config:
+    activate:
+      on-profile: test
+  devtools:
+    add-properties: false
+  datasource:
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5439/postgres}
+    username: ${POSTGRES_USER:quoctay}
+    password: ${POSTGRES_PASSWORD:password}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+
+redis:
+  host: ${REDIS_HOST:host.docker.internal}
+  port: ${REDIS_PORT:6379}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    enabled: true
+openapi:
+  service:
+    api-docs: authentication-service
+    server: ${API_GATEWAY:http://localhost:4953}/auth
+    title: Authentication service
+    version: 1.0.0
+
+jwt:
+  expiryMinutes: 30
+  expiryDay: 14
+  accessKey: ${JWT_ACCESS_KEY:DUMMY_JWT_ACCESS_KEY}
+  refreshKey: ${JWT_REFRESH_KEY:DUMMY_JWT_REFRESH_KEY}

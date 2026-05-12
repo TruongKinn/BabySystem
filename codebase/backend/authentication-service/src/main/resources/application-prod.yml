@@ -1,0 +1,27 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+  devtools:
+    add-properties: false
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_URL:dummy-postgres-url}
+    username: ${POSTGRES_USER:dummy-postgres-user}
+    password: ${POSTGRES_PASSWORD:dummy-postgres-password}
+  jpa:
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+
+redis:
+  host: ${REDIS_HOST}
+  port: ${REDIS_PORT:6379}
+
+springdoc:
+  api-docs:
+    enabled: false
+  swagger-ui:
+    enabled: false

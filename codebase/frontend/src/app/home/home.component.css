@@ -1,0 +1,26 @@
+.home-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  background: #f4f7fb;
+  padding: 16px;
+}
+
+.home-card {
+  width: min(560px, 100%);
+  border: 1px solid #dce5ef;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(31, 65, 114, 0.06);
+  padding: 24px;
+}
+
+.home-card h1 {
+  margin: 0 0 8px;
+  color: #1f2d3d;
+}
+
+.home-card p {
+  margin: 0 0 16px;
+  color: #6f839a;
+}

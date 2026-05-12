@@ -1,0 +1,271 @@
+.login-page {
+  min-height: 100vh;
+  padding: 16px;
+  background: #f4f7fb;
+}
+
+.login-shell {
+  width: min(1080px, 100%);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(280px, 0.9fr) minmax(0, 1.1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.intro-panel,
+.login-card {
+  border: 1px solid #dce5ef;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(31, 65, 114, 0.06);
+}
+
+.intro-panel {
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+  align-content: start;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7c8da5;
+}
+
+.intro-panel h1 {
+  margin: 0;
+  font-size: clamp(24px, 3vw, 34px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #1f2d3d;
+}
+
+.intro-panel p {
+  margin: 0;
+  color: #6f839a;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.hero-points {
+  display: grid;
+  gap: 8px;
+}
+
+.hero-point {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e2eaf3;
+  border-radius: 8px;
+  background: #fbfdff;
+  color: #46586f;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.hero-point span[nz-icon] {
+  color: #1677ff;
+  margin-top: 2px;
+}
+
+.login-card {
+  padding: 18px;
+}
+
+.card-header h2 {
+  margin: 0;
+  font-size: clamp(24px, 3vw, 30px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #1f2d3d;
+}
+
+.card-header p {
+  margin: 8px 0 0;
+  color: #6f839a;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.auth-switch {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+  padding: 8px;
+  border-radius: 8px;
+  background: #f4f7fb;
+}
+
+.switch-btn {
+  border: 1px solid #dbe4f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: #fff;
+  color: #44586f;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.switch-btn.active {
+  border-color: #1677ff;
+  color: #1677ff;
+  background: #eef5ff;
+}
+
+.error-banner {
+  margin-bottom: 12px;
+}
+
+.login-form {
+  display: block;
+}
+
+:host ::ng-deep .login-form .ant-form-item-label > label {
+  color: #2f3e50 !important;
+  font-weight: 700 !important;
+}
+
+:host ::ng-deep .login-form .ant-input,
+:host ::ng-deep .login-form .ant-input-affix-wrapper {
+  border-radius: 8px;
+  height: 42px;
+}
+
+:host ::ng-deep .login-form .ant-input-affix-wrapper .ant-input {
+  height: auto;
+}
+
+.password-toggle {
+  cursor: pointer;
+  color: #64748b;
+}
+
+.captcha-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 128px;
+  gap: 12px;
+  align-items: center;
+}
+
+.captcha-image {
+  width: 128px;
+  height: 42px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #dbe4f0;
+  cursor: pointer;
+}
+
+.form-actions {
+  margin: 4px 0 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.form-actions a {
+  color: #1677ff;
+  font-weight: 600;
+}
+
+.hint-link {
+  color: #1677ff;
+  font-weight: 600;
+}
+
+.submit-btn {
+  height: 42px;
+  border-radius: 999px;
+  font-weight: 700;
+  box-shadow: 0 6px 14px rgba(22, 119, 255, 0.18);
+}
+
+.bottom-links {
+  margin-top: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+
+.bottom-links a {
+  color: #1677ff;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.keycloak-panel {
+  display: grid;
+  gap: 12px;
+}
+
+.keycloak-panel p {
+  margin: 0;
+  color: #6f839a;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.keycloak-panel ul {
+  margin: 0;
+  padding-left: 18px;
+  color: #46586f;
+  line-height: 1.6;
+}
+
+.two-factor-guide-modal {
+  display: grid;
+  gap: 14px;
+  color: #334155;
+  line-height: 1.7;
+}
+
+.two-factor-guide-modal ol {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.force-change-password-form {
+  display: block;
+}
+
+.force-change-description {
+  margin-bottom: 16px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+@media (max-width: 1080px) {
+  .login-shell {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .login-page {
+    padding: 12px;
+  }
+
+  .auth-switch {
+    grid-template-columns: 1fr;
+  }
+
+  .captcha-row {
+    grid-template-columns: 1fr;
+  }
+
+  .captcha-image {
+    width: 100%;
+  }
+}

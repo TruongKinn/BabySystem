@@ -1,0 +1,29 @@
+pipeline {
+    agent any
+    options { timeout(time: 1, unit: 'HOURS'); retry(2); timestamps(); buildDiscarder(logRotator(numToKeepStr: '2')) }
+    tools { nodejs 'nodejs-20' }
+    environment {
+        APP_NAME          = 'frontend'
+        DOCKER_IMAGE      = "truongtv1111/logistic-${APP_NAME}:${BUILD_NUMBER}"
+        DOCKER_IMAGE_LATEST = "truongtv1111/logistic-${APP_NAME}:latest"
+    }
+    stages {
+        stage('Build Frontend') {
+            steps {
+                dir("codebase/${APP_NAME}") {
+                    script {
+                        sh "npm install"
+                        sh "npm run build --prod"
+                    }
+                }
+            }
+        }
+        stage('Dockerize') {
+            steps {
+                dir("codebase/${APP_NAME}") {
+                    script { sh "docker build -t ${DOCKER_IMAGE_LATEST} ." }
+                }
+            }
+        }
+    }
+}

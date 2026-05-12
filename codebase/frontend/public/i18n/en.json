@@ -1,0 +1,2343 @@
+﻿{
+  "common": {
+    "language": "Language",
+    "userFallback": "User",
+    "errorTitle": "Error"
+  },
+  "commonActions": {
+    "refresh": "Refresh",
+    "save": "Save",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "delete": "Delete",
+    "details": "Details",
+    "create": "Create",
+    "update": "Update"
+  },
+  "commonValues": {
+    "yes": "Yes",
+    "no": "No",
+    "na": "N/A"
+  },
+  "pagination": {
+    "range": "Showing {{start}} - {{end}} of {{total}} results"
+  },
+  "layout": {
+    "menu": {
+      "overviewGroup": "Overview",
+      "overviewDashboard": "Logistics Dashboard",
+      "shipmentGroup": "Shipment Management",
+      "shipmentList": "Shipment List",
+      "organizationGroup": "Organization Unit",
+      "orgRequestDashboard": "Request Dashboard",
+      "orgUnitEditor": "Update Unit",
+      "orgOrgChart": "Organization Chart",
+      "driverVehicleGroup": "Drivers & Vehicles",
+      "driverList": "Driver Management",
+      "vehicleList": "Vehicle List",
+      "trackingGroup": "Tracking",
+      "controlTower": "Control Tower",
+      "trackingView": "Journey & Tracking",
+      "accountAccessGroup": "Account & Access",
+      "workspaceGroup": "Workspace",
+      "systemGroup": "System",
+      "encryption": "Encryption",
+      "vaultManagement": "Vault Management",
+      "twoFactorSetup": "2FA Setup",
+      "passwordCenter": "Password Center",
+      "myPasswords": "My Passwords",
+      "mailQueueManager": "Mail Queue Manager",
+      "userManagement": "User Management",
+      "sagaManagement": "Saga Management",
+      "jobSupervisor": "Job Supervisor",
+      "financeWorkspace": "Finance Workspace",
+      "apiManagement": "API Management",
+      "accessControl": "Role/API Permission",
+      "todoWorkspace": "Todo Workspace",
+      "workflowIntro": "Workflow E2E",
+      "fileExtraction": "Text Extraction (OCR)",
+      "rateLimitTester": "Rate Limit Tester",
+      "notificationGroup": "Notification Management",
+      "notificationHistory": "Notification History",
+      "aiGroup": "AI Assistant",
+      "aiChat": "AI Q&A",
+      "exposeApi": "Expose API"
+    },
+    "header": {
+      "toggleTheme": "Toggle theme",
+      "hello": "Hello"
+    },
+    "user": {
+      "role": "Administrator",
+      "logout": "Log out"
+    },
+    "notification": {
+      "title": "Notifications",
+      "empty": "No new notifications",
+      "sendTest": "Send WS Test",
+      "markAll": "Mark all",
+      "viewAll": "View all →"
+    }
+  },
+  "notification": {
+    "types": {
+      "ORDER_CREATED": "Order Created",
+      "PAYMENT_SUCCESS": "Payment Success",
+      "PAYMENT_FAILED": "Payment Failed",
+      "INVENTORY_LOW": "Low Inventory",
+      "TODO_ASSIGNED": "Todo Assigned",
+      "TODO_REMINDER": "Todo Reminder",
+      "TODO_OVERDUE": "Todo Overdue",
+      "GENERAL": "General"
+    },
+    "test": {
+      "title": "Real-time Notification",
+      "message": "WebSocket test notification at {{time}}"
+    }
+  },
+  "auth": {
+    "login": {
+      "themeToggleAria": "Switch theme",
+      "hero": {
+        "badge": "Logistics Platform",
+        "title": "One login, two authentication methods",
+        "subtitle": "Use <strong>Bearer token</strong> to sign in with your platform account, or switch to <strong>Keycloak</strong> if you use centralized SSO.",
+        "point1": "Internal account + 2FA",
+        "point2": "SSO via Keycloak",
+        "point3": "Unified token storage"
+      },
+      "card": {
+        "eyebrow": "Authentication",
+        "title": "Sign in",
+        "subtitle": "Choose one of the sign-in methods below."
+      },
+      "switch": {
+        "bearer": "Bearer token",
+        "keycloak": "Keycloak"
+      },
+      "form": {
+        "usernameLabel": "Username",
+        "usernameError": "Please enter username",
+        "usernamePlaceholder": "Enter username",
+        "passwordLabel": "Password",
+        "passwordError": "Please enter password",
+        "passwordPlaceholder": "••••••••",
+        "otpLabel": "OTP Code (2FA)",
+        "otpError": "Please enter a 6-digit OTP",
+        "otpPlaceholder": "000000",
+        "captchaLabel": "CAPTCHA",
+        "captchaError": "Please enter CAPTCHA",
+        "captchaPlaceholder": "Verification code",
+        "captchaRefresh": "Click to refresh code",
+        "remember": "Remember me",
+        "forgotPassword": "Forgot password?",
+        "register": "Create account",
+        "submitBearer": "Sign in with Bearer token",
+        "note": "OTP or CAPTCHA will be enabled automatically when required.",
+        "twoFactorHelp": "Where can I get the 2FA code?",
+        "setupTwoFactor": "Set up 2FA",
+        "setupHint": "If you are signed in, this opens the QR setup page directly."
+      },
+      "keycloak": {
+        "title": "Sign in with Keycloak",
+        "description": "Use SSO to authenticate in Keycloak, then the system exchanges it into an internal session for gateway and downstream services.",
+        "bullet1": "Best for centralized identity accounts.",
+        "bullet2": "No need to re-enter internal password.",
+        "bullet3": "Final token is still stored consistently.",
+        "submit": "Sign in with Keycloak"
+      },
+      "twoFactorModal": {
+        "title": "How to get 2FA code",
+        "description": "The 2FA code is not generated on the login screen. You must enable 2FA first in <strong>2FA Setup</strong> after signing in.",
+        "step1": "Sign in to the system.",
+        "step2": "Open <strong>2FA Setup</strong> menu or go to <code>/2fa-setup</code>.",
+        "step3": "Scan QR with Google Authenticator or a compatible OTP app.",
+        "step4": "The app generates a new 6-digit code every 30 seconds.",
+        "step5": "When OTP is required later, enter that 6-digit code in login form.",
+        "info": "If your account has not enabled 2FA, OTP is not required."
+      },
+      "forceChangeModal": {
+        "title": "Change temporary password",
+        "description": "Your account is using a temporary password. Set a new password to continue.",
+        "newPasswordLabel": "New password",
+        "newPasswordError": "New password must be at least 6 characters",
+        "newPasswordPlaceholder": "Enter new password",
+        "confirmPasswordLabel": "Confirm new password",
+        "confirmPasswordError": "Please confirm new password",
+        "confirmPasswordMismatch": "Password confirmation does not match",
+        "confirmPasswordPlaceholder": "Re-enter new password",
+        "confirm": "Update password"
+      },
+      "messages": {
+        "captchaLoadFailed": "Unable to load CAPTCHA: {{message}}",
+        "loginSuccessTitle": "Login successful",
+        "loginSuccessDesc": "Welcome back!",
+        "keycloakVerifyFailed": "Unable to verify with Keycloak",
+        "loginFailedTitle": "Login failed",
+        "forceChangeRequiredTitle": "Password update required",
+        "forceChangeRequiredDesc": "You must change temporary password before continuing.",
+        "forceChangeSuccessTitle": "Password updated",
+        "forceChangeSuccessDesc": "Password changed successfully. Signing you in...",
+        "forceChangeFailed": "Unable to change password. Please verify your input.",
+        "forceChangeMissingContext": "Missing username or temporary password. Please login again.",
+        "captchaRequiredTitle": "CAPTCHA required",
+        "captchaRequiredDesc": "Too many wrong password attempts. Please complete CAPTCHA to continue.",
+        "captchaInvalid": "Invalid CAPTCHA code. Please try again.",
+        "captchaRequiredSimple": "Please complete CAPTCHA verification.",
+        "twoFactorRequiredTitle": "Two-factor authentication required",
+        "twoFactorRequiredDesc": "This account has 2FA enabled. Please enter OTP from your Authenticator app.",
+        "loginFailedFallback": "Login failed. Please verify your account credentials."
+      }
+    },
+    "register": {
+      "brand": {
+        "description": "Join the AI Agent community and unlock next-generation AI capabilities today.",
+        "cta": "Learn more"
+      },
+      "form": {
+        "title": "Register",
+        "subtitle": "Create a free account in less than a minute.",
+        "firstNameLabel": "First name",
+        "firstNameError": "Please enter first name",
+        "firstNamePlaceholder": "First name",
+        "lastNameLabel": "Last name",
+        "lastNameError": "Please enter last name",
+        "lastNamePlaceholder": "Last name",
+        "usernameLabel": "Username",
+        "usernameError": "Please enter username",
+        "usernamePlaceholder": "username",
+        "emailLabel": "Email",
+        "emailError": "Please enter a valid email",
+        "emailPlaceholder": "email@example.com",
+        "passwordLabel": "Password",
+        "passwordError": "Password must be at least 6 characters",
+        "passwordPlaceholder": "••••••••",
+        "confirmPasswordLabel": "Confirm password",
+        "confirmPasswordError": "Confirm password does not match",
+        "confirmPasswordPlaceholder": "••••••••",
+        "terms": "I agree to the Terms of Use and Privacy Policy",
+        "submit": "Register",
+        "socialLabel": "Or register with",
+        "haveAccount": "Already have an account?",
+        "loginNow": "Sign in now"
+      }
+    },
+    "passwordCenter": {
+      "hero": {
+        "eyebrow": "Account security",
+        "title": "Password recovery and change",
+        "description": "Use this page to submit password recovery requests or change your password when logged in.",
+        "point1": "Submit recovery request via email",
+        "point2": "Change password for active account",
+        "point3": "Integrated with existing security flow",
+        "backToLogin": "Back to login"
+      },
+      "page": {
+        "backToDashboard": "Back to dashboard",
+        "summary": {
+          "recoveryLabel": "Recovery",
+          "recoveryValue": "Mail",
+          "securityLabel": "Security",
+          "securityValue": "2-step",
+          "accessLabel": "Access",
+          "signedIn": "Signed in",
+          "guest": "Guest"
+        }
+      },
+      "card": {
+        "eyebrow": "Password Center",
+        "title": "Password management",
+        "subtitle": "Choose the flow that matches your current status."
+      },
+      "tabs": {
+        "forgot": "Forgot password",
+        "change": "Change password"
+      },
+      "forgot": {
+        "milestoneTitle": "Current MVP",
+        "milestoneDescription": "Forgot password flow sends a request email. Then admin or user can log in and change password.",
+        "usernameLabel": "Username",
+        "usernameError": "Please enter username",
+        "usernamePlaceholder": "Enter username",
+        "emailLabel": "Notification email",
+        "emailError": "Please enter a valid email",
+        "emailPlaceholder": "name@company.com",
+        "noteLabel": "Note",
+        "notePlaceholder": "Briefly describe account issue",
+        "submit": "Send recovery request",
+        "successTitle": "Request submitted",
+        "successDescription": "The recovery request has been recorded via email."
+      },
+      "change": {
+        "notAuthenticatedTitle": "Not signed in",
+        "notAuthenticatedDesc": "Please sign in first to change your current account password.",
+        "oldPasswordLabel": "Current password",
+        "oldPasswordError": "Please enter current password",
+        "oldPasswordPlaceholder": "Current password",
+        "newPasswordLabel": "New password",
+        "newPasswordError": "New password must be at least 6 characters",
+        "newPasswordPlaceholder": "New password",
+        "confirmPasswordLabel": "Confirm new password",
+        "confirmPasswordPlaceholder": "Re-enter new password",
+        "confirmMismatch": "Password confirmation does not match.",
+        "confirmRequired": "Please enter password confirmation.",
+        "submit": "Update password",
+        "successTitle": "Password changed successfully",
+        "successDescription": "Your account password has been updated."
+      },
+      "messages": {
+        "forgotSubject": "Password recovery request for Logistics platform",
+        "mailGreeting": "Hello {{username}},",
+        "mailLine1": "The system has recorded your password recovery request.",
+        "mailLine2": "Reset-token flow is not fully completed yet, so request is routed through support email.",
+        "mailUsername": "Username: {{username}}",
+        "mailEmail": "Email: {{email}}",
+        "mailNote": "Note: {{note}}",
+        "mailLine3": "If you are an administrator, change password in the Change Password tab after signing in.",
+        "mailTime": "Time: {{time}}",
+        "forgotSuccessTitle": "Request submitted",
+        "forgotSuccessDesc": "Recovery request has been sent via email.",
+        "forgotErrorTitle": "Unable to send",
+        "tryLater": "Please try again later.",
+        "accountMissingTitle": "Missing account data",
+        "accountMissingDesc": "You must sign in to change password.",
+        "changeSuccessTitle": "Password changed successfully",
+        "changeSuccessDesc": "Password has been updated.",
+        "changeErrorTitle": "Password change failed",
+        "changeErrorFallback": "Please verify your input."
+      }
+    }
+  },
+  "myPassword": {
+    "title": "My Password",
+    "subtitle": "Store and review passwords used for exported files.",
+    "actions": {
+      "refresh": "Refresh list"
+    },
+    "table": {
+      "fileName": "File name",
+      "fileType": "Type",
+      "password": "Password",
+      "createdAt": "Created at"
+    },
+    "messages": {
+      "loadFailed": "Unable to load password history.",
+      "userNotFound": "Cannot detect current user."
+    }
+  },
+  "logisticsDashboard": {
+    "breadcrumb": "Logistics Dashboard",
+    "title": "Realtime Logistics Operations",
+    "subtitle": "Live dispatch, utilization, exceptions, and GPS-aware tracking in one screen.",
+    "filter": {
+      "date": "Date",
+      "shift": "Shift",
+      "shiftCurrent": "Current",
+      "shift1": "Shift 1 (06-14)",
+      "shift2": "Shift 2 (14-22)",
+      "shift3": "Shift 3 (22-06)"
+    },
+    "sla": {
+      "overdueAlert": "{{count}} shipment(s) are overdue SLA",
+      "overdueDesc": "Overdue shipment codes: {{codes}}"
+    },
+    "slaHero": {
+      "title": "SLA warning",
+      "subtitle": "These shipments need immediate attention before the delay grows."
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "pause": "Pause 15s",
+      "auto": "Auto 15s",
+      "updatedAt": "Updated"
+    },
+    "relative": {
+      "secondsAgo": "{{count}}s ago",
+      "minutesAgo": "{{count}}m ago",
+      "hoursAgo": "{{count}}h ago"
+    },
+    "eta": {
+      "unavailable": "ETA -",
+      "inMinutes": "ETA {{count}}m",
+      "overdue": "ETA overdue {{count}}m",
+      "minutesShort": "{{count}}m",
+      "overdueShort": "{{count}}m overdue",
+      "unavailableShort": "Unavailable"
+    },
+    "labels": {
+      "points": "pts"
+    },
+    "status": {
+      "PENDING": "Pending",
+      "ASSIGNED": "Assigned",
+      "PICKED_UP": "Picked Up",
+      "IN_TRANSIT": "In Transit",
+      "OUT_FOR_DELIVERY": "Out For Delivery",
+      "DELIVERED": "Delivered",
+      "FAILED": "Failed",
+      "RETURNED": "Returned",
+      "CANCELLED": "Cancelled"
+    },
+    "slaState": {
+      "OVERDUE": "Overdue",
+      "DUE_SOON": "Due Soon",
+      "ON_TIME": "On Time",
+      "DELIVERED_ON_TIME": "Delivered On Time",
+      "DELIVERED_LATE": "Delivered Late",
+      "NO_ETA": "No ETA",
+      "CANCELLED": "Cancelled",
+      "TRACKED": "Tracked"
+    },
+    "exceptionSeverity": {
+      "HIGH": "High",
+      "MEDIUM": "Medium",
+      "LOW": "Low"
+    },
+    "exceptionType": {
+      "ADDRESS_ISSUE": "Address Issue",
+      "CAPACITY_LIMIT": "Capacity Limit",
+      "DRIVER_UNAVAILABLE": "Driver Unavailable",
+      "FAILED_ATTEMPT": "Failed Attempt",
+      "LATE_DELIVERY": "Late Delivery",
+      "PAYMENT_ISSUE": "Payment Issue",
+      "SYSTEM_ALERT": "System Alert",
+      "UNKNOWN": "Unknown"
+    },
+    "kpi": {
+      "totalShipments": "Total Shipments",
+      "pending": "Pending",
+      "inTransit": "In Transit",
+      "outForDelivery": "Out For Delivery",
+      "deliveredToday": "Delivered Today",
+      "failedReturned": "Failed/Returned",
+      "activeDrivers": "Active Drivers",
+      "inUseVehicles": "In-use Vehicles"
+    },
+    "dispatchBoard": {
+      "title": "Live Dispatch Board",
+      "colShipment": "Shipment",
+      "colStatus": "Status",
+      "colLocation": "Current Location",
+      "colDriverVehicle": "Driver / Vehicle",
+      "colEta": "ETA / SLA",
+      "colUpdated": "Updated",
+      "colActions": "Actions",
+      "btnAssign": "Assign",
+      "btnUnassign": "Unassign",
+      "btnStatus": "Status"
+    },
+    "utilization": {
+      "title": "Fleet / Driver Utilization",
+      "driverUtil": "Driver Utilization",
+      "vehicleUtil": "Vehicle Utilization",
+      "busy": "Busy",
+      "available": "Available",
+      "inUse": "In Use",
+      "slaRate": "SLA on-time rate"
+    },
+    "exceptionQueue": {
+      "title": "Exception Queue",
+      "colShipment": "Shipment",
+      "colType": "Type",
+      "colSeverity": "Severity",
+      "colMessage": "Message"
+    },
+    "mapBoard": {
+      "title": "Map / Position Board",
+      "noMapKeyNote": "Google Maps key is not configured. Showing latest position list fallback.",
+      "unknownLocation": "Unknown location",
+      "hotspots": "SLA hotspots",
+      "avgEta": "Average ETA",
+      "points": "Live points",
+      "heat": {
+        "overdue": "Overdue",
+        "dueSoon": "Due soon",
+        "onTime": "On time",
+        "tracked": "Tracked"
+      }
+    },
+    "mapInfo": {
+      "statusLabel": "Status",
+      "slaLabel": "SLA",
+      "etaLabel": "ETA"
+    },
+    "assignModal": {
+      "title": "Assign Driver & Vehicle",
+      "driverLabel": "Driver",
+      "driverPlaceholder": "Select driver",
+      "vehicleLabel": "Vehicle",
+      "vehiclePlaceholder": "Select vehicle",
+      "suggestionKicker": "Smart suggestion",
+      "suggestionTitle": "Best available driver and vehicle for this shipment",
+      "useSuggestion": "Use suggestion"
+    },
+    "statusModal": {
+      "title": "Update Shipment Status",
+      "nextStatus": "Next Status",
+      "statusPlaceholder": "Select status",
+      "location": "Location",
+      "locationPlaceholder": "Current location text",
+      "latitude": "Latitude",
+      "longitude": "Longitude",
+      "note": "Note",
+      "notePlaceholder": "Optional note"
+    }
+  },
+  "orgRequestDashboard": {
+    "title": "Request Dashboard",
+    "requestListTitle": "Request List",
+    "searchPlaceholder": "Search by abbreviation, name, status",
+    "newTag": "New",
+    "actions": {
+      "newUnit": "New Unit",
+      "reload": "Reload",
+      "tableView": "Table View",
+      "orgchartView": "Orgchart View"
+    },
+    "status": {
+      "all": "All status",
+      "DRAFT": "Draft",
+      "SUBMITTED": "Submitted",
+      "REVIEWED": "Reviewed",
+      "CONFIRMED": "Confirmed",
+      "APPROVED": "Approved"
+    },
+    "table": {
+      "abbreviation": "Abbreviation",
+      "head": "Head",
+      "viceHead": "Vice head",
+      "opic": "OPIC",
+      "hrbp": "HRBP",
+      "plannedHc": "Planned HC",
+      "currentHc": "Current HC",
+      "currentWpRev": "Current WP REV",
+      "plannedWpRev": "Planned WP REV",
+      "type": "Type",
+      "subType": "Sub Type",
+      "category": "Category",
+      "director": "C-level Director",
+      "effectiveDate": "Effective Date",
+      "status": "Status",
+      "action": "Action"
+    },
+    "footer": {
+      "totalRows": "Total {{count}} rows",
+      "hierarchyMode": "Hierarchy mode enabled"
+    }
+  },
+  "orgOrgChart": {
+    "titleFallback": "Organization Chart",
+    "departmentOption": "{{title}} ({{count}})",
+    "actions": {
+      "departmentView": "Department View",
+      "allView": "All View",
+      "reset": "Reset",
+      "backToDashboard": "Back to Dashboard"
+    },
+    "fallback": {
+      "department": "Department",
+      "allDepartments": "All Departments"
+    },
+    "detail": {
+      "infoTitle": "Unit Information",
+      "abbreviation": "Abbreviation",
+      "vietnameseName": "Vietnamese Name",
+      "englishName": "English Name",
+      "memberCompany": "Member Company",
+      "type": "Type",
+      "subType": "Sub Type",
+      "currentWpRevenue": "Current WP Revenue",
+      "currentHeadcount": "Current Headcount",
+      "effectiveDate": "Effective Date",
+      "status": "Status",
+      "teamLeadTitle": "Team Lead"
+    },
+    "teamLead": {
+      "account": "Account:",
+      "reportTo": "Report To:",
+      "promotion": "Promotion:",
+      "effective": "Effective:"
+    },
+    "node": {
+      "metaTitle": "WP REV {{wpRev}} | HC {{headcount}}",
+      "metaText": "WP REV {{wpRev}} | HC {{headcount}}"
+    }
+  },
+  "shipment": {
+    "detail": {
+      "breadcrumb": {
+        "group": "Shipment List"
+      },
+      "titlePrefix": "Shipment #",
+      "subtitleRef": "Order reference",
+      "subtitleCreated": "Created at",
+      "backButton": "Back",
+      "refreshButton": "Refresh",
+      "errorTitle": "Shipment not found",
+      "errorDesc": "Shipment code does not exist or has been deleted. Please check again.",
+      "backToList": "Back to list",
+      "summaryCard": {
+        "weightKg": "Weight",
+        "codAmount": "COD amount",
+        "estimatedAt": "Estimated delivery",
+        "estimatedEmpty": "Not set",
+        "sla": "SLA status",
+        "updatedAt": "Last updated",
+        "deliveredAt": "Delivered at"
+      },
+      "tab": {
+        "shipmentInfo": "📋 Shipment Information",
+        "delivery": "🚗 Delivery",
+        "tracking": "📍 Tracking History"
+      },
+      "section": {
+        "senderInfo": "Sender Information",
+        "receiverInfo": "Receiver Information",
+        "orderDetails": "Order Details",
+        "driverInfo": "Assigned Driver",
+        "vehicleInfo": "Delivery Vehicle"
+      },
+      "field": {
+        "fullName": "Full name",
+        "phone": "Phone number",
+        "address": "Address",
+        "shipmentCode": "Shipment code",
+        "orderRef": "Order reference",
+        "status": "Status",
+        "weightKg": "Weight",
+        "codAmount": "COD amount",
+        "note": "Note",
+        "driverId": "Driver ID",
+        "vehicleId": "Vehicle ID",
+        "notAssigned": "Not assigned",
+        "createdAt": "Created at",
+        "estimatedAt": "Estimated delivery",
+        "deliveredAt": "Actual delivered at",
+        "notDelivered": "Not delivered",
+        "estimatedEmpty": "Not set",
+        "updatedAt": "Last updated"
+      },
+      "driver": {
+        "employeeCode": "Employee code",
+        "phone": "Phone number",
+        "status": "Status",
+        "zone": "Zone",
+        "noDriver": "No driver assigned"
+      },
+      "vehicle": {
+        "type": "Type",
+        "plateNumber": "Plate number",
+        "vehicleType": "Vehicle type",
+        "status": "Status",
+        "noVehicle": "No vehicle assigned"
+      },
+      "tracking": {
+        "noEvents": "No tracking events yet"
+      },
+      "noDelivery": "No delivery assignment info"
+    },
+    "list": {
+      "breadcrumb": {
+        "group": "Shipment",
+        "page": "Shipment List"
+      },
+      "title": "Shipment Management",
+      "subtitle": "Manage shipments, update status and assign driver/vehicle in one screen.",
+      "actions": {
+        "exportExcel": "Export Excel",
+        "downloadTemplate": "Download Template",
+        "sampleData": "Sample Data",
+        "addNew": "Add Shipment"
+      },
+      "search": {
+        "placeholder": "Search shipment code...",
+        "button": "Search"
+      },
+      "filter": {
+        "searchTitle": "Search shipments",
+        "searchHint": "Find by code, sender, receiver or status",
+        "slaTitle": "SLA quick filters",
+        "slaHint": "Switch between normal, due soon and overdue shipments"
+      },
+      "table": {
+        "id": "ID",
+        "shipmentCode": "Shipment Code",
+        "senderName": "Sender",
+        "receiverName": "Receiver",
+        "address": "Address",
+        "estimatedAt": "Estimated delivery",
+        "sla": "SLA",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "slaFilter": {
+        "all": "All SLA",
+        "dueSoon": "Due soon",
+        "overdue": "Overdue"
+      },
+      "tooltip": {
+        "detail": "View detail",
+        "edit": "Edit shipment",
+        "changeStatus": "Change status",
+        "assign": "Assign driver/vehicle",
+        "refresh": "Refresh"
+      },
+      "sla": {
+        "onTime": "On time",
+        "dueSoon": "Due soon",
+        "overdue": "Overdue",
+        "deliveredOnTime": "Delivered on time",
+        "deliveredLate": "Delivered late",
+        "cancelled": "Cancelled",
+        "noEta": "No ETA",
+        "dueIn": "Due in {{time}}",
+        "lateBy": "Late by {{time}}",
+        "completedOnTime": "Completed on time in {{time}}",
+        "completedLate": "Completed late by {{time}}"
+      },
+      "pagination": {
+        "showing": "Showing",
+        "to": "-",
+        "of": "of",
+        "results": "results"
+      },
+      "createModal": {
+        "title": "Create new shipment",
+        "orderRef": "Order reference",
+        "orderRefError": "Please enter order reference",
+        "orderRefPlaceholder": "ORDER-0001",
+        "weightKg": "Weight (kg)",
+        "weightKgPlaceholder": "12.5",
+        "senderName": "Sender name",
+        "senderNameError": "Please enter sender name",
+        "senderNamePlaceholder": "Sender name",
+        "senderPhone": "Sender phone",
+        "senderPhonePlaceholder": "090...",
+        "senderAddress": "Sender address",
+        "senderAddressPlaceholder": "Pickup address",
+        "receiverName": "Receiver name",
+        "receiverNameError": "Please enter receiver name",
+        "receiverNamePlaceholder": "Receiver name",
+        "receiverPhone": "Receiver phone",
+        "receiverPhoneError": "Please enter receiver phone",
+        "receiverPhonePlaceholder": "090...",
+        "receiverAddress": "Receiver address",
+        "receiverAddressError": "Please enter receiver address",
+        "receiverAddressPlaceholder": "Delivery address",
+        "estimatedAt": "Estimated delivery time",
+        "estimatedAtError": "Please choose an estimated delivery time",
+        "estimatedAtHelp": "This time is used to calculate SLA on the dashboard.",
+        "codAmount": "COD",
+        "codAmountPlaceholder": "500000",
+        "note": "Note",
+        "notePlaceholder": "Internal note",
+        "senderSectionTitle": "Sender information",
+        "receiverSectionTitle": "Receiver information",
+        "deliverySectionTitle": "Delivery planning",
+        "helpText": "The new shipment will be created with the default backend status.",
+        "cancelButton": "Cancel",
+        "submitButton": "Create shipment"
+      },
+      "editModal": {
+        "title": "Edit shipment",
+        "helpText": "Update shipment information without changing status or assignment.",
+        "submitButton": "Save changes"
+      },
+      "statusModal": {
+        "title": "Update shipment status",
+        "alertDescription": "Update status for the current shipment.",
+        "status": "Status",
+        "statusError": "Please select a status",
+        "note": "Note",
+        "notePlaceholder": "Status update note",
+        "cancelButton": "Cancel",
+        "submitButton": "Update"
+      },
+      "assignModal": {
+        "title": "Assign driver and vehicle",
+        "pendingAlertDescription": "Select an AVAILABLE driver and vehicle to assign for delivery.",
+        "assignedAlertDescription": "This shipment has already been assigned. You can only view current info or unassign before re-assigning.",
+        "driverLabel": "Assigned driver",
+        "driverError": "Please select a driver",
+        "driverPlaceholder": "Select driver...",
+        "vehicleLabel": "Vehicle",
+        "vehicleError": "Please select a vehicle",
+        "vehiclePlaceholder": "Select vehicle...",
+        "assignedDriverLabel": "Currently assigned driver",
+        "assignedVehicleLabel": "Currently assigned vehicle",
+        "cancelButton": "Cancel",
+        "submitButton": "Assign shipment",
+        "unassignButton": "Unassign"
+      }
+    }
+  },
+  "tracking": {
+    "view": {
+      "breadcrumb": {
+        "group": "Tracking",
+        "page": "Journey & Tracking"
+      },
+      "title": "Shipment Journey",
+      "subtitle": "Enter shipment code to view journey history and current status.",
+      "actions": {
+        "refresh": "Refresh",
+        "pauseLive": "Pause live",
+        "startLive": "Start live"
+      },
+      "search": {
+        "sectionTitle": "Look up journey",
+        "placeholder": "E.g.: SHIP-1234",
+        "button": "Search"
+      },
+      "summary": {
+        "shipmentCode": "Shipment code",
+        "currentStatus": "Current status",
+        "location": "Location",
+        "locationUpdating": "Updating...",
+        "updatedAt": "Updated at",
+        "note": "Note"
+      },
+      "history": {
+        "title": "Shipment journey details"
+      }
+    }
+  },
+  "driver": {
+    "detail": {
+      "breadcrumb": {
+        "group": "Driver Management"
+      },
+      "titlePrefix": "Driver #",
+      "subtitleCode": "Employee Code",
+      "subtitleCreated": "Created At",
+      "backButton": "Back",
+      "refreshButton": "Refresh",
+      "errorTitle": "Driver not found",
+      "errorDesc": "Driver ID does not exist or has been deleted. Please check again.",
+      "backToList": "Back to list",
+      "summaryCard": {
+        "employeeCode": "Employee code",
+        "phone": "Phone",
+        "zone": "Operating zone",
+        "zoneEmpty": "Not set"
+      },
+      "tab": {
+        "personalInfo": "📋 Personal Information"
+      },
+      "section": {
+        "profileTitle": "Profile Details"
+      },
+      "field": {
+        "fullName": "Full name",
+        "employeeCode": "Employee code",
+        "status": "Status",
+        "phone": "Phone number",
+        "email": "Email address",
+        "address": "Contact address",
+        "identityCard": "National ID",
+        "licenseClass": "License class",
+        "zone": "Operating zone",
+        "createdAt": "Joined date",
+        "updatedAt": "Last updated"
+      },
+      "actions": {
+        "exportCv": "Export CV",
+        "exportContract": "Prepare contract"
+      },
+      "cvModal": {
+        "title": "Export driver CV",
+        "editorTitle": "Edit before download",
+        "previewTitle": "PDF preview",
+        "previewLoading": "Rendering PDF preview...",
+        "previewEmpty": "Click Preview PDF to render the document.",
+        "hint": "Changes here only affect the exported file.",
+        "fullName": "Full name",
+        "employeeCode": "Employee code",
+        "phone": "Phone number",
+        "email": "Email address",
+        "address": "Address",
+        "zone": "Zone",
+        "licenseNo": "License number",
+        "licenseType": "License class",
+        "summary": "Professional summary",
+        "skills": "Key skills",
+        "previewButton": "Preview PDF",
+        "downloadDocxButton": "Download DOCX",
+        "downloadPdfButton": "Download PDF"
+      },
+      "contractModal": {
+        "title": "Prepare labor contract",
+        "editorTitle": "Edit contract content",
+        "previewTitle": "Labor contract PDF preview",
+        "previewLoading": "Rendering contract preview...",
+        "previewEmpty": "Click Preview to generate the contract file.",
+        "hint": "Changes here only affect the exported contract file and the draft prepared for digital signing.",
+        "contractNumber": "Contract number",
+        "companyName": "Company name",
+        "contractDate": "Contract date",
+        "effectiveDate": "Effective date",
+        "startDate": "Start date",
+        "endDate": "End date",
+        "probationDays": "Probation days",
+        "companyRepresentative": "Representative",
+        "companyTitle": "Representative title",
+        "companyAddress": "Company address",
+        "workplace": "Workplace",
+        "workingSchedule": "Working schedule",
+        "baseSalary": "Base salary",
+        "allowance": "Allowance",
+        "paymentCycle": "Payment cycle",
+        "roleDescription": "Job description",
+        "identityCard": "National ID",
+        "address": "Contact address",
+        "notes": "Contract notes",
+        "digitalSignatureNote": "Digital signature note",
+        "demoSign": "Mock signing (DEV only)",
+        "fillCompanySide": "Auto-fill Party A",
+        "fillDriverSide": "Auto-fill Party B",
+        "fillBothSides": "Auto-fill both",
+        "partyA": "Party A - Employer",
+        "partyB": "Party B - Employee",
+        "contractTerms": "Contract terms",
+        "previewButton": "Preview",
+        "downloadPdfButton": "Download contract PDF"
+      }
+    },
+    "list": {
+      "breadcrumb": {
+        "group": "Drivers & Vehicles",
+        "page": "Driver Management"
+      },
+      "title": "Driver Management",
+      "subtitle": "Manage driver list, check contact info and operational status",
+      "actions": {
+        "exportExcel": "Export Excel",
+        "downloadTemplate": "Download Template",
+        "importExcel": "Import Excel",
+        "addNew": "Add new driver"
+      },
+      "search": {
+        "placeholder": "Search by name or phone...",
+        "button": "Search"
+      },
+      "table": {
+        "id": "ID",
+        "fullName": "Driver name",
+        "phone": "Phone number",
+        "licenseNo": "Driver's license",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "tooltip": {
+        "detail": "View detail",
+        "clone": "Clone",
+        "edit": "Edit"
+      },
+      "pagination": {
+        "showing": "Showing",
+        "to": "-",
+        "of": "of",
+        "results": "results"
+      },
+      "createModal": {
+        "title": "Add new driver",
+        "employeeCode": "Employee code",
+        "employeeCodeError": "Please enter employee code",
+        "employeeCodePlaceholder": "E.g.: TX001",
+        "fullName": "Full name",
+        "fullNameError": "Please enter full name",
+        "fullNamePlaceholder": "Enter full name",
+        "phone": "Phone number",
+        "phoneError": "Please enter phone number",
+        "phonePlaceholder": "090...",
+        "email": "Email address",
+        "emailPlaceholder": "email@example.com",
+        "identityCard": "ID Card",
+        "identityCardPlaceholder": "ID Card number",
+        "licenseClass": "License class",
+        "licenseClassPlaceholder": "E.g.: B2, C, E",
+        "zone": "Operating zone",
+        "zonePlaceholder": "E.g.: South Region",
+        "address": "Permanent address",
+        "addressPlaceholder": "Enter address",
+        "cancelButton": "Cancel",
+        "submitButton": "Add driver"
+      },
+      "editModal": {
+        "title": "Edit driver",
+        "employeeCode": "Employee code",
+        "employeeCodeError": "Please enter employee code",
+        "fullName": "Full name",
+        "fullNameError": "Please enter full name",
+        "phone": "Phone number",
+        "phoneError": "Please enter phone number",
+        "status": "Status",
+        "statusError": "Please select a status",
+        "email": "Email",
+        "licenseNo": "License number",
+        "licenseType": "License class",
+        "zone": "Zone",
+        "cancelButton": "Cancel",
+        "submitButton": "Save changes"
+      }
+    }
+  },
+  "vehicle": {
+    "detail": {
+      "breadcrumb": {
+        "group": "Vehicle Management"
+      },
+      "titlePrefix": "Vehicle #",
+      "subtitleBrand": "Brand",
+      "subtitleCreated": "Created At",
+      "backButton": "Back",
+      "refreshButton": "Refresh",
+      "errorTitle": "Vehicle not found",
+      "errorDesc": "Vehicle ID does not exist or has been deleted. Please check again.",
+      "backToList": "Back to list",
+      "summaryCard": {
+        "plateNumber": "Plate number",
+        "type": "Vehicle type",
+        "capacityKg": "Capacity (kg)"
+      },
+      "tab": {
+        "vehicleInfo": "📋 Vehicle Information"
+      },
+      "section": {
+        "profileTitle": "Profile Details"
+      },
+      "field": {
+        "plateNumber": "Plate number",
+        "type": "Vehicle type",
+        "status": "Status",
+        "currentDriver": "Current driver (ID)",
+        "currentDriverEmpty": "Empty",
+        "capacityKg": "Maximum capacity",
+        "lengthM": "Length",
+        "widthM": "Width",
+        "heightM": "Height",
+        "brand": "Brand",
+        "model": "Model",
+        "manufactureYear": "Year of manufacture",
+        "color": "Color",
+        "createdAt": "Created date",
+        "updatedAt": "Last updated"
+      }
+    },
+    "list": {
+      "breadcrumb": {
+        "group": "Drivers & Vehicles",
+        "page": "Vehicle List"
+      },
+      "title": "Vehicle List",
+      "subtitle": "Monitor vehicle fleet, payload capacity and current technical status",
+      "actions": {
+        "exportExcel": "Export Excel",
+        "downloadTemplate": "Download Template",
+        "importExcel": "Import Excel",
+        "addNew": "Add new vehicle"
+      },
+      "search": {
+        "placeholder": "Search by plate number...",
+        "button": "Search"
+      },
+      "table": {
+        "id": "ID",
+        "plateNumber": "Plate number",
+        "type": "Vehicle type",
+        "capacityKg": "Payload (kg)",
+        "volumeM3": "Volume (m3)",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "tooltip": {
+        "detail": "View detail",
+        "edit": "Edit"
+      },
+      "pagination": {
+        "showing": "Showing",
+        "to": "-",
+        "of": "of",
+        "results": "results"
+      },
+      "createModal": {
+        "title": "Add new vehicle",
+        "plateNumber": "Plate number",
+        "plateNumberError": "Please enter plate number",
+        "plateNumberPlaceholder": "E.g.: 29A-123.45",
+        "type": "Vehicle type",
+        "typeError": "Please enter vehicle type",
+        "typePlaceholder": "E.g.: Closed box truck",
+        "brand": "Manufacturer",
+        "brandPlaceholder": "E.g.: Hino, Isuzu",
+        "model": "Model",
+        "modelPlaceholder": "E.g.: NQR75",
+        "capacityKg": "Payload (kg)",
+        "capacityKgPlaceholder": "E.g.: 1500",
+        "volumeM3": "Volume (m3)",
+        "volumeM3Placeholder": "E.g.: 15",
+        "manufactureYear": "Manufacture year",
+        "manufactureYearPlaceholder": "E.g.: 2020",
+        "color": "Color",
+        "colorPlaceholder": "E.g.: White",
+        "cancelButton": "Cancel",
+        "submitButton": "Add vehicle"
+      },
+      "editModal": {
+        "title": "Edit vehicle",
+        "plateNumber": "Plate number",
+        "plateNumberError": "Please enter plate number",
+        "type": "Vehicle type",
+        "typeError": "Please select vehicle type",
+        "brand": "Manufacturer",
+        "model": "Model",
+        "maxWeightKg": "Payload (kg)",
+        "volumeM3": "Volume (m3)",
+        "yearOfManufacture": "Manufacture year",
+        "status": "Status",
+        "statusError": "Please select a status",
+        "cancelButton": "Cancel",
+        "submitButton": "Save changes"
+      }
+    }
+  },
+  "messages": {
+    "common": {
+      "selectSingleFile": "Please select exactly one file.",
+      "downloadTemplateSuccess": "Template downloaded successfully.",
+      "downloadTemplateFailed": "Failed to download template.",
+      "unknownError": "Unknown error"
+    },
+    "exportPassword": {
+      "prompt": "Enter password for exported file: {{fileName}}",
+      "required": "Password is required for export.",
+      "saveFailed": "Export succeeded but failed to save password history."
+    },
+    "shipment": {
+      "createSuccess": "New shipment created successfully.",
+      "createFailed": "Unable to create shipment.",
+      "exportSuccess": "Shipment data exported successfully.",
+      "exportFailed": "Unable to export shipment data.",
+      "updateSuccess": "Shipment updated successfully.",
+      "updateFailed": "Unable to update shipment.",
+      "statusUpdated": "Shipment status updated.",
+      "updateStatusFailed": "Unable to update shipment status.",
+      "cannotAssign": "Can only assign or unassign PENDING or ASSIGNED shipments.",
+      "cannotAssignNonPending": "Can only assign driver/vehicle to a PENDING shipment.",
+      "noAvailableAssignees": "No AVAILABLE drivers or vehicles to assign.",
+      "loadAssigneeFailed": "Unable to load driver/vehicle list.",
+      "loadAssignedInfoFailed": "Unable to load currently assigned driver/vehicle data.",
+      "assignSuccess": "Driver and vehicle assigned successfully.",
+      "assignFailed": "Unable to assign driver/vehicle.",
+      "unknownShipment": "Unable to identify shipment.",
+      "unassignSuccess": "Shipment unassigned successfully.",
+      "unassignFailed": "Unable to unassign shipment.",
+      "noDriverInfo": "No driver information available.",
+      "noVehicleInfo": "No vehicle information available.",
+      "driverFallback": "Driver",
+      "vehicleFallback": "Vehicle"
+    },
+    "orgRequestDashboard": {
+      "loadFailed": "Cannot load organization request dashboard."
+    },
+    "orgOrgChart": {
+      "loadFailed": "Cannot load org chart data."
+    },
+    "driver": {
+      "unknownDriver": "Unable to identify driver.",
+      "importSuccess": "Imported {{count}} new drivers successfully.",
+      "importFailed": "An error occurred while importing file from server.",
+      "createSuccess": "Driver created successfully.",
+      "createFailed": "Failed to create driver.",
+      "updateSuccess": "Driver updated successfully.",
+      "updateFailed": "Failed to update driver.",
+      "exportExcelSuccess": "Driver data exported successfully.",
+      "exportExcelFailed": "Failed to export driver data.",
+      "exportCvMissingData": "Driver data is not ready yet. Please wait until the profile is loaded.",
+      "exportCvPdfSuccess": "Driver CV PDF downloaded successfully.",
+      "exportCvPdfFailed": "Failed to generate driver CV PDF.",
+      "exportCvDocxSuccess": "Driver CV DOCX downloaded successfully.",
+      "exportCvDocxFailed": "Failed to generate driver CV DOCX.",
+      "exportContractMissingData": "Driver data is not ready yet. Please wait until the profile is loaded.",
+      "exportContractPdfSuccess": "Driver contract PDF downloaded successfully.",
+      "exportContractPdfFailed": "Failed to generate driver contract PDF.",
+      "contractFillCompanySuccess": "Party A information has been filled.",
+      "contractFillDriverSuccess": "Party B information has been filled.",
+      "contractFillAllSuccess": "Party A and Party B have been filled.",
+      "downloadTemplateSuccess": "Template downloaded successfully.",
+      "downloadTemplateFailed": "An error occurred while downloading template.",
+      "loadDetailFailed": "Failed to load driver information."
+    },
+    "vehicle": {
+      "unknownVehicle": "Unable to identify vehicle.",
+      "importSuccess": "Imported {{count}} new vehicles successfully.",
+      "importFailed": "An error occurred while importing file from server.",
+      "createSuccess": "Vehicle created successfully.",
+      "createFailed": "Failed to create vehicle.",
+      "updateSuccess": "Vehicle updated successfully.",
+      "updateFailed": "Failed to update vehicle.",
+      "loadDetailFailed": "Failed to load vehicle details."
+    },
+    "tracking": {
+      "enterShipmentCode": "Please enter shipment code to search.",
+      "noHistoryFound": "No tracking history found for this shipment code.",
+      "lookupFailed": "Failed to look up tracking history."
+    },
+    "fileExtraction": {
+      "unsupportedFile": "Only image files (.jpg, .png) or PDF (.pdf) are supported.",
+      "loading": "Running OCR, please wait...",
+      "noTextFound": "(No text detected or image quality is too low)",
+      "extractSuccess": "Text extracted successfully.",
+      "extractFailed": "Extraction failed: {{error}}"
+    },
+    "dashboard": {
+      "loadSnapshotFailed": "Unable to load dashboard data.",
+      "loadDriversFailed": "Unable to load driver list.",
+      "loadVehiclesFailed": "Unable to load vehicle list.",
+      "suggestionUnavailable": "Assignment suggestion is temporarily unavailable.",
+      "assignmentUpdated": "Assignment updated successfully.",
+      "assignFailed": "Unable to assign driver/vehicle.",
+      "unassignSuccess": "Shipment unassigned successfully.",
+      "unassignFailed": "Unable to unassign shipment.",
+      "statusUpdated": "Shipment status updated.",
+      "updateStatusFailed": "Unable to update shipment status."
+    },
+    "twoFactor": {
+      "generateQrFailed": "Unable to generate QR code. Please try again.",
+      "enableSuccess": "2FA enabled successfully.",
+      "invalidOtp": "Invalid OTP code. Please try again.",
+      "disableSuccess": "2FA disabled successfully.",
+      "disableFailed": "Unable to disable 2FA. Please try again."
+    },
+    "crypto": {
+      "enterSecretKey": "Please enter a secret key.",
+      "encryptSuccess": "Encrypted successfully.",
+      "encryptFailed": "Encryption failed.",
+      "decryptSuccess": "Decrypted successfully.",
+      "decryptFailed": "Decryption failed.",
+      "oneWayHash": "This algorithm is one-way and cannot be decrypted.",
+      "publicKeyFetched": "Fetched public key for alias: {{alias}}",
+      "fetchPublicKeyFailed": "Failed to fetch public key.",
+      "aliasFilled": "Filled default key alias.",
+      "copied": "Copied to clipboard."
+    },
+    "vault": {
+      "loadMetadataFailed": "Failed to load Vault metadata."
+    }
+  },
+  "cryptoWorkspace": {
+    "header": {
+      "title": "Crypto workspace",
+      "subtitle": "Encrypt, decrypt, hash, and inspect secure payloads in one compact workflow.",
+      "tagAes": "AES-GCM",
+      "tagRsa": "RSA",
+      "tagHash": "Hash"
+    },
+    "summary": {
+      "algorithms": "Algorithms",
+      "modes": "Modes",
+      "keyInput": "Key input"
+    },
+    "states": {
+      "on": "On",
+      "off": "Off"
+    },
+    "tabs": {
+      "encrypt": "Encrypt",
+      "decrypt": "Decrypt"
+    },
+    "config": {
+      "encryptTitle": "Configure encryption",
+      "decryptTitle": "Configure decryption",
+      "description": "Select an algorithm, then provide the required key material.",
+      "encryptBadge": "Write secure output",
+      "decryptBadge": "Read secure payload"
+    },
+    "form": {
+      "algorithm": "Algorithm",
+      "keyAlias": "Key alias",
+      "secretKey": "Secret key",
+      "keyAliasPlaceholder": "Enter key alias",
+      "secretKeyPlaceholder": "Enter secure password"
+    },
+    "algorithms": {
+      "gcm": "AES-GCM (256-bit)",
+      "md5": "MD5 Hash",
+      "sha256": "SHA-256 Hash",
+      "base64": "Base64 Encoding",
+      "rsaEncrypt": "RSA Public Key Encrypt",
+      "rsaDecrypt": "RSA Remote Decrypt"
+    },
+    "helper": {
+      "outbound": "Outbound security",
+      "inbound": "Inbound inspection",
+      "gcm": "Remote AES flow",
+      "rsa": "Alias driven RSA flow",
+      "hash": "One-way hash",
+      "base64": "Text encoding"
+    },
+    "editor": {
+      "inputTitle": "Input",
+      "inputDescription": "Paste the raw text or secure payload you want to process.",
+      "inputPlaceholder": "Enter text here...",
+      "outputTitle": "Output",
+      "outputDescription": "Review the result and copy it for downstream use.",
+      "outputPlaceholder": "Result will appear here..."
+    },
+    "actions": {
+      "encryptNow": "Encrypt now",
+      "decryptNow": "Decrypt now",
+      "loadDefaultPublicKey": "Load default public key",
+      "useDefaultAlias": "Use default alias",
+      "copy": "Copy"
+    }
+  },
+  "vaultWorkspace": {
+    "header": {
+      "title": "Vault workspace",
+      "subtitle": "Monitor secret health, inspect metadata, and move into crypto or document extraction flows."
+    },
+    "actions": {
+      "refresh": "Refresh"
+    },
+    "summary": {
+      "reachability": "Reachability",
+      "secretState": "Secret state",
+      "namedKeys": "Named keys",
+      "version": "Version"
+    },
+    "states": {
+      "online": "Online",
+      "unknown": "Unknown",
+      "loaded": "Loaded",
+      "pending": "Pending",
+      "missing": "Missing",
+      "na": "N/A"
+    },
+    "alert": {
+      "title": "Vault service is separated",
+      "description": "Use this page as a compact control surface for backend metadata, crypto, and OCR entry points."
+    },
+    "status": {
+      "title": "Metadata snapshot",
+      "subtitle": "Latest backend state for reachability, secret path, and safe key names.",
+      "readOnly": "Read only"
+    },
+    "metadata": {
+      "health": "Health",
+      "secretPath": "Secret path",
+      "secretLoaded": "Secret loaded",
+      "updatedAt": "Updated at",
+      "message": "Message"
+    },
+    "keys": {
+      "title": "Safe key names",
+      "total": "{{count}} total"
+    },
+    "empty": {
+      "title": "No metadata loaded",
+      "description": "Use Refresh to fetch the latest Vault state from backend."
+    },
+    "cards": {
+      "crypto": {
+        "title": "Crypto tools",
+        "description": "Open the dedicated crypto screen for AES-GCM, RSA, Base64, and hashing flows.",
+        "action": "Open crypto"
+      },
+      "ocr": {
+        "title": "File extraction",
+        "description": "Jump into OCR and structured document processing without leaving the system workspace.",
+        "action": "Open OCR"
+      }
+    },
+    "notes": {
+      "gatewayRouteTitle": "Gateway route",
+      "gatewayRouteDescription": "/common -> common-service",
+      "secretSourcesTitle": "Secret sources",
+      "secretSourcesDescription": "Vault, environment variables, and bundled OCR assets."
+    }
+  },
+  "twoFactorSetupPage": {
+    "header": {
+      "title": "Two-factor security",
+      "subtitle": "Connect an authenticator app, verify OTP, and manage account-level MFA from one place."
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "guide": "Guide",
+      "viewGuide": "View guide",
+      "disable": "Disable 2FA",
+      "activate": "Activate 2FA",
+      "regenerate": "Regenerate QR"
+    },
+    "summary": {
+      "status": "Status",
+      "method": "Method",
+      "methodValue": "OTP",
+      "codeLength": "Code length"
+    },
+    "states": {
+      "enabled": "Enabled",
+      "setup": "Setup"
+    },
+    "active": {
+      "title": "2FA is active",
+      "description": "Your account already requires OTP verification for trusted sign-in flow and device validation."
+    },
+    "setup": {
+      "stepOne": "Step 1",
+      "stepTwo": "Step 2",
+      "scanTitle": "Scan the QR code",
+      "scanDescription": "Open your authenticator app and register the account using the QR code or secret.",
+      "qrAlt": "QR Code",
+      "secretLabel": "Manual secret",
+      "secretAlertTitle": "Keep this secret private",
+      "secretAlertDescription": "Do not share the QR code or secret key with anyone outside the account owner.",
+      "verifyTitle": "Verify the OTP",
+      "verifyDescription": "Enter the current 6-digit code generated by your authenticator app.",
+      "otpError": "OTP must contain exactly 6 digits",
+      "otpPlaceholder": "000000"
+    },
+    "helper": {
+      "expireHint": "Use the latest code before it rotates in your authenticator app.",
+      "openGuide": "Open the setup guide"
+    },
+    "modal": {
+      "title": "2FA setup guide"
+    }
+  },
+  "financeWorkspace": {
+    "breadcrumb": {
+      "workspace": "Workspace",
+      "finance": "Finance"
+    },
+    "header": {
+      "title": "Finance Workspace",
+      "subtitle": "Track income, expenses, budgets, and recurring cash flow in one compact view."
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "template": "Template",
+      "import": "Import Excel",
+      "export": "Export Excel",
+      "newTransaction": "New Transaction",
+      "apply": "Apply",
+      "reset": "Reset",
+      "newBudget": "New Budget",
+      "newRecurring": "New Recurring"
+    },
+    "summary": {
+      "income": "Total income",
+      "expense": "Total expense",
+      "net": "Net cash flow",
+      "pending": "Pending approval",
+      "budgetUsed": "Budget used",
+      "overBudget": "Over budget"
+    },
+    "filters": {
+      "from": "From",
+      "to": "To",
+      "type": "Type",
+      "status": "Status",
+      "category": "Category",
+      "currency": "Currency",
+      "linkedType": "Linked type",
+      "search": "Search",
+      "searchPlaceholder": "Search description, owner, counterparty"
+    },
+    "charts": {
+      "income": "Income",
+      "expense": "Expense",
+      "net": "Net",
+      "cumulative": "Cumulative cash flow",
+      "dailyIncome": "Daily income",
+      "dailyExpense": "Daily expense",
+      "monthlyTitle": "Monthly income vs expense",
+      "cumulativeTitle": "Cumulative cash flow",
+      "categoryTitle": "Category mix",
+      "dailyTitle": "Daily breakdown",
+      "topExpenseTitle": "Top expenses",
+      "topIncomeTitle": "Top income"
+    },
+    "table": {
+      "type": "Type",
+      "category": "Category",
+      "amount": "Amount",
+      "status": "Status",
+      "date": "Date",
+      "owner": "Owner",
+      "actions": "Actions"
+    },
+    "detail": {
+      "title": "Transaction detail",
+      "status": "Status",
+      "originalAmount": "Original amount",
+      "exchangeRate": "Exchange rate",
+      "counterparty": "Counterparty",
+      "reference": "Reference",
+      "linked": "Linked entity",
+      "note": "Description",
+      "auditTitle": "Approval trail"
+    },
+    "tabs": {
+      "list": "Transactions",
+      "analysis": "Analysis",
+      "budgets": "Budgets",
+      "recurring": "Recurring"
+    },
+    "analysis": {
+      "copy": "Use the charts above to inspect income, expense, category structure, and cumulative cash movement."
+    },
+    "budgets": {
+      "title": "Budget control",
+      "category": "Category",
+      "limit": "Budget limit",
+      "used": "Used",
+      "usage": "Usage"
+    },
+    "recurring": {
+      "title": "Recurring rules",
+      "name": "Rule name",
+      "frequency": "Frequency",
+      "amount": "Amount",
+      "nextRun": "Next run"
+    },
+    "modal": {
+      "createTransaction": "Create transaction",
+      "editTransaction": "Edit transaction",
+      "budgetTitle": "Budget",
+      "recurringTitle": "Recurring rule",
+      "type": "Type",
+      "date": "Transaction date",
+      "amount": "Amount",
+      "currency": "Currency",
+      "rate": "Rate to VND",
+      "category": "Category",
+      "counterparty": "Counterparty",
+      "paymentMethod": "Payment method",
+      "reference": "Reference code",
+      "linkedType": "Linked type",
+      "linkedId": "Linked ID",
+      "description": "Description",
+      "year": "Year",
+      "month": "Month",
+      "threshold": "Alert threshold %",
+      "notes": "Notes",
+      "startDate": "Start date"
+    },
+    "messages": {
+      "loadFailed": "Unable to load finance workspace.",
+      "loadDetailFailed": "Unable to load transaction detail.",
+      "transactionUpdated": "Transaction updated.",
+      "transactionCreated": "Transaction created.",
+      "saveFailed": "Unable to save finance data.",
+      "budgetSaved": "Budget saved.",
+      "recurringSaved": "Recurring rule saved.",
+      "submitted": "Transaction submitted.",
+      "submitFailed": "Unable to submit transaction.",
+      "posted": "Transaction posted.",
+      "postFailed": "Unable to post transaction.",
+      "importSuccess": "Imported {{count}} rows successfully.",
+      "importFailed": "Unable to import Excel file.",
+      "exportFailed": "Unable to export Excel file."
+    },
+    "enums": {
+      "type": {
+        "INCOME": "Income",
+        "EXPENSE": "Expense"
+      },
+      "status": {
+        "DRAFT": "Draft",
+        "PENDING": "Pending",
+        "POSTED": "Posted"
+      },
+      "linkedEntity": {
+        "SHIPMENT": "Shipment",
+        "DRIVER": "Driver",
+        "VEHICLE": "Vehicle",
+        "ORG_UNIT_REQUEST": "Org Unit Request"
+      },
+      "frequency": {
+        "DAILY": "Daily",
+        "WEEKLY": "Weekly",
+        "MONTHLY": "Monthly"
+      }
+    },
+    "audit": {
+      "CREATED": "Created",
+      "UPDATED": "Updated",
+      "SUBMITTED": "Submitted",
+      "POSTED": "Posted",
+      "IMPORTED": "Imported"
+    }
+  },
+  "accessControl": {
+    "breadcrumb": {
+      "system": "System",
+      "page": "Role/API Permission"
+    },
+    "header": {
+      "title": "Role Creation and Permission Assignment",
+      "subtitle": "Manage menu permissions and API permissions per role in one workspace."
+    },
+    "role": {
+      "title": "Role list",
+      "empty": "No roles found.",
+      "emptySelection": "No role selected."
+    },
+    "assignment": {
+      "title": "Role permission assignment",
+      "menuGroup": "Menu permissions",
+      "apiGroup": "API permissions",
+      "apiSelectedCount": "{{selected}} / {{total}} APIs assigned to role",
+      "summaryCounts": "Menu: {{menuSelected}}/{{menuTotal}} • API: {{apiSelected}}/{{apiTotal}}",
+      "apiTesterTitle": "API Tester",
+      "apiTesterNoEndpoint": "No endpoint selected",
+      "apiTesterEmptyHint": "Click \"Test API\" on any endpoint to load it into API Tester.",
+      "apiTesterMethod": "Method",
+      "apiTesterEndpoint": "Endpoint",
+      "apiTesterQueryParams": "Query params",
+      "apiTesterHeaders": "Headers",
+      "apiTesterEnabled": "Enabled",
+      "apiTesterKey": "Key",
+      "apiTesterValue": "Value",
+      "apiTesterResponseHeaders": "Response headers",
+      "apiTesterResponseBody": "Response body",
+      "apiPaginationTotal": "Total {{total}} APIs",
+      "apiTestPayload": "API test payload (for POST/PUT/PATCH)",
+      "apiTestPayloadPlaceholder": "Example: {\"id\":1}",
+      "apiTestPathPlaceholder": "API endpoint test path",
+      "apiTestLastRun": "Last run"
+    },
+    "form": {
+      "roleName": "Role name",
+      "roleNamePlaceholder": "Example: DISPATCHER",
+      "permissionName": "Permission code",
+      "permissionNamePlaceholder": "Example: MENU:SHIPMENTS or API:GET:SHIPMENTS",
+      "permissionType": "Permission type",
+      "menuKey": "Menu key (route)",
+      "menuKeyPlaceholder": "Example: /shipments",
+      "apiMethod": "API method",
+      "apiPath": "API path",
+      "apiPathPlaceholder": "Example: /shipment/api/v1/shipments",
+      "description": "Description"
+    },
+    "modal": {
+      "createRoleTitle": "Create role",
+      "editRoleTitle": "Update role",
+      "createPermissionTitle": "Create permission"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "newRole": "New role",
+      "editRole": "Edit role",
+      "deleteRole": "Delete role",
+      "newMenuPermission": "New menu permission",
+      "syncApiCatalog": "Sync APIs from catalog",
+      "saveAssignment": "Save assignment",
+      "testApi": "Test API",
+      "assignAllApi": "Assign all APIs",
+      "clearAllApi": "Clear all APIs",
+      "sendApiRequest": "Send",
+      "closeApiTester": "Close tester",
+      "addRow": "Add row",
+      "cancel": "Cancel",
+      "create": "Create",
+      "update": "Update"
+    },
+    "messages": {
+      "loadFailed": "Unable to load role-permission workspace.",
+      "selectRoleFirst": "Select a role before saving assignment.",
+      "assignSuccess": "Permissions saved.",
+      "assignFailed": "Unable to save permissions.",
+      "roleNameRequired": "Role name is required.",
+      "createRoleSuccess": "Role created.",
+      "createRoleFailed": "Unable to create role.",
+      "updateRoleSuccess": "Role updated.",
+      "updateRoleFailed": "Unable to update role.",
+      "confirmDeleteRole": "Are you sure you want to delete role \"{{roleName}}\"?",
+      "deleteRoleSuccess": "Role deleted.",
+      "deleteRoleFailed": "Unable to delete role.",
+      "deleteLastRoleNotAllowed": "At least one role must remain.",
+      "permissionNameRequired": "Permission code is required.",
+      "menuKeyRequired": "menuKey is required for MENU permission.",
+      "apiPermissionRequired": "apiMethod and apiPath are required for API permission.",
+      "createPermissionSuccess": "Permission created.",
+      "createPermissionFailed": "Unable to create permission.",
+      "syncApiSuccess": "Synced {{count}} API permissions from catalog.",
+      "syncApiNoChanges": "No new APIs to sync.",
+      "apiTestMissingInfo": "API permission is missing method/path for testing.",
+      "apiTestSelectEndpoint": "Please select an endpoint to test.",
+      "apiTestPathRequired": "Please enter API test path.",
+      "apiTestPayloadInvalid": "API test payload must be valid JSON.",
+      "apiTestNoContent": "API responded successfully with no content.",
+      "apiTestFailedUnknown": "API test failed."
+    }
+  },
+  "apiManagement": {
+    "breadcrumb": {
+      "system": "System",
+      "page": "API Management"
+    },
+    "header": {
+      "title": "Centralized API Management",
+      "subtitle": "Track existing APIs and add new APIs in one minimal workspace."
+    },
+    "summary": {
+      "total": "Total APIs",
+      "system": "System APIs",
+      "custom": "Custom APIs",
+      "visible": "Filtered"
+    },
+    "filters": {
+      "keyword": "Search by name, module, endpoint...",
+      "method": "Method",
+      "source": "Source",
+      "module": "Module",
+      "allMethods": "All methods",
+      "allSources": "All sources",
+      "allModules": "All modules"
+    },
+    "table": {
+      "name": "API Name",
+      "module": "Module",
+      "method": "Method",
+      "path": "Endpoint",
+      "source": "Source",
+      "description": "Description",
+      "actions": "Actions",
+      "empty": "No API matches current filters."
+    },
+    "source": {
+      "system": "System",
+      "custom": "Custom"
+    },
+    "form": {
+      "name": "API Name",
+      "namePlaceholder": "Example: Create Driver",
+      "module": "Module",
+      "modulePlaceholder": "Example: Driver",
+      "method": "Method",
+      "path": "Endpoint",
+      "pathPlaceholder": "/driver/api/v1/drivers",
+      "description": "Description",
+      "descriptionPlaceholder": "API purpose"
+    },
+    "modal": {
+      "createTitle": "Create API",
+      "editTitle": "Update API"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "newApi": "New API",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "messages": {
+      "loadFailed": "Unable to load API list from backend.",
+      "systemReadonly": "System APIs are read-only in this screen.",
+      "validationRequired": "Please provide API name, module, and endpoint.",
+      "createSuccess": "API created.",
+      "createFailed": "Unable to create API.",
+      "updateSuccess": "API updated.",
+      "updateFailed": "Unable to update API.",
+      "deleteSuccess": "API deleted.",
+      "deleteFailed": "Unable to delete API.",
+      "copySuccess": "Endpoint copied.",
+      "copyFailed": "Unable to copy endpoint.",
+      "copyNotSupported": "Clipboard is not supported in this browser.",
+      "confirmDelete": "Delete this API?"
+    }
+  },
+  "todoWorkspace": {
+    "breadcrumb": {
+      "workspace": "Workspace",
+      "todos": "Todos"
+    },
+    "header": {
+      "title": "Todo Workspace",
+      "subtitle": "Plan daily tasks, schedule deadlines, and manage reminder follow-up in one workspace."
+    },
+    "summary": {
+      "total": "Total",
+      "today": "Today",
+      "upcoming": "Upcoming",
+      "overdue": "Overdue"
+    },
+    "views": {
+      "list": "List",
+      "calendar": "Calendar",
+      "kanban": "Kanban"
+    },
+    "filters": {
+      "today": "Today",
+      "upcoming": "Upcoming",
+      "overdue": "Overdue",
+      "assignedToMe": "Assigned to me",
+      "createdByMe": "Created by me"
+    },
+    "table": {
+      "title": "Title",
+      "priority": "Priority",
+      "status": "Status",
+      "due": "Due",
+      "assignee": "Assignee",
+      "link": "Link",
+      "actions": "Actions"
+    },
+    "detail": {
+      "priority": "Priority",
+      "dueAt": "Due at",
+      "assignee": "Assignee",
+      "recurrence": "Recurrence",
+      "linkedEntity": "Linked entity",
+      "empty": "Select a todo to inspect details."
+    },
+    "comments": {
+      "title": "Comments",
+      "placeholder": "Write a comment...",
+      "replyPlaceholder": "Write a reply...",
+      "empty": "No comments yet.",
+      "deleteConfirm": "Delete this comment?"
+    },
+    "calendar": {
+      "title": "Calendar",
+      "selectedDay": "Selected day",
+      "empty": "No todos scheduled on this date."
+    },
+    "kanban": {
+      "empty": "No items"
+    },
+    "modal": {
+      "createTitle": "Create Todo",
+      "editTitle": "Edit Todo",
+      "titleLabel": "Title",
+      "titleRequired": "Title is required",
+      "titlePlaceholder": "Daily dispatch review",
+      "descriptionLabel": "Description",
+      "assigneeLabel": "Assignee",
+      "assigneeRequired": "Assignee is required",
+      "assigneePlaceholder": "Choose assignee",
+      "priorityLabel": "Priority",
+      "startAtLabel": "Start at",
+      "dueAtLabel": "Due at",
+      "dueAtRequired": "Due at is required",
+      "linkedTypeLabel": "Linked type",
+      "linkedIdLabel": "Linked ID",
+      "linkedIdPlaceholder": "SHP-2026-001",
+      "recurrenceLabel": "Recurrence",
+      "intervalLabel": "Interval",
+      "reminderRules": "Reminder rules",
+      "offsetMinutesPlaceholder": "Offset minutes",
+      "channelsPlaceholder": "Channels"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "newTodo": "New Todo",
+      "edit": "Edit",
+      "addComment": "Add comment",
+      "likeComment": "Like",
+      "replyComment": "Reply",
+      "shareComment": "Share",
+      "sendReply": "Send reply",
+      "editComment": "Edit comment",
+      "deleteComment": "Delete comment",
+      "viewReplies": "View all {{count}} replies",
+      "hideReplies": "Hide replies",
+      "markDone": "Mark done",
+      "addReminder": "Add reminder",
+      "cancel": "Cancel",
+      "createTodo": "Create todo",
+      "saveChanges": "Save changes"
+    },
+    "pagination": {
+      "showing": "Showing",
+      "to": "-",
+      "of": "of",
+      "results": "results"
+    },
+    "labels": {
+      "noDescription": "No description",
+      "notAvailable": "N/A",
+      "standalone": "Standalone",
+      "recurrenceEvery": "{{type}} every {{interval}}"
+    },
+    "enums": {
+      "status": {
+        "PLANNED": "Planned",
+        "IN_PROGRESS": "In Progress",
+        "DONE": "Done",
+        "OVERDUE": "Overdue",
+        "CANCELLED": "Cancelled"
+      },
+      "priority": {
+        "LOW": "Low",
+        "MEDIUM": "Medium",
+        "HIGH": "High",
+        "URGENT": "Urgent"
+      },
+      "recurrence": {
+        "NONE": "None",
+        "DAILY": "Daily",
+        "WEEKLY": "Weekly",
+        "MONTHLY": "Monthly"
+      },
+      "linkedEntity": {
+        "SHIPMENT": "Shipment",
+        "DRIVER": "Driver",
+        "VEHICLE": "Vehicle",
+        "ORG_UNIT_REQUEST": "Org Unit Request"
+      },
+      "channel": {
+        "IN_APP": "In-app",
+        "EMAIL": "Email"
+      }
+    },
+    "messages": {
+      "loadWorkspaceFailed": "Unable to load todo workspace.",
+      "createSuccess": "Todo created.",
+      "updateSuccess": "Todo updated.",
+      "saveFailed": "Unable to save todo.",
+      "statusUpdated": "Todo status updated.",
+      "updateStatusFailed": "Unable to update todo status.",
+      "moveSuccess": "Todo moved.",
+      "moveFailed": "Unable to move todo.",
+      "loadCalendarFailed": "Unable to load calendar items.",
+      "commentLoadFailed": "Unable to load comments.",
+      "commentCreateSuccess": "Comment added.",
+      "commentCreateFailed": "Unable to add comment.",
+      "commentUpdateSuccess": "Comment updated.",
+      "commentUpdateFailed": "Unable to update comment.",
+      "commentDeleteSuccess": "Comment deleted.",
+      "commentDeleteFailed": "Unable to delete comment.",
+      "replyCreateSuccess": "Reply added.",
+      "replyCreateFailed": "Unable to add reply."
+    }
+  },
+  "orgUnitEditor": {
+    "title": "Update Unit",
+    "breadcrumb": {
+      "home": "Home Page",
+      "page": "Update Unit"
+    },
+    "header": {
+      "effectiveDate": "Effective Date:"
+    },
+    "actions": {
+      "transferEmployee": "Transfer Employee",
+      "save": "Save",
+      "reviewSubmit": "Review & Submit"
+    },
+    "tab": {
+      "parentInfo": "Parent Information",
+      "childInfo": "Child Information"
+    },
+    "tree": {
+      "searchPlaceholder": "Department",
+      "addChild": "Add Child",
+      "emptyContext": "No parent-child context selected for this new request.",
+      "addChildDepartment": "Add Child 1 Department"
+    },
+    "parent": {
+      "title": "Parent Information",
+      "key": "Key",
+      "label": "Label",
+      "owner": "Owner",
+      "requestCode": "Request Code",
+      "empty": "Select a node to see parent details."
+    },
+    "child": {
+      "title": "Current Child Selection",
+      "empty": "No child node is selected yet."
+    },
+    "form": {
+      "reasonOfChange": "Reason of change",
+      "childInfoTitle": "Child Information",
+      "abbreviation": "Abbreviation",
+      "vietnameseName": "Vietnamese Name",
+      "englishName": "English Name",
+      "functionDuty": "Function & Duty",
+      "memberCompany": "Member Company",
+      "type": "Type",
+      "subType": "Sub Type",
+      "plannedWpRev": "Planned WP REV",
+      "plannedHeadcount": "Planned Headcount",
+      "transferEmployee": "Transfer Employee"
+    },
+    "teamLead": {
+      "title": "Child 2 Team Lead",
+      "addViceHead": "Add Vice Head",
+      "account": "Account:",
+      "position": "Position:",
+      "reportTo": "Report To:",
+      "promotionType": "Promotion Type:",
+      "effectiveDate": "Effective Date:",
+      "expiredDate": "Expired Date:",
+      "profile": "Profile:",
+      "kpi": "KPI:",
+      "functionDuty": "Function & Duty:",
+      "reAppointment": "Re-appointment"
+    },
+    "messages": {
+      "noTargetEmpty": "Please select an existing unit in tree first.",
+      "transferSuccess": "Transfer employee applied.",
+      "transferFailed": "Transfer employee failed.",
+      "formInvalid": "Please complete required fields before saving.",
+      "saveSuccess": "Draft saved successfully.",
+      "saveFailed": "Save draft failed.",
+      "saveRequiredBeforeSubmit": "Please save draft first before submitting.",
+      "submitSuccess": "Review & Submit completed.",
+      "submitFailed": "Review & Submit failed.",
+      "noParentSelected": "Please select a parent node in tree first.",
+      "addChildSuccess": "Child request created.",
+      "addChildFailed": "Create child failed.",
+      "addViceHeadSuccess": "Vice head added.",
+      "addViceHeadFailed": "Add vice head failed.",
+      "loadFailed": "Cannot load editor data."
+    }
+  },
+  "jobConsole": {
+    "title": "Job Supervisor",
+    "subtitle": "Track schedules, trigger jobs, and inspect the latest execution status in one compact screen.",
+    "summary": {
+      "total": "Total jobs",
+      "enabled": "Enabled",
+      "running": "Running",
+      "disabled": "Disabled"
+    },
+    "searchPlaceholder": "Search by name, type, status, cron or report path",
+    "filters": {
+      "all": "All",
+      "enabled": "Enabled",
+      "running": "Running",
+      "idle": "Idle",
+      "completed": "Completed",
+      "failed": "Failed",
+      "disabled": "Disabled"
+    },
+    "enabled": {
+      "enabled": "Enabled",
+      "disabled": "Disabled"
+    },
+    "status": {
+      "running": "Running",
+      "completed": "Completed",
+      "failed": "Failed",
+      "idle": "Idle"
+    },
+    "actions": {
+      "newJob": "New Job",
+      "saveJob": "Save job",
+      "triggerJob": "Trigger job",
+      "editJob": "Edit job",
+      "deleteJob": "Delete job",
+      "select": "Select",
+      "triggerNow": "Trigger now",
+      "delete": "Delete",
+      "trigger": "Trigger"
+    },
+    "table": {
+      "name": "Name",
+      "type": "Type",
+      "cron": "Cron",
+      "enabled": "Enabled",
+      "status": "Status",
+      "lastRun": "Last run",
+      "nextRun": "Next run",
+      "actions": "Actions",
+      "noReportYet": "No report yet"
+    },
+    "detail": {
+      "noJobType": "No job type",
+      "cronExpression": "Cron expression",
+      "jobType": "Job type",
+      "enabled": "Enabled",
+      "lastRun": "Last run",
+      "nextRun": "Next run",
+      "reportPath": "Report path",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at",
+      "noReportGenerated": "No report generated yet",
+      "triggerPayloadTip": "Trigger payload tip",
+      "triggerAlertDescription": "Use JSON like {\"forceFail\": true} to simulate a failed batch run.",
+      "emptySelection": "Select a job from the table to inspect details."
+    },
+    "modal": {
+      "createTitle": "Create Job",
+      "editTitle": "Edit Job",
+      "createAlertTitle": "Create a new scheduled job",
+      "editAlertTitle": "Update the selected job",
+      "alertDescription": "Quartz cron expressions are required. Use a unique uppercase name to keep the launcher stable."
+    },
+    "form": {
+      "name": "Name",
+      "nameRequired": "Name is required",
+      "jobType": "Job type",
+      "jobTypeRequired": "Job type is required",
+      "cronExpression": "Cron expression",
+      "cronRequired": "Enter a valid Quartz cron expression, for example 0 0/5 * * * ?",
+      "enabled": "Enabled"
+    },
+    "triggerModal": {
+      "title": "Trigger Job",
+      "description": "This runs the selected job immediately through Kafka.",
+      "parametersJson": "Parameters JSON",
+      "tipPrefix": "Tip: add",
+      "tipSuffix": "to simulate a FAILED execution."
+    },
+    "deleteModal": {
+      "title": "Delete job",
+      "description": "Delete {{name}}? This cannot be undone."
+    },
+    "messages": {
+      "loadFailed": "Unable to load job definitions.",
+      "createSuccess": "Job created.",
+      "updateSuccess": "Job updated.",
+      "saveFailed": "Unable to save job.",
+      "deleteSuccess": "Job deleted.",
+      "deleteFailed": "Unable to delete job.",
+      "invalidJson": "Trigger payload must be valid JSON.",
+      "triggerSuccess": "Job triggered.",
+      "triggerFailed": "Unable to trigger job."
+    }
+  },
+  "controlTower": {
+    "title": "3D Control Tower + GPT Assistant",
+    "subtitle": "Realtime operations screen to monitor delivery hotspots and act faster.",
+    "meta": {
+      "lastSync": "Last sync",
+      "timezone": "Timezone"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "autoOn": "Auto 20s",
+      "autoOff": "Auto off",
+      "rebalance": "Generate rebalance plan"
+    },
+    "kpis": {
+      "riskShipments": "High-risk shipments",
+      "activeHeat": "SLA hotspots",
+      "onTimeRate": "On-time rate",
+      "livePoints": "Live points"
+    },
+    "board": {
+      "title": "Simulated dispatch map",
+      "nodeNoData": "No tracking points to render."
+    },
+    "risk": {
+      "title": "Intervention queue",
+      "empty": "No high-risk shipment."
+    },
+    "exceptions": {
+      "title": "Operational exceptions",
+      "empty": "No critical exception."
+    },
+    "assistant": {
+      "title": "GPT Assistant",
+      "subtitle": "Dispatch guidance from the current logistics snapshot.",
+      "placeholder": "Ask GPT: what to prioritize, how to rebalance...",
+      "send": "Send",
+      "loading": "GPT is analyzing the operation...",
+      "welcome": "I am your Control Tower GPT Assistant.\nAsk anything to get dispatch recommendations from realtime data.",
+      "error": "AI service is unavailable now, switching to fallback guidance.",
+      "fallback": "Fallback plan: clear overdue SLA first, cluster nearby routes, and prioritize negative ETA shipments.",
+      "quickPrompts": {
+        "rebalance": "Suggest driver/vehicle rebalance",
+        "slaPlan": "Build a 60-minute SLA rescue plan",
+        "dispatchBrief": "Summarize current shift status"
+      }
+    },
+    "rebalance": {
+      "title": "Rebalance suggestions",
+      "generated": "Generated {{count}} rebalance suggestion(s).",
+      "failed": "Unable to generate rebalance plan."
+    }
+  },
+  "aiAssistant": {
+    "title": "AI Assistant",
+    "subtitle": "Smart assistant for general Q&A and product consultation with RAG search.",
+    "botName": "Antigravity Bot",
+    "rag": {
+      "indexedProducts": "{{count}} indexed products",
+      "ready": "RAG ready",
+      "empty": "Empty",
+      "syncing": "Syncing..."
+    },
+    "actions": {
+      "sync": "Sync Data",
+      "syncTooltip": "Sync the product catalog back into the RAG index",
+      "clearTooltip": "Clear chat history"
+    },
+    "modes": {
+      "geminiLabel": "GPT Business",
+      "ragLabel": "RAG",
+      "geminiDescription": "GPT Business - answer general questions",
+      "ragDescription": "RAG mode - consult products from the real catalog",
+      "ragActiveTooltip": "RAG mode is active - switch off to return to GPT Business",
+      "ragInactiveTooltip": "Turn on RAG so AI can search real products"
+    },
+    "input": {
+      "chatHint": "Ask me anything...",
+      "ragHint": "Ask about products, pricing, comparisons...",
+      "chatPlaceholder": "Ask me anything...",
+      "ragPlaceholder": "Example: Find products under 50k, which option is best..."
+    },
+    "messages": {
+      "welcome": "Hello! I am the Antigravity assistant.\n\nGPT Business mode answers general questions.\nRAG mode searches and consults products from the real catalog.",
+      "ragError": "Sorry, an error occurred while connecting to the AI service in RAG mode.",
+      "chatError": "Sorry, an error occurred while connecting to the AI server.",
+      "cleared": "The conversation has been cleared. What can I help you with next?"
+    },
+    "sync": {
+      "loading": "Syncing products into the RAG index...",
+      "started": "Sync has started.",
+      "completed": "Sync completed. {{count}} products indexed.",
+      "failed": "Sync failed: {{error}}"
+    }
+  },
+  "fileExtractionPage": {
+    "title": "Automatic Text Extraction (OCR)",
+    "subtitle": "Use OCR to extract text from scanned images and PDF documents.",
+    "algorithm": {
+      "title": "Processing flow",
+      "description": "If you upload a PDF, the system uses the fast extract flow. If you upload a scanned image or invoice, the request goes through the OCR pipeline for deeper analysis."
+    },
+    "input": {
+      "title": "Input file",
+      "description": "Drag and drop a document into the area below to start processing automatically.",
+      "dragTitle": "Drop image (.jpg, .png) or PDF (.pdf) here",
+      "dragHint": "Files are processed securely and are not stored permanently on the server."
+    },
+    "output": {
+      "title": "Extraction output",
+      "fileLabel": "Extracted file:"
+    }
+  },
+  "sagaTransactions": {
+    "title": "Saga Transactions",
+    "subtitle": "Track current status and execution history for Saga transactions.",
+    "table": {
+      "id": "ID",
+      "orderId": "Order ID",
+      "status": "Status",
+      "currentStep": "Current step",
+      "createdAt": "Created at",
+      "updatedAt": "Updated at",
+      "actions": "Actions"
+    },
+    "detailTitle": "Saga transaction details",
+    "messages": {
+      "loadFailed": "Unable to load Saga transactions."
+    }
+  },
+  "userManagement": {
+    "title": "User Management",
+    "subtitle": "Manage system users and account administration in one place.",
+    "searchPlaceholder": "Search username, email, phone...",
+    "columns": {
+      "username": "Username",
+      "email": "Email",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "phone": "Phone",
+      "gender": "Gender",
+      "status": "Status",
+      "dateOfBirth": "Date of birth",
+      "action": "Actions"
+    },
+    "actions": {
+      "addNew": "Add new",
+      "deleteTooltip": "Delete user",
+      "lockTooltip": "Lock account",
+      "unlockTooltip": "Unlock account",
+      "resetPasswordTooltip": "Reset password"
+    },
+    "config": {
+      "button": "Customize columns",
+      "customTab": "Custom setup",
+      "defaultTab": "Default setup",
+      "searchPlaceholder": "Search columns",
+      "columnsHeader": "Columns",
+      "tooltipsHeader": "Tooltips",
+      "defaultDescription": "The system will restore the original default column layout.",
+      "applyDefault": "Apply default setup",
+      "restoreDefaults": "Restore defaults"
+    },
+    "deleteModal": {
+      "title": "Confirm deletion",
+      "description": "Are you sure you want to delete this user?"
+    },
+    "genders": {
+      "male": "Male",
+      "female": "Female",
+      "other": "Other"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "locked": "Locked"
+    },
+    "userTypes": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "user": "User"
+    },
+    "messages": {
+      "saveConfigSuccess": "Column configuration saved.",
+      "saveConfigFailed": "Unable to save column configuration.",
+      "loadUsersFailed": "Failed to load users.",
+      "deleteSuccess": "User deleted successfully.",
+      "deleteFailed": "Failed to delete user.",
+      "lockSuccess": "Account has been locked.",
+      "lockFailed": "Failed to lock account.",
+      "unlockSuccess": "Account has been unlocked.",
+      "unlockFailed": "Failed to unlock account.",
+      "tempPasswordRequired": "Temporary password is required.",
+      "resetPasswordSuccess": "Temporary password has been set.",
+      "resetPasswordFailed": "Failed to reset password."
+    },
+    "resetPasswordModal": {
+      "title": "Reset password by admin",
+      "description": "Set a temporary password. The user will be required to change it at next login.",
+      "placeholder": "Enter temporary password",
+      "confirm": "Reset password"
+    },
+    "detail": {
+      "title": "Profile Information",
+      "changePhoto": "Change Photo",
+      "uploadHint": "JPG or PNG. Maximum size 1 MB.",
+      "userTypeLabel": "User Type",
+      "passwordLabel": "Password",
+      "placeholders": {
+        "firstName": "First name",
+        "lastName": "Last name",
+        "gender": "Select gender",
+        "userType": "Select user type",
+        "phone": "Phone number",
+        "email": "Email address",
+        "username": "Username",
+        "password": "Password"
+      },
+      "errors": {
+        "firstName": "Please input first name.",
+        "lastName": "Please input last name.",
+        "dateOfBirth": "Please select birth date.",
+        "gender": "Please select gender.",
+        "userType": "Please select user type.",
+        "phone": "Please input phone number.",
+        "email": "Please input a valid email.",
+        "username": "Please input username.",
+        "password": "Please input password."
+      },
+      "messages": {
+        "loadFailed": "Failed to load user details.",
+        "updateSuccess": "User updated successfully.",
+        "updateFailed": "Failed to update user.",
+        "createSuccess": "User created successfully.",
+        "createFailed": "Failed to create user.",
+        "avatarUploadSuccess": "Avatar uploaded successfully.",
+        "avatarUploadFailed": "Failed to upload avatar."
+      }
+    }
+  }
+}

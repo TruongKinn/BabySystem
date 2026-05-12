@@ -1,0 +1,206 @@
+<div class="login-page">
+  <div class="login-shell">
+    <section class="intro-panel">
+      <span class="eyebrow">{{ 'auth.login.card.eyebrow' | translate }}</span>
+      <h1>{{ 'auth.login.hero.title' | translate }}</h1>
+      <p [innerHTML]="'auth.login.hero.subtitle' | translate"></p>
+
+      <div class="hero-points">
+        <div class="hero-point">
+          <span nz-icon nzType="lock"></span>
+          <div>{{ 'auth.login.hero.point1' | translate }}</div>
+        </div>
+        <div class="hero-point">
+          <span nz-icon nzType="safety-certificate"></span>
+          <div>{{ 'auth.login.hero.point2' | translate }}</div>
+        </div>
+        <div class="hero-point">
+          <span nz-icon nzType="cloud"></span>
+          <div>{{ 'auth.login.hero.point3' | translate }}</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="login-card">
+      <div class="card-header">
+        <h2>{{ 'auth.login.card.title' | translate }}</h2>
+        <p>{{ 'auth.login.card.subtitle' | translate }}</p>
+      </div>
+
+      <div class="auth-switch">
+        <button type="button" class="switch-btn" [class.active]="authMode === 'bearer'" (click)="selectAuthMode('bearer')">
+          {{ 'auth.login.switch.bearer' | translate }}
+        </button>
+        <button type="button" class="switch-btn" [class.active]="authMode === 'keycloak'" (click)="selectAuthMode('keycloak')">
+          {{ 'auth.login.switch.keycloak' | translate }}
+        </button>
+      </div>
+
+      <nz-alert *ngIf="errorMsg" nzType="error" [nzMessage]="errorMsg" nzShowIcon class="error-banner"></nz-alert>
+
+      <form
+        *ngIf="authMode === 'bearer'"
+        nz-form
+        nzLayout="vertical"
+        [formGroup]="loginForm"
+        (ngSubmit)="submitForm()"
+        class="login-form"
+      >
+        <nz-form-item>
+          <nz-form-label [nzNoColon]="true">{{ 'auth.login.form.usernameLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'auth.login.form.usernameError' | translate">
+            <input nz-input formControlName="username" [placeholder]="'auth.login.form.usernamePlaceholder' | translate" />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzNoColon]="true">{{ 'auth.login.form.passwordLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'auth.login.form.passwordError' | translate">
+            <nz-input-group [nzSuffix]="pwdToggle">
+              <input
+                [type]="passwordVisible ? 'text' : 'password'"
+                nz-input
+                formControlName="password"
+                [placeholder]="'auth.login.form.passwordPlaceholder' | translate"
+              />
+            </nz-input-group>
+            <ng-template #pwdToggle>
+              <span
+                nz-icon
+                [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                class="password-toggle"
+                (click)="passwordVisible = !passwordVisible"
+              ></span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item *ngIf="requireOtp">
+          <nz-form-label [nzNoColon]="true">{{ 'auth.login.form.otpLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'auth.login.form.otpError' | translate">
+            <input
+              #otpInput
+              nz-input
+              formControlName="otp"
+              [placeholder]="'auth.login.form.otpPlaceholder' | translate"
+              maxlength="6"
+              autocomplete="one-time-code"
+            />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item *ngIf="requireCaptcha">
+          <nz-form-label [nzNoColon]="true">{{ 'auth.login.form.captchaLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'auth.login.form.captchaError' | translate">
+            <div class="captcha-row">
+              <input
+                nz-input
+                formControlName="captchaAnswer"
+                [placeholder]="'auth.login.form.captchaPlaceholder' | translate"
+                maxlength="4"
+              />
+              <img
+                [src]="captchaBase64"
+                alt="CAPTCHA"
+                class="captcha-image"
+                (click)="refreshCaptcha()"
+                nz-tooltip
+                [nzTooltipTitle]="'auth.login.form.captchaRefresh' | translate"
+              />
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+
+        <div class="form-actions">
+          <label nz-checkbox formControlName="remember">{{ 'auth.login.form.remember' | translate }}</label>
+          <span class="hint-link">{{ 'auth.login.form.forgotPassword' | translate }}</span>
+        </div>
+
+        <button nz-button nzType="primary" nzBlock class="submit-btn" [nzLoading]="isLoading" [disabled]="!loginForm.valid">
+          {{ 'auth.login.form.submitBearer' | translate }}
+        </button>
+
+        <div class="bottom-links">
+          <a (click)="openTwoFactorGuide()">{{ 'auth.login.form.twoFactorHelp' | translate }}</a>
+        </div>
+      </form>
+
+      <div *ngIf="authMode === 'keycloak'" class="keycloak-panel">
+        <p>{{ 'auth.login.keycloak.description' | translate }}</p>
+        <ul>
+          <li>{{ 'auth.login.keycloak.bullet1' | translate }}</li>
+          <li>{{ 'auth.login.keycloak.bullet2' | translate }}</li>
+          <li>{{ 'auth.login.keycloak.bullet3' | translate }}</li>
+        </ul>
+        <button nz-button nzType="primary" nzBlock class="submit-btn" [nzLoading]="isLoading" (click)="loginWithKeycloak()">
+          {{ 'auth.login.keycloak.submit' | translate }}
+        </button>
+      </div>
+    </section>
+  </div>
+
+  <nz-modal
+    [(nzVisible)]="isVisibleTwoFactorGuide"
+    [nzTitle]="'auth.login.twoFactorModal.title' | translate"
+    [nzFooter]="null"
+    (nzOnCancel)="closeTwoFactorGuide()"
+  >
+    <ng-container *nzModalContent>
+      <div class="two-factor-guide-modal">
+        <p [innerHTML]="'auth.login.twoFactorModal.description' | translate"></p>
+        <ol>
+          <li>{{ 'auth.login.twoFactorModal.step1' | translate }}</li>
+          <li [innerHTML]="'auth.login.twoFactorModal.step2' | translate"></li>
+          <li>{{ 'auth.login.twoFactorModal.step3' | translate }}</li>
+          <li>{{ 'auth.login.twoFactorModal.step4' | translate }}</li>
+          <li>{{ 'auth.login.twoFactorModal.step5' | translate }}</li>
+        </ol>
+        <nz-alert nzType="info" nzShowIcon [nzMessage]="'auth.login.twoFactorModal.info' | translate"></nz-alert>
+      </div>
+    </ng-container>
+  </nz-modal>
+
+  <nz-modal
+    [(nzVisible)]="isVisibleForceChangePassword"
+    [nzTitle]="'auth.login.forceChangeModal.title' | translate"
+    [nzOkText]="'auth.login.forceChangeModal.confirm' | translate"
+    [nzCancelText]="'commonActions.cancel' | translate"
+    [nzOkLoading]="isForceChangeLoading"
+    (nzOnCancel)="closeForceChangePasswordModal()"
+    (nzOnOk)="submitForceChangePassword()"
+  >
+    <ng-container *nzModalContent>
+      <form nz-form nzLayout="vertical" [formGroup]="forceChangeForm" class="force-change-password-form">
+        <p class="force-change-description">{{ 'auth.login.forceChangeModal.description' | translate }}</p>
+
+        <nz-form-item>
+          <nz-form-label [nzNoColon]="true">{{ 'auth.login.forceChangeModal.newPasswordLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'auth.login.forceChangeModal.newPasswordError' | translate">
+            <input nz-input type="password" formControlName="newPassword" [placeholder]="'auth.login.forceChangeModal.newPasswordPlaceholder' | translate" />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label [nzNoColon]="true">{{ 'auth.login.forceChangeModal.confirmPasswordLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="mismatchTpl">
+            <input
+              nz-input
+              type="password"
+              formControlName="confirmPassword"
+              [placeholder]="'auth.login.forceChangeModal.confirmPasswordPlaceholder' | translate"
+              (keydown.enter)="submitForceChangePassword()"
+            />
+            <ng-template #mismatchTpl>
+              <span *ngIf="forceChangeForm.errors?.['mismatch']; else requiredConfirm">
+                {{ 'auth.login.forceChangeModal.confirmPasswordMismatch' | translate }}
+              </span>
+              <ng-template #requiredConfirm>
+                {{ 'auth.login.forceChangeModal.confirmPasswordError' | translate }}
+              </ng-template>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </ng-container>
+  </nz-modal>
+</div>

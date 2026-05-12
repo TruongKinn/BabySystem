@@ -1,0 +1,19 @@
+syntax = "proto3";
+option java_multiple_files = true;
+option java_package = "vn.agent.grpcserver";
+package vn.agent.grpcserver;
+
+
+service VerifyTokenService {
+  rpc verifyAccessToken(VerifyRequest) returns (VerifyResponse);
+}
+
+message VerifyRequest {
+  string token = 1;
+}
+
+message VerifyResponse {
+  bool isVerified = 1;
+  string message = 2;
+  int64 userId = 3;
+}

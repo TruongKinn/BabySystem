@@ -1,0 +1,144 @@
+pipeline {
+    agent any
+
+    // --- 🛡️ Pipeline Safety & UX ---
+    options {
+        timeout(time: 1, unit: 'HOURS') // Tránh Job treo vô hạn
+        retry(2)                        // Thử lại nếu có lỗi mạng tạm thời
+        timestamps()                    // Thêm thời gian vào log để dễ debug
+        buildDiscarder(logRotator(numToKeepStr: '2')) // Chỉ giữ 2 bản build gần nhất để tiết kiệm tối đa ổ cứng
+    }
+
+    // --- 🛠️ Flexible Parameters ---
+    parameters {
+        booleanParam(name: 'SKIP_TESTS', defaultValue: true, description: 'Bỏ qua Unit Tests để Build nhanh?')
+    }
+
+    tools {
+        maven 'maven-3.9' 
+        jdk 'jdk-17'
+    }
+
+    environment {
+        // --- ⚙️ Project Configuration ---
+        APP_NAME          = 'authentication-service'
+        DOCKER_HUB_USER   = 'truongtv1111'
+        DOCKER_IMAGE      = "${DOCKER_HUB_USER}/${APP_NAME}:${BUILD_NUMBER}"
+        DOCKER_IMAGE_LATEST = "${DOCKER_HUB_USER}/${APP_NAME}:latest"
+        
+        // --- 🌐 Network & Infra ---
+        DOCKER_NETWORK    = 'api-network'
+        VAULT_URL         = 'http://vault:8200'
+        KEYCLOAK_INTERNAL = 'http://keycloak:8080'
+        POSTGRES_INTERNAL = 'jdbc:postgresql://postgres:5432/postgres'
+        REDIS_HOST        = 'redis'
+        REDIS_PORT        = '6379'
+        API_GATEWAY_URL   = 'http://api-gateway:4953'
+        LOGSTASH_URL      = 'logstash:5600'
+        
+        // Centralized Docker Path
+        DOCKER_PATH       = "${tool 'docker'}:${tool 'docker'}/bin"
+    }
+
+    stages {
+        stage('🚀 Preparation') {
+            steps {
+                script {
+                    echo "📥 Processing ${APP_NAME} build #${BUILD_NUMBER}..."
+                    checkout scm
+                    
+                    withEnv(["PATH+DOCKER=${DOCKER_PATH}"]) {
+                        sh "docker network create ${DOCKER_NETWORK} || true"
+                    }
+                }
+            }
+        }
+
+        stage('🔨 Build Artifact') {
+            steps {
+                dir("codebase/${APP_NAME}") {
+                    script {
+                        def mvnArgs = params.SKIP_TESTS ? '-DskipTests' : ''
+                        echo "📦 Packaging with args: ${mvnArgs}"
+                        sh "mvn clean package ${mvnArgs}"
+                    }
+                }
+            }
+        }
+
+        stage('🐳 Dockerize') {
+            steps {
+                dir("codebase/${APP_NAME}") {
+                    script {
+                        withEnv(["PATH+DOCKER=${DOCKER_PATH}"]) {
+                            echo "🏗️ Building Image: ${DOCKER_IMAGE}"
+                            sh "docker build -t ${DOCKER_IMAGE} ."
+                            sh "docker tag ${DOCKER_IMAGE} ${DOCKER_IMAGE_LATEST}"
+                        }
+                    }
+                }
+            }
+        }
+        
+        stage('📤 Registry Push') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'docker-hub-credentials', passwordVariable: 'DOCKER_PASS', usernameVariable: 'DOCKER_USER')]) {
+                    script {
+                        withEnv(["PATH+DOCKER=${DOCKER_PATH}"]) {
+                            echo '🔐 Uploading to Docker Hub...'
+                            sh "echo $DOCKER_PASS | docker login -u $DOCKER_USER --password-stdin"
+                            sh "docker push ${DOCKER_IMAGE}"
+                            sh "docker push ${DOCKER_IMAGE_LATEST}"
+                        }
+                    }
+                }
+            }
+        }
+
+        stage('🚚 Container Deploy') {
+            steps {
+                script {
+                    withEnv(["PATH+DOCKER=${DOCKER_PATH}"]) {
+                        echo "♻️ Refreshing container for ${APP_NAME}..."
+                        sh "docker stop ${APP_NAME} || true"
+                        sh "docker rm ${APP_NAME} || true"
+                        
+                        // Added Resource Limits (--memory) for stability
+                        sh """
+                            docker run -d --restart unless-stopped --name ${APP_NAME} \\
+                            --network ${DOCKER_NETWORK} \\
+                            --memory="512m" \\
+                            --cpus="0.5" \\
+                            -p 8081:8081 \\
+                            -e POSTGRES_URL=${POSTGRES_INTERNAL} \\
+                            -e POSTGRES_USER=postgres \\
+                            -e POSTGRES_PASSWORD=password \\
+                            -e VAULT_URI=${VAULT_URL} \\
+                            -e KEYCLOAK_URL=${KEYCLOAK_INTERNAL} \\
+                            -e API_GATEWAY=${API_GATEWAY_URL} \\
+                            -e REDIS_HOST=${REDIS_HOST} \\
+                            -e REDIS_PORT=${REDIS_PORT} \\
+                            -e LOGSTASH_HOST=${LOGSTASH_URL} \\
+                            -e JWT_ACCESS_KEY=c2VjcmV0QGtleS5hcGlfaGFzX2JlZW5fZGVzaWduZWRfYnlfVGF5TFE= \\
+                            -e JWT_REFRESH_KEY=9k1jJAWAKQCnCEz1pwcPNegbHoLugf9hgEnn6sz5pFc= \\
+                            ${DOCKER_IMAGE_LATEST}
+                        """
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo '🧹 Post-build Cleanup...'
+            cleanWs()
+        }
+        success {
+            echo "✅ SUCCESS: ${APP_NAME} is live!"
+        }
+        failure {
+            echo "❌ FAILURE: Check Jenkins logs for ${APP_NAME} build #${BUILD_NUMBER}"
+        }
+    }
+}

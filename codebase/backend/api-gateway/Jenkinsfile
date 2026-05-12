@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+    options { timeout(time: 1, unit: 'HOURS'); retry(2); timestamps(); buildDiscarder(logRotator(numToKeepStr: '2')) }
+    parameters { booleanParam(name: 'SKIP_TESTS', defaultValue: true, description: 'Skip tests?') }
+    tools { maven 'maven-3.9'; jdk 'jdk-17' }
+    environment {
+        APP_NAME          = 'api-gateway'
+        DOCKER_IMAGE      = "truongtv1111/${APP_NAME}:${BUILD_NUMBER}"
+        DOCKER_IMAGE_LATEST = "truongtv1111/logistic-${APP_NAME}:latest"
+    }
+    stages {
+        stage('Build') {
+            steps {
+                dir("codebase/${APP_NAME}") {
+                    script { sh "mvn clean package ${params.SKIP_TESTS ? '-DskipTests' : ''}" }
+                }
+            }
+        }
+        stage('Dockerize') {
+            steps {
+                dir("codebase/${APP_NAME}") {
+                    script { sh "docker build -t ${DOCKER_IMAGE_LATEST} ." }
+                }
+            }
+        }
+    }
+}
