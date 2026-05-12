@@ -1,0 +1,24 @@
+<section class="page-container" *ngIf="tasks$ | async as tasks">
+  <div class="header-actions">
+    <div>
+      <h1 class="page-title">Family Tasks</h1>
+      <p class="page-subtitle">Assign clearly so daily workload is balanced</p>
+    </div>
+    <span class="pill-chip">
+      <span nz-icon nzType="check-circle"></span>
+      {{ tasks.length }} total tasks
+    </span>
+  </div>
+
+  <nz-card class="table-card">
+    <ul class="task-list">
+      <li *ngFor="let task of tasks" [ngClass]="{ done: task.done }">
+        <div>
+          <p class="task-title">{{ task.title }}</p>
+          <p class="task-meta">{{ task.assignee }} - {{ task.dueAt }}</p>
+        </div>
+        <nz-tag [nzColor]="task.done ? 'green' : 'orange'">{{ task.done ? 'Done' : 'Pending' }}</nz-tag>
+      </li>
+    </ul>
+  </nz-card>
+</section>

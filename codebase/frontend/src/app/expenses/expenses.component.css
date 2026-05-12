@@ -1,0 +1,24 @@
+.expense-card {
+  max-width: 760px;
+}
+
+.expense-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.expense-row p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.expense-row strong {
+  color: var(--text-main);
+}
+
+.top-category {
+  margin-top: 12px;
+  color: var(--text-secondary);
+}

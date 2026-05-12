@@ -1,0 +1,21 @@
+<section class="page-container" *ngIf="snapshot$ | async as snapshot">
+  <div class="header-actions">
+    <div>
+      <h1 class="page-title">Baby Tracking</h1>
+      <p class="page-subtitle">Daily logs for sleep, feeding, diaper and vaccine reminders</p>
+    </div>
+    <span class="pill-chip">
+      <span nz-icon nzType="clock-circle"></span>
+      Next vaccine {{ snapshot.baby.nextVaccination }}
+    </span>
+  </div>
+
+  <nz-card [nzTitle]="'Profile: ' + snapshot.baby.babyName" class="table-card baby-card">
+    <nz-descriptions nzBordered [nzColumn]="1">
+      <nz-descriptions-item nzTitle="Sleep today">{{ snapshot.baby.sleepHours }} h</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Feeding count">{{ snapshot.baby.feedings }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Diaper changes">{{ snapshot.baby.diaperChanges }}</nz-descriptions-item>
+      <nz-descriptions-item nzTitle="Vaccine date">{{ snapshot.baby.nextVaccination }}</nz-descriptions-item>
+    </nz-descriptions>
+  </nz-card>
+</section>

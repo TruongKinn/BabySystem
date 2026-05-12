@@ -1,0 +1,25 @@
+<section class="page-container" *ngIf="expense$ | async as expense">
+  <div class="header-actions">
+    <div>
+      <h1 class="page-title">Expense Control</h1>
+      <p class="page-subtitle">Track family spending and keep monthly budget safe</p>
+    </div>
+    <span class="pill-chip">
+      <span nz-icon nzType="wallet"></span>
+      Budget used {{ expense.budgetPercent }}%
+    </span>
+  </div>
+
+  <nz-card nzTitle="Monthly overview" class="table-card expense-card">
+    <div class="expense-row">
+      <p>Spent</p>
+      <strong>{{ expense.monthlySpent | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+    </div>
+    <div class="expense-row">
+      <p>Budget</p>
+      <strong>{{ expense.monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+    </div>
+    <nz-progress [nzPercent]="expense.budgetPercent" [nzStatus]="expense.budgetPercent > 85 ? 'exception' : 'active'"></nz-progress>
+    <p class="top-category">Top category: {{ expense.topCategory }}</p>
+  </nz-card>
+</section>

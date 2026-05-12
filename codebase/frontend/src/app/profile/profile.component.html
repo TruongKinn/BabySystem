@@ -1,0 +1,18 @@
+<section class="page-container">
+  <div class="header-actions">
+    <div>
+      <h1 class="page-title">Profile</h1>
+      <p class="page-subtitle">Account identity and role in family coordination</p>
+    </div>
+  </div>
+
+  <nz-card class="table-card profile-card">
+    <div class="profile-box">
+      <nz-avatar [nzText]="displayName.charAt(0)" [nzSize]="72" nzIcon="user"></nz-avatar>
+      <div>
+        <h3>{{ displayName }}</h3>
+        <p>Role: {{ role }}</p>
+      </div>
+    </div>
+  </nz-card>
+</section>

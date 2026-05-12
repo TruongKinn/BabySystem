@@ -1,0 +1,26 @@
+<section class="page-container">
+  <div class="header-actions">
+    <div>
+      <h1 class="page-title">Settings</h1>
+      <p class="page-subtitle">Notification and reminder preferences for the family workflow</p>
+    </div>
+  </div>
+
+  <nz-card class="table-card settings-card">
+    <div class="setting-row">
+      <div>
+        <p class="setting-title">Daily reminder</p>
+        <span>Enable summary reminders for parents</span>
+      </div>
+      <nz-switch [(ngModel)]="notificationEnabled"></nz-switch>
+    </div>
+
+    <div class="setting-row">
+      <div>
+        <p class="setting-title">Reminder time</p>
+        <span>Preferred hour for family digest</span>
+      </div>
+      <input nz-input [(ngModel)]="reminderHour" />
+    </div>
+  </nz-card>
+</section>

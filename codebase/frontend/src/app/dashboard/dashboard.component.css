@@ -1,0 +1,26 @@
+.stat-grid {
+  margin-bottom: 14px;
+}
+
+.stat-card {
+  min-height: 140px;
+}
+
+.card-caption {
+  margin: 10px 0 0;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.panel-card {
+  min-height: 246px;
+}
+
+.list-text {
+  margin-left: 10px;
+}
+
+.top-category {
+  margin-top: 12px;
+  color: var(--text-secondary);
+}

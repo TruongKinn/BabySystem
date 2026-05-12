@@ -1,0 +1,24 @@
+<section class="page-container" *ngIf="members$ | async as members">
+  <div class="header-actions">
+    <div>
+      <h1 class="page-title">Family Members</h1>
+      <p class="page-subtitle">Role and collaboration overview for each member</p>
+    </div>
+    <span class="pill-chip">
+      <span nz-icon nzType="team"></span>
+      {{ members.length }} active members
+    </span>
+  </div>
+
+  <nz-card class="table-card">
+    <ul class="member-list">
+      <li *ngFor="let member of members">
+        <div class="identity">
+          <nz-avatar [nzText]="member.name.charAt(0)" [style.background-color]="member.avatarColor"></nz-avatar>
+          <span>{{ member.name }}</span>
+        </div>
+        <nz-tag nzColor="geekblue">{{ member.role }}</nz-tag>
+      </li>
+    </ul>
+  </nz-card>
+</section>

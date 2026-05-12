@@ -1,0 +1,9 @@
+.insight-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.insight-card {
+  min-height: 165px;
+}

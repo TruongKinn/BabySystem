@@ -1,0 +1,20 @@
+<section class="page-container" *ngIf="insight$ | async as insight">
+  <div class="header-actions">
+    <div>
+      <h1 class="page-title">Family Insights</h1>
+      <p class="page-subtitle">Quick indicators for sleep, budget and workload</p>
+    </div>
+  </div>
+
+  <div class="insight-grid">
+    <nz-card nzTitle="Baby sleep score" class="table-card insight-card">
+      <nz-progress [nzPercent]="insight.sleepScore" nzStatus="active"></nz-progress>
+    </nz-card>
+    <nz-card nzTitle="Budget safety score" class="table-card insight-card">
+      <nz-progress [nzPercent]="insight.budgetScore" [nzStrokeColor]="'#16a34a'"></nz-progress>
+    </nz-card>
+    <nz-card nzTitle="Workload balance" class="table-card insight-card">
+      <nz-progress [nzPercent]="insight.workloadScore" [nzStatus]="insight.workloadScore < 40 ? 'exception' : 'active'"></nz-progress>
+    </nz-card>
+  </div>
+</section>

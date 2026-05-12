@@ -1,0 +1,62 @@
+<section class="page-container" *ngIf="vm$ | async as vm">
+  <div class="header-actions">
+    <div>
+      <h1 class="page-title">Family Dashboard</h1>
+      <p class="page-subtitle">{{ vm.snapshot.familyName }} - overview for today</p>
+    </div>
+    <span class="pill-chip">
+      <span nz-icon nzType="heart"></span>
+      Mood score {{ vm.snapshot.moodScore }}/100
+    </span>
+  </div>
+
+  <div nz-row [nzGutter]="[14, 14]" class="stat-grid">
+    <div nz-col [nzXs]="24" [nzSm]="12" [nzXl]="6">
+      <nz-card class="table-card stat-card">
+        <nz-statistic [nzValue]="vm.snapshot.expense.spentToday" [nzPrefix]="'₫'"></nz-statistic>
+        <p class="card-caption">Spent today</p>
+      </nz-card>
+    </div>
+    <div nz-col [nzXs]="24" [nzSm]="12" [nzXl]="6">
+      <nz-card class="table-card stat-card">
+        <nz-statistic [nzValue]="vm.snapshot.pendingTasks"></nz-statistic>
+        <p class="card-caption">Pending tasks</p>
+      </nz-card>
+    </div>
+    <div nz-col [nzXs]="24" [nzSm]="12" [nzXl]="6">
+      <nz-card class="table-card stat-card">
+        <nz-statistic [nzValue]="vm.snapshot.shoppingReminders"></nz-statistic>
+        <p class="card-caption">Shopping reminders</p>
+      </nz-card>
+    </div>
+    <div nz-col [nzXs]="24" [nzSm]="12" [nzXl]="6">
+      <nz-card class="table-card stat-card">
+        <nz-statistic [nzValue]="vm.snapshot.baby.sleepHours"></nz-statistic>
+        <p class="card-caption">Baby sleep hours</p>
+      </nz-card>
+    </div>
+  </div>
+
+  <div nz-row [nzGutter]="[14, 14]">
+    <div nz-col [nzXs]="24" [nzLg]="12">
+      <nz-card nzTitle="Today meals" class="table-card panel-card">
+        <nz-list nzItemLayout="horizontal">
+          <nz-list-item *ngFor="let meal of vm.snapshot.todayMeals">
+            <span nz-icon nzType="coffee"></span>
+            <span class="list-text">{{ meal }}</span>
+          </nz-list-item>
+        </nz-list>
+      </nz-card>
+    </div>
+    <div nz-col [nzXs]="24" [nzLg]="12">
+      <nz-card nzTitle="Budget health" class="table-card panel-card">
+        <p class="page-subtitle">
+          {{ vm.snapshot.expense.monthlySpent | currency : 'VND' : 'symbol' : '1.0-0' }} /
+          {{ vm.snapshot.expense.monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}
+        </p>
+        <nz-progress [nzPercent]="vm.budgetPercent" [nzStatus]="vm.budgetPercent > 85 ? 'exception' : 'active'"></nz-progress>
+        <p class="top-category">Top category: <strong>{{ vm.snapshot.expense.topCategory }}</strong></p>
+      </nz-card>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,19 @@
+.profile-card {
+  max-width: 760px;
+}
+
+.profile-box {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.profile-box h3 {
+  margin: 0 0 6px;
+  color: var(--text-main);
+}
+
+.profile-box p {
+  margin: 0;
+  color: var(--text-secondary);
+}

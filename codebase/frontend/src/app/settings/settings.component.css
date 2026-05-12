@@ -1,0 +1,42 @@
+.settings-card {
+  max-width: 860px;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.setting-row:last-child {
+  border-bottom: none;
+}
+
+.setting-title {
+  margin: 0 0 4px;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.setting-row span {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.setting-row input {
+  width: 130px;
+}
+
+@media (max-width: 575.98px) {
+  .setting-row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .setting-row input {
+    width: 100%;
+  }
+}

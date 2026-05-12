@@ -1,0 +1,24 @@
+<section class="page-container" *ngIf="items$ | async as items">
+  <div class="header-actions">
+    <div>
+      <h1 class="page-title">Shopping List</h1>
+      <p class="page-subtitle">Groceries and baby supplies in one checklist</p>
+    </div>
+    <span class="pill-chip">
+      <span nz-icon nzType="shopping-cart"></span>
+      {{ items.length }} items
+    </span>
+  </div>
+
+  <nz-card class="table-card">
+    <ul class="shopping-list">
+      <li *ngFor="let item of items" [ngClass]="{ checked: item.checked }">
+        <div>
+          <p class="item-name">{{ item.name }}</p>
+          <p class="item-qty">{{ item.quantity }}</p>
+        </div>
+        <nz-tag [nzColor]="item.checked ? 'green' : 'blue'">{{ item.checked ? 'Bought' : 'To buy' }}</nz-tag>
+      </li>
+    </ul>
+  </nz-card>
+</section>

@@ -1,1 +1,184 @@
-<router-outlet></router-outlet>
+<nz-layout class="app-layout" *ngIf="showLayout; else authLayout">
+  <nz-sider
+    class="menu-sidebar"
+    nzCollapsible
+    nzWidth="208px"
+    [nzCollapsedWidth]="64"
+    nzBreakpoint="md"
+    [(nzCollapsed)]="isCollapsed"
+    [nzTrigger]="null"
+  >
+    <div class="sidebar-logo">
+      <a routerLink="/dashboard">
+        <span class="brand-icon" aria-hidden="true">
+          <span nz-icon nzType="heart" nzTheme="fill"></span>
+        </span>
+        <div class="brand-text" *ngIf="!isCollapsed">
+          <h1>MOM SUPER APP</h1>
+          <p>Family OS</p>
+        </div>
+      </a>
+    </div>
+
+    <ul nz-menu [nzTheme]="isDarkMode ? 'dark' : 'light'" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+      <li nz-submenu nzTitle="Overview" nzIcon="dashboard">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/dashboard">
+              <span nz-icon nzType="home"></span>
+              <span>Dashboard</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li nz-submenu nzTitle="Family Care" nzIcon="heart">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/baby">
+              <span nz-icon nzType="smile"></span>
+              <span>Baby</span>
+            </a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/meals">
+              <span nz-icon nzType="coffee"></span>
+              <span>Meals</span>
+            </a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/tasks">
+              <span nz-icon nzType="check-square"></span>
+              <span>Tasks</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li nz-submenu nzTitle="Finance" nzIcon="wallet">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/expenses">
+              <span nz-icon nzType="wallet"></span>
+              <span>Expenses</span>
+            </a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/shopping">
+              <span nz-icon nzType="shopping-cart"></span>
+              <span>Shopping</span>
+            </a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/insights">
+              <span nz-icon nzType="line-chart"></span>
+              <span>Insights</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li nz-submenu nzTitle="Account" nzIcon="team">
+        <ul>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/family">
+              <span nz-icon nzType="team"></span>
+              <span>Family</span>
+            </a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/profile">
+              <span nz-icon nzType="user"></span>
+              <span>Profile</span>
+            </a>
+          </li>
+          <li nz-menu-item nzMatchRouter>
+            <a routerLink="/settings">
+              <span nz-icon nzType="setting"></span>
+              <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <div
+      class="sidebar-footer"
+      nz-popover
+      [nzPopoverContent]="logoutTemplate"
+      nzPopoverPlacement="rightBottom"
+      nzPopoverTrigger="hover"
+      [class.collapsed]="isCollapsed"
+    >
+      <div class="sidebar-avatar-wrapper">
+        <nz-avatar [nzSrc]="avatarUrl" [nzText]="userInitials" [nzSize]="40" class="profile-avatar"></nz-avatar>
+        <div class="status-indicator"></div>
+      </div>
+      <div class="sidebar-footer-info" *ngIf="!isCollapsed">
+        <div class="sidebar-footer-name">{{ username }}</div>
+        <div class="sidebar-footer-role">Family member</div>
+      </div>
+    </div>
+
+    <ng-template #logoutTemplate>
+      <div class="logout-popover-content">
+        <div class="popover-user-info">
+          <strong>{{ username }}</strong>
+          <span>Authenticated session</span>
+        </div>
+        <nz-divider style="margin: 8px 0"></nz-divider>
+        <div class="logout-action" (click)="logout()">
+          <span nz-icon nzType="logout"></span>
+          <span>Logout</span>
+        </div>
+      </div>
+    </ng-template>
+
+    <div class="sidebar-toggle" (click)="isCollapsed = !isCollapsed">
+      <span nz-icon [nzType]="isCollapsed ? 'right' : 'left'"></span>
+    </div>
+  </nz-sider>
+
+  <nz-layout>
+    <nz-header>
+      <div class="app-header">
+        <div></div>
+        <div class="header-user">
+          <span
+            class="theme-toggle-icon"
+            nz-icon
+            [nzType]="isDarkMode ? 'moon' : 'sun'"
+            [style.color]="isDarkMode ? '#ffc107' : '#555'"
+            (click)="toggleTheme()"
+            nz-tooltip
+            nzTooltipTitle="Toggle theme"
+          ></span>
+
+          <nz-avatar
+            class="header-avatar"
+            [nzSrc]="avatarUrl"
+            [nzText]="userInitials"
+            [nzSize]="28"
+            [nzIcon]="'user'"
+            [style.background-color]="'#87d068'"
+          >
+          </nz-avatar>
+
+          <span nz-typography>Hello, <strong>{{ username }}</strong></span>
+        </div>
+      </div>
+    </nz-header>
+
+    <nz-content>
+      <div class="inner-content">
+        <router-outlet></router-outlet>
+      </div>
+    </nz-content>
+  </nz-layout>
+</nz-layout>
+
+<ng-template #authLayout>
+  <div class="auth-wrapper">
+    <router-outlet></router-outlet>
+  </div>
+</ng-template>

@@ -1,0 +1,33 @@
+<section class="page-container" *ngIf="meals$ | async as meals">
+  <div class="header-actions">
+    <div>
+      <h1 class="page-title">Meal Planner</h1>
+      <p class="page-subtitle">Weekly meal plan for parents and baby-friendly routine</p>
+    </div>
+    <span class="pill-chip">
+      <span nz-icon nzType="calendar"></span>
+      {{ meals.length }} planned days
+    </span>
+  </div>
+
+  <nz-card class="table-card">
+    <nz-table #mealTable [nzData]="meals" [nzFrontPagination]="false" [nzScroll]="{ x: '700px' }">
+      <thead>
+        <tr>
+          <th>Day</th>
+          <th>Breakfast</th>
+          <th>Lunch</th>
+          <th>Dinner</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of mealTable.data">
+          <td>{{ item.day }}</td>
+          <td>{{ item.breakfast }}</td>
+          <td>{{ item.lunch }}</td>
+          <td>{{ item.dinner }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+</section>
