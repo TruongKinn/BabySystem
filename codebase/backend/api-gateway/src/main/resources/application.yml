@@ -55,14 +55,92 @@ spring:
                 fallbackUri: forward:/gateway/fallback/authentication-service
 
         - id: account-service
-          uri: ${AUTH_SERVICE_URI:http://localhost:8081}
+          uri: ${ACCOUNT_SERVICE_URI:http://localhost:8082}
           predicates:
             - Path=/account/**
           filters:
+            - RewritePath=/account/(?<segment>.*), /api/$\{segment}
             - name: CircuitBreaker
               args:
-                name: authenticationServiceGateway
-                fallbackUri: forward:/gateway/fallback/authentication-service
+                name: accountServiceGateway
+                fallbackUri: forward:/gateway/fallback/account-service
+
+        - id: expense-service
+          uri: ${EXPENSE_SERVICE_URI:http://localhost:8083}
+          predicates:
+            - Path=/expense/**
+          filters:
+            - RewritePath=/expense/(?<segment>.*), /api/$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: expenseServiceGateway
+                fallbackUri: forward:/gateway/fallback/expense-service
+
+        - id: meal-service
+          uri: ${MEAL_SERVICE_URI:http://localhost:8084}
+          predicates:
+            - Path=/meal/**
+          filters:
+            - RewritePath=/meal/(?<segment>.*), /api/$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: mealServiceGateway
+                fallbackUri: forward:/gateway/fallback/meal-service
+
+        - id: task-service
+          uri: ${TASK_SERVICE_URI:http://localhost:8086}
+          predicates:
+            - Path=/task/**
+          filters:
+            - RewritePath=/task/(?<segment>.*), /api/$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: taskServiceGateway
+                fallbackUri: forward:/gateway/fallback/task-service
+
+        - id: baby-service
+          uri: ${BABY_SERVICE_URI:http://localhost:8087}
+          predicates:
+            - Path=/baby/**
+          filters:
+            - RewritePath=/baby/(?<segment>.*), /api/$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: babyServiceGateway
+                fallbackUri: forward:/gateway/fallback/baby-service
+
+        - id: shopping-service
+          uri: ${SHOPPING_SERVICE_URI:http://localhost:8088}
+          predicates:
+            - Path=/shopping/**
+          filters:
+            - RewritePath=/shopping/(?<segment>.*), /api/$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: shoppingServiceGateway
+                fallbackUri: forward:/gateway/fallback/shopping-service
+
+        - id: insight-service
+          uri: ${INSIGHT_SERVICE_URI:http://localhost:8089}
+          predicates:
+            - Path=/insight/**
+          filters:
+            - RewritePath=/insight/(?<segment>.*), /api/$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: insightServiceGateway
+                fallbackUri: forward:/gateway/fallback/insight-service
+
+        - id: file-service
+          uri: ${FILE_SERVICE_URI:http://localhost:8092}
+          predicates:
+            - Path=/file/**
+          filters:
+            - RewritePath=/file/(?<segment>.*), /api/$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: fileServiceGateway
+                fallbackUri: forward:/gateway/fallback/file-service
             
         # Route cho logistics-service (Orchestrator)
         - id: logistics-service
@@ -160,6 +238,7 @@ spring:
           predicates:
             - Path=/notification/api/**
           filters:
+            - RewritePath=/notification/api/(?<segment>.*), /api/$\{segment}
             - name: CircuitBreaker
               args:
                 name: notificationServiceGateway
@@ -214,7 +293,7 @@ spring:
 
         # Route cho notification WebSocket/SockJS endpoint
         - id: notification-service-ws
-          uri: ws://localhost:8098
+          uri: ${NOTIFICATION_SERVICE_WS_URI:ws://localhost:8098}
           predicates:
             - Path=/notification/ws/**
             
@@ -239,6 +318,24 @@ springdoc:
         url: /logistics/v3/api-docs
       - name: Authentication Service
         url: /auth/v3/api-docs
+      - name: Account Service
+        url: /account/v3/api-docs
+      - name: Expense Service
+        url: /expense/v3/api-docs
+      - name: Meal Service
+        url: /meal/v3/api-docs
+      - name: Task Service
+        url: /task/v3/api-docs
+      - name: Baby Service
+        url: /baby/v3/api-docs
+      - name: Shopping Service
+        url: /shopping/v3/api-docs
+      - name: Insight Service
+        url: /insight/v3/api-docs
+      - name: File Service
+        url: /file/v3/api-docs
+      - name: Notification Service
+        url: /notification/api/v3/api-docs
       - name: Job Supervisor Service
         url: /job-supervisor/v3/api-docs
       - name: Common Service
@@ -263,6 +360,62 @@ resilience4j:
   circuitbreaker:
     instances:
       authenticationServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      accountServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      expenseServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      mealServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      taskServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      babyServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      shoppingServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      insightServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      fileServiceGateway:
         slidingWindowType: COUNT_BASED
         slidingWindowSize: 10
         minimumNumberOfCalls: 5
@@ -361,6 +514,10 @@ resilience4j:
         waitDurationInOpenState: 30s
         permittedNumberOfCallsInHalfOpenState: 3
   timelimiter:
+    configs:
+      default:
+        timeoutDuration: 10s
+        cancelRunningFuture: true
     instances:
       commonServiceGateway:
         timeoutDuration: 30s

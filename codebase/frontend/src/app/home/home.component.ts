@@ -1,12 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { AuthService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, NzButtonModule],
+  imports: [CommonModule, TranslateModule, NzButtonModule],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

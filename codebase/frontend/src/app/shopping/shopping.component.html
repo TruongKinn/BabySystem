@@ -1,13 +1,19 @@
 <section class="page-container" *ngIf="items$ | async as items">
   <div class="header-actions">
     <div>
-      <h1 class="page-title">Shopping List</h1>
-      <p class="page-subtitle">Groceries and baby supplies in one checklist</p>
+      <h1 class="page-title">{{ 'momApp.shopping.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'momApp.shopping.subtitle' | translate }}</p>
     </div>
-    <span class="pill-chip">
-      <span nz-icon nzType="shopping-cart"></span>
-      {{ items.length }} items
-    </span>
+    <div class="header-buttons">
+      <button nz-button nzType="primary" (click)="openCreateModal()">
+        <span nz-icon nzType="plus"></span>
+        {{ 'momApp.shopping.actions.create' | translate }}
+      </button>
+      <span class="pill-chip">
+        <span nz-icon nzType="shopping-cart"></span>
+        {{ items.length }} {{ 'momApp.shopping.totalLabel' | translate }}
+      </span>
+    </div>
   </div>
 
   <nz-card class="table-card">
@@ -17,8 +23,50 @@
           <p class="item-name">{{ item.name }}</p>
           <p class="item-qty">{{ item.quantity }}</p>
         </div>
-        <nz-tag [nzColor]="item.checked ? 'green' : 'blue'">{{ item.checked ? 'Bought' : 'To buy' }}</nz-tag>
+        <div class="item-actions">
+          <button nz-button nzSize="small" (click)="toggleChecked(item.id, item.checked)">
+            {{ item.checked ? ('momApp.shopping.actions.uncheck' | translate) : ('momApp.shopping.actions.check' | translate) }}
+          </button>
+          <nz-tag [nzColor]="item.checked ? 'green' : 'blue'">
+            {{ item.checked ? ('momApp.shopping.status.bought' | translate) : ('momApp.shopping.status.toBuy' | translate) }}
+          </nz-tag>
+        </div>
       </li>
     </ul>
   </nz-card>
 </section>
+
+<nz-modal
+  [(nzVisible)]="isCreateModalVisible"
+  [nzTitle]="'momApp.shopping.modal.createTitle' | translate"
+  [nzOkLoading]="isSubmitting"
+  [nzOkText]="'commonActions.save' | translate"
+  [nzCancelText]="'commonActions.cancel' | translate"
+  (nzOnCancel)="closeCreateModal()"
+  (nzOnOk)="submitCreateItem()"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="createItemForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.shopping.modal.nameLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="itemName" [placeholder]="'momApp.shopping.modal.namePlaceholder' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.shopping.modal.quantityLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="quantity" [placeholder]="'momApp.shopping.modal.quantityPlaceholder' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.shopping.modal.noteLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input rows="3" formControlName="note" [placeholder]="'momApp.shopping.modal.notePlaceholder' | translate"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

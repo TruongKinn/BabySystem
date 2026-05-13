@@ -1,25 +1,66 @@
 <section class="page-container" *ngIf="expense$ | async as expense">
   <div class="header-actions">
     <div>
-      <h1 class="page-title">Expense Control</h1>
-      <p class="page-subtitle">Track family spending and keep monthly budget safe</p>
+      <h1 class="page-title">{{ 'momApp.expenses.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'momApp.expenses.subtitle' | translate }}</p>
     </div>
-    <span class="pill-chip">
-      <span nz-icon nzType="wallet"></span>
-      Budget used {{ expense.budgetPercent }}%
-    </span>
+    <div class="header-buttons">
+      <button nz-button nzType="primary" (click)="openCreateModal()">
+        <span nz-icon nzType="plus"></span>
+        {{ 'momApp.expenses.actions.create' | translate }}
+      </button>
+      <span class="pill-chip">
+        <span nz-icon nzType="wallet"></span>
+        {{ 'momApp.expenses.budgetUsed' | translate }} {{ expense.budgetPercent }}%
+      </span>
+    </div>
   </div>
 
-  <nz-card nzTitle="Monthly overview" class="table-card expense-card">
+  <nz-card [nzTitle]="'momApp.expenses.monthlyOverview' | translate" class="table-card expense-card">
     <div class="expense-row">
-      <p>Spent</p>
+      <p>{{ 'momApp.expenses.spentLabel' | translate }}</p>
       <strong>{{ expense.monthlySpent | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
     </div>
     <div class="expense-row">
-      <p>Budget</p>
+      <p>{{ 'momApp.expenses.budgetLabel' | translate }}</p>
       <strong>{{ expense.monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
     </div>
     <nz-progress [nzPercent]="expense.budgetPercent" [nzStatus]="expense.budgetPercent > 85 ? 'exception' : 'active'"></nz-progress>
-    <p class="top-category">Top category: {{ expense.topCategory }}</p>
+    <p class="top-category">{{ 'momApp.expenses.topCategory' | translate }}: {{ expense.topCategory || ('momApp.common.notAvailable' | translate) }}</p>
   </nz-card>
 </section>
+
+<nz-modal
+  [(nzVisible)]="isCreateModalVisible"
+  [nzTitle]="'momApp.expenses.modal.createTitle' | translate"
+  [nzOkLoading]="isSubmitting"
+  [nzOkText]="'commonActions.save' | translate"
+  [nzCancelText]="'commonActions.cancel' | translate"
+  (nzOnCancel)="closeCreateModal()"
+  (nzOnOk)="submitCreateExpense()"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="createExpenseForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.expenses.modal.amountLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input type="number" formControlName="amount" [placeholder]="'momApp.expenses.modal.amountPlaceholder' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.expenses.modal.categoryLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="categoryName" [placeholder]="'momApp.expenses.modal.categoryPlaceholder' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.expenses.modal.noteLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input rows="3" formControlName="note" [placeholder]="'momApp.expenses.modal.notePlaceholder' | translate"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

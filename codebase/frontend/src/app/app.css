@@ -173,8 +173,14 @@ nz-content {
 .header-user {
   display: flex;
   align-items: center;
+  gap: 10px;
   color: var(--text-main);
   font-size: 15px;
+}
+
+.language-switcher {
+  display: inline-flex;
+  gap: 6px;
 }
 
 .sidebar-footer {

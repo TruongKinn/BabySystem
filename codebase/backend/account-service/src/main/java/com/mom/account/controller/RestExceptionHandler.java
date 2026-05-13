@@ -1,7 +1,7 @@
 package com.mom.account.controller;
 
-import com.mom.account.controller.dto.ApiResponse;
-import com.mom.account.service.ResourceNotFoundException;
+import com.mom.common.dto.ApiResponse;
+import com.mom.common.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

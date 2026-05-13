@@ -1,17 +1,19 @@
-<section class="page-container">
+<section class="page-container" *ngIf="profile$ | async as profile">
   <div class="header-actions">
     <div>
-      <h1 class="page-title">Profile</h1>
-      <p class="page-subtitle">Account identity and role in family coordination</p>
+      <h1 class="page-title">{{ 'momApp.profile.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'momApp.profile.subtitle' | translate }}</p>
     </div>
   </div>
 
   <nz-card class="table-card profile-card">
     <div class="profile-box">
-      <nz-avatar [nzText]="displayName.charAt(0)" [nzSize]="72" nzIcon="user"></nz-avatar>
+      <nz-avatar [nzText]="profile.displayName.charAt(0)" [nzSize]="72" nzIcon="user"></nz-avatar>
       <div>
-        <h3>{{ displayName }}</h3>
-        <p>Role: {{ role }}</p>
+        <h3>{{ profile.displayName }}</h3>
+        <p>{{ 'momApp.profile.roleLabel' | translate }}: {{ profile.roleLabel }}</p>
+        <p>{{ 'momApp.profile.usernameLabel' | translate }}: {{ profile.username }}</p>
+        <p>{{ 'momApp.profile.emailLabel' | translate }}: {{ profile.email }}</p>
       </div>
     </div>
   </nz-card>

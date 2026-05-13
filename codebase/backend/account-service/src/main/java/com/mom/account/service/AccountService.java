@@ -10,9 +10,13 @@ import com.mom.account.domain.FamilyEntity;
 import com.mom.account.domain.FamilyMemberEntity;
 import com.mom.account.domain.FamilyRole;
 import com.mom.account.domain.UserEntity;
+import com.mom.account.event.AccountEventPublisher;
+import com.mom.account.event.FamilyCreatedPayload;
+import com.mom.account.event.UserCreatedPayload;
 import com.mom.account.repository.FamilyMemberRepository;
 import com.mom.account.repository.FamilyRepository;
 import com.mom.account.repository.UserRepository;
+import com.mom.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +30,7 @@ public class AccountService {
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
     private final FamilyMemberRepository familyMemberRepository;
+    private final AccountEventPublisher accountEventPublisher;
 
     @Transactional
     public UserResponse createUser(CreateUserRequest request) {
@@ -38,6 +43,12 @@ public class AccountService {
         user.setEmail(request.email().trim().toLowerCase());
         user.setDisplayName(request.displayName().trim());
         UserEntity saved = userRepository.save(user);
+        accountEventPublisher.publishUserCreated(new UserCreatedPayload(
+                saved.getId(),
+                saved.getUsername(),
+                saved.getEmail(),
+                saved.getDisplayName()
+        ));
         return toUserResponse(saved);
     }
 
@@ -62,6 +73,11 @@ public class AccountService {
         ownerMember.setUserId(creator.getId());
         ownerMember.setRole(FamilyRole.MOM);
         familyMemberRepository.save(ownerMember);
+        accountEventPublisher.publishFamilyCreated(new FamilyCreatedPayload(
+                savedFamily.getId(),
+                savedFamily.getName(),
+                savedFamily.getCreatedByUserId()
+        ));
 
         return getFamily(savedFamily.getId());
     }

@@ -1,5 +1,6 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, inject } from '@angular/core';
+import { TranslateModule } from '@ngx-translate/core';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzGridModule } from 'ng-zorro-antd/grid';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -16,6 +17,7 @@ import { MockSuperAppService } from '../core/services/mock-super-app.service';
   imports: [
     CommonModule,
     CurrencyPipe,
+    TranslateModule,
     NzCardModule,
     NzGridModule,
     NzIconModule,
@@ -33,7 +35,10 @@ export class DashboardComponent {
   readonly vm$ = this.data.getDashboard().pipe(
     map((snapshot) => ({
       snapshot,
-      budgetPercent: Math.round((snapshot.expense.monthlySpent / snapshot.expense.monthlyBudget) * 100)
+      budgetPercent:
+        snapshot.expense.monthlyBudget > 0
+          ? Math.max(0, Math.min(100, Math.round((snapshot.expense.monthlySpent / snapshot.expense.monthlyBudget) * 100)))
+          : 0
     }))
   );
 }

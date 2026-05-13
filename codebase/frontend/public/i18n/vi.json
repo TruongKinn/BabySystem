@@ -2337,5 +2337,277 @@
                 "avatarUploadFailed": "Tải ảnh đại diện thất bại."
             }
         }
+    },
+    "momApp": {
+        "common": {
+            "success": "Thành công",
+            "notAvailable": "N/A"
+        },
+        "home": {
+            "title": "Đăng nhập thành công",
+            "subtitle": "Tất cả module gia đình đã sẵn sàng từ dashboard chính."
+        },
+        "layout": {
+            "brandTitle": "MOM SUPER APP",
+            "brandSubtitle": "Family OS",
+            "hello": "Xin chào",
+            "toggleTheme": "Đổi giao diện",
+            "logout": "Đăng xuất",
+            "familyMember": "Thành viên gia đình",
+            "authenticatedSession": "Phiên đăng nhập hợp lệ",
+            "userFallback": "Người dùng gia đình",
+            "menu": {
+                "overview": "Tổng quan",
+                "dashboard": "Dashboard",
+                "familyCare": "Chăm sóc gia đình",
+                "baby": "Em bé",
+                "meals": "Bữa ăn",
+                "tasks": "Công việc",
+                "finance": "Tài chính",
+                "expenses": "Chi tiêu",
+                "shopping": "Mua sắm",
+                "insights": "Phân tích",
+                "account": "Tài khoản",
+                "family": "Gia đình",
+                "profile": "Hồ sơ",
+                "settings": "Cài đặt"
+            }
+        },
+        "dashboard": {
+            "title": "Dashboard Gia Đình",
+            "subtitle": "tổng quan trong ngày",
+            "familyFallback": "Gia đình",
+            "moodScore": "Điểm tinh thần",
+            "spentToday": "Chi hôm nay",
+            "pendingTasks": "Việc đang chờ",
+            "shoppingReminders": "Nhắc mua sắm",
+            "babySleepHours": "Giờ ngủ của bé",
+            "todayMeals": "Bữa ăn hôm nay",
+            "noMeals": "Chưa có kế hoạch bữa ăn hôm nay.",
+            "budgetHealth": "Sức khỏe ngân sách",
+            "topCategory": "Nhóm chi tiêu cao nhất"
+        },
+        "tasks": {
+            "title": "Công Việc Gia Đình",
+            "subtitle": "Phân công rõ ràng để cân bằng khối lượng công việc hàng ngày",
+            "totalLabel": "công việc",
+            "unassigned": "Chưa phân công",
+            "noDeadline": "Chưa có hạn",
+            "actions": {
+                "create": "Thêm việc",
+                "complete": "Hoàn thành"
+            },
+            "status": {
+                "done": "Đã xong",
+                "pending": "Đang chờ"
+            },
+            "modal": {
+                "createTitle": "Tạo công việc",
+                "titleLabel": "Tiêu đề công việc",
+                "titlePlaceholder": "Ví dụ: Đặt lịch tiêm vaccine",
+                "descriptionLabel": "Mô tả",
+                "descriptionPlaceholder": "Chi tiết bổ sung",
+                "dueAtLabel": "Hạn hoàn thành"
+            },
+            "messages": {
+                "createSuccess": "Tạo công việc thành công.",
+                "createFailed": "Không thể tạo công việc.",
+                "completeSuccess": "Đã đánh dấu công việc hoàn thành.",
+                "completeFailed": "Không thể hoàn thành công việc."
+            }
+        },
+        "shopping": {
+            "title": "Danh Sách Mua Sắm",
+            "subtitle": "Đồ tạp hóa và đồ dùng cho bé trong một checklist",
+            "totalLabel": "món",
+            "actions": {
+                "create": "Thêm món",
+                "check": "Đã mua",
+                "uncheck": "Đánh dấu lại"
+            },
+            "status": {
+                "bought": "Đã mua",
+                "toBuy": "Cần mua"
+            },
+            "modal": {
+                "createTitle": "Thêm món mua sắm",
+                "nameLabel": "Tên món",
+                "namePlaceholder": "Ví dụ: Bỉm size M",
+                "quantityLabel": "Số lượng",
+                "quantityPlaceholder": "Ví dụ: 2 gói",
+                "noteLabel": "Ghi chú",
+                "notePlaceholder": "Ghi chú thêm"
+            },
+            "messages": {
+                "createSuccess": "Thêm món thành công.",
+                "createFailed": "Không thể thêm món.",
+                "updateFailed": "Không thể cập nhật trạng thái món."
+            }
+        },
+        "meals": {
+            "title": "Kế Hoạch Bữa Ăn",
+            "subtitle": "Lịch bữa ăn theo tuần cho cả nhà và phù hợp cho bé",
+            "totalLabel": "ngày đã lên kế hoạch",
+            "actions": {
+                "create": "Thêm kế hoạch"
+            },
+            "table": {
+                "day": "Ngày",
+                "breakfast": "Sáng",
+                "lunch": "Trưa",
+                "dinner": "Tối"
+            },
+            "mealType": {
+                "BREAKFAST": "Bữa sáng",
+                "LUNCH": "Bữa trưa",
+                "DINNER": "Bữa tối",
+                "SNACK": "Bữa phụ"
+            },
+            "modal": {
+                "createTitle": "Tạo kế hoạch bữa ăn",
+                "mealNameLabel": "Tên món",
+                "mealNamePlaceholder": "Ví dụ: Canh gà nấm",
+                "mealTypeLabel": "Loại bữa",
+                "planDateLabel": "Ngày áp dụng",
+                "noteLabel": "Ghi chú",
+                "notePlaceholder": "Ghi chú thêm"
+            },
+            "messages": {
+                "createSuccess": "Tạo kế hoạch bữa ăn thành công.",
+                "createFailed": "Không thể tạo kế hoạch bữa ăn."
+            }
+        },
+        "expenses": {
+            "title": "Kiểm Soát Chi Tiêu",
+            "subtitle": "Theo dõi chi tiêu gia đình và bảo vệ ngân sách tháng",
+            "actions": {
+                "create": "Thêm chi tiêu"
+            },
+            "budgetUsed": "Ngân sách đã dùng",
+            "monthlyOverview": "Tổng quan tháng",
+            "spentLabel": "Đã chi",
+            "budgetLabel": "Ngân sách",
+            "topCategory": "Nhóm chi cao nhất",
+            "modal": {
+                "createTitle": "Tạo khoản chi",
+                "amountLabel": "Số tiền",
+                "amountPlaceholder": "Nhập số tiền",
+                "categoryLabel": "Danh mục",
+                "categoryPlaceholder": "Ví dụ: Sữa và bỉm",
+                "noteLabel": "Ghi chú",
+                "notePlaceholder": "Ghi chú thêm"
+            },
+            "messages": {
+                "createSuccess": "Tạo khoản chi thành công.",
+                "createFailed": "Không thể tạo khoản chi."
+            }
+        },
+        "baby": {
+            "title": "Theo Dõi Em Bé",
+            "subtitle": "Nhật ký ngủ, ăn, thay tã và nhắc lịch tiêm",
+            "unknownName": "Em bé",
+            "actions": {
+                "addProfile": "Thêm hồ sơ bé",
+                "addLog": "Thêm nhật ký"
+            },
+            "nextVaccine": "Lịch tiêm tiếp theo",
+            "profileTitle": "Hồ sơ",
+            "sleepToday": "Ngủ hôm nay",
+            "feedingCount": "Số lần ăn",
+            "diaperChanges": "Số lần thay tã",
+            "vaccineDate": "Ngày tiêm",
+            "gender": {
+                "MALE": "Nam",
+                "FEMALE": "Nữ",
+                "OTHER": "Khác"
+            },
+            "logType": {
+                "SLEEP": "Ngủ",
+                "FEEDING": "Ăn",
+                "DIAPER": "Thay tã"
+            },
+            "modal": {
+                "createProfileTitle": "Tạo hồ sơ bé",
+                "nameLabel": "Tên bé",
+                "namePlaceholder": "Nhập tên bé",
+                "birthDateLabel": "Ngày sinh",
+                "genderLabel": "Giới tính",
+                "noteLabel": "Ghi chú",
+                "notePlaceholder": "Ghi chú thêm",
+                "createLogTitle": "Tạo nhật ký bé",
+                "logTypeLabel": "Loại nhật ký",
+                "valueLabel": "Giá trị",
+                "valuePlaceholder": "Dùng giờ cho nhật ký ngủ"
+            },
+            "messages": {
+                "createBabySuccess": "Tạo hồ sơ bé thành công.",
+                "createBabyFailed": "Không thể tạo hồ sơ bé.",
+                "createLogSuccess": "Tạo nhật ký bé thành công.",
+                "createLogFailed": "Không thể tạo nhật ký bé."
+            }
+        },
+        "family": {
+            "title": "Thành Viên Gia Đình",
+            "subtitle": "Tổng quan vai trò và phối hợp của từng thành viên",
+            "totalLabel": "thành viên hoạt động",
+            "actions": {
+                "create": "Thêm thành viên"
+            },
+            "role": {
+                "MOM": "Mẹ",
+                "DAD": "Bố",
+                "GRANDMA": "Bà",
+                "CAREGIVER": "Người chăm sóc",
+                "ADMIN": "Quản trị"
+            },
+            "modal": {
+                "createTitle": "Tạo thành viên gia đình",
+                "displayNameLabel": "Tên hiển thị",
+                "displayNamePlaceholder": "Nhập tên hiển thị",
+                "usernameLabel": "Tên đăng nhập",
+                "usernamePlaceholder": "Nhập username",
+                "emailLabel": "Email",
+                "emailPlaceholder": "Nhập email",
+                "roleLabel": "Vai trò"
+            },
+            "messages": {
+                "createSuccess": "Thêm thành viên thành công.",
+                "createFailed": "Không thể thêm thành viên."
+            }
+        },
+        "insights": {
+            "title": "Phân Tích Gia Đình",
+            "subtitle": "Chỉ số nhanh cho giấc ngủ, ngân sách và khối lượng công việc",
+            "sleepScore": "Điểm giấc ngủ của bé",
+            "budgetScore": "Điểm an toàn ngân sách",
+            "workloadScore": "Điểm cân bằng công việc"
+        },
+        "profile": {
+            "title": "Hồ Sơ",
+            "subtitle": "Thông tin tài khoản và vai trò trong gia đình",
+            "roleLabel": "Vai trò",
+            "usernameLabel": "Tên đăng nhập",
+            "emailLabel": "Email"
+        },
+        "settings": {
+            "title": "Cài Đặt",
+            "subtitle": "Thiết lập thông báo và nhắc việc cho gia đình",
+            "dailyReminder": {
+                "title": "Nhắc việc hằng ngày",
+                "desc": "Bật nhắc nhở tóm tắt cho phụ huynh"
+            },
+            "reminderTime": {
+                "title": "Giờ nhắc việc",
+                "desc": "Khung giờ ưu tiên để nhận tổng hợp gia đình"
+            },
+            "modal": {
+                "title": "Lưu cài đặt",
+                "description": "Áp dụng cài đặt nhắc việc lúc {{hour}}?"
+            },
+            "messages": {
+                "saveSuccess": "Lưu cài đặt thành công.",
+                "saveFailed": "Không thể lưu cài đặt."
+            }
+        }
     }
 }

@@ -2339,5 +2339,277 @@
         "avatarUploadFailed": "Failed to upload avatar."
       }
     }
+  },
+  "momApp": {
+    "common": {
+      "success": "Success",
+      "notAvailable": "N/A"
+    },
+    "home": {
+      "title": "Login successful",
+      "subtitle": "All family modules are now available from the main dashboard."
+    },
+    "layout": {
+      "brandTitle": "MOM SUPER APP",
+      "brandSubtitle": "Family OS",
+      "hello": "Hello",
+      "toggleTheme": "Toggle theme",
+      "logout": "Logout",
+      "familyMember": "Family member",
+      "authenticatedSession": "Authenticated session",
+      "userFallback": "Family User",
+      "menu": {
+        "overview": "Overview",
+        "dashboard": "Dashboard",
+        "familyCare": "Family Care",
+        "baby": "Baby",
+        "meals": "Meals",
+        "tasks": "Tasks",
+        "finance": "Finance",
+        "expenses": "Expenses",
+        "shopping": "Shopping",
+        "insights": "Insights",
+        "account": "Account",
+        "family": "Family",
+        "profile": "Profile",
+        "settings": "Settings"
+      }
+    },
+    "dashboard": {
+      "title": "Family Dashboard",
+      "subtitle": "overview for today",
+      "familyFallback": "Family",
+      "moodScore": "Mood score",
+      "spentToday": "Spent today",
+      "pendingTasks": "Pending tasks",
+      "shoppingReminders": "Shopping reminders",
+      "babySleepHours": "Baby sleep hours",
+      "todayMeals": "Today meals",
+      "noMeals": "No meal plan for today yet.",
+      "budgetHealth": "Budget health",
+      "topCategory": "Top category"
+    },
+    "tasks": {
+      "title": "Family Tasks",
+      "subtitle": "Assign clearly so daily workload is balanced",
+      "totalLabel": "total tasks",
+      "unassigned": "Unassigned",
+      "noDeadline": "No deadline",
+      "actions": {
+        "create": "New task",
+        "complete": "Complete"
+      },
+      "status": {
+        "done": "Done",
+        "pending": "Pending"
+      },
+      "modal": {
+        "createTitle": "Create task",
+        "titleLabel": "Task title",
+        "titlePlaceholder": "e.g. Book vaccine appointment",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Optional details",
+        "dueAtLabel": "Due date"
+      },
+      "messages": {
+        "createSuccess": "Task created successfully.",
+        "createFailed": "Unable to create task.",
+        "completeSuccess": "Task marked as completed.",
+        "completeFailed": "Unable to complete task."
+      }
+    },
+    "shopping": {
+      "title": "Shopping List",
+      "subtitle": "Groceries and baby supplies in one checklist",
+      "totalLabel": "items",
+      "actions": {
+        "create": "Add item",
+        "check": "Mark bought",
+        "uncheck": "Mark pending"
+      },
+      "status": {
+        "bought": "Bought",
+        "toBuy": "To buy"
+      },
+      "modal": {
+        "createTitle": "Add shopping item",
+        "nameLabel": "Item name",
+        "namePlaceholder": "e.g. Diaper size M",
+        "quantityLabel": "Quantity",
+        "quantityPlaceholder": "e.g. 2 packs",
+        "noteLabel": "Note",
+        "notePlaceholder": "Optional note"
+      },
+      "messages": {
+        "createSuccess": "Shopping item created.",
+        "createFailed": "Unable to create shopping item.",
+        "updateFailed": "Unable to update shopping item."
+      }
+    },
+    "meals": {
+      "title": "Meal Planner",
+      "subtitle": "Weekly meal plan for parents and baby-friendly routine",
+      "totalLabel": "planned days",
+      "actions": {
+        "create": "Add plan"
+      },
+      "table": {
+        "day": "Day",
+        "breakfast": "Breakfast",
+        "lunch": "Lunch",
+        "dinner": "Dinner"
+      },
+      "mealType": {
+        "BREAKFAST": "Breakfast",
+        "LUNCH": "Lunch",
+        "DINNER": "Dinner",
+        "SNACK": "Snack"
+      },
+      "modal": {
+        "createTitle": "Create meal plan",
+        "mealNameLabel": "Meal name",
+        "mealNamePlaceholder": "e.g. Chicken soup",
+        "mealTypeLabel": "Meal type",
+        "planDateLabel": "Plan date",
+        "noteLabel": "Note",
+        "notePlaceholder": "Optional note"
+      },
+      "messages": {
+        "createSuccess": "Meal plan created.",
+        "createFailed": "Unable to create meal plan."
+      }
+    },
+    "expenses": {
+      "title": "Expense Control",
+      "subtitle": "Track family spending and keep monthly budget safe",
+      "actions": {
+        "create": "Add expense"
+      },
+      "budgetUsed": "Budget used",
+      "monthlyOverview": "Monthly overview",
+      "spentLabel": "Spent",
+      "budgetLabel": "Budget",
+      "topCategory": "Top category",
+      "modal": {
+        "createTitle": "Create expense",
+        "amountLabel": "Amount",
+        "amountPlaceholder": "Enter amount",
+        "categoryLabel": "Category",
+        "categoryPlaceholder": "e.g. Milk and diaper",
+        "noteLabel": "Note",
+        "notePlaceholder": "Optional note"
+      },
+      "messages": {
+        "createSuccess": "Expense created successfully.",
+        "createFailed": "Unable to create expense."
+      }
+    },
+    "baby": {
+      "title": "Baby Tracking",
+      "subtitle": "Daily logs for sleep, feeding, diaper and vaccine reminders",
+      "unknownName": "Baby",
+      "actions": {
+        "addProfile": "Add profile",
+        "addLog": "Add log"
+      },
+      "nextVaccine": "Next vaccine",
+      "profileTitle": "Profile",
+      "sleepToday": "Sleep today",
+      "feedingCount": "Feeding count",
+      "diaperChanges": "Diaper changes",
+      "vaccineDate": "Vaccine date",
+      "gender": {
+        "MALE": "Male",
+        "FEMALE": "Female",
+        "OTHER": "Other"
+      },
+      "logType": {
+        "SLEEP": "Sleep",
+        "FEEDING": "Feeding",
+        "DIAPER": "Diaper"
+      },
+      "modal": {
+        "createProfileTitle": "Create baby profile",
+        "nameLabel": "Baby name",
+        "namePlaceholder": "Enter baby name",
+        "birthDateLabel": "Birth date",
+        "genderLabel": "Gender",
+        "noteLabel": "Note",
+        "notePlaceholder": "Optional note",
+        "createLogTitle": "Create baby log",
+        "logTypeLabel": "Log type",
+        "valueLabel": "Value",
+        "valuePlaceholder": "Use hours for sleep"
+      },
+      "messages": {
+        "createBabySuccess": "Baby profile created.",
+        "createBabyFailed": "Unable to create baby profile.",
+        "createLogSuccess": "Baby log created.",
+        "createLogFailed": "Unable to create baby log."
+      }
+    },
+    "family": {
+      "title": "Family Members",
+      "subtitle": "Role and collaboration overview for each member",
+      "totalLabel": "active members",
+      "actions": {
+        "create": "Add member"
+      },
+      "role": {
+        "MOM": "Mom",
+        "DAD": "Dad",
+        "GRANDMA": "Grandma",
+        "CAREGIVER": "Caregiver",
+        "ADMIN": "Admin"
+      },
+      "modal": {
+        "createTitle": "Create family member",
+        "displayNameLabel": "Display name",
+        "displayNamePlaceholder": "Enter display name",
+        "usernameLabel": "Username",
+        "usernamePlaceholder": "Enter username",
+        "emailLabel": "Email",
+        "emailPlaceholder": "Enter email",
+        "roleLabel": "Role"
+      },
+      "messages": {
+        "createSuccess": "Family member created.",
+        "createFailed": "Unable to create family member."
+      }
+    },
+    "insights": {
+      "title": "Family Insights",
+      "subtitle": "Quick indicators for sleep, budget and workload",
+      "sleepScore": "Baby sleep score",
+      "budgetScore": "Budget safety score",
+      "workloadScore": "Workload balance"
+    },
+    "profile": {
+      "title": "Profile",
+      "subtitle": "Account identity and role in family coordination",
+      "roleLabel": "Role",
+      "usernameLabel": "Username",
+      "emailLabel": "Email"
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Notification and reminder preferences for family workflow",
+      "dailyReminder": {
+        "title": "Daily reminder",
+        "desc": "Enable summary reminders for parents"
+      },
+      "reminderTime": {
+        "title": "Reminder time",
+        "desc": "Preferred hour for family digest"
+      },
+      "modal": {
+        "title": "Save settings",
+        "description": "Apply reminder settings with time {{hour}}?"
+      },
+      "messages": {
+        "saveSuccess": "Settings saved successfully.",
+        "saveFailed": "Unable to save settings."
+      }
+    }
   }
 }

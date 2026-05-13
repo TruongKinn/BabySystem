@@ -14,88 +14,88 @@
           <span nz-icon nzType="heart" nzTheme="fill"></span>
         </span>
         <div class="brand-text" *ngIf="!isCollapsed">
-          <h1>MOM SUPER APP</h1>
-          <p>Family OS</p>
+          <h1>{{ 'momApp.layout.brandTitle' | translate }}</h1>
+          <p>{{ 'momApp.layout.brandSubtitle' | translate }}</p>
         </div>
       </a>
     </div>
 
     <ul nz-menu [nzTheme]="isDarkMode ? 'dark' : 'light'" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-      <li nz-submenu nzTitle="Overview" nzIcon="dashboard">
+      <li nz-submenu [nzTitle]="'momApp.layout.menu.overview' | translate" nzIcon="dashboard">
         <ul>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/dashboard">
               <span nz-icon nzType="home"></span>
-              <span>Dashboard</span>
+              <span>{{ 'momApp.layout.menu.dashboard' | translate }}</span>
             </a>
           </li>
         </ul>
       </li>
 
-      <li nz-submenu nzTitle="Family Care" nzIcon="heart">
+      <li nz-submenu [nzTitle]="'momApp.layout.menu.familyCare' | translate" nzIcon="heart">
         <ul>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/baby">
               <span nz-icon nzType="smile"></span>
-              <span>Baby</span>
+              <span>{{ 'momApp.layout.menu.baby' | translate }}</span>
             </a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/meals">
               <span nz-icon nzType="coffee"></span>
-              <span>Meals</span>
+              <span>{{ 'momApp.layout.menu.meals' | translate }}</span>
             </a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/tasks">
               <span nz-icon nzType="check-square"></span>
-              <span>Tasks</span>
+              <span>{{ 'momApp.layout.menu.tasks' | translate }}</span>
             </a>
           </li>
         </ul>
       </li>
 
-      <li nz-submenu nzTitle="Finance" nzIcon="wallet">
+      <li nz-submenu [nzTitle]="'momApp.layout.menu.finance' | translate" nzIcon="wallet">
         <ul>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/expenses">
               <span nz-icon nzType="wallet"></span>
-              <span>Expenses</span>
+              <span>{{ 'momApp.layout.menu.expenses' | translate }}</span>
             </a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/shopping">
               <span nz-icon nzType="shopping-cart"></span>
-              <span>Shopping</span>
+              <span>{{ 'momApp.layout.menu.shopping' | translate }}</span>
             </a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/insights">
               <span nz-icon nzType="line-chart"></span>
-              <span>Insights</span>
+              <span>{{ 'momApp.layout.menu.insights' | translate }}</span>
             </a>
           </li>
         </ul>
       </li>
 
-      <li nz-submenu nzTitle="Account" nzIcon="team">
+      <li nz-submenu [nzTitle]="'momApp.layout.menu.account' | translate" nzIcon="team">
         <ul>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/family">
               <span nz-icon nzType="team"></span>
-              <span>Family</span>
+              <span>{{ 'momApp.layout.menu.family' | translate }}</span>
             </a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/profile">
               <span nz-icon nzType="user"></span>
-              <span>Profile</span>
+              <span>{{ 'momApp.layout.menu.profile' | translate }}</span>
             </a>
           </li>
           <li nz-menu-item nzMatchRouter>
             <a routerLink="/settings">
               <span nz-icon nzType="setting"></span>
-              <span>Settings</span>
+              <span>{{ 'momApp.layout.menu.settings' | translate }}</span>
             </a>
           </li>
         </ul>
@@ -116,7 +116,7 @@
       </div>
       <div class="sidebar-footer-info" *ngIf="!isCollapsed">
         <div class="sidebar-footer-name">{{ username }}</div>
-        <div class="sidebar-footer-role">Family member</div>
+        <div class="sidebar-footer-role">{{ 'momApp.layout.familyMember' | translate }}</div>
       </div>
     </div>
 
@@ -124,12 +124,12 @@
       <div class="logout-popover-content">
         <div class="popover-user-info">
           <strong>{{ username }}</strong>
-          <span>Authenticated session</span>
+          <span>{{ 'momApp.layout.authenticatedSession' | translate }}</span>
         </div>
         <nz-divider style="margin: 8px 0"></nz-divider>
         <div class="logout-action" (click)="logout()">
           <span nz-icon nzType="logout"></span>
-          <span>Logout</span>
+          <span>{{ 'momApp.layout.logout' | translate }}</span>
         </div>
       </div>
     </ng-template>
@@ -144,6 +144,18 @@
       <div class="app-header">
         <div></div>
         <div class="header-user">
+          <div class="language-switcher">
+            <button
+              *ngFor="let lang of languageOptions"
+              nz-button
+              nzSize="small"
+              [nzType]="currentLanguage === lang.code ? 'primary' : 'default'"
+              (click)="setLanguage(lang.code)"
+            >
+              {{ lang.shortLabel }}
+            </button>
+          </div>
+
           <span
             class="theme-toggle-icon"
             nz-icon
@@ -151,7 +163,7 @@
             [style.color]="isDarkMode ? '#ffc107' : '#555'"
             (click)="toggleTheme()"
             nz-tooltip
-            nzTooltipTitle="Toggle theme"
+            [nzTooltipTitle]="'momApp.layout.toggleTheme' | translate"
           ></span>
 
           <nz-avatar
@@ -164,7 +176,7 @@
           >
           </nz-avatar>
 
-          <span nz-typography>Hello, <strong>{{ username }}</strong></span>
+          <span nz-typography>{{ 'momApp.layout.hello' | translate }}, <strong>{{ username }}</strong></span>
         </div>
       </div>
     </nz-header>

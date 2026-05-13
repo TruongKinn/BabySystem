@@ -1,3 +1,9 @@
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .task-list {
   list-style: none;
   margin: 0;
@@ -30,6 +36,12 @@
   margin: 0;
   color: var(--text-secondary);
   font-size: 13px;
+}
+
+.task-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 @media (max-width: 575.98px) {

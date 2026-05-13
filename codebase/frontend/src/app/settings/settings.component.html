@@ -1,26 +1,44 @@
 <section class="page-container">
   <div class="header-actions">
     <div>
-      <h1 class="page-title">Settings</h1>
-      <p class="page-subtitle">Notification and reminder preferences for the family workflow</p>
+      <h1 class="page-title">{{ 'momApp.settings.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'momApp.settings.subtitle' | translate }}</p>
     </div>
+    <button nz-button nzType="primary" (click)="openSaveModal()">
+      <span nz-icon nzType="save"></span>
+      {{ 'commonActions.save' | translate }}
+    </button>
   </div>
 
   <nz-card class="table-card settings-card">
     <div class="setting-row">
       <div>
-        <p class="setting-title">Daily reminder</p>
-        <span>Enable summary reminders for parents</span>
+        <p class="setting-title">{{ 'momApp.settings.dailyReminder.title' | translate }}</p>
+        <span>{{ 'momApp.settings.dailyReminder.desc' | translate }}</span>
       </div>
       <nz-switch [(ngModel)]="notificationEnabled"></nz-switch>
     </div>
 
     <div class="setting-row">
       <div>
-        <p class="setting-title">Reminder time</p>
-        <span>Preferred hour for family digest</span>
+        <p class="setting-title">{{ 'momApp.settings.reminderTime.title' | translate }}</p>
+        <span>{{ 'momApp.settings.reminderTime.desc' | translate }}</span>
       </div>
       <input nz-input [(ngModel)]="reminderHour" />
     </div>
   </nz-card>
 </section>
+
+<nz-modal
+  [(nzVisible)]="isSaveModalVisible"
+  [nzTitle]="'momApp.settings.modal.title' | translate"
+  [nzOkLoading]="isSaving"
+  [nzOkText]="'commonActions.save' | translate"
+  [nzCancelText]="'commonActions.cancel' | translate"
+  (nzOnCancel)="closeSaveModal()"
+  (nzOnOk)="confirmSaveSettings()"
+>
+  <ng-container *nzModalContent>
+    <p>{{ 'momApp.settings.modal.description' | translate : { hour: reminderHour } }}</p>
+  </ng-container>
+</nz-modal>

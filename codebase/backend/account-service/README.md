@@ -22,3 +22,8 @@ Environment variables:
 - `DB_USERNAME` default `postgres`
 - `DB_PASSWORD` default `postgres`
 - `PORT` default `8082`
+- `KAFKA_BOOTSTRAP_SERVERS` default `localhost:9092`
+- `REDIS_HOST` default `localhost`
+- `REDIS_PORT` default `6379`
+- `VAULT_URI` default `http://localhost:8200`
+- `VAULT_TOKEN` default `root`

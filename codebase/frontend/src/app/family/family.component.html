@@ -1,13 +1,19 @@
 <section class="page-container" *ngIf="members$ | async as members">
   <div class="header-actions">
     <div>
-      <h1 class="page-title">Family Members</h1>
-      <p class="page-subtitle">Role and collaboration overview for each member</p>
+      <h1 class="page-title">{{ 'momApp.family.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'momApp.family.subtitle' | translate }}</p>
     </div>
-    <span class="pill-chip">
-      <span nz-icon nzType="team"></span>
-      {{ members.length }} active members
-    </span>
+    <div class="header-buttons">
+      <button nz-button nzType="primary" (click)="openCreateMemberModal()">
+        <span nz-icon nzType="user-add"></span>
+        {{ 'momApp.family.actions.create' | translate }}
+      </button>
+      <span class="pill-chip">
+        <span nz-icon nzType="team"></span>
+        {{ members.length }} {{ 'momApp.family.totalLabel' | translate }}
+      </span>
+    </div>
   </div>
 
   <nz-card class="table-card">
@@ -17,8 +23,52 @@
           <nz-avatar [nzText]="member.name.charAt(0)" [style.background-color]="member.avatarColor"></nz-avatar>
           <span>{{ member.name }}</span>
         </div>
-        <nz-tag nzColor="geekblue">{{ member.role }}</nz-tag>
+        <nz-tag nzColor="geekblue">{{ roleLabel(member.role) }}</nz-tag>
       </li>
     </ul>
   </nz-card>
 </section>
+
+<nz-modal
+  [(nzVisible)]="isCreateMemberModalVisible"
+  [nzTitle]="'momApp.family.modal.createTitle' | translate"
+  [nzOkLoading]="isSubmitting"
+  [nzOkText]="'commonActions.save' | translate"
+  [nzCancelText]="'commonActions.cancel' | translate"
+  (nzOnCancel)="closeCreateMemberModal()"
+  (nzOnOk)="submitCreateMember()"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="createMemberForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.family.modal.displayNameLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="displayName" [placeholder]="'momApp.family.modal.displayNamePlaceholder' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.family.modal.usernameLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="username" [placeholder]="'momApp.family.modal.usernamePlaceholder' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.family.modal.emailLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input type="email" formControlName="email" [placeholder]="'momApp.family.modal.emailPlaceholder' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.family.modal.roleLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="role">
+            <nz-option *ngFor="let role of roles" [nzValue]="role" [nzLabel]="roleLabel(role)"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

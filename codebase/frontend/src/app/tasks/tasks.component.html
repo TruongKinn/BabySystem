@@ -1,13 +1,19 @@
 <section class="page-container" *ngIf="tasks$ | async as tasks">
   <div class="header-actions">
     <div>
-      <h1 class="page-title">Family Tasks</h1>
-      <p class="page-subtitle">Assign clearly so daily workload is balanced</p>
+      <h1 class="page-title">{{ 'momApp.tasks.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'momApp.tasks.subtitle' | translate }}</p>
     </div>
-    <span class="pill-chip">
-      <span nz-icon nzType="check-circle"></span>
-      {{ tasks.length }} total tasks
-    </span>
+    <div class="header-buttons">
+      <button nz-button nzType="primary" (click)="openCreateModal()">
+        <span nz-icon nzType="plus"></span>
+        {{ 'momApp.tasks.actions.create' | translate }}
+      </button>
+      <span class="pill-chip">
+        <span nz-icon nzType="check-circle"></span>
+        {{ tasks.length }} {{ 'momApp.tasks.totalLabel' | translate }}
+      </span>
+    </div>
   </div>
 
   <nz-card class="table-card">
@@ -15,10 +21,64 @@
       <li *ngFor="let task of tasks" [ngClass]="{ done: task.done }">
         <div>
           <p class="task-title">{{ task.title }}</p>
-          <p class="task-meta">{{ task.assignee }} - {{ task.dueAt }}</p>
+          <p class="task-meta">
+            {{ task.assignee || ('momApp.tasks.unassigned' | translate) }} -
+            {{ task.dueAt || ('momApp.tasks.noDeadline' | translate) }}
+          </p>
         </div>
-        <nz-tag [nzColor]="task.done ? 'green' : 'orange'">{{ task.done ? 'Done' : 'Pending' }}</nz-tag>
+        <div class="task-actions">
+          <button
+            *ngIf="!task.done"
+            nz-button
+            nzSize="small"
+            nzType="default"
+            (click)="completeTask(task.id)"
+          >
+            {{ 'momApp.tasks.actions.complete' | translate }}
+          </button>
+          <nz-tag [nzColor]="task.done ? 'green' : 'orange'">{{ task.done ? ('momApp.tasks.status.done' | translate) : ('momApp.tasks.status.pending' | translate) }}</nz-tag>
+        </div>
       </li>
     </ul>
   </nz-card>
 </section>
+
+<nz-modal
+  [(nzVisible)]="isCreateModalVisible"
+  [nzTitle]="'momApp.tasks.modal.createTitle' | translate"
+  [nzOkLoading]="isSubmitting"
+  [nzOkText]="'commonActions.save' | translate"
+  [nzCancelText]="'commonActions.cancel' | translate"
+  (nzOnCancel)="closeCreateModal()"
+  (nzOnOk)="submitCreateTask()"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="createTaskForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.tasks.modal.titleLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="title" [placeholder]="'momApp.tasks.modal.titlePlaceholder' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.tasks.modal.descriptionLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <textarea
+            nz-input
+            rows="3"
+            formControlName="description"
+            [placeholder]="'momApp.tasks.modal.descriptionPlaceholder' | translate"
+          ></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.tasks.modal.dueAtLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <nz-date-picker formControlName="dueAt" nzFormat="yyyy-MM-dd"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

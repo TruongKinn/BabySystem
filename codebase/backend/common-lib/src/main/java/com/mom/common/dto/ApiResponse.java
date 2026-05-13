@@ -1,4 +1,4 @@
-package com.mom.account.controller.dto;
+package com.mom.common.dto;
 
 public record ApiResponse<T>(
         boolean success,

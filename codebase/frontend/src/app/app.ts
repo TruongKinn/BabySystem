@@ -2,6 +2,7 @@ import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
+import { TranslateModule } from '@ngx-translate/core';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
@@ -13,6 +14,9 @@ import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { AuthService } from './auth/auth.service';
+import { SUPPORTED_LANGUAGES } from './i18n/i18n.constants';
+import { I18nService } from './i18n/i18n.service';
+import { LanguageCode } from './i18n/language.model';
 
 @Component({
   selector: 'app-root',
@@ -21,6 +25,7 @@ import { AuthService } from './auth/auth.service';
     CommonModule,
     RouterOutlet,
     RouterLink,
+    TranslateModule,
     NzAvatarModule,
     NzButtonModule,
     NzDividerModule,
@@ -41,9 +46,12 @@ export class App implements OnInit {
   avatarUrl?: string;
   showLayout = true;
   isDarkMode = false;
+  readonly languageOptions = SUPPORTED_LANGUAGES;
+  currentLanguage: LanguageCode = 'vi';
 
   constructor(
     private readonly authService: AuthService,
+    private readonly i18nService: I18nService,
     private readonly router: Router,
     @Inject(PLATFORM_ID) private readonly platformId: object
   ) {
@@ -79,6 +87,11 @@ export class App implements OnInit {
         this.showLayout = false;
       }
     });
+
+    this.currentLanguage = this.i18nService.getCurrentLanguage();
+    this.i18nService.currentLanguage$.subscribe((language) => {
+      this.currentLanguage = language;
+    });
   }
 
   get isLoggedIn(): boolean {
@@ -93,7 +106,7 @@ export class App implements OnInit {
     if (firstName && lastName) {
       return `${firstName} ${lastName}`;
     }
-    return username || 'Family User';
+    return username || this.i18nService.translate('momApp.layout.userFallback');
   }
 
   get userInitials(): string {
@@ -118,5 +131,9 @@ export class App implements OnInit {
       document.body.classList.remove('dark-theme');
       localStorage.setItem('theme', 'light');
     }
+  }
+
+  setLanguage(language: LanguageCode): void {
+    void this.i18nService.setLanguage(language);
   }
 }

@@ -2,6 +2,12 @@
   max-width: 760px;
 }
 
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .expense-row {
   display: flex;
   justify-content: space-between;

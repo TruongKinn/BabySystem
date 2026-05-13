@@ -1,3 +1,10 @@
 .baby-card {
   max-width: 920px;
 }
+
+.header-buttons {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}

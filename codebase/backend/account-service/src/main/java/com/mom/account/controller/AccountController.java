@@ -1,12 +1,12 @@
 package com.mom.account.controller;
 
 import com.mom.account.controller.dto.AddFamilyMemberRequest;
-import com.mom.account.controller.dto.ApiResponse;
 import com.mom.account.controller.dto.CreateFamilyRequest;
 import com.mom.account.controller.dto.CreateUserRequest;
 import com.mom.account.controller.dto.FamilyResponse;
 import com.mom.account.controller.dto.UserResponse;
 import com.mom.account.service.AccountService;
+import com.mom.common.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;

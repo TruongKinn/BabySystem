@@ -1,0 +1,375 @@
+package com.mom.expense.service;
+
+import com.mom.expense.controller.dto.BudgetResponse;
+import com.mom.expense.controller.dto.CreateBudgetRequest;
+import com.mom.expense.controller.dto.CreateExpenseCategoryRequest;
+import com.mom.expense.controller.dto.CreateExpenseRequest;
+import com.mom.expense.controller.dto.ExpenseCategoryReportResponse;
+import com.mom.expense.controller.dto.ExpenseCategoryResponse;
+import com.mom.expense.controller.dto.ExpenseDailySummaryResponse;
+import com.mom.expense.controller.dto.ExpenseResponse;
+import com.mom.expense.controller.dto.ExpenseSummaryResponse;
+import com.mom.expense.controller.dto.UpdateBudgetRequest;
+import com.mom.expense.controller.dto.UpdateExpenseRequest;
+import com.mom.expense.domain.BudgetEntity;
+import com.mom.expense.domain.ExpenseCategoryEntity;
+import com.mom.expense.domain.ExpenseEntity;
+import com.mom.expense.event.ExpenseChangedPayload;
+import com.mom.expense.event.ExpenseEventPublisher;
+import com.mom.expense.repository.BudgetRepository;
+import com.mom.expense.repository.ExpenseCategoryRepository;
+import com.mom.expense.repository.ExpenseRepository;
+import com.mom.common.exception.ResourceNotFoundException;
+import com.mom.common.utils.MonthUtils;
+import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.YearMonth;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class ExpenseService {
+
+    private final ExpenseCategoryRepository expenseCategoryRepository;
+    private final BudgetRepository budgetRepository;
+    private final ExpenseRepository expenseRepository;
+    private final ExpenseEventPublisher expenseEventPublisher;
+
+    @Transactional
+    @CacheEvict(value = "expense-summary", allEntries = true)
+    public ExpenseCategoryResponse createCategory(CreateExpenseCategoryRequest request) {
+        if (expenseCategoryRepository.existsByFamilyIdAndNameIgnoreCase(request.familyId(), request.name().trim())) {
+            throw new IllegalArgumentException("Category name already exists in this family");
+        }
+
+        ExpenseCategoryEntity category = new ExpenseCategoryEntity();
+        category.setFamilyId(request.familyId());
+        category.setName(request.name().trim());
+        category.setColorCode(normalizeColor(request.colorCode()));
+        category.setDefaultCategory(Boolean.TRUE.equals(request.defaultCategory()));
+        ExpenseCategoryEntity saved = expenseCategoryRepository.save(category);
+        return toCategoryResponse(saved);
+    }
+
+    public List<ExpenseCategoryResponse> getCategories(Long familyId) {
+        return expenseCategoryRepository.findByFamilyIdOrderByNameAsc(familyId).stream()
+                .map(this::toCategoryResponse)
+                .toList();
+    }
+
+    @Transactional
+    @CacheEvict(value = "expense-summary", allEntries = true)
+    public BudgetResponse createBudget(CreateBudgetRequest request) {
+        YearMonth month = MonthUtils.parse(request.month());
+
+        budgetRepository.findByFamilyIdAndMonthKey(request.familyId(), MonthUtils.format(month))
+                .ifPresent(existing -> {
+                    throw new IllegalArgumentException("Budget already exists for this month");
+                });
+
+        BudgetEntity budget = new BudgetEntity();
+        budget.setFamilyId(request.familyId());
+        budget.setMonthKey(MonthUtils.format(month));
+        budget.setLimitAmount(request.limitAmount());
+
+        return toBudgetResponse(budgetRepository.save(budget));
+    }
+
+    @Transactional
+    @CacheEvict(value = "expense-summary", allEntries = true)
+    public BudgetResponse updateBudget(Long budgetId, UpdateBudgetRequest request) {
+        BudgetEntity budget = budgetRepository.findById(budgetId)
+                .orElseThrow(() -> new ResourceNotFoundException("Budget not found"));
+
+        budget.setLimitAmount(request.limitAmount());
+        return toBudgetResponse(budgetRepository.save(budget));
+    }
+
+    public List<BudgetResponse> getBudgets(Long familyId) {
+        return budgetRepository.findByFamilyIdOrderByMonthKeyDesc(familyId).stream()
+                .map(this::toBudgetResponse)
+                .toList();
+    }
+
+    @Transactional
+    @CacheEvict(value = "expense-summary", allEntries = true)
+    public ExpenseResponse createExpense(CreateExpenseRequest request) {
+        ExpenseCategoryEntity category = expenseCategoryRepository.findById(request.categoryId())
+                .orElseThrow(() -> new ResourceNotFoundException("Expense category not found"));
+
+        if (!category.getFamilyId().equals(request.familyId())) {
+            throw new IllegalArgumentException("Category does not belong to this family");
+        }
+
+        ExpenseEntity expense = new ExpenseEntity();
+        expense.setFamilyId(request.familyId());
+        expense.setCategoryId(request.categoryId());
+        expense.setAmount(request.amount());
+        expense.setCurrency(request.currency().trim().toUpperCase());
+        expense.setNote(trimToNull(request.note()));
+        expense.setSpentAt(request.spentAt());
+        ExpenseEntity saved = expenseRepository.save(expense);
+        expenseEventPublisher.publishExpenseCreated(saved.getFamilyId(), toExpenseChangedPayload(saved));
+        return toExpenseResponse(saved, category.getName());
+    }
+
+    public ExpenseResponse getExpense(Long expenseId) {
+        ExpenseEntity expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Expense not found"));
+        String categoryName = getCategoryName(expense.getCategoryId());
+        return toExpenseResponse(expense, categoryName);
+    }
+
+    public List<ExpenseResponse> getExpenses(Long familyId, String month, Long categoryId) {
+        List<ExpenseEntity> expenses = queryExpenses(familyId, month, categoryId);
+        Map<Long, String> categoryNameMap = loadCategoryNames(expenses);
+        return expenses.stream()
+                .map(expense -> toExpenseResponse(expense, categoryNameMap.getOrDefault(expense.getCategoryId(), "Unknown")))
+                .toList();
+    }
+
+    @Transactional
+    @CacheEvict(value = "expense-summary", allEntries = true)
+    public ExpenseResponse updateExpense(Long expenseId, UpdateExpenseRequest request) {
+        ExpenseEntity expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Expense not found"));
+
+        if (request.categoryId() != null && !request.categoryId().equals(expense.getCategoryId())) {
+            ExpenseCategoryEntity category = expenseCategoryRepository.findById(request.categoryId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Expense category not found"));
+            if (!category.getFamilyId().equals(expense.getFamilyId())) {
+                throw new IllegalArgumentException("Category does not belong to this family");
+            }
+            expense.setCategoryId(request.categoryId());
+        }
+
+        if (request.amount() != null) {
+            expense.setAmount(request.amount());
+        }
+        if (request.currency() != null) {
+            expense.setCurrency(request.currency().trim().toUpperCase());
+        }
+        if (request.note() != null) {
+            expense.setNote(trimToNull(request.note()));
+        }
+        if (request.spentAt() != null) {
+            expense.setSpentAt(request.spentAt());
+        }
+
+        ExpenseEntity saved = expenseRepository.save(expense);
+        expenseEventPublisher.publishExpenseUpdated(saved.getFamilyId(), toExpenseChangedPayload(saved));
+        String categoryName = getCategoryName(saved.getCategoryId());
+        return toExpenseResponse(saved, categoryName);
+    }
+
+    @Transactional
+    @CacheEvict(value = "expense-summary", allEntries = true)
+    public void deleteExpense(Long expenseId) {
+        ExpenseEntity expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Expense not found"));
+        expenseRepository.delete(expense);
+        expenseEventPublisher.publishExpenseDeleted(expense.getFamilyId(), toExpenseChangedPayload(expense));
+    }
+
+    @Cacheable(value = "expense-summary", key = "#familyId + ':' + #month")
+    public ExpenseSummaryResponse getMonthlySummary(Long familyId, String month) {
+        YearMonth yearMonth = MonthUtils.parse(month);
+        OffsetDateTime from = yearMonth.atDay(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+        OffsetDateTime to = yearMonth.plusMonths(1).atDay(1).atStartOfDay().atOffset(ZoneOffset.UTC).minusNanos(1);
+
+        List<ExpenseEntity> expenses = expenseRepository.findByFamilyIdAndSpentAtBetweenOrderBySpentAtDesc(familyId, from, to);
+        Map<Long, String> categoryNameMap = loadCategoryNames(expenses);
+        Map<Long, BigDecimal> totalByCategory = buildCategoryTotals(expenses);
+
+        BigDecimal total = sumAmounts(expenses);
+
+        List<ExpenseSummaryResponse.CategorySummary> categorySummaries = totalByCategory.entrySet().stream()
+                .map(entry -> new ExpenseSummaryResponse.CategorySummary(
+                        entry.getKey(),
+                        categoryNameMap.getOrDefault(entry.getKey(), "Unknown"),
+                        entry.getValue()
+                ))
+                .sorted((left, right) -> right.totalAmount().compareTo(left.totalAmount()))
+                .toList();
+
+        return new ExpenseSummaryResponse(MonthUtils.format(yearMonth), total, categorySummaries);
+    }
+
+    public ExpenseDailySummaryResponse getDailySummary(Long familyId, LocalDate date) {
+        LocalDate targetDate = date != null ? date : LocalDate.now(ZoneOffset.UTC);
+        OffsetDateTime from = startOfDayUtc(targetDate);
+        OffsetDateTime to = endOfDayUtc(targetDate);
+
+        List<ExpenseEntity> expenses = expenseRepository.findByFamilyIdAndSpentAtBetweenOrderBySpentAtDesc(familyId, from, to);
+        Map<Long, String> categoryNameMap = loadCategoryNames(expenses);
+        Map<Long, BigDecimal> totalByCategory = buildCategoryTotals(expenses);
+
+        List<ExpenseDailySummaryResponse.CategorySummary> categorySummaries = totalByCategory.entrySet().stream()
+                .map(entry -> new ExpenseDailySummaryResponse.CategorySummary(
+                        entry.getKey(),
+                        categoryNameMap.getOrDefault(entry.getKey(), "Unknown"),
+                        entry.getValue()
+                ))
+                .sorted((left, right) -> right.totalAmount().compareTo(left.totalAmount()))
+                .toList();
+
+        return new ExpenseDailySummaryResponse(targetDate.toString(), sumAmounts(expenses), categorySummaries);
+    }
+
+    public ExpenseCategoryReportResponse getCategoryReport(Long familyId, String month) {
+        YearMonth yearMonth = MonthUtils.parse(month);
+        OffsetDateTime from = yearMonth.atDay(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+        OffsetDateTime to = yearMonth.plusMonths(1).atDay(1).atStartOfDay().atOffset(ZoneOffset.UTC).minusNanos(1);
+
+        List<ExpenseEntity> expenses = expenseRepository.findByFamilyIdAndSpentAtBetweenOrderBySpentAtDesc(familyId, from, to);
+        Map<Long, String> categoryNameMap = loadCategoryNames(expenses);
+        Map<Long, BigDecimal> totalByCategory = buildCategoryTotals(expenses);
+        Map<Long, Long> countByCategory = expenses.stream()
+                .collect(Collectors.groupingBy(ExpenseEntity::getCategoryId, Collectors.counting()));
+
+        BigDecimal total = sumAmounts(expenses);
+        List<ExpenseCategoryReportResponse.CategoryReportItem> items = totalByCategory.entrySet().stream()
+                .map(entry -> new ExpenseCategoryReportResponse.CategoryReportItem(
+                        entry.getKey(),
+                        categoryNameMap.getOrDefault(entry.getKey(), "Unknown"),
+                        entry.getValue(),
+                        countByCategory.getOrDefault(entry.getKey(), 0L),
+                        toPercentage(entry.getValue(), total)
+                ))
+                .sorted((left, right) -> right.totalAmount().compareTo(left.totalAmount()))
+                .toList();
+
+        return new ExpenseCategoryReportResponse(MonthUtils.format(yearMonth), total, items);
+    }
+
+    private List<ExpenseEntity> queryExpenses(Long familyId, String month, Long categoryId) {
+        if (month == null || month.isBlank()) {
+            return categoryId == null
+                    ? expenseRepository.findByFamilyIdOrderBySpentAtDesc(familyId)
+                    : expenseRepository.findByFamilyIdAndCategoryIdOrderBySpentAtDesc(familyId, categoryId);
+        }
+
+        YearMonth yearMonth = MonthUtils.parse(month);
+        OffsetDateTime from = yearMonth.atDay(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+        OffsetDateTime to = yearMonth.plusMonths(1).atDay(1).atStartOfDay().atOffset(ZoneOffset.UTC).minusNanos(1);
+        return categoryId == null
+                ? expenseRepository.findByFamilyIdAndSpentAtBetweenOrderBySpentAtDesc(familyId, from, to)
+                : expenseRepository.findByFamilyIdAndCategoryIdAndSpentAtBetweenOrderBySpentAtDesc(familyId, categoryId, from, to);
+    }
+
+    private OffsetDateTime startOfDayUtc(LocalDate date) {
+        return date.atStartOfDay().atOffset(ZoneOffset.UTC);
+    }
+
+    private OffsetDateTime endOfDayUtc(LocalDate date) {
+        return date.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC).minusNanos(1);
+    }
+
+    private BigDecimal sumAmounts(List<ExpenseEntity> expenses) {
+        return expenses.stream()
+                .map(ExpenseEntity::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private Map<Long, BigDecimal> buildCategoryTotals(List<ExpenseEntity> expenses) {
+        return expenses.stream()
+                .collect(Collectors.groupingBy(
+                        ExpenseEntity::getCategoryId,
+                        Collectors.reducing(BigDecimal.ZERO, ExpenseEntity::getAmount, BigDecimal::add)
+                ));
+    }
+
+    private BigDecimal toPercentage(BigDecimal amount, BigDecimal total) {
+        if (total.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
+        return amount.multiply(BigDecimal.valueOf(100))
+                .divide(total, 2, RoundingMode.HALF_UP);
+    }
+
+    private Map<Long, String> loadCategoryNames(List<ExpenseEntity> expenses) {
+        Set<Long> categoryIds = expenses.stream()
+                .map(ExpenseEntity::getCategoryId)
+                .collect(Collectors.toSet());
+        return expenseCategoryRepository.findAllById(categoryIds).stream()
+                .collect(Collectors.toMap(ExpenseCategoryEntity::getId, ExpenseCategoryEntity::getName));
+    }
+
+    private String getCategoryName(Long categoryId) {
+        return expenseCategoryRepository.findById(categoryId)
+                .map(ExpenseCategoryEntity::getName)
+                .orElse("Unknown");
+    }
+
+    private String normalizeColor(String colorCode) {
+        if (colorCode == null || colorCode.isBlank()) {
+            return null;
+        }
+        String trimmed = colorCode.trim().toUpperCase();
+        return trimmed.startsWith("#") ? trimmed : "#" + trimmed;
+    }
+
+    private String trimToNull(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmed = value.trim();
+        return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    private ExpenseCategoryResponse toCategoryResponse(ExpenseCategoryEntity category) {
+        return new ExpenseCategoryResponse(
+                category.getId(),
+                category.getFamilyId(),
+                category.getName(),
+                category.getColorCode(),
+                category.isDefaultCategory()
+        );
+    }
+
+    private BudgetResponse toBudgetResponse(BudgetEntity budget) {
+        return new BudgetResponse(
+                budget.getId(),
+                budget.getFamilyId(),
+                budget.getMonthKey(),
+                budget.getLimitAmount()
+        );
+    }
+
+    private ExpenseResponse toExpenseResponse(ExpenseEntity expense, String categoryName) {
+        return new ExpenseResponse(
+                expense.getId(),
+                expense.getFamilyId(),
+                expense.getCategoryId(),
+                categoryName,
+                expense.getAmount(),
+                expense.getCurrency(),
+                expense.getNote(),
+                expense.getSpentAt()
+        );
+    }
+
+    private ExpenseChangedPayload toExpenseChangedPayload(ExpenseEntity expense) {
+        return new ExpenseChangedPayload(
+                expense.getId(),
+                expense.getFamilyId(),
+                expense.getCategoryId(),
+                expense.getAmount(),
+                expense.getCurrency(),
+                expense.getNote(),
+                expense.getSpentAt()
+        );
+    }
+}
