@@ -77,43 +77,41 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
                 : "";
 
         String token = extractBearerToken(exchange.getRequest().getHeaders());
-        Mono<AuthDecision> bearerDecision = StringUtils.hasText(token)
-                ? authorizeByBearer(requestMethod, requestPath, token)
-                : Mono.just(AuthDecision.rejected(HttpStatus.UNAUTHORIZED, "Missing or invalid Authorization header"));
-
-        return bearerDecision.flatMap(decision -> {
-                    if (decision.allowed()) {
-                        log.debug("Gateway authTypeResolved={} path={} method={}", decision.authTypeResolved(), requestPath, requestMethod);
-                        return chain.filter(exchange);
-                    }
-
-                    return authorizeByApiKey(exchange).flatMap(apiKeyDecision -> {
-                        if (apiKeyDecision.allowed()) {
-                            log.debug("Gateway authTypeResolved={} path={} method={}", apiKeyDecision.authTypeResolved(), requestPath, requestMethod);
+        if (StringUtils.hasText(token)) {
+            return authorizeByBearer(requestMethod, requestPath, token)
+                    .flatMap(decision -> {
+                        if (decision.allowed()) {
+                            log.debug("Gateway authTypeResolved={} path={} method={}", decision.authTypeResolved(), requestPath, requestMethod);
                             return chain.filter(exchange);
                         }
-                        HttpStatus status = decision.status() != null ? decision.status() : HttpStatus.FORBIDDEN;
-                        String message = decision.message() != null ? decision.message() : "Forbidden by API permission policy";
-                        if (apiKeyDecision.status() != null && apiKeyDecision.status().value() > status.value()) {
-                            status = apiKeyDecision.status();
-                            message = apiKeyDecision.message();
-                        }
+
+                        HttpStatus status = decision.status() != null ? decision.status() : HttpStatus.UNAUTHORIZED;
+                        String message = StringUtils.hasText(decision.message())
+                                ? decision.message()
+                                : "Invalid or expired access token";
                         return writeError(exchange, status, message);
+                    })
+                    .onErrorResume(ex -> {
+                        log.error("Bearer authorization check failed: {}", ex.getMessage(), ex);
+                        return writeError(exchange, HttpStatus.UNAUTHORIZED, "Invalid or expired access token");
                     });
+        }
+
+        return authorizeByApiKey(exchange)
+                .flatMap(apiKeyDecision -> {
+                    if (apiKeyDecision.allowed()) {
+                        log.debug("Gateway authTypeResolved={} path={} method={}", apiKeyDecision.authTypeResolved(), requestPath, requestMethod);
+                        return chain.filter(exchange);
+                    }
+                    HttpStatus status = apiKeyDecision.status() != null ? apiKeyDecision.status() : HttpStatus.FORBIDDEN;
+                    String message = StringUtils.hasText(apiKeyDecision.message())
+                            ? apiKeyDecision.message()
+                            : "Forbidden by API key policy";
+                    return writeError(exchange, status, message);
                 })
                 .onErrorResume(ex -> {
-                    log.error("Authorization check failed: {}", ex.getMessage(), ex);
-                    return authorizeByApiKey(exchange)
-                            .flatMap(apiKeyDecision -> {
-                                if (apiKeyDecision.allowed()) {
-                                    return chain.filter(exchange);
-                                }
-                                return writeError(exchange, HttpStatus.FORBIDDEN, "Forbidden by API permission policy");
-                            })
-                            .onErrorResume(apiKeyEx -> {
-                                log.error("API key authorization failed: {}", apiKeyEx.getMessage(), apiKeyEx);
-                                return writeError(exchange, HttpStatus.FORBIDDEN, "Forbidden by API permission policy");
-                            });
+                    log.error("API key authorization failed: {}", ex.getMessage(), ex);
+                    return writeError(exchange, HttpStatus.FORBIDDEN, "Forbidden by API key policy");
                 });
     }
 

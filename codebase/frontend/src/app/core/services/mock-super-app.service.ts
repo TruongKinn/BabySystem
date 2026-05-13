@@ -7,7 +7,8 @@ import {
   FamilyMember,
   MealPlanItem,
   ShoppingItem,
-  TaskItem
+  TaskItem,
+  TaskOverview
 } from '../models/super-app.model';
 
 interface ApiEnvelope<T> {
@@ -85,6 +86,7 @@ interface TaskApi {
   categoryName: string | null;
   status: 'PENDING' | 'IN_PROGRESS' | 'DONE';
   assigneeUserId: number | null;
+  createdByUserId: number | null;
   dueAt: string | null;
   completedAt: string | null;
 }
@@ -92,6 +94,18 @@ interface TaskApi {
 interface TaskPendingCountApi {
   familyId: number;
   pendingCount: number;
+}
+
+interface TaskOverviewApi {
+  familyId: number;
+  totalTasks: number;
+  pendingTasks: number;
+  inProgressTasks: number;
+  doneTasks: number;
+  overdueTasks: number;
+  dueTodayTasks: number;
+  unassignedTasks: number;
+  completionRate: number;
 }
 
 interface ShoppingItemApi {
@@ -217,21 +231,59 @@ export class MockSuperAppService {
     }).pipe(map(({ weeklyPlans, meals }) => this.mapWeeklyMeals(weeklyPlans, meals)));
   }
 
-  getTasks(): Observable<TaskItem[]> {
+  getTasks(status?: TaskApi['status'] | null): Observable<TaskItem[]> {
+    const familyId = this.getFamilyId();
+    let params = new HttpParams().set('familyId', String(familyId));
+    if (status) {
+      params = params.set('status', status);
+    }
+
+    return forkJoin({
+      tasks: this.get<TaskApi[]>('/task/tasks', params),
+      members: this.getFamilyMembers()
+    }).pipe(
+      map(({ tasks, members }) => {
+        const memberNameById = new Map<number, string>(
+          members
+            .map((member) => ({ id: Number(member.id), name: member.name }))
+            .filter((member) => Number.isFinite(member.id))
+            .map((member) => [member.id, member.name] as const)
+        );
+
+        return tasks.map((task) => ({
+          id: String(task.id),
+          title: task.title,
+          description: task.description ?? '',
+          assignee: task.assigneeUserId ? memberNameById.get(task.assigneeUserId) ?? `#${task.assigneeUserId}` : '',
+          assigneeUserId: task.assigneeUserId,
+          createdByUserId: task.createdByUserId,
+          dueAt: task.dueAt ? this.formatDateTime(task.dueAt) : '',
+          dueAtRaw: task.dueAt,
+          done: task.status === 'DONE',
+          status: task.status
+        }));
+      }),
+      catchError(() => of([]))
+    );
+  }
+
+  getTaskOverview(): Observable<TaskOverview> {
     const familyId = this.getFamilyId();
     const params = new HttpParams().set('familyId', String(familyId));
 
-    return this.get<TaskApi[]>('/task/tasks', params).pipe(
-      map((tasks) =>
-        tasks.map((task) => ({
-          id: String(task.id),
-          title: task.title,
-          assignee: task.assigneeUserId ? `#${task.assigneeUserId}` : '',
-          dueAt: task.dueAt ? this.formatDateTime(task.dueAt) : '',
-          done: task.status === 'DONE'
-        }))
-      ),
-      catchError(() => of([]))
+    return this.get<TaskOverviewApi>('/task/tasks/overview', params).pipe(
+      map((overview) => ({
+        familyId: overview.familyId,
+        totalTasks: Math.max(0, Math.trunc(this.asNumber(overview.totalTasks))),
+        pendingTasks: Math.max(0, Math.trunc(this.asNumber(overview.pendingTasks))),
+        inProgressTasks: Math.max(0, Math.trunc(this.asNumber(overview.inProgressTasks))),
+        doneTasks: Math.max(0, Math.trunc(this.asNumber(overview.doneTasks))),
+        overdueTasks: Math.max(0, Math.trunc(this.asNumber(overview.overdueTasks))),
+        dueTodayTasks: Math.max(0, Math.trunc(this.asNumber(overview.dueTodayTasks))),
+        unassignedTasks: Math.max(0, Math.trunc(this.asNumber(overview.unassignedTasks))),
+        completionRate: this.asNumber(overview.completionRate)
+      })),
+      catchError(() => of(this.emptyTaskOverview(familyId)))
     );
   }
 
@@ -565,6 +617,20 @@ export class MockSuperAppService {
       weekStart: weekStart.toISOString().slice(0, 10),
       weekEnd: weekEnd.toISOString().slice(0, 10),
       plans: []
+    };
+  }
+
+  private emptyTaskOverview(familyId: number): TaskOverview {
+    return {
+      familyId,
+      totalTasks: 0,
+      pendingTasks: 0,
+      inProgressTasks: 0,
+      doneTasks: 0,
+      overdueTasks: 0,
+      dueTodayTasks: 0,
+      unassignedTasks: 0,
+      completionRate: 0
     };
   }
 }

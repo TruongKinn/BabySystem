@@ -44,6 +44,9 @@ public class TaskEntity {
     @Column(name = "assignee_user_id")
     private Long assigneeUserId;
 
+    @Column(name = "created_by_user_id")
+    private Long createdByUserId;
+
     @Column(name = "due_at")
     private OffsetDateTime dueAt;
 

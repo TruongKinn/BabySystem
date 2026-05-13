@@ -6,6 +6,7 @@ import com.mom.task.controller.dto.CreateTaskCategoryRequest;
 import com.mom.task.controller.dto.CreateTaskRequest;
 import com.mom.task.controller.dto.RecurringTaskResponse;
 import com.mom.task.controller.dto.TaskCategoryResponse;
+import com.mom.task.controller.dto.TaskOverviewResponse;
 import com.mom.task.controller.dto.TaskPendingCountResponse;
 import com.mom.task.controller.dto.TaskResponse;
 import com.mom.task.controller.dto.UpdateTaskRequest;
@@ -24,7 +25,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.OffsetDateTime;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,6 +42,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final RecurringTaskRepository recurringTaskRepository;
     private final TaskEventPublisher taskEventPublisher;
+    private static final Set<TaskStatus> ACTIVE_TASK_STATUSES = EnumSet.of(TaskStatus.PENDING, TaskStatus.IN_PROGRESS);
 
     @Transactional
     public TaskCategoryResponse createCategory(CreateTaskCategoryRequest request) {
@@ -58,7 +63,7 @@ public class TaskService {
     }
 
     @Transactional
-    @CacheEvict(value = "task-pending-count", allEntries = true)
+    @CacheEvict(value = {"task-pending-count", "task-overview"}, allEntries = true)
     public TaskResponse createTask(CreateTaskRequest request) {
         if (request.categoryId() != null) {
             validateCategoryBelongsToFamily(request.categoryId(), request.familyId());
@@ -66,10 +71,11 @@ public class TaskService {
 
         TaskEntity task = new TaskEntity();
         task.setFamilyId(request.familyId());
-        task.setTitle(request.title().trim());
+        task.setTitle(trimToNonBlank(request.title(), "title"));
         task.setDescription(trimToNull(request.description()));
         task.setCategoryId(request.categoryId());
         task.setAssigneeUserId(request.assigneeUserId());
+        task.setCreatedByUserId(request.createdByUserId());
         task.setDueAt(request.dueAt());
         task.setStatus(TaskStatus.PENDING);
         TaskEntity saved = taskRepository.save(task);
@@ -109,14 +115,14 @@ public class TaskService {
     }
 
     @Transactional
-    @CacheEvict(value = "task-pending-count", allEntries = true)
+    @CacheEvict(value = {"task-pending-count", "task-overview"}, allEntries = true)
     public TaskResponse updateTask(Long taskId, UpdateTaskRequest request) {
         TaskEntity task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
         TaskStatus previousStatus = task.getStatus();
 
         if (request.title() != null) {
-            task.setTitle(request.title().trim());
+            task.setTitle(trimToNonBlank(request.title(), "title"));
         }
         if (request.description() != null) {
             task.setDescription(trimToNull(request.description()));
@@ -148,7 +154,7 @@ public class TaskService {
     }
 
     @Transactional
-    @CacheEvict(value = "task-pending-count", allEntries = true)
+    @CacheEvict(value = {"task-pending-count", "task-overview"}, allEntries = true)
     public TaskResponse completeTask(Long taskId) {
         TaskEntity task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
@@ -163,7 +169,7 @@ public class TaskService {
     }
 
     @Transactional
-    @CacheEvict(value = "task-pending-count", allEntries = true)
+    @CacheEvict(value = {"task-pending-count", "task-overview"}, allEntries = true)
     public void deleteTask(Long taskId) {
         TaskEntity task = taskRepository.findById(taskId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
@@ -176,6 +182,38 @@ public class TaskService {
         return new TaskPendingCountResponse(familyId, pendingCount);
     }
 
+    @Cacheable(value = "task-overview", key = "#familyId")
+    public TaskOverviewResponse getOverview(Long familyId) {
+        OffsetDateTime now = OffsetDateTime.now();
+        OffsetDateTime todayStart = now.toLocalDate().atStartOfDay().atOffset(now.getOffset());
+        OffsetDateTime tomorrowStart = todayStart.plusDays(1);
+
+        long totalTasks = taskRepository.countByFamilyId(familyId);
+        long pendingTasks = taskRepository.countByFamilyIdAndStatus(familyId, TaskStatus.PENDING);
+        long inProgressTasks = taskRepository.countByFamilyIdAndStatus(familyId, TaskStatus.IN_PROGRESS);
+        long doneTasks = taskRepository.countByFamilyIdAndStatus(familyId, TaskStatus.DONE);
+        long overdueTasks = taskRepository.countByFamilyIdAndStatusInAndDueAtBefore(familyId, ACTIVE_TASK_STATUSES, now);
+        long dueTodayTasks = taskRepository.countByFamilyIdAndStatusInAndDueAtGreaterThanEqualAndDueAtLessThan(
+                familyId,
+                ACTIVE_TASK_STATUSES,
+                todayStart,
+                tomorrowStart
+        );
+        long unassignedTasks = taskRepository.countByFamilyIdAndAssigneeUserIdIsNull(familyId);
+
+        return new TaskOverviewResponse(
+                familyId,
+                totalTasks,
+                pendingTasks,
+                inProgressTasks,
+                doneTasks,
+                overdueTasks,
+                dueTodayTasks,
+                unassignedTasks,
+                calculateCompletionRate(doneTasks, totalTasks)
+        );
+    }
+
     @Transactional
     public RecurringTaskResponse createRecurringTask(CreateRecurringTaskRequest request) {
         if (request.categoryId() != null) {
@@ -184,11 +222,11 @@ public class TaskService {
 
         RecurringTaskEntity recurringTask = new RecurringTaskEntity();
         recurringTask.setFamilyId(request.familyId());
-        recurringTask.setTitle(request.title().trim());
+        recurringTask.setTitle(trimToNonBlank(request.title(), "title"));
         recurringTask.setDescription(trimToNull(request.description()));
         recurringTask.setCategoryId(request.categoryId());
         recurringTask.setAssigneeUserId(request.assigneeUserId());
-        recurringTask.setRecurrenceRule(request.recurrenceRule().trim());
+        recurringTask.setRecurrenceRule(trimToNonBlank(request.recurrenceRule(), "recurrenceRule"));
         recurringTask.setNextRunAt(request.nextRunAt());
         recurringTask.setActive(request.active() == null || request.active());
         RecurringTaskEntity saved = recurringTaskRepository.save(recurringTask);
@@ -238,6 +276,24 @@ public class TaskService {
         return trimmed.isEmpty() ? null : trimmed;
     }
 
+    private String trimToNonBlank(String value, String fieldName) {
+        String trimmed = trimToNull(value);
+        if (trimmed == null) {
+            throw new IllegalArgumentException(fieldName + " must not be blank");
+        }
+        return trimmed;
+    }
+
+    private double calculateCompletionRate(long doneTasks, long totalTasks) {
+        if (totalTasks <= 0) {
+            return 0D;
+        }
+        BigDecimal rate = BigDecimal.valueOf(doneTasks)
+                .multiply(BigDecimal.valueOf(100))
+                .divide(BigDecimal.valueOf(totalTasks), 1, RoundingMode.HALF_UP);
+        return rate.doubleValue();
+    }
+
     private String normalizeColor(String colorCode) {
         if (colorCode == null || colorCode.isBlank()) {
             return null;
@@ -265,6 +321,7 @@ public class TaskService {
                 categoryName,
                 task.getStatus(),
                 task.getAssigneeUserId(),
+                task.getCreatedByUserId(),
                 task.getDueAt(),
                 task.getCompletedAt()
         );

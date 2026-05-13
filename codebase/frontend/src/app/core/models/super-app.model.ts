@@ -20,12 +20,31 @@ export interface MealPlanItem {
   dinner: string;
 }
 
+export type TaskItemStatus = 'PENDING' | 'IN_PROGRESS' | 'DONE';
+
 export interface TaskItem {
   id: string;
   title: string;
+  description: string;
   assignee: string;
+  assigneeUserId: number | null;
+  createdByUserId: number | null;
   dueAt: string;
+  dueAtRaw: string | null;
   done: boolean;
+  status: TaskItemStatus;
+}
+
+export interface TaskOverview {
+  familyId: number;
+  totalTasks: number;
+  pendingTasks: number;
+  inProgressTasks: number;
+  doneTasks: number;
+  overdueTasks: number;
+  dueTodayTasks: number;
+  unassignedTasks: number;
+  completionRate: number;
 }
 
 export interface ShoppingItem {

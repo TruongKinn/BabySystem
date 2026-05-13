@@ -2389,31 +2389,97 @@
         },
         "tasks": {
             "title": "Công Việc Gia Đình",
-            "subtitle": "Phân công rõ ràng để cân bằng khối lượng công việc hàng ngày",
-            "totalLabel": "công việc",
+            "subtitle": "Không gian làm việc gồm danh sách, lịch và bảng kéo-thả",
             "unassigned": "Chưa phân công",
             "noDeadline": "Chưa có hạn",
+            "noDescription": "Không có mô tả",
+            "notTracked": "N/A",
             "actions": {
                 "create": "Thêm việc",
+                "assign": "Phân công",
+                "start": "Bắt đầu",
                 "complete": "Hoàn thành"
+            },
+            "summary": {
+                "total": "Tổng công việc",
+                "today": "Đến hạn hôm nay",
+                "upcoming": "Sắp tới hạn",
+                "overdue": "Quá hạn"
+            },
+            "views": {
+                "list": "Danh sách",
+                "calendar": "Lịch",
+                "kanban": "Kanban"
+            },
+            "filters": {
+                "today": "Hôm nay",
+                "upcoming": "Sắp tới hạn",
+                "overdue": "Quá hạn",
+                "assignedToMe": "Giao cho tôi",
+                "createdByMe": "Tôi tạo"
+            },
+            "table": {
+                "title": "Công việc",
+                "status": "Trạng thái",
+                "due": "Hạn chót",
+                "assignee": "Người phụ trách",
+                "createdBy": "Người tạo",
+                "actions": "Thao tác"
             },
             "status": {
                 "done": "Đã xong",
+                "inProgress": "Đang làm",
                 "pending": "Đang chờ"
+            },
+            "detail": {
+                "dueAt": "Hạn chót",
+                "assignee": "Người phụ trách",
+                "createdBy": "Người tạo",
+                "empty": "Chọn một công việc để xem chi tiết."
+            },
+            "calendar": {
+                "title": "Lịch công việc",
+                "selectedDay": "Ngày đã chọn",
+                "empty": "Không có công việc trong ngày này."
+            },
+            "kanban": {
+                "empty": "Kéo công việc vào đây"
+            },
+            "pagination": {
+                "showing": "Hiển thị",
+                "to": "đến",
+                "of": "trong tổng",
+                "results": "kết quả"
             },
             "modal": {
                 "createTitle": "Tạo công việc",
+                "editTitle": "Chỉnh sửa công việc",
+                "assignTitle": "Phân công công việc",
                 "titleLabel": "Tiêu đề công việc",
                 "titlePlaceholder": "Ví dụ: Đặt lịch tiêm vaccine",
                 "descriptionLabel": "Mô tả",
                 "descriptionPlaceholder": "Chi tiết bổ sung",
+                "assigneeLabel": "Người phụ trách",
+                "assigneePlaceholder": "Chọn thành viên gia đình",
                 "dueAtLabel": "Hạn hoàn thành"
             },
             "messages": {
+                "loadFailed": "Không thể tải danh sách công việc.",
                 "createSuccess": "Tạo công việc thành công.",
                 "createFailed": "Không thể tạo công việc.",
+                "updateSuccess": "Cập nhật công việc thành công.",
+                "updateFailed": "Không thể cập nhật công việc.",
+                "assignSuccess": "Cập nhật người phụ trách thành công.",
+                "assignFailed": "Không thể phân công công việc.",
+                "dragUpdateSuccess": "Cập nhật trạng thái công việc thành công.",
+                "dragUpdateFailed": "Không thể cập nhật trạng thái bằng kéo thả.",
+                "startSuccess": "Đã chuyển công việc sang trạng thái đang làm.",
+                "startFailed": "Không thể cập nhật công việc sang trạng thái đang làm.",
                 "completeSuccess": "Đã đánh dấu công việc hoàn thành.",
-                "completeFailed": "Không thể hoàn thành công việc."
+                "completeFailed": "Không thể hoàn thành công việc.",
+                "deleteSuccess": "Xóa công việc thành công.",
+                "deleteFailed": "Không thể xóa công việc.",
+                "deleteConfirm": "Bạn có chắc muốn xóa công việc này?"
             }
         },
         "shopping": {

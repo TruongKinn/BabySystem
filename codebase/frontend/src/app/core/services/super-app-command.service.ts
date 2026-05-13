@@ -57,6 +57,7 @@ export type MealType = 'BREAKFAST' | 'LUNCH' | 'DINNER' | 'SNACK';
 export type BabyGender = 'MALE' | 'FEMALE' | 'OTHER';
 export type BabyLogType = 'SLEEP' | 'FEEDING' | 'DIAPER';
 export type FamilyRole = 'MOM' | 'DAD' | 'GRANDMA' | 'CAREGIVER' | 'ADMIN';
+export type TaskStatus = 'PENDING' | 'IN_PROGRESS' | 'DONE';
 
 @Injectable({
   providedIn: 'root'
@@ -144,19 +145,57 @@ export class SuperAppCommandService {
     );
   }
 
-  createTask(input: { title: string; description: string; dueAt?: string; assigneeUserId?: number | null }): Observable<void> {
+  createTask(input: {
+    title: string;
+    description: string;
+    dueAt?: string;
+    assigneeUserId?: number | null;
+    createdByUserId?: number | null;
+  }): Observable<void> {
     const familyId = this.getFamilyId();
     return this.post('/task/tasks', {
       familyId,
       title: input.title,
       description: input.description,
       assigneeUserId: input.assigneeUserId ?? null,
+      createdByUserId: input.createdByUserId ?? this.getUserId(),
       dueAt: input.dueAt ?? null
     }).pipe(map(() => undefined));
   }
 
   completeTask(taskId: number): Observable<void> {
     return this.post(`/task/tasks/${taskId}/complete`, {}).pipe(map(() => undefined));
+  }
+
+  startTask(taskId: number): Observable<void> {
+    return this.put(`/task/tasks/${taskId}`, { status: 'IN_PROGRESS' }).pipe(map(() => undefined));
+  }
+
+  assignTask(taskId: number, assigneeUserId: number): Observable<void> {
+    return this.put(`/task/tasks/${taskId}`, { assigneeUserId }).pipe(map(() => undefined));
+  }
+
+  updateTaskStatus(taskId: number, status: TaskStatus): Observable<void> {
+    return this.put(`/task/tasks/${taskId}`, { status }).pipe(map(() => undefined));
+  }
+
+  updateTask(
+    taskId: number,
+    input: { title: string; description: string; dueAt?: string; assigneeUserId?: number | null; status?: TaskStatus }
+  ): Observable<void> {
+    return this.put(`/task/tasks/${taskId}`, {
+      title: input.title,
+      description: input.description,
+      assigneeUserId: input.assigneeUserId ?? null,
+      dueAt: input.dueAt ?? null,
+      status: input.status
+    }).pipe(map(() => undefined));
+  }
+
+  deleteTask(taskId: number): Observable<void> {
+    return this.http
+      .delete<ApiEnvelope<unknown>>(`${this.apiBase}/task/tasks/${taskId}`)
+      .pipe(map(() => undefined));
   }
 
   createShoppingItem(input: { itemName: string; quantity: string; note: string }): Observable<void> {
@@ -411,6 +450,12 @@ export class SuperAppCommandService {
   private post<T>(path: string, body: unknown): Observable<T> {
     return this.http
       .post<ApiEnvelope<T>>(`${this.apiBase}${path}`, body)
+      .pipe(map((response) => response.data));
+  }
+
+  private put<T>(path: string, body: unknown): Observable<T> {
+    return this.http
+      .put<ApiEnvelope<T>>(`${this.apiBase}${path}`, body)
       .pipe(map((response) => response.data));
   }
 }

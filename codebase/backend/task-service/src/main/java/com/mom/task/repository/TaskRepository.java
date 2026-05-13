@@ -4,6 +4,8 @@ import com.mom.task.domain.TaskEntity;
 import com.mom.task.domain.TaskStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.time.OffsetDateTime;
+import java.util.Collection;
 import java.util.List;
 
 public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
@@ -20,5 +22,18 @@ public interface TaskRepository extends JpaRepository<TaskEntity, Long> {
             Long assigneeUserId
     );
 
+    long countByFamilyId(Long familyId);
+
     long countByFamilyIdAndStatus(Long familyId, TaskStatus status);
+
+    long countByFamilyIdAndAssigneeUserIdIsNull(Long familyId);
+
+    long countByFamilyIdAndStatusInAndDueAtBefore(Long familyId, Collection<TaskStatus> statuses, OffsetDateTime dueAt);
+
+    long countByFamilyIdAndStatusInAndDueAtGreaterThanEqualAndDueAtLessThan(
+            Long familyId,
+            Collection<TaskStatus> statuses,
+            OffsetDateTime start,
+            OffsetDateTime end
+    );
 }

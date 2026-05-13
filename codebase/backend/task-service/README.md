@@ -4,17 +4,18 @@ Task and recurring task management service for Mom Super App.
 
 ## Main APIs
 
-- `POST /api/task-categories`
-- `GET /api/task-categories?familyId={familyId}`
-- `POST /api/tasks`
-- `GET /api/tasks?familyId={familyId}&status={status}&assigneeUserId={userId}`
-- `GET /api/tasks/{id}`
-- `PUT /api/tasks/{id}`
-- `POST /api/tasks/{id}/complete`
-- `DELETE /api/tasks/{id}`
-- `GET /api/tasks/pending/count?familyId={familyId}`
-- `POST /api/recurring-tasks`
-- `GET /api/recurring-tasks?familyId={familyId}`
+- `POST /api/v1/task-categories` (compatible with `/api/task-categories`)
+- `GET /api/v1/task-categories?familyId={familyId}`
+- `POST /api/v1/tasks`
+- `GET /api/v1/tasks?familyId={familyId}&status={status}&assigneeUserId={userId}`
+- `GET /api/v1/tasks/{id}`
+- `PUT /api/v1/tasks/{id}`
+- `POST /api/v1/tasks/{id}/complete`
+- `DELETE /api/v1/tasks/{id}`
+- `GET /api/v1/tasks/pending/count?familyId={familyId}`
+- `GET /api/v1/tasks/overview?familyId={familyId}`
+- `POST /api/v1/recurring-tasks`
+- `GET /api/v1/recurring-tasks?familyId={familyId}`
 
 ## Run locally
 

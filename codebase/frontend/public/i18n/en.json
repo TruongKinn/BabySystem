@@ -2391,31 +2391,97 @@
     },
     "tasks": {
       "title": "Family Tasks",
-      "subtitle": "Assign clearly so daily workload is balanced",
-      "totalLabel": "total tasks",
+      "subtitle": "Task workspace with list, calendar, and drag-drop board",
       "unassigned": "Unassigned",
       "noDeadline": "No deadline",
+      "noDescription": "No description",
+      "notTracked": "N/A",
       "actions": {
         "create": "New task",
+        "assign": "Assign",
+        "start": "Start",
         "complete": "Complete"
+      },
+      "summary": {
+        "total": "Total tasks",
+        "today": "Due today",
+        "upcoming": "Upcoming",
+        "overdue": "Overdue"
+      },
+      "views": {
+        "list": "List",
+        "calendar": "Calendar",
+        "kanban": "Kanban"
+      },
+      "filters": {
+        "today": "Today",
+        "upcoming": "Upcoming",
+        "overdue": "Overdue",
+        "assignedToMe": "Assigned to me",
+        "createdByMe": "Created by me"
+      },
+      "table": {
+        "title": "Task",
+        "status": "Status",
+        "due": "Due time",
+        "assignee": "Assignee",
+        "createdBy": "Created by",
+        "actions": "Actions"
       },
       "status": {
         "done": "Done",
+        "inProgress": "In progress",
         "pending": "Pending"
+      },
+      "detail": {
+        "dueAt": "Due time",
+        "assignee": "Assignee",
+        "createdBy": "Created by",
+        "empty": "Select a task to view details."
+      },
+      "calendar": {
+        "title": "Task calendar",
+        "selectedDay": "Selected day",
+        "empty": "No tasks on this day."
+      },
+      "kanban": {
+        "empty": "Drop tasks here"
+      },
+      "pagination": {
+        "showing": "Showing",
+        "to": "to",
+        "of": "of",
+        "results": "results"
       },
       "modal": {
         "createTitle": "Create task",
+        "editTitle": "Edit task",
+        "assignTitle": "Assign task",
         "titleLabel": "Task title",
         "titlePlaceholder": "e.g. Book vaccine appointment",
         "descriptionLabel": "Description",
         "descriptionPlaceholder": "Optional details",
+        "assigneeLabel": "Assignee",
+        "assigneePlaceholder": "Select a family member",
         "dueAtLabel": "Due date"
       },
       "messages": {
+        "loadFailed": "Unable to load tasks.",
         "createSuccess": "Task created successfully.",
         "createFailed": "Unable to create task.",
+        "updateSuccess": "Task updated successfully.",
+        "updateFailed": "Unable to update task.",
+        "assignSuccess": "Task assignee updated.",
+        "assignFailed": "Unable to assign task.",
+        "dragUpdateSuccess": "Task status updated.",
+        "dragUpdateFailed": "Unable to update task status.",
+        "startSuccess": "Task marked as in progress.",
+        "startFailed": "Unable to start task.",
         "completeSuccess": "Task marked as completed.",
-        "completeFailed": "Unable to complete task."
+        "completeFailed": "Unable to complete task.",
+        "deleteSuccess": "Task deleted successfully.",
+        "deleteFailed": "Unable to delete task.",
+        "deleteConfirm": "Delete this task?"
       }
     },
     "shopping": {

@@ -6,13 +6,16 @@ import com.mom.task.controller.dto.CreateTaskCategoryRequest;
 import com.mom.task.controller.dto.CreateTaskRequest;
 import com.mom.task.controller.dto.RecurringTaskResponse;
 import com.mom.task.controller.dto.TaskCategoryResponse;
+import com.mom.task.controller.dto.TaskOverviewResponse;
 import com.mom.task.controller.dto.TaskPendingCountResponse;
 import com.mom.task.controller.dto.TaskResponse;
 import com.mom.task.controller.dto.UpdateTaskRequest;
 import com.mom.task.domain.TaskStatus;
 import com.mom.task.service.TaskService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@Validated
+@RequestMapping({"/api", "/api/v1"})
 @RequiredArgsConstructor
 public class TaskController {
 
@@ -38,7 +42,9 @@ public class TaskController {
     }
 
     @GetMapping("/task-categories")
-    public ApiResponse<List<TaskCategoryResponse>> getTaskCategories(@RequestParam("familyId") Long familyId) {
+    public ApiResponse<List<TaskCategoryResponse>> getTaskCategories(
+            @RequestParam("familyId") @Positive(message = "familyId must be greater than 0") Long familyId
+    ) {
         return ApiResponse.ok("Success", taskService.getCategories(familyId));
     }
 
@@ -49,40 +55,57 @@ public class TaskController {
 
     @GetMapping("/tasks")
     public ApiResponse<List<TaskResponse>> getTasks(
-            @RequestParam("familyId") Long familyId,
+            @RequestParam("familyId") @Positive(message = "familyId must be greater than 0") Long familyId,
             @RequestParam(value = "status", required = false) TaskStatus status,
-            @RequestParam(value = "assigneeUserId", required = false) Long assigneeUserId
+            @RequestParam(value = "assigneeUserId", required = false)
+            @Positive(message = "assigneeUserId must be greater than 0")
+            Long assigneeUserId
     ) {
         return ApiResponse.ok("Success", taskService.getTasks(familyId, status, assigneeUserId));
     }
 
     @GetMapping("/tasks/{id}")
-    public ApiResponse<TaskResponse> getTask(@PathVariable("id") Long taskId) {
+    public ApiResponse<TaskResponse> getTask(
+            @PathVariable("id") @Positive(message = "taskId must be greater than 0") Long taskId
+    ) {
         return ApiResponse.ok("Success", taskService.getTask(taskId));
     }
 
     @PutMapping("/tasks/{id}")
     public ApiResponse<TaskResponse> updateTask(
-            @PathVariable("id") Long taskId,
+            @PathVariable("id") @Positive(message = "taskId must be greater than 0") Long taskId,
             @Valid @RequestBody UpdateTaskRequest request
     ) {
         return ApiResponse.ok("Task updated", taskService.updateTask(taskId, request));
     }
 
     @PostMapping("/tasks/{id}/complete")
-    public ApiResponse<TaskResponse> completeTask(@PathVariable("id") Long taskId) {
+    public ApiResponse<TaskResponse> completeTask(
+            @PathVariable("id") @Positive(message = "taskId must be greater than 0") Long taskId
+    ) {
         return ApiResponse.ok("Task completed", taskService.completeTask(taskId));
     }
 
     @DeleteMapping("/tasks/{id}")
-    public ApiResponse<Object> deleteTask(@PathVariable("id") Long taskId) {
+    public ApiResponse<Object> deleteTask(
+            @PathVariable("id") @Positive(message = "taskId must be greater than 0") Long taskId
+    ) {
         taskService.deleteTask(taskId);
         return ApiResponse.ok("Task deleted", null);
     }
 
     @GetMapping("/tasks/pending/count")
-    public ApiResponse<TaskPendingCountResponse> getPendingCount(@RequestParam("familyId") Long familyId) {
+    public ApiResponse<TaskPendingCountResponse> getPendingCount(
+            @RequestParam("familyId") @Positive(message = "familyId must be greater than 0") Long familyId
+    ) {
         return ApiResponse.ok("Success", taskService.getPendingCount(familyId));
+    }
+
+    @GetMapping("/tasks/overview")
+    public ApiResponse<TaskOverviewResponse> getOverview(
+            @RequestParam("familyId") @Positive(message = "familyId must be greater than 0") Long familyId
+    ) {
+        return ApiResponse.ok("Success", taskService.getOverview(familyId));
     }
 
     @PostMapping("/recurring-tasks")
@@ -91,7 +114,9 @@ public class TaskController {
     }
 
     @GetMapping("/recurring-tasks")
-    public ApiResponse<List<RecurringTaskResponse>> getRecurringTasks(@RequestParam("familyId") Long familyId) {
+    public ApiResponse<List<RecurringTaskResponse>> getRecurringTasks(
+            @RequestParam("familyId") @Positive(message = "familyId must be greater than 0") Long familyId
+    ) {
         return ApiResponse.ok("Success", taskService.getRecurringTasks(familyId));
     }
 }

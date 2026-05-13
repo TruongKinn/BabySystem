@@ -13,6 +13,7 @@ public record TaskResponse(
         String categoryName,
         TaskStatus status,
         Long assigneeUserId,
+        Long createdByUserId,
         OffsetDateTime dueAt,
         OffsetDateTime completedAt
 ) {

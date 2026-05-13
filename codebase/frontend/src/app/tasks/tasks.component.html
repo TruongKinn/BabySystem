@@ -1,59 +1,297 @@
-<section class="page-container" *ngIf="tasks$ | async as tasks">
-  <div class="header-actions">
-    <div>
-      <h1 class="page-title">{{ 'momApp.tasks.title' | translate }}</h1>
-      <p class="page-subtitle">{{ 'momApp.tasks.subtitle' | translate }}</p>
-    </div>
-    <div class="header-buttons">
-      <button nz-button nzType="primary" (click)="openCreateModal()">
-        <span nz-icon nzType="plus"></span>
-        {{ 'momApp.tasks.actions.create' | translate }}
-      </button>
-      <span class="pill-chip">
-        <span nz-icon nzType="check-circle"></span>
-        {{ tasks.length }} {{ 'momApp.tasks.totalLabel' | translate }}
-      </span>
-    </div>
-  </div>
-
-  <nz-card class="table-card">
-    <ul class="task-list">
-      <li *ngFor="let task of tasks" [ngClass]="{ done: task.done }">
+<section class="page-container tasks-page">
+  <nz-spin [nzSpinning]="loading">
+    <section class="workspace-panel">
+      <div class="panel-header">
         <div>
-          <p class="task-title">{{ task.title }}</p>
-          <p class="task-meta">
-            {{ task.assignee || ('momApp.tasks.unassigned' | translate) }} -
-            {{ task.dueAt || ('momApp.tasks.noDeadline' | translate) }}
-          </p>
+          <h1 class="page-title">{{ 'momApp.tasks.title' | translate }}</h1>
+          <p class="page-subtitle">{{ 'momApp.tasks.subtitle' | translate }}</p>
         </div>
-        <div class="task-actions">
+
+        <div class="toolbar-actions">
+          <button nz-button nzType="default" nzSize="small" class="toolbar-btn" (click)="refresh()">
+            <span nz-icon nzType="reload"></span>
+            {{ 'commonActions.refresh' | translate }}
+          </button>
+          <button nz-button nzType="primary" nzSize="small" class="toolbar-btn toolbar-btn-primary" (click)="openCreateModal()">
+            <span nz-icon nzType="plus"></span>
+            {{ 'momApp.tasks.actions.create' | translate }}
+          </button>
+        </div>
+      </div>
+
+      <div class="summary-grid">
+        <nz-card class="summary-card">
+          <div class="summary-content">
+            <div>
+              <div class="summary-title">{{ 'momApp.tasks.summary.total' | translate }}</div>
+              <div class="summary-value tone-blue">{{ summary.total }}</div>
+            </div>
+            <span class="summary-icon-badge tone-bg-blue"><span nz-icon nzType="profile"></span></span>
+          </div>
+        </nz-card>
+
+        <nz-card class="summary-card">
+          <div class="summary-content">
+            <div>
+              <div class="summary-title">{{ 'momApp.tasks.summary.today' | translate }}</div>
+              <div class="summary-value tone-cyan">{{ summary.today }}</div>
+            </div>
+            <span class="summary-icon-badge tone-bg-cyan"><span nz-icon nzType="calendar"></span></span>
+          </div>
+        </nz-card>
+
+        <nz-card class="summary-card">
+          <div class="summary-content">
+            <div>
+              <div class="summary-title">{{ 'momApp.tasks.summary.upcoming' | translate }}</div>
+              <div class="summary-value tone-orange">{{ summary.upcoming }}</div>
+            </div>
+            <span class="summary-icon-badge tone-bg-orange"><span nz-icon nzType="clock-circle"></span></span>
+          </div>
+        </nz-card>
+
+        <nz-card class="summary-card summary-card-alert">
+          <div class="summary-content">
+            <div>
+              <div class="summary-title">{{ 'momApp.tasks.summary.overdue' | translate }}</div>
+              <div class="summary-value tone-volcano">{{ summary.overdue }}</div>
+            </div>
+            <span class="summary-icon-badge tone-bg-volcano"><span nz-icon nzType="warning"></span></span>
+          </div>
+        </nz-card>
+      </div>
+
+      <div class="toolbar">
+        <div class="view-toggle">
+          <button nz-button nzSize="small" nzShape="round" class="view-toggle-btn" [nzType]="view === 'LIST' ? 'primary' : 'default'" (click)="changeView('LIST')">
+            <span nz-icon nzType="table"></span>
+            {{ 'momApp.tasks.views.list' | translate }}
+          </button>
+          <button nz-button nzSize="small" nzShape="round" class="view-toggle-btn" [nzType]="view === 'CALENDAR' ? 'primary' : 'default'" (click)="changeView('CALENDAR')">
+            <span nz-icon nzType="calendar"></span>
+            {{ 'momApp.tasks.views.calendar' | translate }}
+          </button>
+          <button nz-button nzSize="small" nzShape="round" class="view-toggle-btn" [nzType]="view === 'KANBAN' ? 'primary' : 'default'" (click)="changeView('KANBAN')">
+            <span nz-icon nzType="appstore"></span>
+            {{ 'momApp.tasks.views.kanban' | translate }}
+          </button>
+        </div>
+
+        <div class="filter-switch">
           <button
-            *ngIf="!task.done"
+            *ngFor="let option of filterOptions"
             nz-button
             nzSize="small"
-            nzType="default"
-            (click)="completeTask(task.id)"
-          >
-            {{ 'momApp.tasks.actions.complete' | translate }}
+            nzShape="round"
+            class="filter-btn"
+            [nzType]="filter === option.value ? 'primary' : 'default'"
+            (click)="changeFilter(option.value)">
+            {{ option.labelKey | translate }}
+            <span class="filter-count">{{ getFilterCount(option.value) }}</span>
           </button>
-          <nz-tag [nzColor]="task.done ? 'green' : 'orange'">{{ task.done ? ('momApp.tasks.status.done' | translate) : ('momApp.tasks.status.pending' | translate) }}</nz-tag>
         </div>
-      </li>
-    </ul>
-  </nz-card>
+      </div>
+
+      <ng-container [ngSwitch]="view">
+        <div class="workspace" *ngSwitchCase="'LIST'">
+          <div class="table-wrap">
+            <nz-table
+              #taskTable
+              [nzData]="filteredTasks"
+              [nzFrontPagination]="true"
+              [nzShowPagination]="false"
+              [(nzPageIndex)]="listPageIndex"
+              [(nzPageSize)]="listPageSize"
+              nzSize="middle"
+              [nzScroll]="{ x: '1200px' }">
+              <thead>
+                <tr>
+                  <th>{{ 'momApp.tasks.table.title' | translate }}</th>
+                  <th>{{ 'momApp.tasks.table.status' | translate }}</th>
+                  <th>{{ 'momApp.tasks.table.due' | translate }}</th>
+                  <th>{{ 'momApp.tasks.table.assignee' | translate }}</th>
+                  <th>{{ 'momApp.tasks.table.createdBy' | translate }}</th>
+                  <th nzWidth="220px">{{ 'momApp.tasks.table.actions' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="let task of taskTable.data; trackBy: trackByTaskId"
+                  class="task-row"
+                  [class.active]="selectedTask?.id === task.id"
+                  (click)="selectTask(task)">
+                  <td>
+                    <div class="task-name">{{ task.title }}</div>
+                    <div class="task-sub">{{ task.description || ('momApp.tasks.noDescription' | translate) }}</div>
+                  </td>
+                  <td><nz-tag [nzColor]="statusColor(task.status)">{{ statusLabelKey(task.status) | translate }}</nz-tag></td>
+                  <td>{{ formatDate(task.dueAtRaw) }}</td>
+                  <td>{{ task.assignee || ('momApp.tasks.unassigned' | translate) }}</td>
+                  <td>{{ task.createdByUserId || ('momApp.tasks.notTracked' | translate) }}</td>
+                  <td>
+                    <div class="action-group" (click)="$event.stopPropagation()">
+                      <button nz-button nzType="text" nzShape="circle" class="action-btn action-btn-assign" (click)="openAssignModal(task)">
+                        <span nz-icon nzType="user-add"></span>
+                      </button>
+                      <button nz-button nzType="text" nzShape="circle" class="action-btn action-btn-edit" (click)="openEditModal(task)">
+                        <span nz-icon nzType="edit"></span>
+                      </button>
+                      <button *ngIf="task.status === 'PENDING'" nz-button nzType="text" nzShape="circle" class="action-btn action-btn-progress" (click)="startTask(task)">
+                        <span nz-icon nzType="play-circle"></span>
+                      </button>
+                      <button *ngIf="task.status !== 'DONE'" nz-button nzType="text" nzShape="circle" class="action-btn action-btn-done" (click)="completeTask(task)">
+                        <span nz-icon nzType="check-circle"></span>
+                      </button>
+                      <button
+                        nz-button
+                        nzType="text"
+                        nzShape="circle"
+                        class="action-btn action-btn-delete"
+                        nz-popconfirm
+                        [nzPopconfirmTitle]="'momApp.tasks.messages.deleteConfirm' | translate"
+                        (nzOnConfirm)="deleteTask(task)">
+                        <span nz-icon nzType="delete"></span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </nz-table>
+
+            <div class="table-footer" *ngIf="filteredTasks.length > 0">
+              <span class="total-text">
+                {{ 'momApp.tasks.pagination.showing' | translate }}
+                <b>{{ listStart }}</b>
+                {{ 'momApp.tasks.pagination.to' | translate }}
+                <b>{{ listEnd }}</b>
+                {{ 'momApp.tasks.pagination.of' | translate }}
+                <b>{{ filteredTasks.length }}</b>
+                {{ 'momApp.tasks.pagination.results' | translate }}
+              </span>
+              <nz-pagination
+                [nzPageIndex]="listPageIndex"
+                [nzTotal]="filteredTasks.length"
+                [nzPageSize]="listPageSize"
+                [nzShowSizeChanger]="true"
+                [nzPageSizeOptions]="[10, 20, 50, 100]"
+                (nzPageIndexChange)="onListPageIndexChange($event)"
+                (nzPageSizeChange)="onListPageSizeChange($event)">
+              </nz-pagination>
+            </div>
+          </div>
+
+          <nz-card class="detail-card" nzSize="small">
+            <ng-container *ngIf="selectedTask; else noTaskSelection">
+              <div class="detail-header">
+                <div class="detail-title">{{ selectedTask.title }}</div>
+                <nz-tag [nzColor]="statusColor(selectedTask.status)">{{ statusLabelKey(selectedTask.status) | translate }}</nz-tag>
+              </div>
+              <div class="detail-desc">{{ selectedTask.description || ('momApp.tasks.noDescription' | translate) }}</div>
+
+              <nz-descriptions nzBordered [nzColumn]="1" nzSize="small">
+                <nz-descriptions-item [nzTitle]="'momApp.tasks.detail.dueAt' | translate">{{ formatDate(selectedTask.dueAtRaw) }}</nz-descriptions-item>
+                <nz-descriptions-item [nzTitle]="'momApp.tasks.detail.assignee' | translate">{{ selectedTask.assignee || ('momApp.tasks.unassigned' | translate) }}</nz-descriptions-item>
+                <nz-descriptions-item [nzTitle]="'momApp.tasks.detail.createdBy' | translate">{{ selectedTask.createdByUserId || ('momApp.tasks.notTracked' | translate) }}</nz-descriptions-item>
+              </nz-descriptions>
+
+              <div class="detail-actions">
+                <button nz-button nzType="default" nzSize="small" class="toolbar-btn" (click)="openEditModal(selectedTask)">
+                  {{ 'commonActions.edit' | translate }}
+                </button>
+                <button nz-button nzType="default" nzSize="small" class="toolbar-btn" (click)="openAssignModal(selectedTask)">
+                  {{ 'momApp.tasks.actions.assign' | translate }}
+                </button>
+                <button
+                  *ngIf="selectedTask.status !== 'DONE'"
+                  nz-button
+                  nzType="primary"
+                  nzSize="small"
+                  class="toolbar-btn toolbar-btn-primary"
+                  (click)="completeTask(selectedTask)">
+                  {{ 'momApp.tasks.actions.complete' | translate }}
+                </button>
+              </div>
+            </ng-container>
+
+            <ng-template #noTaskSelection>
+              <nz-empty [nzNotFoundContent]="'momApp.tasks.detail.empty' | translate"></nz-empty>
+            </ng-template>
+          </nz-card>
+        </div>
+
+        <div class="calendar-shell" *ngSwitchCase="'CALENDAR'">
+          <nz-card class="calendar-card" nzSize="small" [nzTitle]="'momApp.tasks.calendar.title' | translate">
+            <nz-calendar [(ngModel)]="selectedDate" (ngModelChange)="onCalendarDateChange($event)">
+              <ul *nzDateCell="let date" class="events">
+                <li *ngIf="calendarCount(date) > 0">
+                  <span class="event-count">{{ calendarCount(date) }}</span>
+                </li>
+              </ul>
+            </nz-calendar>
+          </nz-card>
+
+          <nz-card class="calendar-detail" nzSize="small" [nzTitle]="'momApp.tasks.calendar.selectedDay' | translate">
+            <div class="calendar-day">{{ selectedDate | date:'fullDate' }}</div>
+            <div *ngIf="selectedDateItems.length; else emptyCalendarDay">
+              <div *ngFor="let task of selectedDateItems; trackBy: trackByTaskId" class="calendar-item" (click)="selectTask(task)">
+                <div>
+                  <div class="task-name">{{ task.title }}</div>
+                  <div class="task-sub">{{ formatDate(task.dueAtRaw) }}</div>
+                </div>
+                <nz-tag [nzColor]="statusColor(task.status)">{{ statusLabelKey(task.status) | translate }}</nz-tag>
+              </div>
+            </div>
+            <ng-template #emptyCalendarDay>
+              <nz-empty [nzNotFoundContent]="'momApp.tasks.calendar.empty' | translate"></nz-empty>
+            </ng-template>
+          </nz-card>
+        </div>
+
+        <div class="kanban-shell" *ngSwitchCase="'KANBAN'">
+          <div class="kanban-column" *ngFor="let column of boardColumns">
+            <div class="kanban-column-head">
+              <span>{{ statusLabelKey(column.status) | translate }}</span>
+              <span class="column-count">{{ column.items.length }}</span>
+            </div>
+
+            <div
+              class="kanban-dropzone"
+              cdkDropList
+              [id]="dropListId(column.status)"
+              [cdkDropListData]="column.items"
+              [cdkDropListConnectedTo]="boardDropListIds"
+              (cdkDropListDropped)="drop($event, column.status)">
+              <ng-container *ngIf="column.items.length; else emptyColumn">
+                <div class="kanban-card" *ngFor="let task of column.items; trackBy: trackByTaskId" cdkDrag (click)="selectTask(task)">
+                  <div class="kanban-title">{{ task.title }}</div>
+                  <div class="kanban-meta">{{ formatDate(task.dueAtRaw) }}</div>
+                  <div class="kanban-tags">
+                    <nz-tag [nzColor]="statusColor(task.status)">{{ statusLabelKey(task.status) | translate }}</nz-tag>
+                    <nz-tag>{{ task.assignee || ('momApp.tasks.unassigned' | translate) }}</nz-tag>
+                  </div>
+                </div>
+              </ng-container>
+              <ng-template #emptyColumn>
+                <nz-empty [nzNotFoundContent]="'momApp.tasks.kanban.empty' | translate"></nz-empty>
+              </ng-template>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </section>
+  </nz-spin>
 </section>
 
 <nz-modal
-  [(nzVisible)]="isCreateModalVisible"
-  [nzTitle]="'momApp.tasks.modal.createTitle' | translate"
-  [nzOkLoading]="isSubmitting"
+  [(nzVisible)]="taskModalVisible"
+  [nzTitle]="editingTask ? ('momApp.tasks.modal.editTitle' | translate) : ('momApp.tasks.modal.createTitle' | translate)"
+  [nzOkLoading]="saving"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
-  (nzOnCancel)="closeCreateModal()"
-  (nzOnOk)="submitCreateTask()"
->
+  (nzOnCancel)="closeTaskModal()"
+  (nzOnOk)="submitTask()">
   <ng-container *nzModalContent>
-    <form nz-form [formGroup]="createTaskForm" nzLayout="vertical">
+    <form nz-form [formGroup]="taskForm" nzLayout="vertical">
       <nz-form-item>
         <nz-form-label nzRequired>{{ 'momApp.tasks.modal.titleLabel' | translate }}</nz-form-label>
         <nz-form-control>
@@ -64,19 +302,45 @@
       <nz-form-item>
         <nz-form-label>{{ 'momApp.tasks.modal.descriptionLabel' | translate }}</nz-form-label>
         <nz-form-control>
-          <textarea
-            nz-input
-            rows="3"
-            formControlName="description"
-            [placeholder]="'momApp.tasks.modal.descriptionPlaceholder' | translate"
-          ></textarea>
+          <textarea nz-input rows="3" formControlName="description" [placeholder]="'momApp.tasks.modal.descriptionPlaceholder' | translate"></textarea>
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
-        <nz-form-label>{{ 'momApp.tasks.modal.dueAtLabel' | translate }}</nz-form-label>
+        <nz-form-label>{{ 'momApp.tasks.modal.assigneeLabel' | translate }}</nz-form-label>
         <nz-form-control>
-          <nz-date-picker formControlName="dueAt" nzFormat="yyyy-MM-dd"></nz-date-picker>
+          <nz-select formControlName="assigneeUserId" nzAllowClear [nzPlaceHolder]="'momApp.tasks.modal.assigneePlaceholder' | translate">
+            <nz-option *ngFor="let member of members" [nzValue]="member.id" [nzLabel]="member.name"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.tasks.modal.dueAtLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <nz-date-picker formControlName="dueAt" nzFormat="yyyy-MM-dd HH:mm" [nzShowTime]="true"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<nz-modal
+  [(nzVisible)]="assignModalVisible"
+  [nzTitle]="'momApp.tasks.modal.assignTitle' | translate"
+  [nzOkLoading]="assignSaving"
+  [nzOkText]="'commonActions.save' | translate"
+  [nzCancelText]="'commonActions.cancel' | translate"
+  (nzOnCancel)="closeAssignModal()"
+  (nzOnOk)="submitAssign()">
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="assignTaskForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.tasks.modal.assigneeLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="assigneeUserId" [nzPlaceHolder]="'momApp.tasks.modal.assigneePlaceholder' | translate">
+            <nz-option *ngFor="let member of members" [nzValue]="member.id" [nzLabel]="member.name"></nz-option>
+          </nz-select>
         </nz-form-control>
       </nz-form-item>
     </form>
