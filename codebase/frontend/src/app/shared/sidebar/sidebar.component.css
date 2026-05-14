@@ -13,8 +13,8 @@
   box-shadow: 2px 0 12px rgba(0, 0, 0, 0.07);
   position: relative;
   transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1),
-              background 0.3s ease,
-              box-shadow 0.3s ease;
+    background 0.3s ease,
+    box-shadow 0.3s ease;
   overflow: hidden;
   z-index: 100;
 }
@@ -159,7 +159,7 @@
 }
 
 /* Active parent (open state) */
-.metismenu li.mm-active > .metis-parent {
+.metismenu li.mm-active>.metis-parent {
   background: linear-gradient(135deg, rgba(249, 115, 22, 0.1) 0%, rgba(236, 72, 153, 0.08) 100%);
   color: var(--primary-color, #1890ff);
 }
@@ -175,13 +175,13 @@
 }
 
 /* Xoay arrow khi hover vào li cha */
-.has-submenu:hover > .metis-parent .menu-arrow {
+.has-submenu:hover>.metis-parent .menu-arrow {
   transform: rotate(90deg);
   opacity: 1;
   color: var(--primary-color, #1890ff);
 }
 
-.metismenu li.mm-active > .metis-parent .menu-arrow {
+.metismenu li.mm-active>.metis-parent .menu-arrow {
   transform: rotate(90deg);
   opacity: 1;
   color: var(--primary-color, #1890ff);
@@ -200,8 +200,8 @@
 }
 
 .metis-parent:hover .menu-icon,
-.has-submenu:hover > .metis-parent .menu-icon,
-.metismenu li.mm-active > .metis-parent .menu-icon {
+.has-submenu:hover>.metis-parent .menu-icon,
+.metismenu li.mm-active>.metis-parent .menu-icon {
   color: var(--primary-color, #1890ff);
   transform: scale(1.12);
 }
@@ -217,23 +217,6 @@
   text-overflow: ellipsis;
 }
 
-/* ---- Ẩn text khi sidebar thu gọn (CSS thay vì *ngIf) ---------- */
-:host.collapsed .sidebar-text {
-  opacity: 0;
-  width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  pointer-events: none;
-  flex-shrink: 0;
-  transition: opacity 0.2s ease, width 0.25s ease;
-}
-
-:host:not(.collapsed) .sidebar-text {
-  opacity: 1;
-  width: auto;
-  transition: opacity 0.25s ease 0.05s;
-}
-
 /* ---- Submenu (Hover to open) ----------------------------- */
 .mm-collapse {
   list-style: none;
@@ -241,13 +224,13 @@
   padding: 0;
   overflow: hidden;
   transition: max-height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
-              opacity 0.25s ease;
+    opacity 0.25s ease;
   max-height: 0;
   opacity: 0;
 }
 
 /* Mở submenu khi hover vào li cha */
-.has-submenu:hover > .mm-collapse {
+.has-submenu:hover>.mm-collapse {
   max-height: 600px;
   opacity: 1;
 }
@@ -474,7 +457,7 @@
   color: var(--primary-color, #58a6ff);
 }
 
-:host.dark-mode .metismenu li.mm-active > .metis-parent {
+:host.dark-mode .metismenu li.mm-active>.metis-parent {
   background: rgba(88, 166, 255, 0.1);
   color: var(--primary-color, #58a6ff);
 }
@@ -511,6 +494,7 @@
     opacity: 0;
     transform: translateX(-8px);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -532,5 +516,5 @@
   white-space: nowrap;
   pointer-events: none;
   z-index: 9999;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }

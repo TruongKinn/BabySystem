@@ -1,7 +1,5 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   HostBinding,
@@ -32,7 +30,6 @@ export interface MenuItem {
   imports: [CommonModule, RouterLink, RouterLinkActive, TranslateModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Sidebar tự quản lý collapse — mở khi hover, đóng khi rời chuột */
@@ -52,13 +49,11 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
   @HostListener('mouseenter')
   onMouseEnter(): void {
     this.isCollapsed = false;
-    this.cdr.markForCheck();
   }
 
   @HostListener('mouseleave')
   onMouseLeave(): void {
     this.isCollapsed = true;
-    this.cdr.markForCheck();
   }
 
   isBrowser: boolean;
@@ -105,14 +100,11 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
     },
   ];
 
-  constructor(
-    @Inject(PLATFORM_ID) private readonly platformId: object,
-    private readonly cdr: ChangeDetectorRef,
-  ) {
+  constructor(@Inject(PLATFORM_ID) private readonly platformId: object) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void { }
 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
@@ -127,7 +119,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.metisInstance) {
       try {
         this.metisInstance.dispose();
-      } catch {}
+      } catch { }
     }
 
     import('metismenujs').then(({ MetisMenu }) => {
@@ -142,7 +134,7 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.metisInstance) {
       try {
         this.metisInstance.dispose();
-      } catch {}
+      } catch { }
     }
   }
 
