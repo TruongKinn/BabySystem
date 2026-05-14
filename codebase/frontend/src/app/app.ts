@@ -1,22 +1,17 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
-import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { TranslateModule } from '@ngx-translate/core';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { NzLayoutModule } from 'ng-zorro-antd/layout';
-import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
-import { NzTagModule } from 'ng-zorro-antd/tag';
-import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
-import { NzTypographyModule } from 'ng-zorro-antd/typography';
 import { AuthService } from './auth/auth.service';
 import { SUPPORTED_LANGUAGES } from './i18n/i18n.constants';
 import { I18nService } from './i18n/i18n.service';
 import { LanguageCode } from './i18n/language.model';
+import { SidebarComponent } from './shared/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-root',
@@ -24,24 +19,17 @@ import { LanguageCode } from './i18n/language.model';
   imports: [
     CommonModule,
     RouterOutlet,
-    RouterLink,
     TranslateModule,
     NzAvatarModule,
-    NzButtonModule,
     NzDividerModule,
     NzIconModule,
-    NzLayoutModule,
-    NzMenuModule,
     NzPopoverModule,
-    NzTagModule,
-    NzToolTipModule,
-    NzTypographyModule
+    SidebarComponent,
   ],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App implements OnInit {
-  isCollapsed = true;
   isBrowser: boolean;
   avatarUrl?: string;
   showLayout = true;

@@ -1,4 +1,5 @@
 @import 'ng-zorro-antd/ng-zorro-antd.min.css';
+@import 'metismenujs/style';
 
 :root {
     /* Light Theme Palette */
@@ -13,6 +14,7 @@
     --primary-color: #1890ff;
     --accent-color: #1890ff;
     --surface-bg: #ffffff;
+    --hover-bg: rgba(24, 144, 255, 0.06);
     /* Explicitly define for light mode */
 }
 
@@ -36,6 +38,7 @@
     --primary-color: #58a6ff;
     /* Brighter primary for dark */
     --accent-color: #1f5ca4;
+    --hover-bg: rgba(88, 166, 255, 0.08);
 }
 
 body {

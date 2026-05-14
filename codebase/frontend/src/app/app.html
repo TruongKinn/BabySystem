@@ -1,194 +1,87 @@
-<nz-layout class="app-layout" *ngIf="showLayout; else authLayout">
-  <nz-sider
-    class="menu-sidebar"
-    nzCollapsible
-    nzWidth="208px"
-    [nzCollapsedWidth]="64"
-    nzBreakpoint="md"
-    [(nzCollapsed)]="isCollapsed"
-    [nzTrigger]="null"
-  >
-    <div class="sidebar-logo">
-      <a routerLink="/dashboard">
-        <span class="brand-icon" aria-hidden="true">
-          <span nz-icon nzType="heart" nzTheme="fill"></span>
-        </span>
-        <div class="brand-text" *ngIf="!isCollapsed">
-          <h1>{{ 'momApp.layout.brandTitle' | translate }}</h1>
-          <p>{{ 'momApp.layout.brandSubtitle' | translate }}</p>
-        </div>
-      </a>
-    </div>
+<div class="app-shell" *ngIf="showLayout; else authLayout">
 
-    <ul nz-menu [nzTheme]="isDarkMode ? 'dark' : 'light'" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
-      <li nz-submenu [nzTitle]="'momApp.layout.menu.overview' | translate" nzIcon="dashboard">
-        <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/dashboard">
-              <span nz-icon nzType="home"></span>
-              <span>{{ 'momApp.layout.menu.dashboard' | translate }}</span>
-            </a>
-          </li>
-        </ul>
-      </li>
+  <!-- MetisMenu Sidebar -->
+  <app-sidebar
+    [isDarkMode]="isDarkMode"
+    [username]="username"
+    [userInitials]="userInitials"
+    [avatarUrl]="avatarUrl"
+  ></app-sidebar>
 
-      <li nz-submenu [nzTitle]="'momApp.layout.menu.familyCare' | translate" nzIcon="heart">
-        <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/baby">
-              <span nz-icon nzType="smile"></span>
-              <span>{{ 'momApp.layout.menu.baby' | translate }}</span>
-            </a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/meals">
-              <span nz-icon nzType="coffee"></span>
-              <span>{{ 'momApp.layout.menu.meals' | translate }}</span>
-            </a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/tasks">
-              <span nz-icon nzType="check-square"></span>
-              <span>{{ 'momApp.layout.menu.tasks' | translate }}</span>
-            </a>
-          </li>
-        </ul>
-      </li>
 
-      <li nz-submenu [nzTitle]="'momApp.layout.menu.finance' | translate" nzIcon="wallet">
-        <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/expenses">
-              <span nz-icon nzType="wallet"></span>
-              <span>{{ 'momApp.layout.menu.expenses' | translate }}</span>
-            </a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/shopping">
-              <span nz-icon nzType="shopping-cart"></span>
-              <span>{{ 'momApp.layout.menu.shopping' | translate }}</span>
-            </a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/insights">
-              <span nz-icon nzType="line-chart"></span>
-              <span>{{ 'momApp.layout.menu.insights' | translate }}</span>
-            </a>
-          </li>
-        </ul>
-      </li>
 
-      <li nz-submenu [nzTitle]="'momApp.layout.menu.account' | translate" nzIcon="team">
-        <ul>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/family">
-              <span nz-icon nzType="team"></span>
-              <span>{{ 'momApp.layout.menu.family' | translate }}</span>
-            </a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/profile">
-              <span nz-icon nzType="user"></span>
-              <span>{{ 'momApp.layout.menu.profile' | translate }}</span>
-            </a>
-          </li>
-          <li nz-menu-item nzMatchRouter>
-            <a routerLink="/settings">
-              <span nz-icon nzType="setting"></span>
-              <span>{{ 'momApp.layout.menu.settings' | translate }}</span>
-            </a>
-          </li>
-        </ul>
-      </li>
-    </ul>
-
-    <div
-      class="sidebar-footer"
-      nz-popover
-      [nzPopoverContent]="logoutTemplate"
-      nzPopoverPlacement="rightBottom"
-      nzPopoverTrigger="hover"
-      [class.collapsed]="isCollapsed"
-    >
-      <div class="sidebar-avatar-wrapper">
-        <nz-avatar [nzSrc]="avatarUrl" [nzText]="userInitials" [nzSize]="40" class="profile-avatar"></nz-avatar>
-        <div class="status-indicator"></div>
+  <!-- Main area -->
+  <div class="main-area">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-left">
       </div>
-      <div class="sidebar-footer-info" *ngIf="!isCollapsed">
-        <div class="sidebar-footer-name">{{ username }}</div>
-        <div class="sidebar-footer-role">{{ 'momApp.layout.familyMember' | translate }}</div>
-      </div>
-    </div>
 
-    <ng-template #logoutTemplate>
-      <div class="logout-popover-content">
-        <div class="popover-user-info">
-          <strong>{{ username }}</strong>
-          <span>{{ 'momApp.layout.authenticatedSession' | translate }}</span>
+      <div class="header-right">
+        <!-- Language switcher -->
+        <div class="lang-switcher">
+          <button
+            *ngFor="let lang of languageOptions"
+            class="lang-btn"
+            [class.active]="currentLanguage === lang.code"
+            (click)="setLanguage(lang.code)"
+          >{{ lang.shortLabel }}</button>
         </div>
-        <nz-divider style="margin: 8px 0"></nz-divider>
-        <div class="logout-action" (click)="logout()">
-          <span nz-icon nzType="logout"></span>
-          <span>{{ 'momApp.layout.logout' | translate }}</span>
-        </div>
-      </div>
-    </ng-template>
 
-    <div class="sidebar-toggle" (click)="isCollapsed = !isCollapsed">
-      <span nz-icon [nzType]="isCollapsed ? 'right' : 'left'"></span>
-    </div>
-  </nz-sider>
+        <!-- Theme toggle -->
+        <button class="theme-toggle-btn" (click)="toggleTheme()" [attr.title]="'momApp.layout.toggleTheme' | translate">
+          <svg *ngIf="!isDarkMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg *ngIf="isDarkMode" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
 
-  <nz-layout>
-    <nz-header>
-      <div class="app-header">
-        <div></div>
-        <div class="header-user">
-          <div class="language-switcher">
-            <button
-              *ngFor="let lang of languageOptions"
-              nz-button
-              nzSize="small"
-              [nzType]="currentLanguage === lang.code ? 'primary' : 'default'"
-              (click)="setLanguage(lang.code)"
-            >
-              {{ lang.shortLabel }}
-            </button>
-          </div>
-
-          <span
-            class="theme-toggle-icon"
-            nz-icon
-            [nzType]="isDarkMode ? 'moon' : 'sun'"
-            [style.color]="isDarkMode ? '#ffc107' : '#555'"
-            (click)="toggleTheme()"
-            nz-tooltip
-            [nzTooltipTitle]="'momApp.layout.toggleTheme' | translate"
-          ></span>
-
+        <!-- User info -->
+        <div class="header-user-info" nz-popover [nzPopoverContent]="logoutTemplate" nzPopoverPlacement="bottomRight" nzPopoverTrigger="hover">
           <nz-avatar
-            class="header-avatar"
             [nzSrc]="avatarUrl"
             [nzText]="userInitials"
-            [nzSize]="28"
+            [nzSize]="32"
             [nzIcon]="'user'"
-            [style.background-color]="'#87d068'"
-          >
-          </nz-avatar>
-
-          <span nz-typography>{{ 'momApp.layout.hello' | translate }}, <strong>{{ username }}</strong></span>
+          ></nz-avatar>
+          <span class="header-username">{{ 'momApp.layout.hello' | translate }}, <strong>{{ username }}</strong></span>
         </div>
       </div>
-    </nz-header>
+    </header>
 
-    <nz-content>
-      <div class="inner-content">
-        <router-outlet></router-outlet>
-      </div>
-    </nz-content>
-  </nz-layout>
-</nz-layout>
+    <!-- Content -->
+    <main class="app-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>
 
+<!-- Logout popover -->
+<ng-template #logoutTemplate>
+  <div class="logout-popover-content">
+    <div class="popover-user-info">
+      <strong>{{ username }}</strong>
+      <span>{{ 'momApp.layout.authenticatedSession' | translate }}</span>
+    </div>
+    <nz-divider style="margin: 8px 0"></nz-divider>
+    <div class="logout-action" (click)="logout()">
+      <span nz-icon nzType="logout"></span>
+      <span>{{ 'momApp.layout.logout' | translate }}</span>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Auth layout (unauthenticated) -->
 <ng-template #authLayout>
   <div class="auth-wrapper">
     <router-outlet></router-outlet>

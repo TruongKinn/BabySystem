@@ -1,0 +1,128 @@
+<aside class="metis-sidebar" [class.sidebar-collapsed]="isCollapsed" [class.dark-mode]="isDarkMode">
+  <!-- Logo -->
+  <div class="sidebar-brand" routerLink="/dashboard">
+    <div class="brand-logo-wrap">
+      <div class="brand-logo">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="logo-icon">
+          <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z" fill="url(#heartGrad)"/>
+          <defs>
+            <linearGradient id="heartGrad" x1="1" y1="2" x2="23" y2="22" gradientUnits="userSpaceOnUse">
+              <stop offset="0%" stop-color="#f97316"/>
+              <stop offset="55%" stop-color="#ec4899"/>
+              <stop offset="100%" stop-color="#0ea5e9"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="brand-text" *ngIf="!isCollapsed">
+        <span class="brand-name">{{ 'momApp.layout.brandTitle' | translate }}</span>
+        <span class="brand-sub">{{ 'momApp.layout.brandSubtitle' | translate }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MetisMenu Navigation -->
+  <nav class="metis-nav" [class.nav-collapsed]="isCollapsed">
+    <ul #metisMenuEl class="metismenu" id="side-menu">
+      <ng-container *ngFor="let group of menuItems; trackBy: trackByLabel">
+
+        <!-- Group with children -->
+        <li *ngIf="group.children && group.children.length > 0" class="has-submenu">
+          <a href="javascript:void(0)" class="metis-parent">
+            <span class="menu-icon">
+              <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <ng-container [ngSwitch]="group.icon">
+                  <ng-container *ngSwitchCase="'grid'">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'heart'">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'wallet'">
+                    <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'users'">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                  </ng-container>
+                  <ng-container *ngSwitchDefault>
+                    <circle cx="12" cy="12" r="10"/>
+                  </ng-container>
+                </ng-container>
+              </svg>
+            </span>
+            <span class="menu-label" *ngIf="!isCollapsed">{{ group.labelKey | translate }}</span>
+            <span class="menu-arrow" *ngIf="!isCollapsed">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </span>
+          </a>
+
+          <!-- Children submenu -->
+          <ul class="mm-collapse">
+            <li *ngFor="let child of group.children; trackBy: trackByLabel">
+              <a [routerLink]="child.route" routerLinkActive="active-link" class="metis-child">
+                <span class="child-icon">
+                  <svg class="icon-svg-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <ng-container [ngSwitch]="child.icon">
+                      <ng-container *ngSwitchCase="'home'">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'smile'">
+                        <circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'coffee'">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'check-square'">
+                        <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'wallet'">
+                        <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'shopping-cart'">
+                        <circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'bar-chart-2'">
+                        <line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'users'">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'user'">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                      </ng-container>
+                      <ng-container *ngSwitchCase="'settings'">
+                        <circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                      </ng-container>
+                      <ng-container *ngSwitchDefault>
+                        <circle cx="12" cy="12" r="4"/>
+                      </ng-container>
+                    </ng-container>
+                  </svg>
+                </span>
+                <span class="child-label">{{ child.labelKey | translate }}</span>
+              </a>
+            </li>
+          </ul>
+        </li>
+
+      </ng-container>
+    </ul>
+  </nav>
+
+  <!-- User Footer -->
+  <div class="sidebar-user-footer" [class.footer-collapsed]="isCollapsed">
+    <div class="user-avatar-wrap">
+      <div class="user-avatar">
+        <img *ngIf="avatarUrl" [src]="avatarUrl" [alt]="username" />
+        <span *ngIf="!avatarUrl">{{ userInitials }}</span>
+      </div>
+      <div class="online-dot"></div>
+    </div>
+    <div class="user-info" *ngIf="!isCollapsed">
+      <span class="user-name">{{ username }}</span>
+      <span class="user-role">{{ 'momApp.layout.familyMember' | translate }}</span>
+    </div>
+  </div>
+</aside>
