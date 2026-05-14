@@ -14,7 +14,8 @@
           </defs>
         </svg>
       </div>
-      <div class="brand-text" *ngIf="!isCollapsed">
+      <!-- Dùng class CSS để ẩn/hiện, KHÔNG dùng *ngIf để tránh DOM thrashing -->
+      <div class="brand-text sidebar-text">
         <span class="brand-name">{{ 'momApp.layout.brandTitle' | translate }}</span>
         <span class="brand-sub">{{ 'momApp.layout.brandSubtitle' | translate }}</span>
       </div>
@@ -50,8 +51,9 @@
                 </ng-container>
               </svg>
             </span>
-            <span class="menu-label" *ngIf="!isCollapsed">{{ group.labelKey | translate }}</span>
-            <span class="menu-arrow" *ngIf="!isCollapsed">
+            <!-- sidebar-text: CSS ẩn khi collapsed thay vì *ngIf -->
+            <span class="menu-label sidebar-text">{{ group.labelKey | translate }}</span>
+            <span class="menu-arrow sidebar-text">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polyline points="9 18 15 12 9 6"/>
               </svg>
@@ -101,7 +103,7 @@
                     </ng-container>
                   </svg>
                 </span>
-                <span class="child-label">{{ child.labelKey | translate }}</span>
+                <span class="child-label sidebar-text">{{ child.labelKey | translate }}</span>
               </a>
             </li>
           </ul>
@@ -120,7 +122,8 @@
       </div>
       <div class="online-dot"></div>
     </div>
-    <div class="user-info" *ngIf="!isCollapsed">
+    <!-- sidebar-text: CSS ẩn khi collapsed -->
+    <div class="user-info sidebar-text">
       <span class="user-name">{{ username }}</span>
       <span class="user-role">{{ 'momApp.layout.familyMember' | translate }}</span>
     </div>

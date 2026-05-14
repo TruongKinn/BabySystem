@@ -215,7 +215,23 @@
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
-  animation: fadeInLeft 0.2s ease;
+}
+
+/* ---- Ẩn text khi sidebar thu gọn (CSS thay vì *ngIf) ---------- */
+:host.collapsed .sidebar-text {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  pointer-events: none;
+  flex-shrink: 0;
+  transition: opacity 0.2s ease, width 0.25s ease;
+}
+
+:host:not(.collapsed) .sidebar-text {
+  opacity: 1;
+  width: auto;
+  transition: opacity 0.25s ease 0.05s;
 }
 
 /* ---- Submenu (Hover to open) ----------------------------- */
