@@ -7,6 +7,7 @@ Local stack for Mom Super App backend:
 - Kafka + Zookeeper + Kafka UI
 - Vault (dev mode)
 - MinIO
+- Keycloak (OIDC / SSO)
 
 PostgreSQL init script creates databases:
 
@@ -26,6 +27,13 @@ PostgreSQL init script creates databases:
 ```bash
 cd codebase/infrastructure
 docker compose up -d
+```
+
+Start only Keycloak (optional):
+
+```bash
+cd codebase/infrastructure
+docker compose up -d keycloak
 ```
 
 ## Stop stack
@@ -68,9 +76,32 @@ PowerShell:
 .\vault\bootstrap-secrets.ps1
 ```
 
+## Keycloak bootstrap
+
+Keycloak is exposed at `http://localhost:8080` and imports realm config from:
+
+- `infrastructure/keycloak/micro-services-realm.json`
+
+Default accounts and realm:
+
+- Admin Console: `http://localhost:8080/admin`
+- Admin user: `admin`
+- Admin password: `admin`
+- Realm: `micro-services`
+- Client: `frontend-app`
+- Demo login user: `demo.user`
+- Demo login password: `demo123`
+
+Quick check discovery endpoint:
+
+```bash
+curl http://localhost:8080/realms/micro-services/.well-known/openid-configuration
+```
+
 ## Service env defaults
 
 - Kafka: `KAFKA_BOOTSTRAP_SERVERS=localhost:9092`
 - Redis: `REDIS_HOST=localhost`, `REDIS_PORT=6379`
 - Vault: `VAULT_URI=http://localhost:8200`, `VAULT_TOKEN=root`
 - MinIO: `MINIO_ENDPOINT=http://localhost:9000`, `MINIO_ACCESS_KEY=minioadmin`, `MINIO_SECRET_KEY=minioadmin`
+- Keycloak: `KEYCLOAK_URL=http://localhost:8080`

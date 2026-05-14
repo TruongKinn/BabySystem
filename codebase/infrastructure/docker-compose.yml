@@ -125,8 +125,29 @@ services:
     volumes:
       - minio_data:/data
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.6
+    container_name: mom-keycloak
+    restart: unless-stopped
+    command:
+      - start-dev
+      - --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KC_HEALTH_ENABLED: "true"
+      KC_METRICS_ENABLED: "true"
+    ports:
+      - "8080:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./keycloak:/opt/keycloak/data/import
+
 volumes:
   postgres_data:
   redis_data:
   vault_data:
   minio_data:
+  keycloak_data:
