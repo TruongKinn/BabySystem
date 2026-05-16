@@ -2,7 +2,7 @@ import { AuthConfig } from 'angular-oauth2-oidc';
 
 export const authConfig: AuthConfig = {
     issuer: 'http://localhost:8080/realms/micro-services',
-    redirectUri: (typeof window !== 'undefined') ? window.location.origin + '/login' : 'http://localhost:4200/login',
+    redirectUri: (typeof window !== 'undefined') ? window.location.origin + '/app/login' : 'http://localhost:4200/app/login',
     clientId: 'frontend-app',
     responseType: 'code',
     strictDiscoveryDocumentValidation: true,

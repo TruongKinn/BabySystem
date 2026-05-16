@@ -13,6 +13,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { MockSuperAppService } from '../core/services/mock-super-app.service';
 import { MealType, SuperAppCommandService } from '../core/services/super-app-command.service';
 import { I18nService } from '../i18n/i18n.service';
@@ -32,7 +33,8 @@ import { I18nService } from '../i18n/i18n.service';
     NzFormModule,
     NzInputModule,
     NzDatePickerModule,
-    NzSelectModule
+    NzSelectModule,
+    NzEmptyModule
   ],
   templateUrl: './meals.component.html',
   styleUrl: './meals.component.css'

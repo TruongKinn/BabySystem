@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import vn.agent.controller.request.ResetPasswordByAdminRequest;
+import vn.agent.controller.request.UpdateUserTypeRequest;
 import vn.agent.controller.request.UpdateUserStatusRequest;
 import vn.agent.service.AccountUserWriteService;
 
@@ -36,6 +37,14 @@ public class UserAdminController {
     public ResponseEntity<Void> resetPasswordByAdmin(@PathVariable Long id,
                                                      @Valid @RequestBody ResetPasswordByAdminRequest request) {
         accountUserWriteService.resetPasswordByAdmin(id, request.getTemporaryPassword());
+        return ResponseEntity.ok().build();
+    }
+
+    @PatchMapping("/{id}/type")
+    @Operation(summary = "Update user type")
+    public ResponseEntity<Void> updateUserType(@PathVariable Long id,
+                                               @Valid @RequestBody UpdateUserTypeRequest request) {
+        accountUserWriteService.updateUserType(id, request.getType());
         return ResponseEntity.ok().build();
     }
 }

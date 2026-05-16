@@ -8,7 +8,19 @@
 
   <nz-card class="table-card profile-card">
     <div class="profile-box">
-      <nz-avatar [nzText]="profile.displayName.charAt(0)" [nzSize]="72" nzIcon="user"></nz-avatar>
+      <div class="avatar-box">
+        <nz-avatar
+          [nzSrc]="profile.avatarUrl ?? undefined"
+          [nzText]="profile.displayName.charAt(0)"
+          [nzSize]="72"
+          nzIcon="user"
+        ></nz-avatar>
+        <input #avatarInput type="file" accept="image/*" (change)="onAvatarFileSelected($event)" hidden />
+        <button nz-button nzType="default" [nzLoading]="isUploadingAvatar" (click)="avatarInput.click()">
+          {{ 'momApp.profile.changeAvatar' | translate }}
+        </button>
+        <small>{{ 'momApp.profile.uploadHint' | translate }}</small>
+      </div>
       <div>
         <h3>{{ profile.displayName }}</h3>
         <p>{{ 'momApp.profile.roleLabel' | translate }}: {{ profile.roleLabel }}</p>

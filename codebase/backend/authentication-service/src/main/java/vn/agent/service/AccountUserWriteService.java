@@ -2,6 +2,7 @@ package vn.agent.service;
 
 import vn.agent.controller.request.ChangePasswordRequest;
 import vn.agent.controller.request.CreateUserRequest;
+import vn.agent.common.UserType;
 import vn.agent.controller.request.UpdateUserRequest;
 import vn.agent.common.UserStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,8 @@ public interface AccountUserWriteService {
     void changePassword(ChangePasswordRequest request);
 
     void updateUserStatus(Long userId, UserStatus status);
+
+    void updateUserType(Long userId, UserType type);
 
     void resetPasswordByAdmin(Long userId, String temporaryPassword);
 

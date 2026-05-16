@@ -13,4 +13,12 @@ public interface FileMetadataRepository extends JpaRepository<FileMetadataEntity
     List<FileMetadataEntity> findByFamilyIdAndDeletedFalseOrderByCreatedAtDesc(Long familyId);
 
     List<FileMetadataEntity> findByFamilyIdAndBucketNameAndDeletedFalseOrderByCreatedAtDesc(Long familyId, String bucketName);
+
+    List<FileMetadataEntity> findByFamilyIdAndFileTagAndDeletedFalseOrderByCreatedAtDesc(Long familyId, String fileTag);
+
+    List<FileMetadataEntity> findByFamilyIdAndBucketNameAndFileTagAndDeletedFalseOrderByCreatedAtDesc(
+            Long familyId,
+            String bucketName,
+            String fileTag
+    );
 }

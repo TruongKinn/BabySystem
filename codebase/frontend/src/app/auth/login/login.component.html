@@ -25,6 +25,8 @@
       <div class="card-header">
         <h2>{{ 'auth.login.card.title' | translate }}</h2>
         <p>{{ 'auth.login.card.subtitle' | translate }}</p>
+        <p class="portal-hint" *ngIf="portalMode === 'admin'">Admin Portal - quản lý tài khoản người dùng</p>
+        <p class="portal-hint" *ngIf="portalMode === 'user'">User Portal - dành cho thành viên gia đình sử dụng ứng dụng</p>
       </div>
 
       <div class="auth-switch">
@@ -135,6 +137,11 @@
         <button nz-button nzType="primary" nzBlock class="submit-btn" [nzLoading]="isLoading" (click)="loginWithKeycloak()">
           {{ 'auth.login.keycloak.submit' | translate }}
         </button>
+      </div>
+
+      <div class="portal-switch-links">
+        <a *ngIf="portalMode === 'user'" routerLink="/admin/login">Đăng nhập vào Admin Portal</a>
+        <a *ngIf="portalMode === 'admin'" routerLink="/app/login">Đăng nhập vào User Portal</a>
       </div>
     </section>
   </div>

@@ -82,7 +82,7 @@
 }
 
 .brand-name {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 700;
   color: var(--text-main, #262626);
   white-space: nowrap;
@@ -175,12 +175,6 @@
 }
 
 /* Xoay arrow khi hover vào li cha */
-.has-submenu:hover>.metis-parent .menu-arrow {
-  transform: rotate(90deg);
-  opacity: 1;
-  color: var(--primary-color, #1890ff);
-}
-
 .metismenu li.mm-active>.metis-parent .menu-arrow {
   transform: rotate(90deg);
   opacity: 1;
@@ -200,7 +194,6 @@
 }
 
 .metis-parent:hover .menu-icon,
-.has-submenu:hover>.metis-parent .menu-icon,
 .metismenu li.mm-active>.metis-parent .menu-icon {
   color: var(--primary-color, #1890ff);
   transform: scale(1.12);
@@ -217,7 +210,7 @@
   text-overflow: ellipsis;
 }
 
-/* ---- Submenu (Hover to open) ----------------------------- */
+/* ---- Submenu (Click to open) ----------------------------- */
 .mm-collapse {
   list-style: none;
   margin: 0;
@@ -227,12 +220,6 @@
     opacity 0.25s ease;
   max-height: 0;
   opacity: 0;
-}
-
-/* Mở submenu khi hover vào li cha */
-.has-submenu:hover>.mm-collapse {
-  max-height: 600px;
-  opacity: 1;
 }
 
 /* Giữ tương thích với MetisMenu click (mm-show) */
@@ -436,6 +423,34 @@
   white-space: nowrap;
 }
 
+.logout-btn-wrap {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: var(--text-secondary, #8c8c8c);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.logout-btn-wrap:hover {
+  background: rgba(249, 115, 22, 0.1);
+  color: #f97316;
+}
+
+.logout-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+.logout-btn-wrap:hover .logout-icon {
+  transform: translateX(2px);
+}
+
 /* ---- Dark Mode ------------------------------------------- */
 :host.dark-mode {
   background: var(--sidebar-bg, #161b22);
@@ -518,3 +533,67 @@
   z-index: 9999;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
+
+/* ============================================================
+   USER-ROLE SIDEBAR OVERRIDES
+   Applied via :host.user-mode class (set from sidebar component)
+   ============================================================ */
+
+/* Active user nav link – warm gradient instead of admin blue */
+:host.user-mode .metis-child.active-link {
+  background: linear-gradient(135deg, rgba(249,115,22,.14) 0%, rgba(236,72,153,.09) 100%);
+  color: #f97316;
+  font-weight: 600;
+}
+
+:host.user-mode .metis-child.active-link::before {
+  background: #f97316;
+}
+
+:host.user-mode .metis-parent:hover {
+  background: rgba(249,115,22,.07);
+  color: #f97316;
+}
+
+:host.user-mode .metismenu li.mm-active>.metis-parent {
+  background: linear-gradient(135deg, rgba(249,115,22,.1) 0%, rgba(236,72,153,.07) 100%);
+  color: #f97316;
+}
+
+:host.user-mode .metismenu li.mm-active>.metis-parent .menu-icon,
+:host.user-mode .metis-parent:hover .menu-icon {
+  color: #f97316;
+}
+
+:host.user-mode .metismenu li.mm-active>.metis-parent .menu-arrow {
+  color: #f97316;
+}
+
+:host.user-mode .metis-child:hover::before {
+  background: #f97316;
+}
+
+:host.user-mode .metis-child:hover {
+  color: #f97316;
+}
+
+/* Dark mode user sidebar */
+:host.dark-mode.user-mode .metis-child.active-link {
+  background: rgba(249,115,22,.14);
+  color: #fb923c;
+}
+
+:host.dark-mode.user-mode .metis-parent:hover {
+  background: rgba(249,115,22,.09);
+  color: #fb923c;
+}
+
+/* Mobile: hide sidebar on small screens – handled by @media in global CSS */
+@media (max-width: 767px) {
+  :host {
+    display: none !important;
+  }
+}
+
+
+

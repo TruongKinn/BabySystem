@@ -1,11 +1,11 @@
-<section class="page-container" *ngIf="items$ | async as items">
+<section class="page-container shopping-page" *ngIf="items$ | async as items">
   <div class="header-actions">
     <div>
       <h1 class="page-title">{{ 'momApp.shopping.title' | translate }}</h1>
       <p class="page-subtitle">{{ 'momApp.shopping.subtitle' | translate }}</p>
     </div>
     <div class="header-buttons">
-      <button nz-button nzType="primary" (click)="openCreateModal()">
+      <button nz-button nzType="primary" (click)="openCreateModal()" class="btn-user-primary">
         <span nz-icon nzType="plus"></span>
         {{ 'momApp.shopping.actions.create' | translate }}
       </button>
@@ -16,26 +16,61 @@
     </div>
   </div>
 
-  <nz-card class="table-card">
-    <ul class="shopping-list">
-      <li *ngFor="let item of items" [ngClass]="{ checked: item.checked }">
-        <div>
-          <p class="item-name">{{ item.name }}</p>
-          <p class="item-qty">{{ item.quantity }}</p>
-        </div>
-        <div class="item-actions">
-          <button nz-button nzSize="small" (click)="toggleChecked(item.id, item.checked)">
-            {{ item.checked ? ('momApp.shopping.actions.uncheck' | translate) : ('momApp.shopping.actions.check' | translate) }}
-          </button>
-          <nz-tag [nzColor]="item.checked ? 'green' : 'blue'">
-            {{ item.checked ? ('momApp.shopping.status.bought' | translate) : ('momApp.shopping.status.toBuy' | translate) }}
-          </nz-tag>
-        </div>
-      </li>
-    </ul>
+  <!-- Shopping Summary Bar -->
+  <div class="shopping-summary animate-slide-up">
+    <div class="shopping-summary-item">
+      <span class="ssm-val" style="color:var(--user-primary)">{{ items.length }}</span>
+      <span class="ssm-lbl">Tổng mặt hàng</span>
+    </div>
+    <div class="shopping-summary-divider"></div>
+    <div class="shopping-summary-item">
+      <span class="ssm-val" style="color:var(--user-teal)">{{ getCheckedCount(items) }}</span>
+      <span class="ssm-lbl">Đã mua</span>
+    </div>
+    <div class="shopping-summary-divider"></div>
+    <div class="shopping-summary-item">
+      <span class="ssm-val" style="color:var(--user-secondary)">{{ items.length - getCheckedCount(items) }}</span>
+      <span class="ssm-lbl">Còn lại</span>
+    </div>
+
+    <!-- Progress fill -->
+    <div class="shopping-progress-wrap" *ngIf="items.length > 0">
+      <div class="user-progress-bar" style="flex:1;margin:0">
+        <div class="user-progress-fill"
+          [style.width.%]="(getCheckedCount(items) / items.length) * 100"
+          style="background: var(--user-grad-3)"></div>
+      </div>
+      <span class="ssm-lbl">{{ ((getCheckedCount(items) / items.length) * 100) | number:'1.0-0' }}%</span>
+    </div>
+  </div>
+
+  <!-- Shopping Items -->
+  <nz-card class="table-card shopping-list-card animate-slide-up" style="animation-delay:.06s">
+    <nz-empty *ngIf="items.length === 0"
+      [nzNotFoundContent]="'Chưa có mặt hàng nào. Hãy thêm vào!'">
+    </nz-empty>
+
+    <div *ngFor="let item of items" class="shop-item" [class.item-checked]="item.checked">
+      <!-- Custom Checkbox -->
+      <div class="shop-checkbox" (click)="toggleChecked(item.id, item.checked)">
+        <span nz-icon nzType="check" *ngIf="item.checked" style="font-size:13px;"></span>
+      </div>
+
+      <!-- Item info -->
+      <div style="flex:1;min-width:0;">
+        <div class="shop-item-name">{{ item.name }}</div>
+        <div class="shop-item-qty" *ngIf="item.quantity">🔢 {{ item.quantity }}</div>
+      </div>
+
+      <!-- Status badge -->
+      <nz-tag [nzColor]="item.checked ? 'cyan' : 'orange'" style="border-radius:8px;margin:0;">
+        {{ item.checked ? ('momApp.shopping.status.bought' | translate) : ('momApp.shopping.status.toBuy' | translate) }}
+      </nz-tag>
+    </div>
   </nz-card>
 </section>
 
+<!-- Create Item Modal -->
 <nz-modal
   [(nzVisible)]="isCreateModalVisible"
   [nzTitle]="'momApp.shopping.modal.createTitle' | translate"

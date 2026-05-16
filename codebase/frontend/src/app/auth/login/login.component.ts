@@ -1,7 +1,7 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { Component, ElementRef, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
 import { TranslateModule } from '@ngx-translate/core';
 import { NzAlertModule } from 'ng-zorro-antd/alert';
@@ -18,6 +18,7 @@ import { authConfig } from '../auth.config';
 import { AuthService } from '../auth.service';
 
 type AuthMode = 'bearer' | 'keycloak';
+type PortalMode = 'user' | 'admin';
 
 @Component({
   selector: 'app-login',
@@ -25,6 +26,7 @@ type AuthMode = 'bearer' | 'keycloak';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    RouterLink,
     TranslateModule,
     NzFormModule,
     NzInputModule,
@@ -55,6 +57,7 @@ export class LoginComponent implements OnInit {
   isVisibleTwoFactorGuide = false;
   isVisibleForceChangePassword = false;
   isForceChangeLoading = false;
+  portalMode: PortalMode = 'user';
   forceChangeForm: FormGroup;
 
   constructor(
@@ -62,6 +65,7 @@ export class LoginComponent implements OnInit {
     private readonly authService: AuthService,
     private readonly notification: NzNotificationService,
     private readonly router: Router,
+    private readonly route: ActivatedRoute,
     private readonly oauthService: OAuthService,
     private readonly i18nService: I18nService,
     @Inject(PLATFORM_ID) private readonly platformId: object
@@ -103,8 +107,13 @@ export class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    const routePortal = this.route.snapshot.data['portal'] as string | undefined;
+    if (routePortal === 'admin' || routePortal === 'user') {
+      this.portalMode = routePortal;
+    }
+
     if (this.isBrowser && this.authService.isAuthenticated()) {
-      this.router.navigate(['/']);
+      this.router.navigateByUrl(this.authService.getDefaultRouteByRole(), { replaceUrl: true });
     }
   }
 
@@ -213,7 +222,7 @@ export class LoginComponent implements OnInit {
           this.i18nService.translate('auth.login.messages.loginSuccessTitle'),
           this.i18nService.translate('auth.login.messages.loginSuccessDesc')
         );
-        this.router.navigateByUrl('/', { replaceUrl: true });
+        this.router.navigateByUrl(this.resolvePostLoginRoute(), { replaceUrl: true });
       },
       error: (err) => {
         this.isLoading = false;
@@ -310,7 +319,7 @@ export class LoginComponent implements OnInit {
             this.i18nService.translate('auth.login.messages.loginSuccessTitle'),
             this.i18nService.translate('auth.login.messages.loginSuccessDesc')
           );
-          this.router.navigateByUrl('/', { replaceUrl: true });
+          this.router.navigateByUrl(this.resolvePostLoginRoute(), { replaceUrl: true });
           return;
         }
 
@@ -434,5 +443,26 @@ export class LoginComponent implements OnInit {
       }
       return newPassword === confirmPassword ? null : { mismatch: true };
     };
+  }
+
+  private resolvePostLoginRoute(): string {
+    const requestedRedirect = this.route.snapshot.queryParamMap.get('redirect');
+    const isAdminUser = this.authService.isAdminUser();
+
+    if (requestedRedirect && requestedRedirect.startsWith('/')) {
+      if (requestedRedirect.startsWith('/admin') && !isAdminUser) {
+        return '/app/dashboard';
+      }
+      if (requestedRedirect.startsWith('/app') && isAdminUser) {
+        return '/admin/users';
+      }
+      return requestedRedirect;
+    }
+
+    if (this.portalMode === 'admin' && !isAdminUser) {
+      return '/app/dashboard';
+    }
+
+    return this.authService.getDefaultRouteByRole();
   }
 }

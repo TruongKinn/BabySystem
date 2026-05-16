@@ -1,0 +1,111 @@
+<section class="admin-users-page">
+  <nz-card class="users-card" [nzTitle]="'Admin - Quản lý tài khoản người dùng'">
+    <div class="toolbar">
+      <input
+        nz-input
+        class="search-input"
+        [ngModel]="searchText"
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="Tìm username, email, số điện thoại..."
+      />
+      <button nz-button nzType="default" (click)="loadUsers()">Làm mới</button>
+    </div>
+
+    <nz-table
+      [nzData]="filteredUsers"
+      [nzLoading]="loading"
+      [nzFrontPagination]="false"
+      [nzPageIndex]="pageIndex"
+      [nzPageSize]="pageSize"
+      [nzTotal]="total"
+      [nzShowSizeChanger]="true"
+      [nzPageSizeOptions]="[10, 20, 50]"
+      (nzPageIndexChange)="onPageIndexChange($event)"
+      (nzPageSizeChange)="onPageSizeChange($event)"
+    >
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Username</th>
+          <th>Họ tên</th>
+          <th>Email</th>
+          <th>SĐT</th>
+          <th>Loại</th>
+          <th>Trạng thái</th>
+          <th>Thao tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of filteredUsers">
+          <td>{{ user.id }}</td>
+          <td>{{ user.username }}</td>
+          <td>{{ fullNameOf(user) }}</td>
+          <td>{{ user.email || '-' }}</td>
+          <td>{{ user.phone || '-' }}</td>
+          <td>{{ user.type || '-' }}</td>
+          <td>
+            <nz-tag [nzColor]="statusColorOf(user.status)">
+              {{ user.status }}
+            </nz-tag>
+          </td>
+          <td>
+            <div class="actions">
+              <button
+                *ngIf="user.status !== 'LOCKED'"
+                nz-button
+                nzType="default"
+                nzDanger
+                nz-popconfirm
+                nzPopconfirmTitle="Khóa tài khoản này?"
+                (nzOnConfirm)="lockUser(user)"
+                [nzLoading]="actionLoadingUserId === user.id"
+              >
+                Khóa
+              </button>
+
+              <button
+                *ngIf="user.status === 'LOCKED'"
+                nz-button
+                nzType="default"
+                nz-popconfirm
+                nzPopconfirmTitle="Mở khóa tài khoản này?"
+                (nzOnConfirm)="unlockUser(user)"
+                [nzLoading]="actionLoadingUserId === user.id"
+              >
+                Mở khóa
+              </button>
+
+              <button nz-button nzType="primary" (click)="openResetPasswordModal(user)">
+                Reset mật khẩu
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+</section>
+
+<nz-modal
+  [(nzVisible)]="isResetModalVisible"
+  nzTitle="Reset mật khẩu tạm"
+  nzOkText="Xác nhận"
+  nzCancelText="Hủy"
+  [nzOkLoading]="isResetLoading"
+  (nzOnCancel)="closeResetPasswordModal()"
+  (nzOnOk)="confirmResetPassword()"
+>
+  <ng-container *nzModalContent>
+    <p class="modal-desc">
+      User:
+      <strong>{{ resetTargetUser?.username }}</strong>
+    </p>
+    <input
+      nz-input
+      [(ngModel)]="temporaryPassword"
+      maxlength="100"
+      placeholder="Nhập mật khẩu tạm"
+      (keydown.enter)="confirmResetPassword()"
+    />
+  </ng-container>
+</nz-modal>

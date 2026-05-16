@@ -42,6 +42,7 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
             "/auth/refresh-token",
             "/auth/exchange-keycloak-token",
             "/auth/captcha",
+            "/auth/account/user/avatar/",
             "/actuator",
             "/v3/api-docs",
             "/swagger-ui",

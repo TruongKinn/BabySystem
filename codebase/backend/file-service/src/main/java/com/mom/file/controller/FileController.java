@@ -38,9 +38,10 @@ public class FileController {
     @GetMapping("/files")
     public ApiResponse<List<FileMetadataResponse>> getFiles(
             @RequestParam("familyId") Long familyId,
-            @RequestParam(value = "bucket", required = false) String bucket
+            @RequestParam(value = "bucket", required = false) String bucket,
+            @RequestParam(value = "tag", required = false) String tag
     ) {
-        return ApiResponse.ok("Success", fileService.getFiles(familyId, bucket));
+        return ApiResponse.ok("Success", fileService.getFiles(familyId, bucket, tag));
     }
 
     @GetMapping("/files/{id}")

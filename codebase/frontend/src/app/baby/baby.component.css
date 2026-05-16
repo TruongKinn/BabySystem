@@ -1,5 +1,11 @@
-.baby-card {
-  max-width: 920px;
+/* Baby component - extra styles beyond global system */
+
+.baby-profile-card {
+  border-radius: var(--user-card-radius);
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(249, 115, 22, 0.15);
+  margin-bottom: 20px;
+  border: none;
 }
 
 .header-buttons {
@@ -7,4 +13,66 @@
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+/* Gradient primary button */
+.btn-gradient-primary.ant-btn-primary {
+  background: var(--user-grad-1);
+  border: none;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
+  transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+}
+
+.btn-gradient-primary.ant-btn-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 20px rgba(249, 115, 22, 0.45);
+}
+
+.baby-gallery-card {
+  margin-top: 0;
+}
+
+.gallery-toolbar {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.baby-select {
+  min-width: 220px;
+  flex: 1;
+}
+
+.gallery-error {
+  margin-bottom: 12px;
+  color: #ef4444;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.empty-state {
+  color: var(--text-secondary);
+  padding: 20px 0;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .gallery-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .baby-select {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .header-buttons { flex-wrap: wrap; }
 }

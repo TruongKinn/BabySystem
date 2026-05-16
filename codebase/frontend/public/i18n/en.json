@@ -2375,6 +2375,13 @@
         "settings": "Settings"
       }
     },
+    "admin": {
+      "menu": {
+        "portal": "System admin",
+        "dashboard": "Admin dashboard",
+        "users": "User management"
+      }
+    },
     "dashboard": {
       "title": "Family Dashboard",
       "subtitle": "overview for today",
@@ -2567,7 +2574,31 @@
       },
       "messages": {
         "createSuccess": "Expense created successfully.",
-        "createFailed": "Unable to create expense."
+        "createFailed": "Unable to create expense.",
+        "uploadReceiptSuccess": "Receipt uploaded successfully.",
+        "uploadReceiptFailed": "Unable to upload receipt.",
+        "downloadReceiptFailed": "Unable to download receipt.",
+        "deleteReceiptSuccess": "Receipt deleted successfully.",
+        "deleteReceiptFailed": "Unable to delete receipt."
+      },
+      "receipts": {
+        "title": "Receipts by expense",
+        "modalTitle": "Manage receipts",
+        "emptyExpenses": "No expense available for receipt attachment.",
+        "emptyFiles": "No receipt has been attached to this expense yet.",
+        "columns": {
+          "category": "Category",
+          "amount": "Amount",
+          "spentAt": "Spent at",
+          "note": "Note",
+          "actions": "Actions"
+        },
+        "actions": {
+          "manage": "Manage receipts",
+          "upload": "Upload receipt",
+          "download": "Download",
+          "delete": "Delete"
+        }
       }
     },
     "baby": {
@@ -2612,6 +2643,25 @@
         "createBabyFailed": "Unable to create baby profile.",
         "createLogSuccess": "Baby log created.",
         "createLogFailed": "Unable to create baby log."
+      },
+      "gallery": {
+        "title": "Baby photo gallery",
+        "selectBaby": "Select baby",
+        "empty": "No photo in the gallery.",
+        "actions": {
+          "upload": "Upload photo",
+          "download": "Download",
+          "delete": "Delete"
+        },
+        "messages": {
+          "loadFailed": "Unable to load baby list.",
+          "selectBabyFirst": "Please select a baby before uploading.",
+          "uploadSuccess": "Photo uploaded successfully.",
+          "uploadFailed": "Unable to upload photo.",
+          "downloadFailed": "Unable to download photo.",
+          "deleteSuccess": "Photo deleted successfully.",
+          "deleteFailed": "Unable to delete photo."
+        }
       }
     },
     "family": {
@@ -2653,9 +2703,17 @@
     "profile": {
       "title": "Profile",
       "subtitle": "Account identity and role in family coordination",
+      "changeAvatar": "Change avatar",
+      "uploadHint": "Image files only, maximum size 30MB.",
       "roleLabel": "Role",
       "usernameLabel": "Username",
-      "emailLabel": "Email"
+      "emailLabel": "Email",
+      "messages": {
+        "selectImageOnly": "Please select a valid image file.",
+        "fileTooLarge": "Image size exceeds the 30MB limit.",
+        "uploadSuccess": "Avatar updated successfully.",
+        "uploadFailed": "Unable to upload avatar."
+      }
     },
     "settings": {
       "title": "Settings",

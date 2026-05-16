@@ -11,6 +11,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { MockSuperAppService } from '../core/services/mock-super-app.service';
 import { SuperAppCommandService } from '../core/services/super-app-command.service';
 import { I18nService } from '../i18n/i18n.service';
@@ -28,7 +29,8 @@ import { I18nService } from '../i18n/i18n.service';
     NzIconModule,
     NzModalModule,
     NzFormModule,
-    NzInputModule
+    NzInputModule,
+    NzEmptyModule
   ],
   templateUrl: './shopping.component.html',
   styleUrl: './shopping.component.css'
@@ -116,5 +118,9 @@ export class ShoppingComponent {
         );
       }
     });
+  }
+
+  getCheckedCount(items: Array<{ checked: boolean }>): number {
+    return items.filter(i => i.checked).length;
   }
 }

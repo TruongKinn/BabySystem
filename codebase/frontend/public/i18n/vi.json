@@ -2373,6 +2373,13 @@
                 "settings": "Cài đặt"
             }
         },
+        "admin": {
+            "menu": {
+                "portal": "Quản trị hệ thống",
+                "dashboard": "Dashboard admin",
+                "users": "Quản lý người dùng"
+            }
+        },
         "dashboard": {
             "title": "Dashboard Gia Đình",
             "subtitle": "tổng quan trong ngày",
@@ -2565,7 +2572,31 @@
             },
             "messages": {
                 "createSuccess": "Tạo khoản chi thành công.",
-                "createFailed": "Không thể tạo khoản chi."
+                "createFailed": "Không thể tạo khoản chi.",
+                "uploadReceiptSuccess": "Tải hóa đơn lên thành công.",
+                "uploadReceiptFailed": "Không thể tải hóa đơn lên.",
+                "downloadReceiptFailed": "Không thể tải hóa đơn xuống.",
+                "deleteReceiptSuccess": "Xóa hóa đơn thành công.",
+                "deleteReceiptFailed": "Không thể xóa hóa đơn."
+            },
+            "receipts": {
+                "title": "Hóa đơn theo khoản chi",
+                "modalTitle": "Quản lý hóa đơn",
+                "emptyExpenses": "Chưa có khoản chi nào để đính kèm hóa đơn.",
+                "emptyFiles": "Khoản chi này chưa có hóa đơn.",
+                "columns": {
+                    "category": "Danh mục",
+                    "amount": "Số tiền",
+                    "spentAt": "Thời gian chi",
+                    "note": "Ghi chú",
+                    "actions": "Thao tác"
+                },
+                "actions": {
+                    "manage": "Quản lý hóa đơn",
+                    "upload": "Tải hóa đơn",
+                    "download": "Tải xuống",
+                    "delete": "Xóa"
+                }
             }
         },
         "baby": {
@@ -2610,6 +2641,25 @@
                 "createBabyFailed": "Không thể tạo hồ sơ bé.",
                 "createLogSuccess": "Tạo nhật ký bé thành công.",
                 "createLogFailed": "Không thể tạo nhật ký bé."
+            },
+            "gallery": {
+                "title": "Thư viện ảnh em bé",
+                "selectBaby": "Chọn em bé",
+                "empty": "Chưa có ảnh trong thư viện.",
+                "actions": {
+                    "upload": "Tải ảnh lên",
+                    "download": "Tải xuống",
+                    "delete": "Xóa"
+                },
+                "messages": {
+                    "loadFailed": "Không thể tải danh sách em bé.",
+                    "selectBabyFirst": "Vui lòng chọn em bé trước khi tải ảnh.",
+                    "uploadSuccess": "Tải ảnh lên thành công.",
+                    "uploadFailed": "Không thể tải ảnh lên.",
+                    "downloadFailed": "Không thể tải ảnh xuống.",
+                    "deleteSuccess": "Xóa ảnh thành công.",
+                    "deleteFailed": "Không thể xóa ảnh."
+                }
             }
         },
         "family": {
@@ -2651,9 +2701,17 @@
         "profile": {
             "title": "Hồ Sơ",
             "subtitle": "Thông tin tài khoản và vai trò trong gia đình",
+            "changeAvatar": "Đổi ảnh đại diện",
+            "uploadHint": "Chỉ chấp nhận file ảnh, tối đa 30MB.",
             "roleLabel": "Vai trò",
             "usernameLabel": "Tên đăng nhập",
-            "emailLabel": "Email"
+            "emailLabel": "Email",
+            "messages": {
+                "selectImageOnly": "Vui lòng chọn file ảnh hợp lệ.",
+                "fileTooLarge": "Ảnh vượt quá dung lượng tối đa 30MB.",
+                "uploadSuccess": "Cập nhật ảnh đại diện thành công.",
+                "uploadFailed": "Không thể tải ảnh đại diện."
+            }
         },
         "settings": {
             "title": "Cài Đặt",

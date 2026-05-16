@@ -48,9 +48,33 @@ interface UserApi {
   displayName: string;
 }
 
+interface ExpenseApi {
+  id: number;
+  familyId: number;
+  categoryId: number;
+  categoryName: string;
+  amount: number;
+  currency: string;
+  note: string | null;
+  spentAt: string;
+}
+
 interface NotificationSettings {
   notificationEnabled: boolean;
   reminderHour: string;
+}
+
+export interface FileMetadata {
+  id: number;
+  familyId: number;
+  userId: number | null;
+  bucketName: string;
+  objectKey: string;
+  originalFileName: string;
+  contentType: string | null;
+  sizeBytes: number;
+  fileTag: string | null;
+  createdAt: string;
 }
 
 export type MealType = 'BREAKFAST' | 'LUNCH' | 'DINNER' | 'SNACK';
@@ -96,16 +120,24 @@ export class SuperAppCommandService {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
   }
 
-  getProfile(): Observable<{ userId: number | null; displayName: string; username: string; email: string }> {
+  getProfile(): Observable<{
+    userId: number | null;
+    displayName: string;
+    username: string;
+    email: string;
+    avatarUrl: string | null;
+  }> {
     const userId = this.getUserId();
     const fallbackName = this.getStored('atg_username') ?? 'Family User';
+    const fallbackAvatar = this.resolveAvatarUrl(this.getStored('atg_avatar_url'));
 
     if (!userId) {
       return of({
         userId: null,
         displayName: fallbackName,
         username: fallbackName,
-        email: this.getStored('atg_email') ?? '-'
+        email: this.getStored('atg_email') ?? '-',
+        avatarUrl: fallbackAvatar
       });
     }
 
@@ -114,17 +146,41 @@ export class SuperAppCommandService {
         userId: user.id,
         displayName: user.displayName,
         username: user.username,
-        email: user.email
+        email: user.email,
+        avatarUrl: fallbackAvatar ?? this.buildAvatarUrl(user.id)
       })),
       catchError(() =>
         of({
           userId,
           displayName: fallbackName,
           username: fallbackName,
-          email: this.getStored('atg_email') ?? '-'
+          email: this.getStored('atg_email') ?? '-',
+          avatarUrl: fallbackAvatar ?? this.buildAvatarUrl(userId)
         })
       )
     );
+  }
+
+  uploadProfileAvatar(file: File): Observable<string> {
+    const userId = this.getUserId();
+    if (!userId) {
+      throw new Error('User is not authenticated.');
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http
+      .post(`${this.apiBase}/auth/account/user/${userId}/avatar`, formData, { responseType: 'text' })
+      .pipe(
+        map((path) => {
+          const resolvedUrl = this.resolveAvatarUrl(path);
+          if (!resolvedUrl) {
+            return '';
+          }
+          return `${resolvedUrl}${resolvedUrl.includes('?') ? '&' : '?'}v=${Date.now()}`;
+        })
+      );
   }
 
   createExpense(input: { amount: number; note: string; categoryName: string; currency?: string }): Observable<void> {
@@ -143,6 +199,13 @@ export class SuperAppCommandService {
       ),
       map(() => undefined)
     );
+  }
+
+  getExpenses(month?: string): Observable<ExpenseApi[]> {
+    const params = new HttpParams()
+      .set('familyId', String(this.getFamilyId()))
+      .set('month', month ?? this.currentMonthKey());
+    return this.get<ExpenseApi[]>('/expense/expenses', params);
   }
 
   createTask(input: {
@@ -246,6 +309,11 @@ export class SuperAppCommandService {
     }).pipe(map(() => undefined));
   }
 
+  getBabies(): Observable<BabyApi[]> {
+    const params = new HttpParams().set('familyId', String(this.getFamilyId()));
+    return this.get<BabyApi[]>('/baby/babies', params);
+  }
+
   createBabyLog(input: { logType: BabyLogType; value?: number; note?: string; babyId?: number | null }): Observable<void> {
     const payload = {
       logType: input.logType,
@@ -258,8 +326,7 @@ export class SuperAppCommandService {
       return this.post(`/baby/babies/${input.babyId}/logs`, payload).pipe(map(() => undefined));
     }
 
-    const familyId = this.getFamilyId();
-    return this.getBabies(familyId).pipe(
+    return this.getBabies().pipe(
       map((babies) => babies[0] ?? null),
       switchMap((baby) => {
         if (!baby) {
@@ -344,6 +411,53 @@ export class SuperAppCommandService {
     }).pipe(map(() => undefined));
   }
 
+  uploadFile(file: File, bucket: string, tag?: string): Observable<FileMetadata> {
+    const familyId = this.getFamilyId();
+    const userId = this.getUserId();
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('familyId', String(familyId));
+    if (userId) {
+      formData.append('userId', String(userId));
+    }
+    if (bucket.trim()) {
+      formData.append('bucket', bucket.trim());
+    }
+    if (tag?.trim()) {
+      formData.append('tag', tag.trim());
+    }
+
+    return this.http
+      .post<ApiEnvelope<FileMetadata>>(`${this.apiBase}/file/files/upload`, formData)
+      .pipe(map((response) => response.data));
+  }
+
+  getFiles(bucket: string, tag?: string): Observable<FileMetadata[]> {
+    let params = new HttpParams().set('familyId', String(this.getFamilyId()));
+    if (bucket.trim()) {
+      params = params.set('bucket', bucket.trim());
+    }
+    if (tag?.trim()) {
+      params = params.set('tag', tag.trim());
+    }
+    return this.get<FileMetadata[]>('/file/files', params);
+  }
+
+  getFileDownloadUrl(fileId: number): Observable<string> {
+    return this.get<{ fileId: number; downloadUrl: string; expirySeconds: number }>(
+      `/file/files/${fileId}/download-url`,
+      new HttpParams().set('expirySeconds', '900')
+    ).pipe(map((data) => data.downloadUrl));
+  }
+
+  deleteFile(fileId: number): Observable<void> {
+    return this.http
+      .delete<ApiEnvelope<unknown>>(`${this.apiBase}/file/files/${fileId}`, {
+        params: new HttpParams().set('deleteObject', 'true')
+      })
+      .pipe(map(() => undefined));
+  }
+
   private ensureExpenseCategory(familyId: number, rawCategoryName: string): Observable<ExpenseCategoryApi> {
     const normalized = rawCategoryName.trim();
 
@@ -414,16 +528,32 @@ export class SuperAppCommandService {
     return this.get<MealApi[]>('/meal/meals', params);
   }
 
-  private getBabies(familyId: number): Observable<BabyApi[]> {
-    const params = new HttpParams().set('familyId', String(familyId));
-    return this.get<BabyApi[]>('/baby/babies', params);
-  }
-
   private getStored(key: string): string | null {
     if (typeof window === 'undefined') {
       return null;
     }
     return window.localStorage.getItem(key) ?? window.sessionStorage.getItem(key);
+  }
+
+  private resolveAvatarUrl(avatarUrl: string | null): string | null {
+    const raw = avatarUrl?.trim();
+    if (raw) {
+      if (/^https?:\/\//i.test(raw)) {
+        return raw;
+      }
+      if (raw.startsWith('/auth/')) {
+        return `${this.apiBase}${raw}`;
+      }
+      if (raw.startsWith('/account/')) {
+        return `${this.apiBase}/auth${raw}`;
+      }
+      return `${this.apiBase}${raw.startsWith('/') ? raw : `/${raw}`}`;
+    }
+    return null;
+  }
+
+  private buildAvatarUrl(userId: number): string {
+    return `${this.apiBase}/auth/account/user/avatar/${userId}`;
   }
 
   private buildScheduleIso(reminderHour: string): string {
@@ -439,6 +569,13 @@ export class SuperAppCommandService {
     }
 
     return scheduled.toISOString();
+  }
+
+  private currentMonthKey(): string {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}`;
   }
 
   private get<T>(path: string, params?: HttpParams): Observable<T> {

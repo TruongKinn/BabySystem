@@ -28,6 +28,36 @@
     <nz-progress [nzPercent]="expense.budgetPercent" [nzStatus]="expense.budgetPercent > 85 ? 'exception' : 'active'"></nz-progress>
     <p class="top-category">{{ 'momApp.expenses.topCategory' | translate }}: {{ expense.topCategory || ('momApp.common.notAvailable' | translate) }}</p>
   </nz-card>
+
+  <nz-card class="table-card expense-history-card" [nzTitle]="'momApp.expenses.receipts.title' | translate">
+    <div class="empty-state" *ngIf="(expenseRecords$ | async)?.length === 0">
+      {{ 'momApp.expenses.receipts.emptyExpenses' | translate }}
+    </div>
+    <table class="expense-table" *ngIf="(expenseRecords$ | async) as expenseRecords">
+      <thead>
+        <tr>
+          <th>{{ 'momApp.expenses.receipts.columns.category' | translate }}</th>
+          <th>{{ 'momApp.expenses.receipts.columns.amount' | translate }}</th>
+          <th>{{ 'momApp.expenses.receipts.columns.spentAt' | translate }}</th>
+          <th>{{ 'momApp.expenses.receipts.columns.note' | translate }}</th>
+          <th>{{ 'momApp.expenses.receipts.columns.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of expenseRecords">
+          <td>{{ item.categoryName }}</td>
+          <td>{{ item.amount | currency : item.currency : 'symbol' : '1.0-0' }}</td>
+          <td>{{ formatSpentAt(item.spentAt) }}</td>
+          <td>{{ item.note || '-' }}</td>
+          <td>
+            <button nz-button nzType="default" (click)="openReceiptModal(item)">
+              {{ 'momApp.expenses.receipts.actions.manage' | translate }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </nz-card>
 </section>
 
 <nz-modal
@@ -62,5 +92,53 @@
         </nz-form-control>
       </nz-form-item>
     </form>
+  </ng-container>
+</nz-modal>
+
+<nz-modal
+  [(nzVisible)]="isReceiptModalVisible"
+  [nzTitle]="'momApp.expenses.receipts.modalTitle' | translate"
+  [nzFooter]="null"
+  (nzOnCancel)="closeReceiptModal()"
+>
+  <ng-container *nzModalContent>
+    <div *ngIf="selectedExpense as expense" class="receipt-modal-body">
+      <p class="receipt-meta">
+        {{ expense.categoryName }} -
+        {{ expense.amount | currency : expense.currency : 'symbol' : '1.0-0' }}
+      </p>
+
+      <div class="receipt-toolbar">
+        <input #receiptInput type="file" accept="image/*,.pdf" (change)="onReceiptFileSelected($event)" hidden />
+        <button nz-button nzType="primary" [nzLoading]="isUploadingReceipt" (click)="receiptInput.click()">
+          {{ 'momApp.expenses.receipts.actions.upload' | translate }}
+        </button>
+      </div>
+
+      <div *ngIf="isLoadingReceipts" class="empty-state">
+        {{ 'commonActions.refresh' | translate }}...
+      </div>
+
+      <div *ngIf="!isLoadingReceipts && receiptFiles.length === 0" class="empty-state">
+        {{ 'momApp.expenses.receipts.emptyFiles' | translate }}
+      </div>
+
+      <div class="receipt-list" *ngIf="!isLoadingReceipts && receiptFiles.length > 0">
+        <div class="receipt-item" *ngFor="let file of receiptFiles">
+          <div>
+            <strong>{{ file.originalFileName }}</strong>
+            <p>{{ formatFileSize(file.sizeBytes) }}</p>
+          </div>
+          <div class="receipt-actions">
+            <button nz-button nzType="default" (click)="downloadReceipt(file)">
+              {{ 'momApp.expenses.receipts.actions.download' | translate }}
+            </button>
+            <button nz-button nzType="default" nzDanger (click)="deleteReceipt(file)">
+              {{ 'momApp.expenses.receipts.actions.delete' | translate }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   </ng-container>
 </nz-modal>

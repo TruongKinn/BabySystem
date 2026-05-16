@@ -1,9 +1,39 @@
-:host {
-  display: block;
-}
-
-.header-buttons {
+/* Meals component styles */
+.meals-header-btns {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-meals-primary.ant-btn-primary {
+  background: var(--user-grad-1);
+  border: none;
+  border-radius: var(--user-btn-radius);
+  box-shadow: 0 4px 14px rgba(236,72,153,.3);
+}
+
+.btn-meals-primary.ant-btn-primary:hover {
+  opacity: .9;
+  transform: translateY(-1px);
+}
+
+/* Day cards grid */
+.meals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 14px;
+}
+
+.meal-no-content {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+  padding: 4px 0;
+}
+
+@media (max-width: 575px) {
+  .meals-grid {
+    grid-template-columns: 1fr;
+  }
 }

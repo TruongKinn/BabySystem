@@ -72,17 +72,33 @@ public class FileService {
         return toResponse(fileMetadataRepository.save(entity));
     }
 
-    public List<FileMetadataResponse> getFiles(Long familyId, String bucket) {
+    public List<FileMetadataResponse> getFiles(Long familyId, String bucket, String tag) {
         if (familyId == null) {
             throw new IllegalArgumentException("familyId is required");
         }
 
-        List<FileMetadataEntity> entities = (bucket == null || bucket.isBlank())
-                ? fileMetadataRepository.findByFamilyIdAndDeletedFalseOrderByCreatedAtDesc(familyId)
-                : fileMetadataRepository.findByFamilyIdAndBucketNameAndDeletedFalseOrderByCreatedAtDesc(
-                        familyId,
-                        normalizeBucket(bucket)
-                );
+        String bucketName = normalizeBucketOptional(bucket);
+        String normalizedTag = trimToNull(tag);
+        List<FileMetadataEntity> entities;
+        if (bucketName == null && normalizedTag == null) {
+            entities = fileMetadataRepository.findByFamilyIdAndDeletedFalseOrderByCreatedAtDesc(familyId);
+        } else if (bucketName == null) {
+            entities = fileMetadataRepository.findByFamilyIdAndFileTagAndDeletedFalseOrderByCreatedAtDesc(
+                    familyId,
+                    normalizedTag
+            );
+        } else if (normalizedTag == null) {
+            entities = fileMetadataRepository.findByFamilyIdAndBucketNameAndDeletedFalseOrderByCreatedAtDesc(
+                    familyId,
+                    bucketName
+            );
+        } else {
+            entities = fileMetadataRepository.findByFamilyIdAndBucketNameAndFileTagAndDeletedFalseOrderByCreatedAtDesc(
+                    familyId,
+                    bucketName,
+                    normalizedTag
+            );
+        }
 
         return entities.stream().map(this::toResponse).toList();
     }
@@ -160,6 +176,13 @@ public class FileService {
     private String normalizeBucket(String bucket) {
         if (bucket == null || bucket.isBlank()) {
             return "documents";
+        }
+        return bucket.trim().toLowerCase();
+    }
+
+    private String normalizeBucketOptional(String bucket) {
+        if (bucket == null || bucket.isBlank()) {
+            return null;
         }
         return bucket.trim().toLowerCase();
     }

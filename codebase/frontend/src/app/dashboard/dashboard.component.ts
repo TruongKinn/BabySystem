@@ -8,6 +8,7 @@ import { NzListModule } from 'ng-zorro-antd/list';
 import { NzProgressModule } from 'ng-zorro-antd/progress';
 import { NzStatisticModule } from 'ng-zorro-antd/statistic';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { map } from 'rxjs';
 import { MockSuperAppService } from '../core/services/mock-super-app.service';
 
@@ -24,7 +25,8 @@ import { MockSuperAppService } from '../core/services/mock-super-app.service';
     NzListModule,
     NzProgressModule,
     NzStatisticModule,
-    NzTagModule
+    NzTagModule,
+    NzEmptyModule
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'

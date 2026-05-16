@@ -8,6 +8,18 @@
   align-items: center;
 }
 
+.avatar-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.avatar-box small {
+  color: var(--text-secondary);
+  text-align: center;
+}
+
 .profile-box h3 {
   margin: 0 0 6px;
   color: var(--text-main);
@@ -16,4 +28,11 @@
 .profile-box p {
   margin: 0;
   color: var(--text-secondary);
+}
+
+@media (max-width: 640px) {
+  .profile-box {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

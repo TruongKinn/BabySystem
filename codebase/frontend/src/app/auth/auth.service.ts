@@ -55,10 +55,32 @@ export class AuthService {
     for (const storage of storages) {
       const value = storage.getItem(key);
       if (value !== null) {
+        if (key === 'atg_avatar_url') {
+          return this.normalizeAvatarUrl(value);
+        }
         return value;
       }
     }
     return null;
+  }
+
+  setAvatarUrl(avatarUrl: string | null): void {
+    if (!this.isBrowser) {
+      return;
+    }
+
+    const mode = this.resolveStorageMode() ?? 'local';
+    const targetStorage = this.getStorage(mode);
+    const otherStorage = this.getStorage(mode === 'local' ? 'session' : 'local');
+    const normalized = this.normalizeAvatarUrl(avatarUrl);
+
+    if (normalized) {
+      targetStorage.setItem('atg_avatar_url', normalized);
+    } else {
+      targetStorage.removeItem('atg_avatar_url');
+    }
+    otherStorage.removeItem('atg_avatar_url');
+    this.authEvents.next('login');
   }
 
   private getStorage(mode: AuthStorageMode): Storage {
@@ -118,8 +140,9 @@ export class AuthService {
     if (response.lastName) {
       targetStorage.setItem('atg_last_name', response.lastName);
     }
-    if (response.avatarUrl) {
-      targetStorage.setItem('atg_avatar_url', response.avatarUrl);
+    const normalizedAvatarUrl = this.normalizeAvatarUrl(response.avatarUrl);
+    if (normalizedAvatarUrl) {
+      targetStorage.setItem('atg_avatar_url', normalizedAvatarUrl);
     }
 
     localStorage.setItem(AUTH_STORAGE_MODE_KEY, mode);
@@ -148,6 +171,11 @@ export class AuthService {
 
 
   logout(): void {
+    const fallbackRoute = this.router.url.startsWith('/admin') ? '/admin/login' : '/app/login';
+    this.logoutTo(fallbackRoute);
+  }
+
+  logoutTo(redirectTo: string): void {
     if (this.isBrowser) {
       this.clearAuthState();
 
@@ -156,7 +184,7 @@ export class AuthService {
       }
       this.authEvents.next('logout');
     }
-    this.router.navigate(['/login']);
+    this.router.navigate([redirectTo]);
   }
 
   login(credentials: any): Observable<any> {
@@ -281,6 +309,14 @@ export class AuthService {
     return assignedRoles.some((assigned) => targetRoles.includes(assigned));
   }
 
+  isAdminUser(): boolean {
+    return this.hasAnyRole(['ADMIN', 'OWNER']);
+  }
+
+  getDefaultRouteByRole(): string {
+    return this.isAdminUser() ? '/admin/users' : '/app/dashboard';
+  }
+
   private decodeJwtPayload(token: string): Record<string, unknown> | null {
     const parts = token.split('.');
     if (parts.length < 2) {
@@ -297,5 +333,26 @@ export class AuthService {
     } catch {
       return null;
     }
+  }
+
+  private normalizeAvatarUrl(rawAvatarUrl: string | null | undefined): string | null {
+    const raw = rawAvatarUrl?.trim();
+    if (!raw) {
+      return null;
+    }
+
+    if (/^https?:\/\//i.test(raw)) {
+      return raw;
+    }
+
+    if (raw.startsWith('/auth/')) {
+      return `${API_CONFIG.GATEWAY_URL}${raw}`;
+    }
+
+    if (raw.startsWith('/account/')) {
+      return `${API_CONFIG.GATEWAY_URL}/auth${raw}`;
+    }
+
+    return `${API_CONFIG.GATEWAY_URL}${raw.startsWith('/') ? raw : `/${raw}`}`;
   }
 }

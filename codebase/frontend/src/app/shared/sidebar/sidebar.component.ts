@@ -6,12 +6,15 @@ import {
   HostListener,
   Inject,
   Input,
+  OnChanges,
   OnDestroy,
   OnInit,
   PLATFORM_ID,
+  SimpleChanges,
   ViewChild,
 } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { EventEmitter, Output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -24,6 +27,20 @@ export interface MenuItem {
   children?: MenuItem[];
 }
 
+const DEFAULT_MENU_ITEMS: MenuItem[] = [
+  {
+    labelKey: 'momApp.layout.menu.overview',
+    icon: 'grid',
+    children: [
+      {
+        labelKey: 'momApp.layout.menu.dashboard',
+        icon: 'home',
+        route: '/app/dashboard',
+      },
+    ],
+  },
+];
+
 @Component({
   selector: 'app-sidebar',
   standalone: true,
@@ -31,19 +48,28 @@ export interface MenuItem {
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
-export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
-  /** Sidebar tự quản lý collapse — mở khi hover, đóng khi rời chuột */
-  isCollapsed = true;
+export class SidebarComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
+  /** Keep sidebar expanded to avoid accidental close while navigating */
+  isCollapsed = false;
 
   @Input() isDarkMode = false;
   @Input() username = '';
   @Input() userInitials = '';
   @Input() avatarUrl?: string;
+  @Input() homeRoute = '/app/dashboard';
+  @Input() menuItems: MenuItem[] = DEFAULT_MENU_ITEMS;
+  @Input() isUserMode = true;
+
+  @Output() logout = new EventEmitter<void>();
 
   @ViewChild('metisMenuEl', { static: false }) metisMenuEl!: ElementRef<HTMLElement>;
 
   @HostBinding('class.collapsed') get collapsedClass() {
     return this.isCollapsed;
+  }
+
+  @HostBinding('class.user-mode') get userModeClass() {
+    return this.isUserMode;
   }
 
   @HostListener('mouseenter')
@@ -59,52 +85,21 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
   isBrowser: boolean;
   private metisInstance: any = null;
 
-  readonly menuItems: MenuItem[] = [
-    {
-      labelKey: 'momApp.layout.menu.overview',
-      icon: 'grid',
-      children: [
-        {
-          labelKey: 'momApp.layout.menu.dashboard',
-          icon: 'home',
-          route: '/dashboard',
-        },
-      ],
-    },
-    {
-      labelKey: 'momApp.layout.menu.familyCare',
-      icon: 'heart',
-      children: [
-        { labelKey: 'momApp.layout.menu.baby', icon: 'smile', route: '/baby' },
-        { labelKey: 'momApp.layout.menu.meals', icon: 'coffee', route: '/meals' },
-        { labelKey: 'momApp.layout.menu.tasks', icon: 'check-square', route: '/tasks' },
-      ],
-    },
-    {
-      labelKey: 'momApp.layout.menu.finance',
-      icon: 'wallet',
-      children: [
-        { labelKey: 'momApp.layout.menu.expenses', icon: 'wallet', route: '/expenses' },
-        { labelKey: 'momApp.layout.menu.shopping', icon: 'shopping-cart', route: '/shopping' },
-        { labelKey: 'momApp.layout.menu.insights', icon: 'bar-chart-2', route: '/insights' },
-      ],
-    },
-    {
-      labelKey: 'momApp.layout.menu.account',
-      icon: 'users',
-      children: [
-        { labelKey: 'momApp.layout.menu.family', icon: 'users', route: '/family' },
-        { labelKey: 'momApp.layout.menu.profile', icon: 'user', route: '/profile' },
-        { labelKey: 'momApp.layout.menu.settings', icon: 'settings', route: '/settings' },
-      ],
-    },
-  ];
-
   constructor(@Inject(PLATFORM_ID) private readonly platformId: object) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
   ngOnInit(): void { }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (!this.isBrowser) {
+      return;
+    }
+
+    if (changes['menuItems'] && this.metisMenuEl?.nativeElement) {
+      queueMicrotask(() => this.initMetisMenu());
+    }
+  }
 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
@@ -141,5 +136,9 @@ export class SidebarComponent implements OnInit, AfterViewInit, OnDestroy {
   /** Track-by để tránh re-render không cần thiết */
   trackByLabel(_: number, item: MenuItem): string {
     return item.labelKey;
+  }
+
+  onLogout(): void {
+    this.logout.emit();
   }
 }

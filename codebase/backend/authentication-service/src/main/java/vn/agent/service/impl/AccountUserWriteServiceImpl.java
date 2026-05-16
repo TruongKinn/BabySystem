@@ -172,6 +172,25 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
 
     @Override
     @Transactional
+    public void updateUserType(Long userId, UserType type) {
+        if (type == null) {
+            throw new InvalidDataException("User type is required");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new InvalidDataException("User not found: " + userId));
+
+        UserType previousType = resolveDisplayType(user);
+        user.setType(resolvePersistedType(type));
+        User savedUser = userRepository.save(user);
+        syncRoles(savedUser, type);
+
+        UserType nextType = resolveDisplayType(savedUser);
+        createAuditLog("UPDATE_USER_TYPE", savedUser, "type: " + previousType + " -> " + nextType);
+    }
+
+    @Override
+    @Transactional
     public void resetPasswordByAdmin(Long userId, String temporaryPassword) {
         if (StringUtils.isBlank(temporaryPassword)) {
             throw new InvalidDataException("Temporary password must be not blank");
@@ -277,6 +296,18 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
             return UserType.USER;
         }
         return requestedType == UserType.OWNER ? UserType.ADMIN : requestedType;
+    }
+
+    private UserType resolveDisplayType(User user) {
+        if (user.getRoles() != null && user.getRoles().stream().anyMatch(item ->
+                item.getRole() != null && "OWNER".equalsIgnoreCase(item.getRole().getName()))) {
+            return UserType.OWNER;
+        }
+        if (user.getRoles() != null && user.getRoles().stream().anyMatch(item ->
+                item.getRole() != null && "ADMIN".equalsIgnoreCase(item.getRole().getName()))) {
+            return UserType.ADMIN;
+        }
+        return user.getType() == null ? UserType.USER : user.getType();
     }
 
     private void syncRoles(User user, UserType requestedType) {

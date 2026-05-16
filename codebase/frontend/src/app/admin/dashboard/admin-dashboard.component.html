@@ -1,0 +1,34 @@
+<section class="admin-dashboard">
+  <div class="topbar">
+    <h1>Admin Portal</h1>
+    <button nz-button nzType="default" (click)="loadSummary()" [disabled]="loading">
+      Làm mới
+    </button>
+  </div>
+
+  <div class="summary-grid">
+    <nz-card class="metric-card">
+      <span class="label">Tổng user</span>
+      <strong class="value">{{ totalUsers }}</strong>
+    </nz-card>
+    <nz-card class="metric-card">
+      <span class="label">User đang hoạt động</span>
+      <strong class="value">{{ activeUsers }}</strong>
+    </nz-card>
+    <nz-card class="metric-card">
+      <span class="label">User bị khóa</span>
+      <strong class="value">{{ lockedUsers }}</strong>
+    </nz-card>
+    <nz-card class="metric-card">
+      <span class="label">Tài khoản quản trị</span>
+      <strong class="value">{{ adminUsers }}</strong>
+    </nz-card>
+  </div>
+
+  <nz-card class="action-card" nzTitle="Thao tác nhanh">
+    <div class="quick-actions">
+      <a routerLink="/admin/users" nz-button nzType="primary">Quản lý user</a>
+      <a routerLink="/app/login" nz-button nzType="default">Mở login User Portal</a>
+    </div>
+  </nz-card>
+</section>

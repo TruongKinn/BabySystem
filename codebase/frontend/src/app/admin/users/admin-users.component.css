@@ -1,0 +1,41 @@
+.admin-users-page {
+  padding: 20px;
+}
+
+.users-card {
+  border-radius: 14px;
+}
+
+.toolbar {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.search-input {
+  max-width: 340px;
+}
+
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.modal-desc {
+  margin: 0 0 12px;
+}
+
+@media (max-width: 768px) {
+  .admin-users-page {
+    padding: 12px;
+  }
+
+  .toolbar {
+    flex-direction: column;
+  }
+
+  .search-input {
+    max-width: 100%;
+  }
+}

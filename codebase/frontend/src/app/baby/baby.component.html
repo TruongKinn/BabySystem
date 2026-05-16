@@ -1,4 +1,6 @@
-<section class="page-container" *ngIf="snapshot$ | async as snapshot">
+<section class="page-container baby-page" *ngIf="snapshot$ | async as snapshot">
+
+  <!-- Page header -->
   <div class="header-actions">
     <div>
       <h1 class="page-title">{{ 'momApp.baby.title' | translate }}</h1>
@@ -9,33 +11,100 @@
         <span nz-icon nzType="user-add"></span>
         {{ 'momApp.baby.actions.addProfile' | translate }}
       </button>
-      <button nz-button nzType="primary" (click)="openCreateLogModal()">
+      <button nz-button nzType="primary" (click)="openCreateLogModal()" class="btn-gradient-primary">
         <span nz-icon nzType="plus"></span>
         {{ 'momApp.baby.actions.addLog' | translate }}
       </button>
-      <span class="pill-chip">
-        <span nz-icon nzType="clock-circle"></span>
-        {{ 'momApp.baby.nextVaccine' | translate }}
-        {{ snapshot.baby.nextVaccination || ('momApp.common.notAvailable' | translate) }}
-      </span>
     </div>
   </div>
 
-  <nz-card
-    [nzTitle]="('momApp.baby.profileTitle' | translate) + ': ' + (snapshot.baby.babyName || ('momApp.baby.unknownName' | translate))"
-    class="table-card baby-card"
-  >
-    <nz-descriptions nzBordered [nzColumn]="1">
-      <nz-descriptions-item [nzTitle]="'momApp.baby.sleepToday' | translate">{{ snapshot.baby.sleepHours }} h</nz-descriptions-item>
-      <nz-descriptions-item [nzTitle]="'momApp.baby.feedingCount' | translate">{{ snapshot.baby.feedings }}</nz-descriptions-item>
-      <nz-descriptions-item [nzTitle]="'momApp.baby.diaperChanges' | translate">{{ snapshot.baby.diaperChanges }}</nz-descriptions-item>
-      <nz-descriptions-item [nzTitle]="'momApp.baby.vaccineDate' | translate">
-        {{ snapshot.baby.nextVaccination || ('momApp.common.notAvailable' | translate) }}
-      </nz-descriptions-item>
-    </nz-descriptions>
+  <!-- Baby Profile Card (premium redesign) -->
+  <div class="baby-profile-card animate-slide-up">
+    <!-- Gradient header -->
+    <div class="baby-profile-header">
+      <div class="baby-avatar">👶</div>
+      <div>
+        <div class="baby-name">
+          {{ snapshot.baby.babyName || ('momApp.baby.unknownName' | translate) }}
+        </div>
+        <div class="baby-next-vaccine">
+          <span nz-icon nzType="medicine-box"></span>
+          {{ 'momApp.baby.vaccineDate' | translate }}:
+          {{ snapshot.baby.nextVaccination || ('momApp.common.notAvailable' | translate) }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats row -->
+    <div class="baby-stats-row">
+      <div class="baby-stat-cell">
+        <div class="baby-stat-val">{{ snapshot.baby.sleepHours }}<span style="font-size:14px;font-weight:500;">h</span></div>
+        <div class="baby-stat-lbl">{{ 'momApp.baby.sleepToday' | translate }}</div>
+      </div>
+      <div class="baby-stat-cell">
+        <div class="baby-stat-val">{{ snapshot.baby.feedings }}</div>
+        <div class="baby-stat-lbl">{{ 'momApp.baby.feedingCount' | translate }}</div>
+      </div>
+      <div class="baby-stat-cell">
+        <div class="baby-stat-val">{{ snapshot.baby.diaperChanges }}</div>
+        <div class="baby-stat-lbl">{{ 'momApp.baby.diaperChanges' | translate }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gallery Card -->
+  <nz-card class="table-card baby-gallery-card animate-slide-up" [nzTitle]="'momApp.baby.gallery.title' | translate" style="animation-delay:.06s">
+    <!-- Toolbar -->
+    <div class="gallery-toolbar">
+      <nz-select
+        class="baby-select"
+        [formControl]="galleryBabyControl"
+        [nzPlaceHolder]="'momApp.baby.gallery.selectBaby' | translate"
+      >
+        <nz-option *ngFor="let baby of (babyProfiles$ | async)" [nzValue]="baby.id" [nzLabel]="baby.name"></nz-option>
+      </nz-select>
+
+      <input #galleryInput type="file" accept="image/*" (change)="onGalleryFileSelected($event)" hidden />
+      <button nz-button nzType="primary" [nzLoading]="isUploadingGallery" (click)="galleryInput.click()" class="btn-gradient-primary">
+        <span nz-icon nzType="upload"></span>
+        {{ 'momApp.baby.gallery.actions.upload' | translate }}
+      </button>
+    </div>
+
+    <div class="gallery-error" *ngIf="galleryLoadError">{{ galleryLoadError }}</div>
+
+    <div *ngIf="isLoadingGallery" class="empty-state">
+      <nz-spin nzSimple></nz-spin>
+    </div>
+
+    <nz-empty *ngIf="!isLoadingGallery && galleryFiles.length === 0"
+      [nzNotFoundContent]="'momApp.baby.gallery.empty' | translate">
+    </nz-empty>
+
+    <!-- Gallery grid layout -->
+    <div class="gallery-grid" *ngIf="!isLoadingGallery && galleryFiles.length > 0">
+      <div class="gallery-card-item" *ngFor="let file of galleryFiles">
+        <div class="gallery-file-icon">
+          <span nz-icon nzType="file-image"></span>
+        </div>
+        <div>
+          <div class="gallery-file-name">{{ file.originalFileName }}</div>
+          <div class="gallery-file-size">{{ formatGalleryFileSize(file.sizeBytes) }}</div>
+        </div>
+        <div class="gallery-file-actions">
+          <button nz-button nzSize="small" nzType="default" (click)="downloadGalleryFile(file)">
+            <span nz-icon nzType="download"></span>
+          </button>
+          <button nz-button nzSize="small" nzType="default" nzDanger (click)="deleteGalleryFile(file)">
+            <span nz-icon nzType="delete"></span>
+          </button>
+        </div>
+      </div>
+    </div>
   </nz-card>
 </section>
 
+<!-- Create Baby Profile Modal -->
 <nz-modal
   [(nzVisible)]="isCreateBabyModalVisible"
   [nzTitle]="'momApp.baby.modal.createProfileTitle' | translate"
@@ -80,6 +149,7 @@
   </ng-container>
 </nz-modal>
 
+<!-- Create Log Modal -->
 <nz-modal
   [(nzVisible)]="isCreateLogModalVisible"
   [nzTitle]="'momApp.baby.modal.createLogTitle' | translate"
