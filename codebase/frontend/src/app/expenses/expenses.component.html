@@ -5,7 +5,7 @@
       <p class="page-subtitle">{{ 'momApp.expenses.subtitle' | translate }}</p>
     </div>
     <div class="header-buttons">
-      <button nz-button nzType="primary" (click)="openCreateModal()">
+      <button nz-button nzType="primary" (click)="openCreateModal()" class="btn-user-primary">
         <span nz-icon nzType="plus"></span>
         {{ 'momApp.expenses.actions.create' | translate }}
       </button>
@@ -23,9 +23,11 @@
     </div>
     <div class="expense-row">
       <p>{{ 'momApp.expenses.budgetLabel' | translate }}</p>
-      <strong>{{ expense.monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+      <strong style="color:var(--text-secondary)">{{ expense.monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
     </div>
-    <nz-progress [nzPercent]="expense.budgetPercent" [nzStatus]="expense.budgetPercent > 85 ? 'exception' : 'active'"></nz-progress>
+    <div class="user-progress-bar" style="margin-top: 14px; margin-bottom: 8px;">
+      <div class="user-progress-fill" [style.width.%]="expense.budgetPercent > 100 ? 100 : expense.budgetPercent" [style.background]="expense.budgetPercent > 85 ? '#ef4444' : 'var(--user-grad-1)'"></div>
+    </div>
     <p class="top-category">{{ 'momApp.expenses.topCategory' | translate }}: {{ expense.topCategory || ('momApp.common.notAvailable' | translate) }}</p>
   </nz-card>
 

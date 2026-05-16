@@ -1,36 +1,56 @@
-.expense-card {
-  max-width: 760px;
-}
-
-.expense-history-card {
-  margin-top: 16px;
+/* Expenses component styles */
+.expenses-page {
+  display: flex;
+  flex-direction: column;
 }
 
 .header-buttons {
   display: flex;
   align-items: center;
   gap: 10px;
+  flex-wrap: wrap;
+}
+
+.btn-user-primary.ant-btn-primary {
+  background: var(--user-grad-1);
+  border: none;
+  border-radius: var(--user-btn-radius);
+  box-shadow: 0 4px 14px rgba(249,115,22,.35);
+  transition: opacity .2s ease, transform .15s ease;
+}
+
+.btn-user-primary.ant-btn-primary:hover {
+  opacity: .9;
+  transform: translateY(-1px);
+}
+
+.expense-card {
+  margin-bottom: 20px;
 }
 
 .expense-row {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
-}
-
-.expense-row p {
-  margin: 0;
-  color: var(--text-secondary);
-}
-
-.expense-row strong {
+  margin-bottom: 8px;
+  font-size: 16px;
   color: var(--text-main);
 }
 
+.expense-row strong {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--user-primary);
+}
+
 .top-category {
-  margin-top: 12px;
+  margin-top: 14px;
+  font-size: 13px;
   color: var(--text-secondary);
+}
+
+.expense-history-card {
+  flex: 1;
 }
 
 .expense-table {
@@ -38,48 +58,68 @@
   border-collapse: collapse;
 }
 
-.expense-table th,
-.expense-table td {
-  padding: 10px 8px;
-  border-bottom: 1px solid var(--border-soft, #e5e7eb);
+.expense-table th {
   text-align: left;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-weight: 600;
 }
 
+.expense-table td {
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.expense-table tr:hover {
+  background: rgba(249, 115, 22, 0.03);
+}
+
+.empty-state {
+  text-align: center;
+  padding: 30px;
+  color: var(--text-secondary);
+}
+
+/* Receipt Modal */
 .receipt-modal-body {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .receipt-meta {
-  margin: 0;
-  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 16px;
 }
 
 .receipt-toolbar {
   display: flex;
-  justify-content: flex-start;
+  justify-content: flex-end;
+  margin-bottom: 16px;
 }
 
 .receipt-list {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .receipt-item {
-  border: 1px solid var(--border-soft, #e5e7eb);
-  border-radius: 10px;
-  padding: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--surface-bg);
 }
 
-.receipt-item p {
-  margin: 4px 0 0;
-  color: var(--text-secondary);
+.receipt-item strong {
+  display: block;
+  margin-bottom: 4px;
 }
 
 .receipt-actions {
@@ -87,13 +127,10 @@
   gap: 8px;
 }
 
-.empty-state {
-  color: var(--text-secondary);
-}
-
-@media (max-width: 768px) {
-  .receipt-item {
-    flex-direction: column;
-    align-items: flex-start;
+@media (max-width: 575px) {
+  .expense-table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
   }
 }

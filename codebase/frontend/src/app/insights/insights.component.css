@@ -1,9 +1,39 @@
+/* Insights component styles */
 .insight-grid {
   display: grid;
-  gap: 14px;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-top: 16px;
 }
 
 .insight-card {
-  min-height: 165px;
+  border-radius: var(--user-card-radius);
+  border: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.insight-score-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.insight-score-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-main);
+  line-height: 1;
+}
+
+.insight-score-label {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+@media (max-width: 575px) {
+  .insight-grid {
+    grid-template-columns: 1fr;
+  }
 }

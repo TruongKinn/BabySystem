@@ -8,55 +8,55 @@
         </div>
 
         <div class="toolbar-actions">
-          <button nz-button nzType="default" nzSize="small" class="toolbar-btn" (click)="refresh()">
+          <button nz-button nzType="default" nzSize="small" class="toolbar-btn btn-user-outline" (click)="refresh()">
             <span nz-icon nzType="reload"></span>
             {{ 'commonActions.refresh' | translate }}
           </button>
-          <button nz-button nzType="primary" nzSize="small" class="toolbar-btn toolbar-btn-primary" (click)="openCreateModal()">
+          <button nz-button nzType="primary" nzSize="small" class="toolbar-btn btn-user-primary" (click)="openCreateModal()">
             <span nz-icon nzType="plus"></span>
             {{ 'momApp.tasks.actions.create' | translate }}
           </button>
         </div>
       </div>
 
-      <div class="summary-grid">
-        <nz-card class="summary-card">
-          <div class="summary-content">
-            <div>
-              <div class="summary-title">{{ 'momApp.tasks.summary.total' | translate }}</div>
-              <div class="summary-value tone-blue">{{ summary.total }}</div>
+      <div class="stat-grid animate-slide-up" style="animation-delay:.05s">
+        <nz-card class="stat-card-user">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <span class="stat-icon stat-icon-blue"><span nz-icon nzType="profile"></span></span>
+            <div class="stat-info">
+              <div class="stat-value">{{ summary.total }}</div>
+              <div class="stat-label">{{ 'momApp.tasks.summary.total' | translate }}</div>
             </div>
-            <span class="summary-icon-badge tone-bg-blue"><span nz-icon nzType="profile"></span></span>
           </div>
         </nz-card>
 
-        <nz-card class="summary-card">
-          <div class="summary-content">
-            <div>
-              <div class="summary-title">{{ 'momApp.tasks.summary.today' | translate }}</div>
-              <div class="summary-value tone-cyan">{{ summary.today }}</div>
+        <nz-card class="stat-card-user">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <span class="stat-icon stat-icon-teal"><span nz-icon nzType="calendar"></span></span>
+            <div class="stat-info">
+              <div class="stat-value">{{ summary.today }}</div>
+              <div class="stat-label">{{ 'momApp.tasks.summary.today' | translate }}</div>
             </div>
-            <span class="summary-icon-badge tone-bg-cyan"><span nz-icon nzType="calendar"></span></span>
           </div>
         </nz-card>
 
-        <nz-card class="summary-card">
-          <div class="summary-content">
-            <div>
-              <div class="summary-title">{{ 'momApp.tasks.summary.upcoming' | translate }}</div>
-              <div class="summary-value tone-orange">{{ summary.upcoming }}</div>
+        <nz-card class="stat-card-user">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <span class="stat-icon stat-icon-orange"><span nz-icon nzType="clock-circle"></span></span>
+            <div class="stat-info">
+              <div class="stat-value">{{ summary.upcoming }}</div>
+              <div class="stat-label">{{ 'momApp.tasks.summary.upcoming' | translate }}</div>
             </div>
-            <span class="summary-icon-badge tone-bg-orange"><span nz-icon nzType="clock-circle"></span></span>
           </div>
         </nz-card>
 
-        <nz-card class="summary-card summary-card-alert">
-          <div class="summary-content">
-            <div>
-              <div class="summary-title">{{ 'momApp.tasks.summary.overdue' | translate }}</div>
-              <div class="summary-value tone-volcano">{{ summary.overdue }}</div>
+        <nz-card class="stat-card-user">
+          <div style="display:flex;align-items:center;gap:14px;">
+            <span class="stat-icon stat-icon-pink"><span nz-icon nzType="warning"></span></span>
+            <div class="stat-info">
+              <div class="stat-value">{{ summary.overdue }}</div>
+              <div class="stat-label">{{ 'momApp.tasks.summary.overdue' | translate }}</div>
             </div>
-            <span class="summary-icon-badge tone-bg-volcano"><span nz-icon nzType="warning"></span></span>
           </div>
         </nz-card>
       </div>

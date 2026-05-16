@@ -7,6 +7,8 @@ import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AuthService } from '../auth/auth.service';
 import { SuperAppCommandService } from '../core/services/super-app-command.service';
 import { I18nService } from '../i18n/i18n.service';
@@ -14,7 +16,7 @@ import { I18nService } from '../i18n/i18n.service';
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, TranslateModule, NzAvatarModule, NzCardModule, NzButtonModule],
+  imports: [CommonModule, TranslateModule, NzAvatarModule, NzCardModule, NzButtonModule, NzTagModule, NzIconModule],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })

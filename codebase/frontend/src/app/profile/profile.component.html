@@ -21,11 +21,15 @@
         </button>
         <small>{{ 'momApp.profile.uploadHint' | translate }}</small>
       </div>
-      <div>
+      <div class="profile-info">
         <h3>{{ profile.displayName }}</h3>
-        <p>{{ 'momApp.profile.roleLabel' | translate }}: {{ profile.roleLabel }}</p>
-        <p>{{ 'momApp.profile.usernameLabel' | translate }}: {{ profile.username }}</p>
-        <p>{{ 'momApp.profile.emailLabel' | translate }}: {{ profile.email }}</p>
+        <p>
+          <nz-tag [nzColor]="profile.role === 'MOM' || profile.role === 'DAD' ? 'magenta' : 'geekblue'" style="border-radius:12px; border:none; background:rgba(249,115,22,0.1); color:var(--user-primary)">
+            {{ profile.roleLabel }}
+          </nz-tag>
+        </p>
+        <p><span nz-icon nzType="user"></span> <strong>{{ 'momApp.profile.usernameLabel' | translate }}:</strong> {{ profile.username }}</p>
+        <p><span nz-icon nzType="mail"></span> <strong>{{ 'momApp.profile.emailLabel' | translate }}:</strong> {{ profile.email }}</p>
       </div>
     </div>
   </nz-card>

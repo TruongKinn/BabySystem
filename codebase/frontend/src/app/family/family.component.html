@@ -5,7 +5,7 @@
       <p class="page-subtitle">{{ 'momApp.family.subtitle' | translate }}</p>
     </div>
     <div class="header-buttons">
-      <button nz-button nzType="primary" (click)="openCreateMemberModal()">
+      <button nz-button nzType="primary" (click)="openCreateMemberModal()" class="btn-user-primary">
         <span nz-icon nzType="user-add"></span>
         {{ 'momApp.family.actions.create' | translate }}
       </button>
@@ -16,17 +16,19 @@
     </div>
   </div>
 
-  <nz-card class="table-card">
-    <ul class="member-list">
-      <li *ngFor="let member of members">
-        <div class="identity">
-          <nz-avatar [nzText]="member.name.charAt(0)" [style.background-color]="member.avatarColor"></nz-avatar>
-          <span>{{ member.name }}</span>
+  <div class="family-grid animate-slide-up">
+    <div class="family-card" *ngFor="let member of members">
+      <nz-avatar [nzSize]="48" [nzText]="member.name.charAt(0)" [style.background-color]="member.avatarColor"></nz-avatar>
+      <div class="family-info">
+        <div class="family-name">{{ member.name }}</div>
+        <div class="family-role">
+          <nz-tag [nzColor]="member.role === 'MOM' || member.role === 'DAD' ? 'magenta' : 'geekblue'" style="border-radius:12px; border:none; background:rgba(249,115,22,0.1); color:var(--user-primary)">
+            {{ roleLabel(member.role) }}
+          </nz-tag>
         </div>
-        <nz-tag nzColor="geekblue">{{ roleLabel(member.role) }}</nz-tag>
-      </li>
-    </ul>
-  </nz-card>
+      </div>
+    </div>
+  </div>
 </section>
 
 <nz-modal

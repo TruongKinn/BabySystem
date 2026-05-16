@@ -6,15 +6,35 @@
     </div>
   </div>
 
-  <div class="insight-grid">
+  <div class="insight-grid animate-slide-up">
     <nz-card [nzTitle]="'momApp.insights.sleepScore' | translate" class="table-card insight-card">
-      <nz-progress [nzPercent]="insight.sleepScore" nzStatus="active"></nz-progress>
+      <div class="insight-score-row">
+        <span class="insight-score-value tone-blue">{{ insight.sleepScore }}</span>
+        <span class="insight-score-label">/ 100</span>
+      </div>
+      <div class="user-progress-bar">
+        <div class="user-progress-fill" [style.width.%]="insight.sleepScore" style="background: var(--user-grad-2)"></div>
+      </div>
     </nz-card>
+    
     <nz-card [nzTitle]="'momApp.insights.budgetScore' | translate" class="table-card insight-card">
-      <nz-progress [nzPercent]="insight.budgetScore" [nzStrokeColor]="'#16a34a'"></nz-progress>
+      <div class="insight-score-row">
+        <span class="insight-score-value tone-cyan">{{ insight.budgetScore }}</span>
+        <span class="insight-score-label">/ 100</span>
+      </div>
+      <div class="user-progress-bar">
+        <div class="user-progress-fill" [style.width.%]="insight.budgetScore" style="background: var(--user-teal)"></div>
+      </div>
     </nz-card>
+    
     <nz-card [nzTitle]="'momApp.insights.workloadScore' | translate" class="table-card insight-card">
-      <nz-progress [nzPercent]="insight.workloadScore" [nzStatus]="insight.workloadScore < 40 ? 'exception' : 'active'"></nz-progress>
+      <div class="insight-score-row">
+        <span class="insight-score-value" [class.tone-volcano]="insight.workloadScore < 40">{{ insight.workloadScore }}</span>
+        <span class="insight-score-label">/ 100</span>
+      </div>
+      <div class="user-progress-bar">
+        <div class="user-progress-fill" [style.width.%]="insight.workloadScore" [style.background]="insight.workloadScore < 40 ? '#ef4444' : 'var(--user-grad-1)'"></div>
+      </div>
     </nz-card>
   </div>
 </section>
