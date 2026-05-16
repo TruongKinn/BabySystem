@@ -1,97 +1,351 @@
-<section class="page-container meals-page" *ngIf="meals$ | async as meals">
-  <div class="header-actions">
-    <div>
+<section class="page-container meals-page">
+  <div class="meals-header">
+    <div class="meals-header-left">
       <h1 class="page-title">{{ 'momApp.meals.title' | translate }}</h1>
       <p class="page-subtitle">{{ 'momApp.meals.subtitle' | translate }}</p>
     </div>
-    <div class="meals-header-btns">
+    <div class="meals-header-actions">
+      <button nz-button nzType="default" class="btn-ai-suggest" (click)="openAiModal()">
+        <span nz-icon nzType="robot"></span>
+        {{ 'momApp.meals.actions.aiSuggest' | translate }}
+      </button>
       <button nz-button nzType="primary" (click)="openCreateModal()" class="btn-meals-primary">
         <span nz-icon nzType="plus"></span>
         {{ 'momApp.meals.actions.create' | translate }}
       </button>
-      <span class="pill-chip">
-        <span nz-icon nzType="calendar"></span>
-        {{ meals.length }} {{ 'momApp.meals.totalLabel' | translate }}
-      </span>
     </div>
   </div>
 
-  <!-- Meals as day-cards grid -->
-  <div class="meals-grid animate-slide-up" *ngIf="meals.length > 0; else emptyMeals">
-    <div class="meal-day-card" *ngFor="let item of meals">
-      <div class="meal-day-label">📅 {{ item.day }}</div>
-      <div class="meal-type-row" *ngIf="item.breakfast">
-        <span class="meal-type-icon">🌅</span>
-        <span class="meal-type-name">Sáng</span>
-        <span class="meal-type-val">{{ item.breakfast }}</span>
-      </div>
-      <div class="meal-type-row" *ngIf="item.lunch">
-        <span class="meal-type-icon">☀️</span>
-        <span class="meal-type-name">Trưa</span>
-        <span class="meal-type-val">{{ item.lunch }}</span>
-      </div>
-      <div class="meal-type-row" *ngIf="item.dinner">
-        <span class="meal-type-icon">🌙</span>
-        <span class="meal-type-name">Tối</span>
-        <span class="meal-type-val">{{ item.dinner }}</span>
-      </div>
-      <div class="meal-no-content"
-        *ngIf="!item.breakfast && !item.lunch && !item.dinner">
-        Chưa có bữa ăn nào
-      </div>
+  <div class="meals-stats-bar">
+    <div class="stat-chip">
+      <span class="stat-icon"><span nz-icon nzType="calendar"></span></span>
+      <span class="stat-label">{{ periodLabel }}</span>
+    </div>
+    <div class="stat-chip">
+      <span class="stat-icon"><span nz-icon nzType="coffee"></span></span>
+      <span class="stat-val">{{ totalMealsAll }}</span>
+      <span class="stat-label">{{ 'momApp.meals.stats.totalMeals' | translate }}</span>
+    </div>
+    <div class="stat-chip">
+      <span class="stat-icon"><span nz-icon nzType="check-circle"></span></span>
+      <span class="stat-val">{{ daysWithMeals }}</span>
+      <span class="stat-label">{{ 'momApp.meals.stats.daysWithMeals' | translate }}</span>
     </div>
   </div>
 
-  <ng-template #emptyMeals>
-    <nz-card class="table-card">
-      <nz-empty [nzNotFoundContent]="'Chưa có kế hoạch bữa ăn nào'"></nz-empty>
-    </nz-card>
-  </ng-template>
+  <div class="meals-filter-bar">
+    <nz-radio-group [(ngModel)]="viewMode" (ngModelChange)="onViewModeChange()" class="view-mode-group">
+      <label nz-radio-button nzValue="week">{{ 'momApp.meals.filters.week' | translate }}</label>
+      <label nz-radio-button nzValue="month">{{ 'momApp.meals.filters.month' | translate }}</label>
+      <label nz-radio-button nzValue="year">{{ 'momApp.meals.filters.year' | translate }}</label>
+    </nz-radio-group>
+
+    <div class="date-picker-wrap">
+      <nz-date-picker
+        *ngIf="viewMode === 'week'"
+        [(ngModel)]="selectedWeek"
+        (ngModelChange)="onWeekChange($event)"
+        nzMode="week"
+        nzFormat="w-yyyy"
+        [nzPlaceHolder]="'momApp.meals.filters.selectWeek' | translate"
+        class="meals-date-picker"
+      ></nz-date-picker>
+
+      <nz-date-picker
+        *ngIf="viewMode === 'month'"
+        [(ngModel)]="selectedMonth"
+        (ngModelChange)="onMonthChange($event)"
+        nzMode="month"
+        nzFormat="MM/yyyy"
+        [nzPlaceHolder]="'momApp.meals.filters.selectMonth' | translate"
+        class="meals-date-picker"
+      ></nz-date-picker>
+
+      <nz-date-picker
+        *ngIf="viewMode === 'year'"
+        [(ngModel)]="selectedYear"
+        (ngModelChange)="onYearChange($event)"
+        nzMode="year"
+        nzFormat="yyyy"
+        [nzPlaceHolder]="'momApp.meals.filters.selectYear' | translate"
+        class="meals-date-picker"
+      ></nz-date-picker>
+    </div>
+  </div>
+
+  <div *ngIf="isLoading" class="meals-loading-grid animate-slide-up">
+    <div class="meal-day-skeleton-card" *ngFor="let card of loadingCards; trackBy: trackByIndex">
+      <div class="skeleton-line skeleton-line--title"></div>
+      <div class="skeleton-line skeleton-line--meta"></div>
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line skeleton-line--short"></div>
+    </div>
+  </div>
+
+  <div *ngIf="!isLoading" class="meals-grid animate-slide-up">
+    <ng-container *ngIf="mealDays.length > 0; else emptyMeals">
+      <div *ngFor="let day of mealDays" class="meal-day-card" [class.meal-day-card--has-meals]="day.totalMeals > 0">
+        <div class="meal-day-header">
+          <span class="meal-day-label">{{ day.dayLabel }}</span>
+          <nz-badge *ngIf="day.totalMeals > 0" [nzCount]="day.totalMeals" nzColor="#7c3aed" class="meal-badge"></nz-badge>
+        </div>
+
+        <div class="meal-section" *ngIf="day.breakfast.length > 0">
+          <div class="meal-section-header">
+            <span class="meal-icon"><span nz-icon nzType="sun"></span></span>
+            <span class="meal-type-name">{{ 'momApp.meals.mealType.BREAKFAST' | translate }}</span>
+          </div>
+          <div class="meal-dishes-list">
+            <nz-tag *ngFor="let dish of day.breakfast" nzColor="orange" class="meal-dish-tag">{{ dish }}</nz-tag>
+          </div>
+        </div>
+
+        <div class="meal-section" *ngIf="day.lunch.length > 0">
+          <div class="meal-section-header">
+            <span class="meal-icon"><span nz-icon nzType="clock-circle"></span></span>
+            <span class="meal-type-name">{{ 'momApp.meals.mealType.LUNCH' | translate }}</span>
+          </div>
+          <div class="meal-dishes-list">
+            <nz-tag *ngFor="let dish of day.lunch" nzColor="gold" class="meal-dish-tag">{{ dish }}</nz-tag>
+          </div>
+        </div>
+
+        <div class="meal-section" *ngIf="day.dinner.length > 0">
+          <div class="meal-section-header">
+            <span class="meal-icon"><span nz-icon nzType="moon"></span></span>
+            <span class="meal-type-name">{{ 'momApp.meals.mealType.DINNER' | translate }}</span>
+          </div>
+          <div class="meal-dishes-list">
+            <nz-tag *ngFor="let dish of day.dinner" nzColor="purple" class="meal-dish-tag">{{ dish }}</nz-tag>
+          </div>
+        </div>
+
+        <div class="meal-section" *ngIf="day.snack.length > 0">
+          <div class="meal-section-header">
+            <span class="meal-icon"><span nz-icon nzType="apple"></span></span>
+            <span class="meal-type-name">{{ 'momApp.meals.mealType.SNACK' | translate }}</span>
+          </div>
+          <div class="meal-dishes-list">
+            <nz-tag *ngFor="let dish of day.snack" nzColor="green" class="meal-dish-tag">{{ dish }}</nz-tag>
+          </div>
+        </div>
+
+        <div class="meal-no-content" *ngIf="day.totalMeals === 0">
+          <span class="meal-empty-icon"><span nz-icon nzType="rest"></span></span>
+          <span>{{ 'momApp.meals.empty.dayNoMeals' | translate }}</span>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #emptyMeals>
+      <div class="meals-empty-state">
+        <nz-empty [nzNotFoundContent]="'momApp.meals.empty.noPlans' | translate"></nz-empty>
+        <button nz-button nzType="primary" (click)="openCreateModal()" class="btn-meals-primary">
+          <span nz-icon nzType="plus"></span>
+          {{ 'momApp.meals.empty.createFirstPlan' | translate }}
+        </button>
+      </div>
+    </ng-template>
+  </div>
 </section>
 
-<!-- Create Meal Plan Modal -->
 <nz-modal
   [(nzVisible)]="isCreateModalVisible"
   [nzTitle]="'momApp.meals.modal.createTitle' | translate"
-  nzClassName="user-role-modal"
-  [nzWidth]="1040"
+  nzClassName="meals-modal"
+  [nzWidth]="680"
   [nzOkLoading]="isSubmitting"
-  [nzOkText]="'commonActions.save' | translate"
+  [nzOkText]="'momApp.meals.modal.savePlan' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeCreateModal()"
   (nzOnOk)="submitCreateMealPlan()"
 >
   <ng-container *nzModalContent>
-    <form nz-form [formGroup]="createMealPlanForm" nzLayout="vertical" class="user-modal-form-grid">
+    <form nz-form [formGroup]="createMealPlanForm" nzLayout="vertical">
+      <div class="modal-apply-mode">
+        <span class="modal-label">{{ 'momApp.meals.modal.applyFor' | translate }}</span>
+        <nz-radio-group [(ngModel)]="applyMode" [ngModelOptions]="{ standalone: true }">
+          <label nz-radio-button nzValue="day">{{ 'momApp.meals.modal.applyDay' | translate }}</label>
+          <label nz-radio-button nzValue="week">{{ 'momApp.meals.modal.applyWeek' | translate }}</label>
+        </nz-radio-group>
+      </div>
+
       <nz-form-item>
-        <nz-form-label nzRequired>{{ 'momApp.meals.modal.mealNameLabel' | translate }}</nz-form-label>
-        <nz-form-control>
-          <input nz-input formControlName="mealName" [placeholder]="'momApp.meals.modal.mealNamePlaceholder' | translate" />
+        <nz-form-label nzRequired>
+          {{ (applyMode === 'week' ? 'momApp.meals.modal.selectWeekStart' : 'momApp.meals.modal.selectDate') | translate }}
+        </nz-form-label>
+        <nz-form-control [nzErrorTip]="'momApp.meals.modal.dateRequired' | translate">
+          <nz-date-picker
+            formControlName="planDate"
+            nzFormat="dd/MM/yyyy"
+            [nzPlaceHolder]="'momApp.meals.modal.selectDate' | translate"
+            style="width: 100%"
+          ></nz-date-picker>
         </nz-form-control>
       </nz-form-item>
 
-      <nz-form-item>
-        <nz-form-label nzRequired>{{ 'momApp.meals.modal.mealTypeLabel' | translate }}</nz-form-label>
-        <nz-form-control>
-          <nz-select formControlName="mealType">
-            <nz-option *ngFor="let type of mealTypes" [nzValue]="type" [nzLabel]="mealTypeLabel(type)"></nz-option>
-          </nz-select>
-        </nz-form-control>
-      </nz-form-item>
+      <div class="dishes-section">
+        <div class="dishes-section-header">
+          <span class="dishes-title">{{ 'momApp.meals.modal.dishesTitle' | translate }}</span>
+          <button nz-button nzType="dashed" nzSize="small" type="button" (click)="addDish()" class="btn-add-dish">
+            <span nz-icon nzType="plus"></span>
+            {{ 'momApp.meals.modal.addDish' | translate }}
+          </button>
+        </div>
 
-      <nz-form-item>
-        <nz-form-label nzRequired>{{ 'momApp.meals.modal.planDateLabel' | translate }}</nz-form-label>
-        <nz-form-control>
-          <nz-date-picker formControlName="planDate" nzFormat="yyyy-MM-dd"></nz-date-picker>
-        </nz-form-control>
-      </nz-form-item>
+        <div formArrayName="dishes" class="dishes-list">
+          <div *ngFor="let dish of dishesArray.controls; let i = index" [formGroupName]="i" class="dish-row">
+            <div class="dish-row-inner">
+              <nz-select formControlName="mealType" class="dish-type-select" [nzPlaceHolder]="'momApp.meals.modal.mealTypePlaceholder' | translate">
+                <nz-option nzValue="BREAKFAST" [nzLabel]="'momApp.meals.mealType.BREAKFAST' | translate"></nz-option>
+                <nz-option nzValue="LUNCH" [nzLabel]="'momApp.meals.mealType.LUNCH' | translate"></nz-option>
+                <nz-option nzValue="DINNER" [nzLabel]="'momApp.meals.mealType.DINNER' | translate"></nz-option>
+                <nz-option nzValue="SNACK" [nzLabel]="'momApp.meals.mealType.SNACK' | translate"></nz-option>
+              </nz-select>
 
-      <nz-form-item class="modal-field-full">
-        <nz-form-label>{{ 'momApp.meals.modal.noteLabel' | translate }}</nz-form-label>
+              <input
+                nz-input
+                formControlName="mealName"
+                [placeholder]="'momApp.meals.modal.mealNamePlaceholder' | translate"
+                class="dish-name-input"
+              />
+
+              <button
+                nz-button
+                nzType="text"
+                nzDanger
+                type="button"
+                (click)="removeDish(i)"
+                [disabled]="dishesArray.length <= 1"
+                class="btn-remove-dish"
+                nz-tooltip
+                [nzTooltipTitle]="'momApp.meals.modal.removeDish' | translate"
+              >
+                <span nz-icon nzType="delete"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nz-form-item style="margin-top: 16px;">
+        <nz-form-label>{{ 'momApp.meals.modal.notesLabel' | translate }}</nz-form-label>
         <nz-form-control>
-          <textarea nz-input rows="3" formControlName="notes" [placeholder]="'momApp.meals.modal.notePlaceholder' | translate"></textarea>
+          <textarea nz-input rows="2" formControlName="notes" [placeholder]="'momApp.meals.modal.notesPlaceholder' | translate"></textarea>
         </nz-form-control>
       </nz-form-item>
     </form>
+  </ng-container>
+</nz-modal>
+
+<nz-modal
+  [(nzVisible)]="isAiModalVisible"
+  [nzTitle]="'momApp.meals.ai.modalTitle' | translate"
+  nzClassName="meals-modal ai-modal"
+  [nzWidth]="720"
+  [nzFooter]="null"
+  (nzOnCancel)="closeAiModal()"
+>
+  <ng-container *nzModalContent>
+    <div class="ai-modal-body">
+      <div class="ai-input-section">
+        <div class="ai-input-label">
+          <span nz-icon nzType="search"></span>
+          {{ 'momApp.meals.ai.inputLabel' | translate }}
+        </div>
+        <textarea
+          nz-input
+          [(ngModel)]="aiIngredients"
+          rows="3"
+          [placeholder]="'momApp.meals.ai.inputPlaceholder' | translate"
+          class="ai-ingredients-input"
+        ></textarea>
+        <button nz-button nzType="primary" (click)="askAiSuggestions()" [nzLoading]="isAiLoading" class="btn-ai-search">
+          <span nz-icon nzType="thunderbolt"></span>
+          {{ 'momApp.meals.ai.searchButton' | translate }}
+        </button>
+      </div>
+
+      <div *ngIf="isAiLoading" class="ai-loading-wrap">
+        <div class="ai-loading-title">
+          <span nz-icon nzType="sync" nzSpin></span>
+          {{ 'momApp.meals.ai.loading' | translate }}
+        </div>
+        <div class="ai-loading-grid">
+          <div class="ai-loading-card" *ngFor="let card of aiLoadingCards; trackBy: trackByIndex">
+            <div class="skeleton-line skeleton-line--chip"></div>
+            <div class="skeleton-line skeleton-line--title"></div>
+            <div class="skeleton-line"></div>
+            <div class="skeleton-line skeleton-line--short"></div>
+          </div>
+        </div>
+      </div>
+
+      <div *ngIf="!isAiLoading && aiSuggestions.length > 0" class="ai-suggestions-section">
+        <nz-divider [nzText]="'momApp.meals.ai.suggestionsTitle' | translate"></nz-divider>
+
+        <div class="ai-suggestions-grid">
+          <div *ngFor="let dish of aiSuggestions" class="ai-dish-card" [class.ai-dish-card--selected]="dish.selected" (click)="toggleAiSelection(dish)">
+            <div class="ai-dish-check" *ngIf="dish.selected">
+              <span nz-icon nzType="check-circle" nzTheme="fill"></span>
+            </div>
+            <div class="ai-dish-type">
+              <nz-tag [nzColor]="mealTypeColor(dish.mealType)">{{ mealTypeLabel(dish.mealType) }}</nz-tag>
+            </div>
+            <div class="ai-dish-name">{{ dish.name }}</div>
+            <div class="ai-dish-desc">{{ dish.description }}</div>
+            <div class="ai-dish-ingredients">
+              <span class="ai-ingredient-label">{{ 'momApp.meals.ai.ingredientsLabel' | translate }}</span>
+              <span *ngFor="let ing of dish.ingredients" class="ai-ingredient-chip">{{ ing }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="ai-apply-section" *ngIf="hasAiSelection">
+          <nz-divider [nzText]="'momApp.meals.ai.applyTitle' | translate"></nz-divider>
+
+          <div class="ai-apply-row">
+            <div class="ai-apply-item">
+              <span class="ai-apply-label">{{ 'momApp.meals.ai.applyMealLabel' | translate }}</span>
+              <nz-select [(ngModel)]="aiApplyMealType" style="width: 160px;">
+                <nz-option nzValue="BREAKFAST" [nzLabel]="'momApp.meals.mealType.BREAKFAST' | translate"></nz-option>
+                <nz-option nzValue="LUNCH" [nzLabel]="'momApp.meals.mealType.LUNCH' | translate"></nz-option>
+                <nz-option nzValue="DINNER" [nzLabel]="'momApp.meals.mealType.DINNER' | translate"></nz-option>
+                <nz-option nzValue="SNACK" [nzLabel]="'momApp.meals.mealType.SNACK' | translate"></nz-option>
+              </nz-select>
+            </div>
+
+            <div class="ai-apply-item">
+              <span class="ai-apply-label">{{ 'momApp.meals.ai.applyModeLabel' | translate }}</span>
+              <nz-radio-group [(ngModel)]="aiApplyMode">
+                <label nz-radio-button nzValue="day">{{ 'momApp.meals.modal.applyDay' | translate }}</label>
+                <label nz-radio-button nzValue="week">{{ 'momApp.meals.modal.applyWeek' | translate }}</label>
+              </nz-radio-group>
+            </div>
+          </div>
+
+          <div class="ai-apply-row">
+            <div class="ai-apply-item">
+              <span class="ai-apply-label">{{ 'momApp.meals.ai.applyDateLabel' | translate }}</span>
+              <nz-date-picker
+                [(ngModel)]="aiTargetDate"
+                nzFormat="dd/MM/yyyy"
+                [nzPlaceHolder]="'momApp.meals.modal.selectDate' | translate"
+                style="width: 200px"
+              ></nz-date-picker>
+            </div>
+          </div>
+
+          <button nz-button nzType="primary" (click)="addSelectedToMenu()" [nzLoading]="isAddingFromAi" class="btn-add-to-menu">
+            <span nz-icon nzType="calendar"></span>
+            {{ 'momApp.meals.ai.addToMenuButton' | translate : { count: selectedAiCount } }}
+          </button>
+        </div>
+
+        <div *ngIf="!hasAiSelection" class="ai-select-hint">
+          {{ 'momApp.meals.ai.selectHint' | translate }}
+        </div>
+      </div>
+    </div>
   </ng-container>
 </nz-modal>

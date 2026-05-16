@@ -1,4 +1,4 @@
-<section class="page-container" *ngIf="members$ | async as members">
+﻿<section class="page-container" *ngIf="members$ | async as members">
   <div class="header-actions">
     <div>
       <h1 class="page-title">{{ 'momApp.family.title' | translate }}</h1>
@@ -18,16 +18,19 @@
 
   <div class="family-grid animate-slide-up">
     <div class="family-card" *ngFor="let member of members">
-      <!-- Role banner -->
       <div class="card-role-banner" [style.background]="roleGradient(member.role)">
         <span nz-icon [nzType]="roleIcon(member.role)" class="banner-icon"></span>
       </div>
 
-      <!-- Avatar + Name -->
       <div class="card-header">
         <div class="avatar-wrap">
-          <img *ngIf="member.avatarUrl" [src]="member.avatarUrl" class="member-avatar" [alt]="member.displayName"
-               (error)="$any($event.target).style.display='none'" />
+          <img
+            *ngIf="member.avatarUrl"
+            [src]="member.avatarUrl"
+            class="member-avatar"
+            [alt]="member.displayName"
+            (error)="$any($event.target).style.display='none'"
+          />
           <nz-avatar
             [nzSize]="56"
             [nzText]="member.displayName.charAt(0).toUpperCase()"
@@ -41,10 +44,7 @@
             <span nz-icon nzType="user" style="opacity:0.6"></span>
             {{ member.username }}
           </div>
-          <nz-tag
-            [nzColor]="member.role === 'MOM' || member.role === 'DAD' ? 'magenta' : 'geekblue'"
-            class="role-tag"
-          >
+          <nz-tag [nzColor]="member.role === 'MOM' || member.role === 'DAD' ? 'magenta' : 'geekblue'" class="role-tag">
             {{ roleLabel(member.role) }}
           </nz-tag>
         </div>
@@ -52,7 +52,6 @@
 
       <nz-divider style="margin: 12px 0;"></nz-divider>
 
-      <!-- Detail info rows -->
       <div class="info-rows">
         <div class="info-row" *ngIf="member.email && member.email !== '-'">
           <span class="info-icon"><span nz-icon nzType="mail"></span></span>
@@ -68,15 +67,20 @@
         </div>
       </div>
 
-      <!-- Edit and Delete buttons -->
       <div class="card-actions" style="display: flex; gap: 8px;">
         <button nz-button nzType="default" nzSize="small" (click)="openEditMemberModal(member, members)" class="btn-edit-member" style="flex: 1;">
           <span nz-icon nzType="edit"></span>
-          Chỉnh sửa
+          {{ 'commonActions.edit' | translate }}
         </button>
-        <button nz-button nzType="text" nzDanger nzSize="small" 
-                nz-popconfirm nzPopconfirmTitle="Bạn có chắc muốn xóa thành viên này?" 
-                (nzOnConfirm)="deleteMember(member.userId)">
+        <button
+          nz-button
+          nzType="text"
+          nzDanger
+          nzSize="small"
+          nz-popconfirm
+          [nzPopconfirmTitle]="'momApp.family.actions.deleteConfirm' | translate"
+          (nzOnConfirm)="deleteMember(member.userId)"
+        >
           <span nz-icon nzType="delete"></span>
         </button>
       </div>
@@ -84,7 +88,6 @@
   </div>
 </section>
 
-<!-- ===== MODAL TẠO THÀNH VIÊN ===== -->
 <nz-modal
   [(nzVisible)]="isCreateMemberModalVisible"
   [nzTitle]="createModalTitle"
@@ -107,7 +110,7 @@
       <div class="form-grid-2">
         <nz-form-item>
           <nz-form-label nzRequired>{{ 'momApp.family.modal.displayNameLabel' | translate }}</nz-form-label>
-          <nz-form-control [nzErrorTip]="'Vui lòng nhập tên hiển thị'">
+          <nz-form-control [nzErrorTip]="'momApp.family.validation.displayNameRequired' | translate">
             <nz-input-group [nzPrefix]="prefixName">
               <input nz-input formControlName="displayName" [placeholder]="'momApp.family.modal.displayNamePlaceholder' | translate" />
             </nz-input-group>
@@ -117,7 +120,7 @@
 
         <nz-form-item>
           <nz-form-label nzRequired>{{ 'momApp.family.modal.usernameLabel' | translate }}</nz-form-label>
-          <nz-form-control [nzErrorTip]="'Vui lòng nhập tên đăng nhập'">
+          <nz-form-control [nzErrorTip]="'momApp.family.validation.usernameRequired' | translate">
             <nz-input-group [nzPrefix]="prefixUser">
               <input nz-input formControlName="username" [placeholder]="'momApp.family.modal.usernamePlaceholder' | translate" />
             </nz-input-group>
@@ -128,7 +131,7 @@
 
       <nz-form-item>
         <nz-form-label nzRequired>{{ 'momApp.family.modal.emailLabel' | translate }}</nz-form-label>
-        <nz-form-control [nzErrorTip]="'Vui lòng nhập email hợp lệ'">
+        <nz-form-control [nzErrorTip]="'momApp.family.validation.emailInvalid' | translate">
           <nz-input-group [nzPrefix]="prefixEmail">
             <input nz-input type="email" formControlName="email" [placeholder]="'momApp.family.modal.emailPlaceholder' | translate" />
           </nz-input-group>
@@ -170,7 +173,6 @@
   </ng-container>
 </nz-modal>
 
-<!-- ===== MODAL CHỈNH SỬA THÀNH VIÊN ===== -->
 <nz-modal
   [(nzVisible)]="isEditMemberModalVisible"
   [nzTitle]="editModalTitle"
@@ -189,7 +191,6 @@
     </div>
   </ng-template>
   <ng-container *nzModalContent>
-    <!-- Member identity preview -->
     <div class="edit-member-preview" *ngIf="selectedMember">
       <div class="preview-avatar" [style.background]="roleGradient(selectedMember.role)">
         {{ selectedMember.displayName.charAt(0).toUpperCase() }}
@@ -213,7 +214,7 @@
       <div class="form-grid-2">
         <nz-form-item>
           <nz-form-label nzRequired>{{ 'momApp.family.modal.displayNameLabel' | translate }}</nz-form-label>
-          <nz-form-control [nzErrorTip]="'Vui lòng nhập tên hiển thị'">
+          <nz-form-control [nzErrorTip]="'momApp.family.validation.displayNameRequired' | translate">
             <nz-input-group [nzPrefix]="prefixNameEdit">
               <input nz-input formControlName="displayName" [placeholder]="'momApp.family.modal.displayNamePlaceholder' | translate" />
             </nz-input-group>
@@ -223,7 +224,7 @@
 
         <nz-form-item>
           <nz-form-label nzRequired>{{ 'momApp.family.modal.usernameLabel' | translate }}</nz-form-label>
-          <nz-form-control [nzErrorTip]="'Vui lòng nhập tên đăng nhập'">
+          <nz-form-control [nzErrorTip]="'momApp.family.validation.usernameRequired' | translate">
             <nz-input-group [nzPrefix]="prefixUserEdit">
               <input nz-input formControlName="username" [placeholder]="'momApp.family.modal.usernamePlaceholder' | translate" />
             </nz-input-group>
@@ -234,7 +235,7 @@
 
       <nz-form-item>
         <nz-form-label nzRequired>{{ 'momApp.family.modal.emailLabel' | translate }}</nz-form-label>
-        <nz-form-control [nzErrorTip]="'Vui lòng nhập email hợp lệ'">
+        <nz-form-control [nzErrorTip]="'momApp.family.validation.emailInvalid' | translate">
           <nz-input-group [nzPrefix]="prefixEmailEdit">
             <input nz-input type="email" formControlName="email" [placeholder]="'momApp.family.modal.emailPlaceholder' | translate" />
           </nz-input-group>

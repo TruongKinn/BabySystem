@@ -1,8 +1,4 @@
-<section class="profile-page" *ngIf="profile$ | async as profile">
-
-  <!-- ═══════════════════════════════════════════════════════
-       HERO BANNER
-       ═══════════════════════════════════════════════════════ -->
+﻿<section class="profile-page" *ngIf="profile$ | async as profile">
   <div class="profile-hero">
     <div class="profile-hero__bg">
       <div class="hero-blob hero-blob--1"></div>
@@ -11,7 +7,6 @@
     </div>
 
     <div class="profile-hero__content">
-      <!-- Avatar Block -->
       <div class="hero-avatar-wrap">
         <div class="hero-avatar-ring">
           <nz-avatar
@@ -21,20 +16,18 @@
             nzIcon="user"
             class="hero-avatar"
           ></nz-avatar>
-          <!-- Online dot -->
           <span class="hero-avatar-online"></span>
         </div>
-        <!-- Upload -->
+
         <input #avatarInput type="file" accept="image/*" (change)="onAvatarFileSelected($event)" hidden />
         <button class="btn-upload" [class.btn-upload--loading]="isUploadingAvatar" (click)="avatarInput.click()">
           <span nz-icon nzType="camera" nzTheme="outline"></span>
           <span *ngIf="!isUploadingAvatar">{{ 'momApp.profile.changeAvatar' | translate }}</span>
-          <span *ngIf="isUploadingAvatar">Đang tải...</span>
+          <span *ngIf="isUploadingAvatar">{{ 'momApp.profile.uploading' | translate }}</span>
         </button>
         <p class="upload-hint">{{ 'momApp.profile.uploadHint' | translate }}</p>
       </div>
 
-      <!-- Identity Block -->
       <div class="hero-identity">
         <div class="hero-name-row">
           <h1 class="hero-name">{{ profile.displayName }}</h1>
@@ -56,7 +49,6 @@
         </div>
       </div>
 
-      <!-- Quick Stats -->
       <div class="hero-stats">
         <div class="stat-pill">
           <span class="stat-icon" style="background: linear-gradient(135deg,#f97316,#fb923c)">
@@ -64,7 +56,7 @@
           </span>
           <div class="stat-text">
             <span class="stat-value">{{ profile.familyMembers.length }}</span>
-            <span class="stat-label">Thành viên</span>
+            <span class="stat-label">{{ 'momApp.profile.stats.members' | translate }}</span>
           </div>
         </div>
         <div class="stat-pill">
@@ -72,8 +64,8 @@
             <span nz-icon nzType="heart" nzTheme="fill"></span>
           </span>
           <div class="stat-text">
-            <span class="stat-value">Gia đình</span>
-            <span class="stat-label">Vai trò</span>
+            <span class="stat-value">{{ 'momApp.profile.stats.family' | translate }}</span>
+            <span class="stat-label">{{ 'momApp.profile.stats.role' | translate }}</span>
           </div>
         </div>
         <div class="stat-pill">
@@ -81,35 +73,30 @@
             <span nz-icon nzType="safety-certificate" nzTheme="fill"></span>
           </span>
           <div class="stat-text">
-            <span class="stat-value">Active</span>
-            <span class="stat-label">Trạng thái</span>
+            <span class="stat-value">{{ 'momApp.profile.stats.active' | translate }}</span>
+            <span class="stat-label">{{ 'momApp.profile.stats.status' | translate }}</span>
           </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════
-       DETAIL CARDS GRID
-       ═══════════════════════════════════════════════════════ -->
   <div class="detail-grid">
-
-    <!-- Card: Thông tin tài khoản -->
     <div class="detail-card detail-card--account">
       <div class="detail-card__header">
         <div class="detail-card__icon" style="background: linear-gradient(135deg,#f97316,#fb923c)">
           <span nz-icon nzType="idcard" nzTheme="outline"></span>
         </div>
         <div>
-          <h2 class="detail-card__title">Thông tin tài khoản</h2>
-          <p class="detail-card__sub">Thông tin đăng nhập và định danh</p>
+          <h2 class="detail-card__title">{{ 'momApp.profile.cards.account.title' | translate }}</h2>
+          <p class="detail-card__sub">{{ 'momApp.profile.cards.account.subtitle' | translate }}</p>
         </div>
       </div>
       <div class="detail-card__body">
         <div class="info-row">
           <span class="info-label">
             <span nz-icon nzType="user" nzTheme="outline"></span>
-            Tên hiển thị
+            {{ 'momApp.profile.cards.account.displayName' | translate }}
           </span>
           <span class="info-value">{{ profile.displayName }}</span>
         </div>
@@ -130,26 +117,25 @@
         <div class="info-row">
           <span class="info-label">
             <span nz-icon nzType="check-circle" nzTheme="outline"></span>
-            Trạng thái
+            {{ 'momApp.profile.cards.account.status' | translate }}
           </span>
           <span class="info-value">
             <span class="status-badge status-badge--active">
-              <i class="status-dot"></i> Đang hoạt động
+              <i class="status-dot"></i> {{ 'momApp.profile.cards.account.activeStatus' | translate }}
             </span>
           </span>
         </div>
       </div>
     </div>
 
-    <!-- Card: Vai trò trong gia đình -->
     <div class="detail-card detail-card--role">
       <div class="detail-card__header">
         <div class="detail-card__icon" style="background: linear-gradient(135deg,#ec4899,#f43f5e)">
           <span nz-icon nzType="home" nzTheme="fill"></span>
         </div>
         <div>
-          <h2 class="detail-card__title">Vai trò gia đình</h2>
-          <p class="detail-card__sub">Vị trí và quan hệ trong gia đình</p>
+          <h2 class="detail-card__title">{{ 'momApp.profile.cards.familyRole.title' | translate }}</h2>
+          <p class="detail-card__sub">{{ 'momApp.profile.cards.familyRole.subtitle' | translate }}</p>
         </div>
       </div>
       <div class="detail-card__body">
@@ -159,17 +145,19 @@
           </div>
           <div class="role-showcase__info">
             <p class="role-showcase__name">{{ profile.roleLabel }}</p>
-            <p class="role-showcase__desc">Vai trò chính trong gia đình</p>
+            <p class="role-showcase__desc">{{ 'momApp.profile.cards.familyRole.primaryRole' | translate }}</p>
           </div>
         </div>
         <div class="info-row" style="margin-top: 12px">
           <span class="info-label">
             <span nz-icon nzType="team" nzTheme="outline"></span>
-            Số thành viên
+            {{ 'momApp.profile.cards.familyRole.memberCount' | translate }}
           </span>
           <span class="info-value">
             <strong style="color: var(--user-primary); font-size: 18px">{{ profile.familyMembers.length }}</strong>
-            <span style="color: var(--text-secondary); font-size: 13px; margin-left: 4px">người</span>
+            <span style="color: var(--text-secondary); font-size: 13px; margin-left: 4px">
+              {{ 'momApp.profile.cards.familyRole.memberUnit' | translate }}
+            </span>
           </span>
         </div>
         <div class="member-avatars" *ngIf="profile.familyMembers && profile.familyMembers.length > 0">
@@ -191,15 +179,14 @@
       </div>
     </div>
 
-    <!-- Card: Bảo mật & Cài đặt -->
     <div class="detail-card detail-card--security">
       <div class="detail-card__header">
         <div class="detail-card__icon" style="background: linear-gradient(135deg,#8b5cf6,#a78bfa)">
           <span nz-icon nzType="safety" nzTheme="fill"></span>
         </div>
         <div>
-          <h2 class="detail-card__title">Bảo mật & Cài đặt</h2>
-          <p class="detail-card__sub">Thiết lập bảo mật tài khoản</p>
+          <h2 class="detail-card__title">{{ 'momApp.profile.cards.security.title' | translate }}</h2>
+          <p class="detail-card__sub">{{ 'momApp.profile.cards.security.subtitle' | translate }}</p>
         </div>
       </div>
       <div class="detail-card__body">
@@ -207,57 +194,45 @@
           <div class="security-item__info">
             <span nz-icon nzType="lock" nzTheme="outline" class="security-item__icon"></span>
             <div>
-              <p class="security-item__title">Mật khẩu</p>
-              <p class="security-item__sub">Thay đổi mật khẩu định kỳ</p>
+              <p class="security-item__title">{{ 'momApp.profile.cards.security.password.title' | translate }}</p>
+              <p class="security-item__sub">{{ 'momApp.profile.cards.security.password.subtitle' | translate }}</p>
             </div>
           </div>
-          <span class="security-badge security-badge--ok">Đã bảo vệ</span>
+          <span class="security-badge security-badge--ok">{{ 'momApp.profile.cards.security.password.status' | translate }}</span>
         </div>
         <div class="security-item">
           <div class="security-item__info">
             <span nz-icon nzType="shield" nzTheme="outline" class="security-item__icon"></span>
             <div>
-              <p class="security-item__title">Phiên đăng nhập</p>
-              <p class="security-item__sub">Quản lý các thiết bị đăng nhập</p>
+              <p class="security-item__title">{{ 'momApp.profile.cards.security.session.title' | translate }}</p>
+              <p class="security-item__sub">{{ 'momApp.profile.cards.security.session.subtitle' | translate }}</p>
             </div>
           </div>
-          <span class="security-badge security-badge--ok">An toàn</span>
+          <span class="security-badge security-badge--ok">{{ 'momApp.profile.cards.security.session.status' | translate }}</span>
         </div>
         <div class="security-item">
           <div class="security-item__info">
             <span nz-icon nzType="bell" nzTheme="outline" class="security-item__icon"></span>
             <div>
-              <p class="security-item__title">Thông báo</p>
-              <p class="security-item__sub">Nhận thông báo quan trọng</p>
+              <p class="security-item__title">{{ 'momApp.profile.cards.security.notifications.title' | translate }}</p>
+              <p class="security-item__sub">{{ 'momApp.profile.cards.security.notifications.subtitle' | translate }}</p>
             </div>
           </div>
-          <span class="security-badge security-badge--on">Bật</span>
+          <span class="security-badge security-badge--on">{{ 'momApp.profile.cards.security.notifications.status' | translate }}</span>
         </div>
       </div>
     </div>
-
   </div>
 
-  <!-- ═══════════════════════════════════════════════════════
-       CÂY PHẢ HỆ GIA ĐÌNH — KHÔNG CHỈNH SỬA
-       ═══════════════════════════════════════════════════════ -->
   <nz-card class="table-card family-tree-card">
     <div class="tree-header">
-      <h3>Cây phả hệ gia đình</h3>
-      <p>Hiển thị phân cấp quan hệ trong gia đình theo mô hình Việt Nam.</p>
+      <h3>{{ 'momApp.profile.familyTree.title' | translate }}</h3>
+      <p>{{ 'momApp.profile.familyTree.subtitle' | translate }}</p>
     </div>
 
     <div class="fg-wrap" *ngIf="treeNodes.length > 0; else emptyFamilyTree">
-
-      <!-- ═══════════════════════════════
-           HÀNG 1: [Ông Bà] + [Bác/Chú] BỐ ❤️ MẸ [Dì/Cậu] + [Ông Bà]
-           ═══════════════════════════════ -->
       <div class="fg-row fg-row--parents">
-
-        <!-- Nhánh nội: Bác/Chú + Bố -->
         <div class="fg-sibling-group fg-sibling-group--paternal">
-          
-          <!-- Ông Bà Nội (Căn giữa tuyệt đối so với nhóm anh em) -->
           <div class="absolute-grandparents">
             <div class="fg-couple-group">
               <ng-container *ngIf="findNodeByRel('ONG_NOI') as ongNoi">
@@ -284,21 +259,16 @@
           </div>
         </div>
 
-        <!-- Cầu nối Bố–Mẹ -->
         <div class="fg-marriage-bridge">
           <div class="fg-bridge-hline left"></div>
           <div class="fg-bridge-heart">
             <span nz-icon nzType="heart" nzTheme="fill"></span>
           </div>
           <div class="fg-bridge-hline right"></div>
-          <!-- Đường dọc xuống con -->
           <div class="fg-bridge-vdown"></div>
         </div>
 
-        <!-- Nhánh ngoại: Mẹ + Dì/Cậu -->
         <div class="fg-sibling-group fg-sibling-group--maternal">
-          
-          <!-- Ông Bà Ngoại (Căn giữa tuyệt đối so với nhóm anh em) -->
           <div class="absolute-grandparents">
             <div class="fg-couple-group">
               <ng-container *ngIf="findNodeByRel('ONG_NGOAI') as ongNgoai">
@@ -326,14 +296,9 @@
         </div>
       </div>
 
-      <!-- ═══════════════════════════════
-           HÀNG 2: CON CÁI / EM BÉ
-           ═══════════════════════════════ -->
       <div class="fg-row fg-row--children" *ngIf="getChildrenNodes().length > 0">
         <div class="fg-children-wrap">
-          <div class="fg-children-bar"
-               [style.display]="getChildrenNodes().length < 2 ? 'none' : 'block'">
-          </div>
+          <div class="fg-children-bar" [style.display]="getChildrenNodes().length < 2 ? 'none' : 'block'"></div>
           <div class="fg-children">
             <ng-container *ngFor="let node of getChildrenNodes()">
               <div class="fg-child-item">
@@ -344,13 +309,18 @@
           </div>
         </div>
       </div>
+    </div>
 
-    </div><!-- /fg-wrap -->
-
-    <!-- ─── Template: node thành viên bình thường ─── -->
     <ng-template #tplNode let-node>
-      <article class="fg-node" [class.fg-node--me]="node.isCurrentUser"
-               nz-popover [nzPopoverContent]="popoverContent" nzPopoverPlacement="top" nzPopoverOverlayClassName="premium-popover" [nzPopoverMouseEnterDelay]="0.1">
+      <article
+        class="fg-node"
+        [class.fg-node--me]="node.isCurrentUser"
+        nz-popover
+        [nzPopoverContent]="popoverContent"
+        nzPopoverPlacement="top"
+        nzPopoverOverlayClassName="premium-popover"
+        [nzPopoverMouseEnterDelay]="0.1"
+      >
         <div class="fg-node-avatar">
           <nz-avatar
             [nzSrc]="node.avatarUrl ?? undefined"
@@ -368,17 +338,27 @@
       <ng-template #popoverContent>
         <div class="node-popover-inner">
           <div class="pop-title"><span nz-icon nzType="user"></span> {{ node.displayName }}</div>
-          <div class="pop-info" *ngIf="node.username && node.username !== '-'"><span nz-icon nzType="idcard"></span> {{ node.username }}</div>
-          <div class="pop-info" *ngIf="node.email && node.email !== '-'"><span nz-icon nzType="mail"></span> {{ node.email }}</div>
+          <div class="pop-info" *ngIf="node.username && node.username !== '-'">
+            <span nz-icon nzType="idcard"></span> {{ node.username }}
+          </div>
+          <div class="pop-info" *ngIf="node.email && node.email !== '-'">
+            <span nz-icon nzType="mail"></span> {{ node.email }}
+          </div>
           <div class="pop-info"><span nz-icon nzType="tag"></span> {{ node.roleLabel }} • {{ node.relationLabel }}</div>
         </div>
       </ng-template>
     </ng-template>
 
-    <!-- ─── Template: node em bé / con ─── -->
     <ng-template #tplBabyNode let-node>
-      <article class="fg-node fg-node--baby" [class.fg-node--me]="node.isCurrentUser"
-               nz-popover [nzPopoverContent]="popoverContentBaby" nzPopoverPlacement="top" nzPopoverOverlayClassName="premium-popover" [nzPopoverMouseEnterDelay]="0.1">
+      <article
+        class="fg-node fg-node--baby"
+        [class.fg-node--me]="node.isCurrentUser"
+        nz-popover
+        [nzPopoverContent]="popoverContentBaby"
+        nzPopoverPlacement="top"
+        nzPopoverOverlayClassName="premium-popover"
+        [nzPopoverMouseEnterDelay]="0.1"
+      >
         <div class="fg-node-avatar">
           <nz-avatar
             [nzSrc]="node.avatarUrl ?? undefined"
@@ -402,8 +382,7 @@
     </ng-template>
 
     <ng-template #emptyFamilyTree>
-      <div class="fg-empty">Không có dữ liệu cây phả hệ cho gia đình này.</div>
+      <div class="fg-empty">{{ 'momApp.profile.familyTree.empty' | translate }}</div>
     </ng-template>
   </nz-card>
-
 </section>

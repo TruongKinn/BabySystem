@@ -1,12 +1,18 @@
-<section class="page-container baby-page" *ngIf="snapshot$ | async as snapshot">
-
-  <!-- Page header -->
+<section class="page-container baby-page">
   <div class="header-actions">
     <div>
       <h1 class="page-title">{{ 'momApp.baby.title' | translate }}</h1>
       <p class="page-subtitle">{{ 'momApp.baby.subtitle' | translate }}</p>
     </div>
     <div class="header-buttons">
+      <nz-select
+        class="baby-header-select"
+        [formControl]="selectedBabyControl"
+        [nzPlaceHolder]="'momApp.baby.gallery.selectBaby' | translate"
+      >
+        <nz-option *ngFor="let baby of (babyProfiles$ | async)" [nzValue]="baby.id" [nzLabel]="baby.name"></nz-option>
+      </nz-select>
+
       <button nz-button nzType="default" (click)="openCreateBabyModal()">
         <span nz-icon nzType="user-add"></span>
         {{ 'momApp.baby.actions.addProfile' | translate }}
@@ -18,54 +24,143 @@
     </div>
   </div>
 
-  <!-- Baby Profile Card (premium redesign) -->
+  <div class="baby-quick-panel animate-slide-up">
+    <div class="quick-log-row">
+      <span class="quick-log-title">{{ 'momApp.baby.quickLogTitle' | translate }}</span>
+      <button
+        nz-button
+        nzType="default"
+        class="quick-log-chip quick-log-chip-sleep"
+        [nzLoading]="quickLogLoadingType === 'SLEEP'"
+        (click)="quickLog('SLEEP')"
+      >
+        + {{ 'momApp.baby.logType.SLEEP' | translate }}
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        class="quick-log-chip quick-log-chip-feeding"
+        [nzLoading]="quickLogLoadingType === 'FEEDING'"
+        (click)="quickLog('FEEDING')"
+      >
+        + {{ 'momApp.baby.logType.FEEDING' | translate }}
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        class="quick-log-chip quick-log-chip-diaper"
+        [nzLoading]="quickLogLoadingType === 'DIAPER'"
+        (click)="quickLog('DIAPER')"
+      >
+        + {{ 'momApp.baby.logType.DIAPER' | translate }}
+      </button>
+    </div>
+
+    <div class="care-meta-row">
+      <div class="care-meta-pill">
+        <span nz-icon nzType="fire"></span>
+        {{ 'momApp.baby.careStreak' | translate:{ days: summary?.careStreakDays ?? 0 } }}
+      </div>
+      <div class="care-meta-pill">
+        <span nz-icon nzType="clock-circle"></span>
+        {{ 'momApp.baby.lastUpdated' | translate }}: {{ formatDateTime(summary?.lastUpdatedAt ?? null) }}
+      </div>
+    </div>
+  </div>
+
   <div class="baby-profile-card animate-slide-up">
-    <!-- Gradient header -->
     <div class="baby-profile-header">
       <div class="baby-avatar">👶</div>
       <div>
         <div class="baby-name">
-          {{ snapshot.baby.babyName || ('momApp.baby.unknownName' | translate) }}
+          {{ selectedBaby?.name || ('momApp.baby.unknownName' | translate) }}
         </div>
         <div class="baby-next-vaccine">
           <span nz-icon nzType="medicine-box"></span>
           {{ 'momApp.baby.vaccineDate' | translate }}:
-          {{ snapshot.baby.nextVaccination || ('momApp.common.notAvailable' | translate) }}
+          {{ summary?.nextVaccination || ('momApp.common.notAvailable' | translate) }}
         </div>
       </div>
     </div>
 
-    <!-- Stats row -->
     <div class="baby-stats-row">
       <div class="baby-stat-cell">
-        <div class="baby-stat-val">{{ snapshot.baby.sleepHours }}<span style="font-size:14px;font-weight:500;">h</span></div>
+        <div class="baby-stat-val">{{ summary?.sleepHours ?? 0 }}<span class="stat-unit">h</span></div>
         <div class="baby-stat-lbl">{{ 'momApp.baby.sleepToday' | translate }}</div>
       </div>
       <div class="baby-stat-cell">
-        <div class="baby-stat-val">{{ snapshot.baby.feedings }}</div>
+        <div class="baby-stat-val">{{ summary?.feedings ?? 0 }}</div>
         <div class="baby-stat-lbl">{{ 'momApp.baby.feedingCount' | translate }}</div>
       </div>
       <div class="baby-stat-cell">
-        <div class="baby-stat-val">{{ snapshot.baby.diaperChanges }}</div>
+        <div class="baby-stat-val">{{ summary?.diaperChanges ?? 0 }}</div>
         <div class="baby-stat-lbl">{{ 'momApp.baby.diaperChanges' | translate }}</div>
       </div>
     </div>
   </div>
 
-  <!-- Gallery Card -->
-  <nz-card class="table-card baby-gallery-card animate-slide-up" [nzTitle]="'momApp.baby.gallery.title' | translate" style="animation-delay:.06s">
-    <!-- Toolbar -->
+  <div class="gallery-error" *ngIf="summaryLoadError">{{ summaryLoadError }}</div>
+
+  <nz-card
+    class="table-card baby-logs-card animate-slide-up"
+    [nzTitle]="'momApp.baby.logs.title' | translate"
+    style="animation-delay:.04s"
+  >
+    <div class="gallery-error" *ngIf="logsLoadError">{{ logsLoadError }}</div>
+
+    <div *ngIf="isLoadingLogs" class="empty-state">
+      <nz-spin nzSimple></nz-spin>
+    </div>
+
+    <nz-empty
+      *ngIf="!isLoadingLogs && todayLogs.length === 0"
+      [nzNotFoundContent]="'momApp.baby.logs.empty' | translate"
+    >
+    </nz-empty>
+
+    <div class="baby-log-list" *ngIf="!isLoadingLogs && todayLogs.length > 0">
+      <div class="baby-log-item" *ngFor="let log of todayLogs">
+        <div
+          class="baby-log-icon"
+          [class.log-icon-sleep]="log.logType === 'SLEEP'"
+          [class.log-icon-feeding]="log.logType === 'FEEDING'"
+          [class.log-icon-diaper]="log.logType === 'DIAPER'"
+        >
+          <span nz-icon [nzType]="logTypeIcon(log.logType)"></span>
+        </div>
+
+        <div class="baby-log-content">
+          <div class="baby-log-top">
+            <span class="baby-log-type">{{ logTypeLabel(log.logType) }}</span>
+            <span class="baby-log-time">{{ formatDateTime(log.loggedAt) }}</span>
+          </div>
+          <div class="baby-log-note">{{ log.note || ('momApp.common.notAvailable' | translate) }}</div>
+        </div>
+
+        <div class="baby-log-value" *ngIf="log.value !== null && log.value !== undefined">{{ log.value }}</div>
+      </div>
+    </div>
+  </nz-card>
+
+  <nz-card
+    class="table-card baby-gallery-card animate-slide-up"
+    [nzTitle]="'momApp.baby.gallery.title' | translate"
+    style="animation-delay:.06s"
+  >
     <div class="gallery-toolbar">
-      <nz-select
-        class="baby-select"
-        [formControl]="galleryBabyControl"
-        [nzPlaceHolder]="'momApp.baby.gallery.selectBaby' | translate"
-      >
-        <nz-option *ngFor="let baby of (babyProfiles$ | async)" [nzValue]="baby.id" [nzLabel]="baby.name"></nz-option>
-      </nz-select>
+      <div class="gallery-selected-baby">
+        {{ 'momApp.baby.gallery.selectedBaby' | translate }}:
+        <b>{{ selectedBaby?.name || ('momApp.common.notAvailable' | translate) }}</b>
+      </div>
 
       <input #galleryInput type="file" accept="image/*" (change)="onGalleryFileSelected($event)" hidden />
-      <button nz-button nzType="primary" [nzLoading]="isUploadingGallery" (click)="galleryInput.click()" class="btn-gradient-primary">
+      <button
+        nz-button
+        nzType="primary"
+        [nzLoading]="isUploadingGallery"
+        (click)="galleryInput.click()"
+        class="btn-gradient-primary"
+      >
         <span nz-icon nzType="upload"></span>
         {{ 'momApp.baby.gallery.actions.upload' | translate }}
       </button>
@@ -77,34 +172,45 @@
       <nz-spin nzSimple></nz-spin>
     </div>
 
-    <nz-empty *ngIf="!isLoadingGallery && galleryFiles.length === 0"
-      [nzNotFoundContent]="'momApp.baby.gallery.empty' | translate">
+    <nz-empty
+      *ngIf="!isLoadingGallery && galleryFiles.length === 0"
+      [nzNotFoundContent]="'momApp.baby.gallery.empty' | translate"
+    >
     </nz-empty>
 
-    <!-- Gallery grid layout -->
-    <div class="gallery-grid" *ngIf="!isLoadingGallery && galleryFiles.length > 0">
-      <div class="gallery-card-item" *ngFor="let file of galleryFiles">
-        <div class="gallery-file-icon">
-          <span nz-icon nzType="file-image"></span>
-        </div>
-        <div>
-          <div class="gallery-file-name">{{ file.originalFileName }}</div>
-          <div class="gallery-file-size">{{ formatGalleryFileSize(file.sizeBytes) }}</div>
-        </div>
-        <div class="gallery-file-actions">
-          <button nz-button nzSize="small" nzType="default" (click)="downloadGalleryFile(file)">
-            <span nz-icon nzType="download"></span>
-          </button>
-          <button nz-button nzSize="small" nzType="default" nzDanger (click)="deleteGalleryFile(file)">
-            <span nz-icon nzType="delete"></span>
-          </button>
+    <nz-image-group>
+      <div class="gallery-grid" *ngIf="!isLoadingGallery && galleryFiles.length > 0">
+        <div class="gallery-card-item" *ngFor="let file of galleryFiles">
+          <div class="gallery-thumb" *ngIf="file.previewUrl; else noPreview">
+            <img nz-image [nzSrc]="file.previewUrl || ''" [alt]="file.originalFileName" />
+          </div>
+          <ng-template #noPreview>
+            <div class="gallery-thumb-empty">
+              <div class="gallery-file-icon">
+                <span nz-icon nzType="file-image"></span>
+              </div>
+            </div>
+          </ng-template>
+
+          <div>
+            <div class="gallery-file-name">{{ file.originalFileName }}</div>
+            <div class="gallery-file-size">{{ formatGalleryFileSize(file.sizeBytes) }}</div>
+          </div>
+
+          <div class="gallery-file-actions">
+            <button nz-button nzSize="small" nzType="default" (click)="downloadGalleryFile(file)">
+              <span nz-icon nzType="download"></span>
+            </button>
+            <button nz-button nzSize="small" nzType="default" nzDanger (click)="deleteGalleryFile(file)">
+              <span nz-icon nzType="delete"></span>
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </nz-image-group>
   </nz-card>
 </section>
 
-<!-- Create Baby Profile Modal -->
 <nz-modal
   [(nzVisible)]="isCreateBabyModalVisible"
   [nzTitle]="'momApp.baby.modal.createProfileTitle' | translate"
@@ -151,7 +257,6 @@
   </ng-container>
 </nz-modal>
 
-<!-- Create Log Modal -->
 <nz-modal
   [(nzVisible)]="isCreateLogModalVisible"
   [nzTitle]="'momApp.baby.modal.createLogTitle' | translate"

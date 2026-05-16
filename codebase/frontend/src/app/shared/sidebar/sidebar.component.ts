@@ -97,9 +97,10 @@ export class SidebarComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     }
 
     if (changes['menuItems'] && this.metisMenuEl?.nativeElement) {
-      queueMicrotask(() => {
+      // Dùng setTimeout thay vì queueMicrotask để đảm bảo Angular đã render xong DOM mới
+      setTimeout(() => {
         void this.initMetisMenu();
-      });
+      }, 50);
     }
   }
 

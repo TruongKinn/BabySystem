@@ -32,6 +32,8 @@ import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -173,13 +175,17 @@ public class BabyService {
         OffsetDateTime from = targetDate.atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime to = targetDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC).minusNanos(1);
 
-        List<BabyLogEntity> logs = babyLogRepository.findByBabyIdAndLoggedAtBetweenOrderByLoggedAtDesc(babyId, from, to);
-        BigDecimal sleepHours = logs.stream()
+        List<BabyLogEntity> dailyLogs = babyLogRepository.findByBabyIdAndLoggedAtBetweenOrderByLoggedAtDesc(babyId, from, to);
+        BigDecimal sleepHours = dailyLogs.stream()
                 .filter(log -> log.getLogType() == BabyLogType.SLEEP)
                 .map(log -> log.getValue() == null ? BigDecimal.ZERO : log.getValue())
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
-        long feedings = babyLogRepository.countByBabyIdAndLogTypeAndLoggedAtBetween(babyId, BabyLogType.FEEDING, from, to);
-        long diaperChanges = babyLogRepository.countByBabyIdAndLogTypeAndLoggedAtBetween(babyId, BabyLogType.DIAPER, from, to);
+        long feedings = dailyLogs.stream().filter(log -> log.getLogType() == BabyLogType.FEEDING).count();
+        long diaperChanges = dailyLogs.stream().filter(log -> log.getLogType() == BabyLogType.DIAPER).count();
+
+        List<BabyLogEntity> allLogs = babyLogRepository.findByBabyIdOrderByLoggedAtDesc(babyId);
+        OffsetDateTime lastUpdatedAt = allLogs.isEmpty() ? null : allLogs.get(0).getLoggedAt();
+        long careStreakDays = calculateCareStreak(targetDate, allLogs);
 
         BigDecimal latestWeight = growthRecordRepository
                 .findFirstByBabyIdAndMeasuredAtLessThanEqualOrderByMeasuredAtDesc(babyId, targetDate)
@@ -198,8 +204,28 @@ public class BabyService {
                 feedings,
                 diaperChanges,
                 latestWeight,
-                nextVaccination
+                nextVaccination,
+                careStreakDays,
+                lastUpdatedAt
         );
+    }
+
+    private long calculateCareStreak(LocalDate targetDate, List<BabyLogEntity> logs) {
+        if (logs.isEmpty()) {
+            return 0;
+        }
+
+        Set<LocalDate> loggedDates = logs.stream()
+                .map(log -> log.getLoggedAt().atZoneSameInstant(ZoneOffset.UTC).toLocalDate())
+                .collect(Collectors.toSet());
+
+        long streak = 0;
+        LocalDate cursor = targetDate;
+        while (loggedDates.contains(cursor)) {
+            streak++;
+            cursor = cursor.minusDays(1);
+        }
+        return streak;
     }
 
     private BabyEntity getBabyEntity(Long babyId) {

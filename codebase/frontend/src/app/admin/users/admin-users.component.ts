@@ -1,7 +1,8 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -10,6 +11,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 
 type UserStatus = 'ACTIVE' | 'INACTIVE' | 'LOCKED';
@@ -39,18 +41,23 @@ interface UserPageResponse {
   imports: [
     CommonModule,
     FormsModule,
+    TranslateModule,
     NzButtonModule,
     NzCardModule,
     NzInputModule,
     NzModalModule,
     NzPopconfirmModule,
     NzTableModule,
-    NzTagModule,
+    NzTagModule
   ],
   templateUrl: './admin-users.component.html',
-  styleUrl: './admin-users.component.css',
+  styleUrl: './admin-users.component.css'
 })
 export class AdminUsersComponent implements OnInit {
+  private readonly http = inject(HttpClient);
+  private readonly message = inject(NzMessageService);
+  private readonly i18n = inject(I18nService);
+
   readonly apiBase = API_CONFIG.GATEWAY_URL;
 
   loading = false;
@@ -69,11 +76,6 @@ export class AdminUsersComponent implements OnInit {
   temporaryPassword = '';
   isResetLoading = false;
 
-  constructor(
-    private readonly http: HttpClient,
-    private readonly message: NzMessageService
-  ) {}
-
   ngOnInit(): void {
     this.loadUsers();
   }
@@ -88,9 +90,7 @@ export class AdminUsersComponent implements OnInit {
 
   loadUsers(): void {
     this.loading = true;
-    const params = new HttpParams()
-      .set('page', String(Math.max(this.pageIndex - 1, 0)))
-      .set('size', String(this.pageSize));
+    const params = new HttpParams().set('page', String(Math.max(this.pageIndex - 1, 0))).set('size', String(this.pageSize));
 
     this.http.get<UserPageResponse>(`${this.apiBase}/auth/account/user/list`, { params }).subscribe({
       next: (response) => {
@@ -104,8 +104,8 @@ export class AdminUsersComponent implements OnInit {
         this.users = [];
         this.filteredUsers = [];
         this.total = 0;
-        this.message.error('Unable to load users.');
-      },
+        this.message.error(this.i18n.translate('momApp.admin.users.messages.loadFailed'));
+      }
     });
   }
 
@@ -152,25 +152,25 @@ export class AdminUsersComponent implements OnInit {
 
     const password = this.temporaryPassword.trim();
     if (!password) {
-      this.message.warning('Temporary password is required.');
+      this.message.warning(this.i18n.translate('momApp.admin.users.messages.passwordRequired'));
       return;
     }
 
     this.isResetLoading = true;
     this.http
       .post<void>(`${this.apiBase}/auth/users/${this.resetTargetUser.id}/reset-password`, {
-        temporaryPassword: password,
+        temporaryPassword: password
       })
       .subscribe({
         next: () => {
           this.isResetLoading = false;
-          this.message.success('Temporary password has been reset.');
+          this.message.success(this.i18n.translate('momApp.admin.users.messages.resetSuccess'));
           this.closeResetPasswordModal();
         },
         error: () => {
           this.isResetLoading = false;
-          this.message.error('Unable to reset password.');
-        },
+          this.message.error(this.i18n.translate('momApp.admin.users.messages.resetFailed'));
+        }
       });
   }
 
@@ -199,15 +199,19 @@ export class AdminUsersComponent implements OnInit {
     return 'status-inactive';
   }
 
+  statusLabel(status: UserStatus): string {
+    return this.i18n.translate(`momApp.admin.users.status.${status}`);
+  }
+
   roleLabel(type?: string): string {
     const normalized = (type ?? 'USER').toUpperCase();
     if (normalized === 'OWNER') {
-      return 'OWNER';
+      return this.i18n.translate('momApp.admin.users.role.OWNER');
     }
     if (normalized === 'ADMIN') {
-      return 'ADMIN';
+      return this.i18n.translate('momApp.admin.users.role.ADMIN');
     }
-    return 'USER';
+    return this.i18n.translate('momApp.admin.users.role.USER');
   }
 
   trackByUser(_: number, user: AdminUser): number {
@@ -219,13 +223,17 @@ export class AdminUsersComponent implements OnInit {
     this.http.patch<void>(`${this.apiBase}/auth/users/${user.id}/status`, { status }).subscribe({
       next: () => {
         this.actionLoadingUserId = null;
-        this.message.success(status === 'LOCKED' ? 'Account locked.' : 'Account unlocked.');
+        this.message.success(
+          this.i18n.translate(status === 'LOCKED' ? 'momApp.admin.users.messages.lockSuccess' : 'momApp.admin.users.messages.unlockSuccess')
+        );
         this.loadUsers();
       },
       error: () => {
         this.actionLoadingUserId = null;
-        this.message.error(status === 'LOCKED' ? 'Unable to lock account.' : 'Unable to unlock account.');
-      },
+        this.message.error(
+          this.i18n.translate(status === 'LOCKED' ? 'momApp.admin.users.messages.lockFailed' : 'momApp.admin.users.messages.unlockFailed')
+        );
+      }
     });
   }
 
@@ -249,7 +257,7 @@ export class AdminUsersComponent implements OnInit {
         user.lastName,
         user.phone ?? '',
         user.type ?? '',
-        user.status ?? '',
+        user.status ?? ''
       ];
       return haystacks.some((value) => value?.toLowerCase().includes(keyword));
     });

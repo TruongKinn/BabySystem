@@ -1,12 +1,12 @@
-<section class="admin-families-page">
+﻿<section class="admin-families-page">
   <header class="families-hero">
     <div class="hero-copy">
-      <span class="hero-kicker">Family Graph</span>
-      <h1>Family Tree Board</h1>
-      <p>Load household structure as a tree so operators can quickly inspect relationships and caregiver links.</p>
+      <span class="hero-kicker">{{ 'momApp.admin.families.hero.kicker' | translate }}</span>
+      <h1>{{ 'momApp.admin.families.hero.title' | translate }}</h1>
+      <p>{{ 'momApp.admin.families.hero.subtitle' | translate }}</p>
     </div>
     <div class="hero-meta">
-      <span>Total households</span>
+      <span>{{ 'momApp.admin.families.totalHouseholds' | translate }}</span>
       <strong>{{ filteredFamilies.length }}</strong>
     </div>
   </header>
@@ -18,9 +18,9 @@
         class="search-input"
         [ngModel]="searchText"
         (ngModelChange)="onSearchChange($event)"
-        placeholder="Search by family name, creator, member..."
+        [placeholder]="'momApp.admin.families.searchPlaceholder' | translate"
       />
-      <button nz-button nzType="default" (click)="loadFamilies()">Refresh tree</button>
+      <button nz-button nzType="default" (click)="loadFamilies()">{{ 'momApp.admin.families.refresh' | translate }}</button>
     </div>
 
     <div class="family-grid" *ngIf="filteredFamilies.length > 0; else emptyState">
@@ -31,8 +31,8 @@
             <span class="family-id">#{{ family.id }}</span>
           </div>
           <div class="head-meta">
-            <span>Creator: {{ family.creatorName }}</span>
-            <span>Members: {{ family.memberCount }}</span>
+            <span>{{ 'momApp.admin.families.creator' | translate }}: {{ family.creatorName }}</span>
+            <span>{{ 'momApp.admin.families.members' | translate }}: {{ family.memberCount }}</span>
           </div>
         </div>
 
@@ -77,8 +77,8 @@
 
     <ng-template #emptyState>
       <div class="empty-state">
-        <h3>No family matched this filter</h3>
-        <p>Try another keyword or refresh to load latest household data.</p>
+        <h3>{{ 'momApp.admin.families.empty.title' | translate }}</h3>
+        <p>{{ 'momApp.admin.families.empty.subtitle' | translate }}</p>
       </div>
     </ng-template>
   </nz-card>

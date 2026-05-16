@@ -1,4 +1,4 @@
-<section class="page-container shopping-page" *ngIf="items$ | async as items">
+﻿<section class="page-container shopping-page" *ngIf="items$ | async as items">
   <div class="header-actions">
     <div>
       <h1 class="page-title">{{ 'momApp.shopping.title' | translate }}</h1>
@@ -16,53 +16,47 @@
     </div>
   </div>
 
-  <!-- Shopping Summary Bar -->
   <div class="shopping-summary animate-slide-up">
     <div class="shopping-summary-item">
       <span class="ssm-val" style="color:var(--user-primary)">{{ items.length }}</span>
-      <span class="ssm-lbl">Tổng mặt hàng</span>
+      <span class="ssm-lbl">{{ 'momApp.shopping.summary.totalItems' | translate }}</span>
     </div>
     <div class="shopping-summary-divider"></div>
     <div class="shopping-summary-item">
       <span class="ssm-val" style="color:var(--user-teal)">{{ getCheckedCount(items) }}</span>
-      <span class="ssm-lbl">Đã mua</span>
+      <span class="ssm-lbl">{{ 'momApp.shopping.summary.checkedItems' | translate }}</span>
     </div>
     <div class="shopping-summary-divider"></div>
     <div class="shopping-summary-item">
       <span class="ssm-val" style="color:var(--user-secondary)">{{ items.length - getCheckedCount(items) }}</span>
-      <span class="ssm-lbl">Còn lại</span>
+      <span class="ssm-lbl">{{ 'momApp.shopping.summary.remainingItems' | translate }}</span>
     </div>
 
-    <!-- Progress fill -->
     <div class="shopping-progress-wrap" *ngIf="items.length > 0">
       <div class="user-progress-bar" style="flex:1;margin:0">
-        <div class="user-progress-fill"
+        <div
+          class="user-progress-fill"
           [style.width.%]="(getCheckedCount(items) / items.length) * 100"
-          style="background: var(--user-grad-3)"></div>
+          style="background: var(--user-grad-3)"
+        ></div>
       </div>
       <span class="ssm-lbl">{{ ((getCheckedCount(items) / items.length) * 100) | number:'1.0-0' }}%</span>
     </div>
   </div>
 
-  <!-- Shopping Items -->
   <nz-card class="table-card shopping-list-card animate-slide-up" style="animation-delay:.06s">
-    <nz-empty *ngIf="items.length === 0"
-      [nzNotFoundContent]="'Chưa có mặt hàng nào. Hãy thêm vào!'">
-    </nz-empty>
+    <nz-empty *ngIf="items.length === 0" [nzNotFoundContent]="'momApp.shopping.empty' | translate"></nz-empty>
 
     <div *ngFor="let item of items" class="shop-item" [class.item-checked]="item.checked">
-      <!-- Custom Checkbox -->
       <div class="shop-checkbox" (click)="toggleChecked(item.id, item.checked)">
         <span nz-icon nzType="check" *ngIf="item.checked" style="font-size:13px;"></span>
       </div>
 
-      <!-- Item info -->
       <div style="flex:1;min-width:0;">
         <div class="shop-item-name">{{ item.name }}</div>
-        <div class="shop-item-qty" *ngIf="item.quantity">🔢 {{ item.quantity }}</div>
+        <div class="shop-item-qty" *ngIf="item.quantity">{{ item.quantity }}</div>
       </div>
 
-      <!-- Status badge -->
       <nz-tag [nzColor]="item.checked ? 'cyan' : 'orange'" style="border-radius:8px;margin:0;">
         {{ item.checked ? ('momApp.shopping.status.bought' | translate) : ('momApp.shopping.status.toBuy' | translate) }}
       </nz-tag>
@@ -70,7 +64,6 @@
   </nz-card>
 </section>
 
-<!-- Create Item Modal -->
 <nz-modal
   [(nzVisible)]="isCreateModalVisible"
   [nzTitle]="'momApp.shopping.modal.createTitle' | translate"

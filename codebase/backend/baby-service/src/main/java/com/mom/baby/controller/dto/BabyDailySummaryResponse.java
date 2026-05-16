@@ -2,6 +2,7 @@ package com.mom.baby.controller.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.OffsetDateTime;
 
 public record BabyDailySummaryResponse(
         Long babyId,
@@ -10,6 +11,8 @@ public record BabyDailySummaryResponse(
         long feedings,
         long diaperChanges,
         BigDecimal latestWeightKg,
-        LocalDate nextVaccination
+        LocalDate nextVaccination,
+        long careStreakDays,
+        OffsetDateTime lastUpdatedAt
 ) {
 }

@@ -1,10 +1,12 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslateModule } from '@ngx-translate/core';
 import { forkJoin } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 
 interface AdminUser {
@@ -29,20 +31,23 @@ interface AdminFamily {
 
 interface MetricCard {
   key: string;
-  label: string;
+  labelKey: string;
   value: number;
-  description: string;
+  descriptionKey: string;
   tone: 'cyan' | 'blue' | 'emerald' | 'amber' | 'slate';
 }
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, NzButtonModule, NzCardModule],
+  imports: [CommonModule, RouterLink, TranslateModule, NzButtonModule, NzCardModule],
   templateUrl: './admin-dashboard.component.html',
-  styleUrl: './admin-dashboard.component.css',
+  styleUrl: './admin-dashboard.component.css'
 })
 export class AdminDashboardComponent implements OnInit {
+  private readonly http = inject(HttpClient);
+  private readonly i18n = inject(I18nService);
+
   totalUsers = 0;
   activeUsers = 0;
   lockedUsers = 0;
@@ -52,8 +57,6 @@ export class AdminDashboardComponent implements OnInit {
 
   loading = false;
 
-  constructor(private readonly http: HttpClient) {}
-
   ngOnInit(): void {
     this.loadSummary();
   }
@@ -62,39 +65,39 @@ export class AdminDashboardComponent implements OnInit {
     return [
       {
         key: 'totalUsers',
-        label: 'Total users',
+        labelKey: 'momApp.admin.dashboard.metrics.totalUsers.label',
         value: this.totalUsers,
-        description: 'All accounts in auth system',
-        tone: 'cyan',
+        descriptionKey: 'momApp.admin.dashboard.metrics.totalUsers.description',
+        tone: 'cyan'
       },
       {
         key: 'activeUsers',
-        label: 'Active users',
+        labelKey: 'momApp.admin.dashboard.metrics.activeUsers.label',
         value: this.activeUsers,
-        description: 'Accounts available for sign-in',
-        tone: 'emerald',
+        descriptionKey: 'momApp.admin.dashboard.metrics.activeUsers.description',
+        tone: 'emerald'
       },
       {
         key: 'lockedUsers',
-        label: 'Locked users',
+        labelKey: 'momApp.admin.dashboard.metrics.lockedUsers.label',
         value: this.lockedUsers,
-        description: 'Accounts under restricted access',
-        tone: 'amber',
+        descriptionKey: 'momApp.admin.dashboard.metrics.lockedUsers.description',
+        tone: 'amber'
       },
       {
         key: 'adminUsers',
-        label: 'Admin accounts',
+        labelKey: 'momApp.admin.dashboard.metrics.adminUsers.label',
         value: this.adminUsers,
-        description: 'Non-user operational accounts',
-        tone: 'blue',
+        descriptionKey: 'momApp.admin.dashboard.metrics.adminUsers.description',
+        tone: 'blue'
       },
       {
         key: 'totalFamilies',
-        label: 'Family groups',
+        labelKey: 'momApp.admin.dashboard.metrics.totalFamilies.label',
         value: this.totalFamilies,
-        description: 'Family entities in account service',
-        tone: 'slate',
-      },
+        descriptionKey: 'momApp.admin.dashboard.metrics.totalFamilies.description',
+        tone: 'slate'
+      }
     ];
   }
 
@@ -112,7 +115,7 @@ export class AdminDashboardComponent implements OnInit {
 
     forkJoin({
       users: this.http.get<UserPageResponse>(`${API_CONFIG.GATEWAY_URL}/auth/account/user/list`, { params }),
-      families: this.http.get<ApiEnvelope<AdminFamily[]>>(`${API_CONFIG.GATEWAY_URL}/account/admin/families`),
+      families: this.http.get<ApiEnvelope<AdminFamily[]>>(`${API_CONFIG.GATEWAY_URL}/account/admin/families`)
     }).subscribe({
       next: ({ users: userResponse, families: familyResponse }) => {
         const users = userResponse.items ?? [];
@@ -134,7 +137,7 @@ export class AdminDashboardComponent implements OnInit {
         this.totalFamilies = 0;
         this.lastUpdatedAt = this.formatTimestamp(new Date());
         this.loading = false;
-      },
+      }
     });
   }
 
@@ -143,6 +146,7 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   private formatTimestamp(value: Date): string {
-    return value.toLocaleString();
+    const locale = this.i18n.getCurrentLanguage() === 'en' ? 'en-US' : 'vi-VN';
+    return value.toLocaleString(locale);
   }
 }

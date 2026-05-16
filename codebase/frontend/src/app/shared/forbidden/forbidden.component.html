@@ -1,8 +1,8 @@
-<section class="forbidden-page">
+﻿<section class="forbidden-page">
   <h1>403</h1>
-  <p>Bạn không có quyền truy cập trang này.</p>
+  <p>{{ 'momApp.forbidden.message' | translate }}</p>
   <div class="actions">
-    <a routerLink="/app/dashboard" nz-button nzType="default">Về User Portal</a>
-    <a routerLink="/admin/dashboard" nz-button nzType="primary">Về Admin Portal</a>
+    <a routerLink="/app/dashboard" nz-button nzType="default">{{ 'momApp.forbidden.goUserPortal' | translate }}</a>
+    <a routerLink="/admin/dashboard" nz-button nzType="primary">{{ 'momApp.forbidden.goAdminPortal' | translate }}</a>
   </div>
 </section>

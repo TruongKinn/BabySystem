@@ -9,7 +9,7 @@ interface ApiEnvelope<T> {
   data: T;
 }
 
-interface ExpenseCategoryApi {
+export interface ExpenseCategoryApi {
   id: number;
   familyId: number;
   name: string;
@@ -32,13 +32,34 @@ interface MealApi {
   description: string | null;
 }
 
-interface BabyApi {
+export interface BabyProfile {
   id: number;
   familyId: number;
   name: string;
   birthDate: string;
   gender: BabyGender;
   notes: string | null;
+}
+
+export interface BabyLogEntry {
+  id: number;
+  babyId: number;
+  logType: BabyLogType;
+  value: number | null;
+  note: string | null;
+  loggedAt: string;
+}
+
+export interface BabyDailySummary {
+  babyId: number;
+  date: string;
+  sleepHours: number;
+  feedings: number;
+  diaperChanges: number;
+  latestWeightKg: number | null;
+  nextVaccination: string | null;
+  careStreakDays: number;
+  lastUpdatedAt: string | null;
 }
 
 interface UserApi {
@@ -63,7 +84,7 @@ interface FamilyApi {
   members: FamilyMemberApi[];
 }
 
-interface ExpenseApi {
+export interface ExpenseApi {
   id: number;
   familyId: number;
   categoryId: number;
@@ -72,6 +93,45 @@ interface ExpenseApi {
   currency: string;
   note: string | null;
   spentAt: string;
+}
+
+export interface ExpenseSummaryCategoryApi {
+  categoryId: number;
+  categoryName: string;
+  totalAmount: number;
+}
+
+export interface ExpenseSummaryApi {
+  month: string;
+  totalAmount: number;
+  byCategories: ExpenseSummaryCategoryApi[];
+}
+
+export interface ExpenseDailySummaryApi {
+  date: string;
+  totalAmount: number;
+  byCategories: ExpenseSummaryCategoryApi[];
+}
+
+export interface ExpenseCategoryReportItemApi {
+  categoryId: number;
+  categoryName: string;
+  totalAmount: number;
+  expenseCount: number;
+  percentage: number;
+}
+
+export interface ExpenseCategoryReportApi {
+  month: string;
+  totalAmount: number;
+  categories: ExpenseCategoryReportItemApi[];
+}
+
+export interface ExpenseBudgetApi {
+  id: number;
+  familyId: number;
+  month: string;
+  limitAmount: number;
 }
 
 interface NotificationSettings {
@@ -250,11 +310,46 @@ export class SuperAppCommandService {
     );
   }
 
-  getExpenses(month?: string): Observable<ExpenseApi[]> {
+  getExpenses(month?: string, categoryId?: number | null): Observable<ExpenseApi[]> {
     const params = new HttpParams()
       .set('familyId', String(this.getFamilyId()))
       .set('month', month ?? this.currentMonthKey());
-    return this.get<ExpenseApi[]>('/expense/expenses', params);
+    const withCategory = categoryId && categoryId > 0
+      ? params.set('categoryId', String(categoryId))
+      : params;
+    return this.get<ExpenseApi[]>('/expense/expenses', withCategory);
+  }
+
+  getExpenseMonthlySummary(month?: string): Observable<ExpenseSummaryApi> {
+    const params = new HttpParams()
+      .set('familyId', String(this.getFamilyId()))
+      .set('month', month ?? this.currentMonthKey());
+    return this.get<ExpenseSummaryApi>('/expense/expenses/summary', params);
+  }
+
+  getExpenseDailySummary(date?: string): Observable<ExpenseDailySummaryApi> {
+    let params = new HttpParams().set('familyId', String(this.getFamilyId()));
+    if (date?.trim()) {
+      params = params.set('date', date.trim());
+    }
+    return this.get<ExpenseDailySummaryApi>('/expense/expenses/summary/daily', params);
+  }
+
+  getExpenseCategoryReport(month?: string): Observable<ExpenseCategoryReportApi> {
+    const params = new HttpParams()
+      .set('familyId', String(this.getFamilyId()))
+      .set('month', month ?? this.currentMonthKey());
+    return this.get<ExpenseCategoryReportApi>('/expense/expenses/reports/categories', params);
+  }
+
+  getExpenseBudgets(): Observable<ExpenseBudgetApi[]> {
+    const params = new HttpParams().set('familyId', String(this.getFamilyId()));
+    return this.get<ExpenseBudgetApi[]>('/expense/budgets', params);
+  }
+
+  getExpenseCategories(familyId?: number): Observable<ExpenseCategoryApi[]> {
+    const params = new HttpParams().set('familyId', String(familyId ?? this.getFamilyId()));
+    return this.get<ExpenseCategoryApi[]>('/expense/categories', params);
   }
 
   createTask(input: {
@@ -358,9 +453,25 @@ export class SuperAppCommandService {
     }).pipe(map(() => undefined));
   }
 
-  getBabies(): Observable<BabyApi[]> {
+  getBabies(): Observable<BabyProfile[]> {
     const params = new HttpParams().set('familyId', String(this.getFamilyId()));
-    return this.get<BabyApi[]>('/baby/babies', params);
+    return this.get<BabyProfile[]>('/baby/babies', params);
+  }
+
+  getBabySummary(babyId: number, date?: string): Observable<BabyDailySummary> {
+    let params = new HttpParams();
+    if (date?.trim()) {
+      params = params.set('date', date.trim());
+    }
+    return this.get<BabyDailySummary>(`/baby/babies/${babyId}/summary`, params);
+  }
+
+  getBabyLogs(babyId: number, date?: string): Observable<BabyLogEntry[]> {
+    let params = new HttpParams();
+    if (date?.trim()) {
+      params = params.set('date', date.trim());
+    }
+    return this.get<BabyLogEntry[]>(`/baby/babies/${babyId}/logs`, params);
   }
 
   createBabyLog(input: { logType: BabyLogType; value?: number; note?: string; babyId?: number | null }): Observable<void> {
@@ -594,11 +705,6 @@ export class SuperAppCommandService {
         });
       })
     );
-  }
-
-  private getExpenseCategories(familyId: number): Observable<ExpenseCategoryApi[]> {
-    const params = new HttpParams().set('familyId', String(familyId));
-    return this.get<ExpenseCategoryApi[]>('/expense/categories', params);
   }
 
   private getMeals(familyId: number): Observable<MealApi[]> {

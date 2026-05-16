@@ -66,13 +66,17 @@ public class MealController {
         return ApiResponse.ok("Meal plan created", mealService.createMealPlan(request));
     }
 
-    @GetMapping("/meal-plans")
+    @GetMapping({"/meal-plans", "/meal-plans/range"})
     public ApiResponse<List<MealPlanResponse>> getMealPlans(
             @RequestParam("familyId") Long familyId,
             @RequestParam(value = "from", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to
+            @RequestParam(value = "to", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
+            @RequestParam(value = "startDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(value = "endDate", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate
     ) {
-        return ApiResponse.ok("Success", mealService.getMealPlans(familyId, from, to));
+        LocalDate actualFrom = from != null ? from : startDate;
+        LocalDate actualTo = to != null ? to : endDate;
+        return ApiResponse.ok("Success", mealService.getMealPlans(familyId, actualFrom, actualTo));
     }
 
     @GetMapping("/meal-plans/today")

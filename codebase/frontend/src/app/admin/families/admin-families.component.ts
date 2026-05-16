@@ -1,10 +1,12 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 
 interface ApiEnvelope<T> {
@@ -43,17 +45,18 @@ interface FamilyView extends FamilyApi {
 @Component({
   selector: 'app-admin-families',
   standalone: true,
-  imports: [CommonModule, FormsModule, NzButtonModule, NzCardModule, NzInputModule],
+  imports: [CommonModule, FormsModule, TranslateModule, NzButtonModule, NzCardModule, NzInputModule],
   templateUrl: './admin-families.component.html',
-  styleUrl: './admin-families.component.css',
+  styleUrl: './admin-families.component.css'
 })
 export class AdminFamiliesComponent implements OnInit {
+  private readonly http = inject(HttpClient);
+  private readonly i18n = inject(I18nService);
+
   loading = false;
   searchText = '';
   families: FamilyView[] = [];
   filteredFamilies: FamilyView[] = [];
-
-  constructor(private readonly http: HttpClient) {}
 
   ngOnInit(): void {
     this.loadFamilies();
@@ -73,7 +76,7 @@ export class AdminFamiliesComponent implements OnInit {
             members,
             creatorName: creator?.displayName ?? `#${family.createdByUserId}`,
             memberCount: members.length,
-            tree: this.buildFamilyTree(members),
+            tree: this.buildFamilyTree(members)
           };
         });
         this.loading = false;
@@ -83,7 +86,7 @@ export class AdminFamiliesComponent implements OnInit {
         this.loading = false;
         this.families = [];
         this.filteredFamilies = [];
-      },
+      }
     });
   }
 
@@ -94,30 +97,30 @@ export class AdminFamiliesComponent implements OnInit {
 
   roleLabel(role: string): string {
     const normalized = (role || '').toUpperCase();
-    if (normalized === 'MOM') {
-      return 'MOM';
+    const roleKey = `momApp.family.role.${normalized}`;
+    const translated = this.i18n.translate(roleKey);
+    if (translated !== roleKey) {
+      return translated;
     }
-    if (normalized === 'DAD') {
-      return 'DAD';
-    }
-    if (normalized === 'GRANDMA') {
-      return 'GRANDMA';
-    }
-    if (normalized === 'CAREGIVER') {
-      return 'CAREGIVER';
-    }
-    return normalized || 'MEMBER';
+    return this.i18n.translate('momApp.admin.families.role.member');
   }
 
   relationLabel(value: string): string {
     if (!value) {
-      return 'N/A';
+      return this.i18n.translate('momApp.common.notAvailable');
     }
+
+    const key = `momApp.family.relation.${value}`;
+    const translated = this.i18n.translate(key);
+    if (translated !== key) {
+      return translated;
+    }
+
     return value.replace(/_/g, ' ');
   }
 
   roleClass(role: string): string {
-    const normalized = this.roleLabel(role);
+    const normalized = (role || '').toUpperCase();
     if (normalized === 'MOM') {
       return 'role-mom';
     }
@@ -184,7 +187,7 @@ export class AdminFamiliesComponent implements OnInit {
         return {
           key: `${member.userId}:${path}`,
           member,
-          children: [],
+          children: []
         };
       }
       visited.add(member.userId);
@@ -196,7 +199,7 @@ export class AdminFamiliesComponent implements OnInit {
       return {
         key: `${member.userId}:${path}`,
         member,
-        children,
+        children
       };
     };
 

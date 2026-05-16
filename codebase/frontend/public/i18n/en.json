@@ -187,6 +187,12 @@
         "twoFactorRequiredTitle": "Two-factor authentication required",
         "twoFactorRequiredDesc": "This account has 2FA enabled. Please enter OTP from your Authenticator app.",
         "loginFailedFallback": "Login failed. Please verify your account credentials."
+      },
+      "portal": {
+        "adminHint": "Admin Portal - manage user accounts and system operations",
+        "userHint": "User Portal - for family members using the app",
+        "switchToAdmin": "Sign in to Admin Portal",
+        "switchToUser": "Sign in to User Portal"
       }
     },
     "register": {
@@ -2343,6 +2349,7 @@
   "momApp": {
     "common": {
       "success": "Success",
+      "warning": "Warning",
       "notAvailable": "N/A"
     },
     "home": {
@@ -2387,6 +2394,119 @@
       "roleLabel": "System operator",
       "header": {
         "greeting": "Operator"
+      },
+      "dashboard": {
+        "hero": {
+          "kicker": "Admin operations",
+          "title": "System control dashboard",
+          "subtitle": "Monitor account health, security posture, and family data coverage in one place."
+        },
+        "lockRate": "Lock rate",
+        "updatedAt": "Updated at",
+        "refresh": "Refresh snapshot",
+        "quickActions": {
+          "title": "Quick actions",
+          "openUsers": "Open user management",
+          "openFamilies": "Open family tree board",
+          "goUserLogin": "Go to user portal login"
+        },
+        "metrics": {
+          "totalUsers": {
+            "label": "Total users",
+            "description": "All accounts in auth system"
+          },
+          "activeUsers": {
+            "label": "Active users",
+            "description": "Accounts available for sign-in"
+          },
+          "lockedUsers": {
+            "label": "Locked users",
+            "description": "Accounts under restricted access"
+          },
+          "adminUsers": {
+            "label": "Admin accounts",
+            "description": "Non-user operational accounts"
+          },
+          "totalFamilies": {
+            "label": "Family groups",
+            "description": "Family entities in account service"
+          }
+        }
+      },
+      "users": {
+        "hero": {
+          "kicker": "Identity & access",
+          "title": "User administration",
+          "subtitle": "Search, lock or unlock accounts, and reset temporary passwords for support operations."
+        },
+        "stats": {
+          "visibleUsers": "Visible users",
+          "locked": "Locked",
+          "adminOwner": "Admin/Owner"
+        },
+        "searchPlaceholder": "Search by username, email, phone, status...",
+        "table": {
+          "id": "ID",
+          "username": "Username",
+          "fullName": "Full name",
+          "email": "Email",
+          "phone": "Phone",
+          "roleType": "Role type",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "actions": {
+          "lockConfirm": "Lock this account?",
+          "unlockConfirm": "Unlock this account?",
+          "lock": "Lock",
+          "unlock": "Unlock",
+          "resetPassword": "Reset password"
+        },
+        "resetModal": {
+          "title": "Reset temporary password",
+          "confirm": "Confirm",
+          "usernameLabel": "Username",
+          "passwordPlaceholder": "Enter temporary password"
+        },
+        "status": {
+          "ACTIVE": "Active",
+          "INACTIVE": "Inactive",
+          "LOCKED": "Locked"
+        },
+        "role": {
+          "USER": "User",
+          "ADMIN": "Admin",
+          "OWNER": "Owner"
+        },
+        "messages": {
+          "loadFailed": "Unable to load users.",
+          "passwordRequired": "Temporary password is required.",
+          "resetSuccess": "Temporary password has been reset.",
+          "resetFailed": "Unable to reset password.",
+          "lockSuccess": "Account locked.",
+          "unlockSuccess": "Account unlocked.",
+          "lockFailed": "Unable to lock account.",
+          "unlockFailed": "Unable to unlock account."
+        }
+      },
+      "families": {
+        "hero": {
+          "kicker": "Family graph",
+          "title": "Family tree board",
+          "subtitle": "Load household structure as a tree so operators can inspect relationships and caregiver links quickly."
+        },
+        "totalHouseholds": "Total households",
+        "searchPlaceholder": "Search by family name, creator, member...",
+        "refresh": "Refresh tree",
+        "creator": "Creator",
+        "members": "Members",
+        "role": {
+          "member": "Member"
+        },
+        "empty": {
+          "title": "No family matched this filter",
+          "subtitle": "Try another keyword or refresh to load latest household data."
+        }
       }
     },
     "dashboard": {
@@ -2401,7 +2521,57 @@
       "todayMeals": "Today meals",
       "noMeals": "No meal plan for today yet.",
       "budgetHealth": "Budget health",
-      "topCategory": "Top category"
+      "topCategory": "Top category",
+      "healthScoreLabel": "Family health score",
+      "healthScoreMeta": "Calculated from mood, baby routine, task load, and budget safety.",
+      "prioritiesTitle": "Priority focus",
+      "viewInsights": "View insights",
+      "activityTodayTitle": "Activity today",
+      "quickShortcutsTitle": "Quick shortcuts",
+      "budgetRemaining": "Remaining budget",
+      "priorities": {
+        "budget": {
+          "title": "Monthly budget is under pressure",
+          "hint": "{{percent}}% of budget has been used."
+        },
+        "tasks": {
+          "title": "Task workload is getting high",
+          "hint": "{{count}} tasks are waiting to be handled."
+        },
+        "shopping": {
+          "title": "Shopping checklist needs completion",
+          "hint": "{{count}} items are still pending."
+        },
+        "vaccine": {
+          "title": "Baby vaccination date is approaching",
+          "hint": "Next milestone: {{date}}."
+        },
+        "noUrgent": {
+          "title": "Everything looks stable today",
+          "hint": "No urgent alerts need immediate handling."
+        }
+      },
+      "timeline": {
+        "meals": {
+          "title": "Meals today",
+          "detail": "{{count}} meal(s) already planned.",
+          "empty": "No meal plan has been set for today."
+        },
+        "baby": {
+          "title": "Baby daily rhythm",
+          "detail": "{{hours}}h sleep ? {{feedings}} feedings ? {{diapers}} diaper changes."
+        },
+        "workload": {
+          "title": "Family workload",
+          "detail": "{{tasks}} tasks pending ? {{shopping}} shopping reminders."
+        }
+      },
+      "quick": {
+        "tasksPending": "{{count}} pending task(s)",
+        "shoppingPending": "{{count}} item(s) to buy",
+        "budgetUsed": "{{percent}}% budget used",
+        "sleepToday": "{{hours}}h sleep today"
+      }
     },
     "tasks": {
       "title": "Family Tasks",
@@ -2524,6 +2694,12 @@
         "createSuccess": "Shopping item created.",
         "createFailed": "Unable to create shopping item.",
         "updateFailed": "Unable to update shopping item."
+      },
+      "empty": "No shopping items yet. Add one to get started.",
+      "summary": {
+        "totalItems": "Total items",
+        "checkedItems": "Bought",
+        "remainingItems": "Remaining"
       }
     },
     "meals": {
@@ -2531,7 +2707,30 @@
       "subtitle": "Weekly meal plan for parents and baby-friendly routine",
       "totalLabel": "planned days",
       "actions": {
-        "create": "Add plan"
+        "create": "Add plan",
+        "aiSuggest": "AI Suggest"
+      },
+      "stats": {
+        "totalMeals": "Total meals",
+        "daysWithMeals": "Days with meals",
+        "period": {
+          "week": "Week: {{start}} - {{end}}",
+          "month": "Month {{month}}/{{year}}",
+          "year": "Year {{year}}"
+        }
+      },
+      "filters": {
+        "week": "By week",
+        "month": "By month",
+        "year": "By year",
+        "selectWeek": "Select week",
+        "selectMonth": "Select month",
+        "selectYear": "Select year"
+      },
+      "empty": {
+        "dayNoMeals": "No meals yet",
+        "noPlans": "No meal plans yet",
+        "createFirstPlan": "Create first meal plan"
       },
       "table": {
         "day": "Day",
@@ -2547,6 +2746,19 @@
       },
       "modal": {
         "createTitle": "Create meal plan",
+        "savePlan": "Save plan",
+        "applyFor": "Apply for:",
+        "applyDay": "1 day",
+        "applyWeek": "Whole week",
+        "selectWeekStart": "Select week start date",
+        "selectDate": "Plan date",
+        "dateRequired": "Please select date",
+        "dishesTitle": "Dish list",
+        "addDish": "Add dish",
+        "mealTypePlaceholder": "Meal type",
+        "removeDish": "Remove dish",
+        "notesLabel": "Notes",
+        "notesPlaceholder": "Optional note",
         "mealNameLabel": "Meal name",
         "mealNamePlaceholder": "e.g. Chicken soup",
         "mealTypeLabel": "Meal type",
@@ -2554,9 +2766,30 @@
         "noteLabel": "Note",
         "notePlaceholder": "Optional note"
       },
+      "ai": {
+        "modalTitle": "AI Meal Suggestion",
+        "inputLabel": "Enter available ingredients (comma separated)",
+        "inputPlaceholder": "Example: chicken, carrot, potato, onion",
+        "searchButton": "Suggest dishes",
+        "loading": "Analyzing ingredients...",
+        "suggestionsTitle": "Suggested dishes",
+        "ingredientsLabel": "Ingredients:",
+        "applyTitle": "Add to meal plan",
+        "applyMealLabel": "Meal:",
+        "applyModeLabel": "Apply:",
+        "applyDateLabel": "Apply date:",
+        "addToMenuButton": "Add {{count}} dish(es) to meal plan",
+        "selectHint": "Select at least one dish to continue"
+      },
       "messages": {
         "createSuccess": "Meal plan created.",
-        "createFailed": "Unable to create meal plan."
+        "createFailed": "Unable to create meal plan.",
+        "requireAtLeastOneDish": "Please add at least one dish.",
+        "missingIngredients": "Please enter ingredients.",
+        "selectAtLeastOneSuggestion": "Please select at least one suggested dish.",
+        "selectApplyDate": "Please select apply date.",
+        "addFromAiSuccess": "Added {{count}} dish(es) to meal plan.",
+        "addFromAiFailed": "Unable to add dishes from AI suggestion."
       }
     },
     "expenses": {
@@ -2586,7 +2819,8 @@
         "uploadReceiptFailed": "Unable to upload receipt.",
         "downloadReceiptFailed": "Unable to download receipt.",
         "deleteReceiptSuccess": "Receipt deleted successfully.",
-        "deleteReceiptFailed": "Unable to delete receipt."
+        "deleteReceiptFailed": "Unable to delete receipt.",
+        "loadWorkspaceFailed": "Unable to load expense workspace."
       },
       "receipts": {
         "title": "Receipts by expense",
@@ -2606,11 +2840,55 @@
           "download": "Download",
           "delete": "Delete"
         }
+      },
+      "remainingBudget": "Remaining budget",
+      "spentToday": "Spent today",
+      "expenseRecords": "Expense records",
+      "averagePerExpense": "Average per expense",
+      "remainingLabel": "Remaining",
+      "budgetStatus": {
+        "notSet": "Budget not set",
+        "over": "Over budget by {{percent}}%",
+        "warning": "Close to budget limit",
+        "good": "Budget is healthy"
+      },
+      "filters": {
+        "selectMonth": "Select month",
+        "category": "Category",
+        "allCategories": "All categories",
+        "selectedCategory": "Selected category",
+        "search": "Search",
+        "searchPlaceholder": "Search by category or note",
+        "sortLabel": "Sort",
+        "clear": "Clear",
+        "sort": {
+          "newest": "Newest first",
+          "oldest": "Oldest first",
+          "highest": "Highest amount",
+          "lowest": "Lowest amount",
+          "category": "By category (A-Z)"
+        }
+      },
+      "categoryBreakdown": {
+        "title": "Category breakdown",
+        "empty": "No category data in this month.",
+        "expenseCount": "{{count}} expense(s)"
+      },
+      "table": {
+        "showing": "Showing",
+        "records": "record(s)",
+        "filter": "Filter",
+        "visibleTotal": "Visible total",
+        "loading": "Loading expense data...",
+        "noFilterMatch": "No expense matches your current filters."
       }
     },
     "baby": {
       "title": "Baby Tracking",
       "subtitle": "Daily logs for sleep, feeding, diaper and vaccine reminders",
+      "quickLogTitle": "Quick log",
+      "careStreak": "{{days}}-day care streak",
+      "lastUpdated": "Last updated",
       "unknownName": "Baby",
       "actions": {
         "addProfile": "Add profile",
@@ -2645,15 +2923,22 @@
         "valueLabel": "Value",
         "valuePlaceholder": "Use hours for sleep"
       },
+      "logs": {
+        "title": "Today's logs",
+        "empty": "No logs for today yet."
+      },
       "messages": {
         "createBabySuccess": "Baby profile created.",
         "createBabyFailed": "Unable to create baby profile.",
         "createLogSuccess": "Baby log created.",
-        "createLogFailed": "Unable to create baby log."
+        "createLogFailed": "Unable to create baby log.",
+        "summaryLoadFailed": "Unable to load baby summary.",
+        "logLoadFailed": "Unable to load baby logs."
       },
       "gallery": {
         "title": "Baby photo gallery",
         "selectBaby": "Select baby",
+        "selectedBaby": "Selected baby",
         "empty": "No photo in the gallery.",
         "actions": {
           "upload": "Upload photo",
@@ -2676,7 +2961,8 @@
       "subtitle": "Role and collaboration overview for each member",
       "totalLabel": "active members",
       "actions": {
-        "create": "Add member"
+        "create": "Add member",
+        "deleteConfirm": "Delete this family member?"
       },
       "role": {
         "MOM": "Mom",
@@ -2694,13 +2980,49 @@
         "emailLabel": "Email",
         "emailPlaceholder": "Enter email",
         "roleLabel": "Role",
-        "editRoleTitle": "Edit family member role"
+        "editRoleTitle": "Edit family member role",
+        "editTitle": "Edit family member",
+        "rolePlaceholder": "Select role",
+        "relationLabel": "Relation to baby",
+        "relationPlaceholder": "Select relation",
+        "parentLabel": "Parent branch",
+        "parentPlaceholder": "No selection = root node"
       },
       "messages": {
         "createSuccess": "Family member created.",
         "createFailed": "Unable to create family member.",
         "updateSuccess": "Role updated successfully.",
-        "updateFailed": "Unable to update role."
+        "updateFailed": "Unable to update role.",
+        "deleteSuccess": "Family member deleted.",
+        "deleteFailed": "Unable to delete family member."
+      },
+      "relation": {
+        "ONG_NOI": "Grandfather (paternal)",
+        "BA_NOI": "Grandmother (paternal)",
+        "ONG_NGOAI": "Grandfather (maternal)",
+        "BA_NGOAI": "Grandmother (maternal)",
+        "BO": "Father",
+        "ME": "Mother",
+        "ANH_TRAI": "Older brother",
+        "CHI_GAI": "Older sister",
+        "EM_TRAI": "Younger brother",
+        "EM_GAI": "Younger sister",
+        "CON_TRAI": "Son",
+        "CON_GAI": "Daughter",
+        "CHU": "Uncle (paternal)",
+        "BAC": "Elder uncle/aunt",
+        "CO": "Aunt (paternal)",
+        "DI": "Aunt (maternal)",
+        "CAU": "Uncle (maternal)",
+        "MO": "Aunt by marriage",
+        "THIM": "Aunt (paternal by marriage)",
+        "BAO_MAU": "Caregiver",
+        "THANH_VIEN_KHAC": "Other member"
+      },
+      "validation": {
+        "displayNameRequired": "Please enter display name",
+        "usernameRequired": "Please enter username",
+        "emailInvalid": "Please enter a valid email"
       }
     },
     "insights": {
@@ -2723,6 +3045,57 @@
         "fileTooLarge": "Image size exceeds the 30MB limit.",
         "uploadSuccess": "Avatar updated successfully.",
         "uploadFailed": "Unable to upload avatar."
+      },
+      "uploading": "Uploading...",
+      "stats": {
+        "members": "Members",
+        "family": "Family",
+        "role": "Role",
+        "active": "Active",
+        "status": "Status"
+      },
+      "cards": {
+        "account": {
+          "title": "Account details",
+          "subtitle": "Sign-in and identity information",
+          "displayName": "Display name",
+          "status": "Status",
+          "activeStatus": "Active"
+        },
+        "familyRole": {
+          "title": "Family role",
+          "subtitle": "Position and relationship in family",
+          "primaryRole": "Primary role in the family",
+          "memberCount": "Member count",
+          "memberUnit": "people"
+        },
+        "security": {
+          "title": "Security & settings",
+          "subtitle": "Account security configuration",
+          "password": {
+            "title": "Password",
+            "subtitle": "Change password regularly",
+            "status": "Protected"
+          },
+          "session": {
+            "title": "Session",
+            "subtitle": "Manage signed-in devices",
+            "status": "Safe"
+          },
+          "notifications": {
+            "title": "Notifications",
+            "subtitle": "Receive important alerts",
+            "status": "On"
+          }
+        }
+      },
+      "familyTree": {
+        "title": "Family tree",
+        "subtitle": "Relationship hierarchy within the household.",
+        "empty": "No family tree data available for this family.",
+        "babyBoy": "Son",
+        "babyGirl": "Daughter",
+        "babyChild": "Child"
       }
     },
     "settings": {
@@ -2744,6 +3117,11 @@
         "saveSuccess": "Settings saved successfully.",
         "saveFailed": "Unable to save settings."
       }
+    },
+    "forbidden": {
+      "message": "You do not have permission to access this page.",
+      "goUserPortal": "Go to User Portal",
+      "goAdminPortal": "Go to Admin Portal"
     }
   }
 }

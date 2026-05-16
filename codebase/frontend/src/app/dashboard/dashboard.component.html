@@ -1,103 +1,136 @@
-<section class="page-container dashboard-user" *ngIf="vm$ | async as vm">
-
-  <!-- Hero / Welcome Banner -->
-  <div class="user-hero animate-slide-up">
-    <div style="position:relative;z-index:1;">
-      <p class="user-hero-sub">{{ 'momApp.dashboard.subtitle' | translate }}</p>
-      <h1 class="user-hero-title">
-        {{ vm.snapshot.familyName || ('momApp.dashboard.familyFallback' | translate) }} 🏡
-      </h1>
-      <div style="display:flex;align-items:center;gap:10px;margin-top:12px;">
-        <span class="hero-mood-badge">
-          ❤️ {{ 'momApp.dashboard.moodScore' | translate }} {{ vm.snapshot.moodScore }}/100
+﻿<section class="page-container dashboard-user" *ngIf="vm$ | async as vm">
+  <section class="dashboard-hero animate-slide-up">
+    <div class="hero-main">
+      <p class="hero-kicker">{{ 'momApp.dashboard.subtitle' | translate }}</p>
+      <h1 class="hero-title">{{ vm.snapshot.familyName || ('momApp.dashboard.familyFallback' | translate) }}</h1>
+      <p class="hero-date">{{ vm.todayLabel }}</p>
+      <div class="hero-chip-row">
+        <span class="hero-chip">
+          <span nz-icon nzType="heart"></span>
+          {{ 'momApp.dashboard.moodScore' | translate }} {{ vm.snapshot.moodScore }}/100
+        </span>
+        <span class="hero-chip">
+          <span nz-icon nzType="wallet"></span>
+          {{ vm.budgetPercent }}% {{ 'momApp.expenses.budgetUsed' | translate }}
         </span>
       </div>
     </div>
+
+    <div class="hero-score-panel">
+      <p class="hero-score-label">{{ 'momApp.dashboard.healthScoreLabel' | translate }}</p>
+      <p class="hero-score-value">{{ vm.familyScore }}</p>
+      <p class="hero-score-meta">{{ 'momApp.dashboard.healthScoreMeta' | translate }}</p>
+    </div>
+  </section>
+
+  <div class="kpi-grid animate-slide-up" style="animation-delay:.05s">
+    <nz-card class="stat-card-user kpi-card">
+      <div class="kpi-row">
+        <span class="stat-icon stat-icon-orange"><span nz-icon nzType="wallet"></span></span>
+        <div class="stat-info">
+          <div class="stat-value">{{ vm.snapshot.expense.spentToday | currency:'VND':'symbol':'1.0-0' }}</div>
+          <div class="stat-label">{{ 'momApp.dashboard.spentToday' | translate }}</div>
+        </div>
+      </div>
+    </nz-card>
+
+    <nz-card class="stat-card-user kpi-card">
+      <div class="kpi-row">
+        <span class="stat-icon stat-icon-violet"><span nz-icon nzType="profile"></span></span>
+        <div class="stat-info">
+          <div class="stat-value">{{ vm.snapshot.pendingTasks }}</div>
+          <div class="stat-label">{{ 'momApp.dashboard.pendingTasks' | translate }}</div>
+        </div>
+      </div>
+    </nz-card>
+
+    <nz-card class="stat-card-user kpi-card">
+      <div class="kpi-row">
+        <span class="stat-icon stat-icon-pink"><span nz-icon nzType="shopping-cart"></span></span>
+        <div class="stat-info">
+          <div class="stat-value">{{ vm.snapshot.shoppingReminders }}</div>
+          <div class="stat-label">{{ 'momApp.dashboard.shoppingReminders' | translate }}</div>
+        </div>
+      </div>
+    </nz-card>
+
+    <nz-card class="stat-card-user kpi-card">
+      <div class="kpi-row">
+        <span class="stat-icon stat-icon-teal"><span nz-icon nzType="moon"></span></span>
+        <div class="stat-info">
+          <div class="stat-value">{{ vm.snapshot.baby.sleepHours }}h</div>
+          <div class="stat-label">{{ 'momApp.dashboard.babySleepHours' | translate }}</div>
+        </div>
+      </div>
+    </nz-card>
   </div>
 
-  <!-- Stat Cards -->
-  <div nz-row [nzGutter]="[14, 14]" class="stat-grid animate-slide-up" style="animation-delay:.05s">
-    <div nz-col [nzXs]="12" [nzSm]="12" [nzXl]="6">
-      <nz-card class="stat-card-user">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <span class="stat-icon stat-icon-orange">💸</span>
-          <div class="stat-info">
-            <div class="stat-value">{{ vm.snapshot.expense.spentToday | number:'1.0-0' }}</div>
-            <div class="stat-label">{{ 'momApp.dashboard.spentToday' | translate }}</div>
-          </div>
+  <div class="dashboard-main animate-slide-up" style="animation-delay:.1s">
+    <div class="main-left">
+      <nz-card class="table-card panel-card">
+        <div class="card-head">
+          <h3>{{ 'momApp.dashboard.prioritiesTitle' | translate }}</h3>
+          <a routerLink="/app/insights" class="head-link">{{ 'momApp.dashboard.viewInsights' | translate }}</a>
         </div>
-      </nz-card>
-    </div>
-    <div nz-col [nzXs]="12" [nzSm]="12" [nzXl]="6">
-      <nz-card class="stat-card-user">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <span class="stat-icon stat-icon-violet">✅</span>
-          <div class="stat-info">
-            <div class="stat-value">{{ vm.snapshot.pendingTasks }}</div>
-            <div class="stat-label">{{ 'momApp.dashboard.pendingTasks' | translate }}</div>
-          </div>
-        </div>
-      </nz-card>
-    </div>
-    <div nz-col [nzXs]="12" [nzSm]="12" [nzXl]="6">
-      <nz-card class="stat-card-user">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <span class="stat-icon stat-icon-pink">🛒</span>
-          <div class="stat-info">
-            <div class="stat-value">{{ vm.snapshot.shoppingReminders }}</div>
-            <div class="stat-label">{{ 'momApp.dashboard.shoppingReminders' | translate }}</div>
-          </div>
-        </div>
-      </nz-card>
-    </div>
-    <div nz-col [nzXs]="12" [nzSm]="12" [nzXl]="6">
-      <nz-card class="stat-card-user">
-        <div style="display:flex;align-items:center;gap:14px;">
-          <span class="stat-icon stat-icon-teal">🌙</span>
-          <div class="stat-info">
-            <div class="stat-value">{{ vm.snapshot.baby.sleepHours }}</div>
-            <div class="stat-label">{{ 'momApp.dashboard.babySleepHours' | translate }}</div>
-          </div>
-        </div>
-      </nz-card>
-    </div>
-  </div>
 
-  <!-- Bottom Panels -->
-  <div nz-row [nzGutter]="[14, 14]" class="animate-slide-up" style="animation-delay:.1s">
-    <!-- Today's Meals -->
-    <div nz-col [nzXs]="24" [nzLg]="12">
-      <nz-card [nzTitle]="'momApp.dashboard.todayMeals' | translate" class="table-card panel-card dash-panel">
-        <ng-container *ngIf="vm.snapshot.todayMeals.length; else noMealTemplate">
-          <div *ngFor="let meal of vm.snapshot.todayMeals" class="activity-row">
-            <span class="activity-dot dot-orange"></span>
-            <span style="font-size:14px;color:var(--text-main);">{{ meal }}</span>
+        <a
+          *ngFor="let priority of vm.priorities"
+          [routerLink]="priority.link"
+          class="priority-item"
+          [ngClass]="'tone-' + priority.tone"
+        >
+          <span class="priority-icon"><span nz-icon [nzType]="priority.icon"></span></span>
+          <div class="priority-content">
+            <p class="priority-title">{{ priority.title }}</p>
+            <p class="priority-hint">{{ priority.hint }}</p>
           </div>
-        </ng-container>
-        <ng-template #noMealTemplate>
-          <nz-empty [nzNotFoundContent]="'momApp.dashboard.noMeals' | translate"></nz-empty>
-        </ng-template>
+          <span nz-icon nzType="right"></span>
+        </a>
+      </nz-card>
+
+      <nz-card class="table-card panel-card">
+        <div class="card-head">
+          <h3>{{ 'momApp.dashboard.activityTodayTitle' | translate }}</h3>
+        </div>
+
+        <div class="timeline-list">
+          <div *ngFor="let item of vm.timeline" class="timeline-item">
+            <span class="timeline-dot" [ngClass]="'dot-' + item.tone"></span>
+            <div>
+              <p class="timeline-title">
+                <span nz-icon [nzType]="item.icon"></span>
+                {{ item.title }}
+              </p>
+              <p class="timeline-detail">{{ item.detail }}</p>
+            </div>
+          </div>
+        </div>
       </nz-card>
     </div>
 
-    <!-- Budget Health -->
-    <div nz-col [nzXs]="24" [nzLg]="12">
-      <nz-card [nzTitle]="'momApp.dashboard.budgetHealth' | translate" class="table-card panel-card dash-panel">
+    <div class="main-right">
+      <nz-card class="table-card panel-card">
+        <div class="card-head">
+          <h3>{{ 'momApp.dashboard.budgetHealth' | translate }}</h3>
+        </div>
+
         <div class="budget-amounts">
           <span class="budget-spent">{{ vm.snapshot.expense.monthlySpent | currency:'VND':'symbol':'1.0-0' }}</span>
           <span class="budget-sep">/</span>
           <span class="budget-total">{{ vm.snapshot.expense.monthlyBudget | currency:'VND':'symbol':'1.0-0' }}</span>
         </div>
 
-        <!-- Custom progress bar -->
         <div class="user-progress-bar">
-          <div class="user-progress-fill" [style.width.%]="vm.budgetPercent > 100 ? 100 : vm.budgetPercent"></div>
+          <div class="user-progress-fill" [style.width.%]="vm.budgetPercent" [style.background]="vm.budgetPercent > 85 ? '#ef4444' : 'var(--user-grad-2)'"></div>
         </div>
+
         <div class="budget-percent-row">
-          <span [style.color]="vm.budgetPercent > 85 ? '#ef4444' : '#14b8a6'" style="font-weight:700;font-size:13px;">
+          <span class="budget-percent" [class.budget-danger]="vm.budgetPercent > 85">
             {{ vm.budgetPercent }}% {{ 'momApp.expenses.budgetUsed' | translate }}
           </span>
-          <span *ngIf="vm.budgetPercent > 85" style="font-size:11px;color:#ef4444;">⚠️ Sắp vượt ngân sách</span>
+          <span class="budget-left">
+            {{ 'momApp.dashboard.budgetRemaining' | translate }} {{ vm.budgetRemaining | currency:'VND':'symbol':'1.0-0' }}
+          </span>
         </div>
 
         <div class="top-category">
@@ -105,7 +138,73 @@
           <strong>{{ vm.snapshot.expense.topCategory || ('momApp.common.notAvailable' | translate) }}</strong>
         </div>
       </nz-card>
+
+      <nz-card class="table-card panel-card">
+        <div class="card-head">
+          <h3>{{ 'momApp.baby.profileTitle' | translate }}</h3>
+        </div>
+
+        <div class="baby-summary-grid">
+          <div class="baby-summary-item">
+            <p>{{ 'momApp.baby.sleepToday' | translate }}</p>
+            <strong>{{ vm.snapshot.baby.sleepHours }}h</strong>
+          </div>
+          <div class="baby-summary-item">
+            <p>{{ 'momApp.baby.feedingCount' | translate }}</p>
+            <strong>{{ vm.snapshot.baby.feedings }}</strong>
+          </div>
+          <div class="baby-summary-item">
+            <p>{{ 'momApp.baby.diaperChanges' | translate }}</p>
+            <strong>{{ vm.snapshot.baby.diaperChanges }}</strong>
+          </div>
+        </div>
+
+        <div class="baby-vaccine" *ngIf="vm.snapshot.baby.nextVaccination">
+          <span nz-icon nzType="calendar"></span>
+          <span>{{ 'momApp.baby.nextVaccine' | translate }}:</span>
+          <strong>{{ vm.snapshot.baby.nextVaccination }}</strong>
+        </div>
+      </nz-card>
+
+      <nz-card class="table-card panel-card">
+        <div class="card-head">
+          <h3>{{ 'momApp.dashboard.quickShortcutsTitle' | translate }}</h3>
+        </div>
+
+        <div class="quick-grid">
+          <a routerLink="/app/tasks" class="quick-item">
+            <span nz-icon nzType="check-square"></span>
+            <div>
+              <p>{{ 'momApp.layout.menu.tasks' | translate }}</p>
+              <small>{{ 'momApp.dashboard.quick.tasksPending' | translate:{ count: vm.snapshot.pendingTasks } }}</small>
+            </div>
+          </a>
+
+          <a routerLink="/app/shopping" class="quick-item">
+            <span nz-icon nzType="shopping-cart"></span>
+            <div>
+              <p>{{ 'momApp.layout.menu.shopping' | translate }}</p>
+              <small>{{ 'momApp.dashboard.quick.shoppingPending' | translate:{ count: vm.snapshot.shoppingReminders } }}</small>
+            </div>
+          </a>
+
+          <a routerLink="/app/expenses" class="quick-item">
+            <span nz-icon nzType="wallet"></span>
+            <div>
+              <p>{{ 'momApp.layout.menu.expenses' | translate }}</p>
+              <small>{{ 'momApp.dashboard.quick.budgetUsed' | translate:{ percent: vm.budgetPercent } }}</small>
+            </div>
+          </a>
+
+          <a routerLink="/app/baby" class="quick-item">
+            <span nz-icon nzType="smile"></span>
+            <div>
+              <p>{{ 'momApp.layout.menu.baby' | translate }}</p>
+              <small>{{ 'momApp.dashboard.quick.sleepToday' | translate:{ hours: vm.snapshot.baby.sleepHours } }}</small>
+            </div>
+          </a>
+        </div>
+      </nz-card>
     </div>
   </div>
-
 </section>

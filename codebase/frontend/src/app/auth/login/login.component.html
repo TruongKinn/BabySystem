@@ -1,4 +1,4 @@
-<div class="login-page">
+﻿<div class="login-page">
   <div class="login-shell">
     <section class="intro-panel">
       <span class="eyebrow">{{ 'auth.login.card.eyebrow' | translate }}</span>
@@ -25,8 +25,8 @@
       <div class="card-header">
         <h2>{{ 'auth.login.card.title' | translate }}</h2>
         <p>{{ 'auth.login.card.subtitle' | translate }}</p>
-        <p class="portal-hint" *ngIf="portalMode === 'admin'">Admin Portal - quản lý tài khoản người dùng</p>
-        <p class="portal-hint" *ngIf="portalMode === 'user'">User Portal - dành cho thành viên gia đình sử dụng ứng dụng</p>
+        <p class="portal-hint" *ngIf="portalMode === 'admin'">{{ 'auth.login.portal.adminHint' | translate }}</p>
+        <p class="portal-hint" *ngIf="portalMode === 'user'">{{ 'auth.login.portal.userHint' | translate }}</p>
       </div>
 
       <div class="auth-switch">
@@ -103,7 +103,7 @@
               />
               <img
                 [src]="captchaBase64"
-                alt="CAPTCHA"
+                [attr.alt]="'auth.login.form.captchaLabel' | translate"
                 class="captcha-image"
                 (click)="refreshCaptcha()"
                 nz-tooltip
@@ -140,8 +140,8 @@
       </div>
 
       <div class="portal-switch-links">
-        <a *ngIf="portalMode === 'user'" routerLink="/admin/login">Đăng nhập vào Admin Portal</a>
-        <a *ngIf="portalMode === 'admin'" routerLink="/app/login">Đăng nhập vào User Portal</a>
+        <a *ngIf="portalMode === 'user'" routerLink="/admin/login">{{ 'auth.login.portal.switchToAdmin' | translate }}</a>
+        <a *ngIf="portalMode === 'admin'" routerLink="/app/login">{{ 'auth.login.portal.switchToUser' | translate }}</a>
       </div>
     </section>
   </div>

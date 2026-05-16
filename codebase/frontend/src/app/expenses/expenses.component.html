@@ -1,64 +1,278 @@
-<section class="page-container" *ngIf="expense$ | async as expense">
+<section class="page-container expenses-page">
   <div class="header-actions">
     <div>
       <h1 class="page-title">{{ 'momApp.expenses.title' | translate }}</h1>
       <p class="page-subtitle">{{ 'momApp.expenses.subtitle' | translate }}</p>
     </div>
+
     <div class="header-buttons">
+      <label class="month-picker-wrap" [attr.aria-label]="'momApp.expenses.filters.selectMonth' | translate">
+        <span nz-icon nzType="calendar"></span>
+        <input
+          type="month"
+          class="month-picker"
+          [value]="monthKey"
+          (change)="onMonthChange($any($event.target).value)"
+        />
+      </label>
+
+      <button nz-button nzType="default" class="btn-user-outline" (click)="loadExpenseWorkspace()">
+        <span nz-icon nzType="reload"></span>
+        {{ 'commonActions.refresh' | translate }}
+      </button>
+
       <button nz-button nzType="primary" (click)="openCreateModal()" class="btn-user-primary">
         <span nz-icon nzType="plus"></span>
         {{ 'momApp.expenses.actions.create' | translate }}
       </button>
-      <span class="pill-chip">
-        <span nz-icon nzType="wallet"></span>
-        {{ 'momApp.expenses.budgetUsed' | translate }} {{ expense.budgetPercent }}%
-      </span>
     </div>
   </div>
 
-  <nz-card [nzTitle]="'momApp.expenses.monthlyOverview' | translate" class="table-card expense-card">
-    <div class="expense-row">
-      <p>{{ 'momApp.expenses.spentLabel' | translate }}</p>
-      <strong>{{ expense.monthlySpent | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+  <div class="stat-grid expense-stat-grid">
+    <nz-card class="stat-card-user expense-stat-card">
+      <div class="stat-line">
+        <span class="stat-icon stat-icon-orange"><span nz-icon nzType="wallet"></span></span>
+        <div class="stat-info">
+          <div class="stat-value">{{ monthlySpent | currency : 'VND' : 'symbol' : '1.0-0' }}</div>
+          <div class="stat-label">{{ 'momApp.expenses.spentLabel' | translate }}</div>
+        </div>
+      </div>
+    </nz-card>
+
+    <nz-card class="stat-card-user expense-stat-card">
+      <div class="stat-line">
+        <span class="stat-icon stat-icon-violet"><span nz-icon nzType="fund"></span></span>
+        <div class="stat-info">
+          <div class="stat-value">{{ monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}</div>
+          <div class="stat-label">{{ 'momApp.expenses.budgetLabel' | translate }}</div>
+        </div>
+      </div>
+    </nz-card>
+
+    <nz-card class="stat-card-user expense-stat-card">
+      <div class="stat-line">
+        <span class="stat-icon" [ngClass]="budgetStatusClass === 'budget-danger' ? 'stat-icon-pink' : (budgetStatusClass === 'budget-warning' ? 'stat-icon-orange' : 'stat-icon-teal')">
+          <span nz-icon nzType="line-chart"></span>
+        </span>
+        <div class="stat-info">
+          <div class="stat-value" [class.value-danger]="remainingBudget < 0">
+            {{ remainingBudget | currency : 'VND' : 'symbol' : '1.0-0' }}
+          </div>
+          <div class="stat-label">{{ 'momApp.expenses.remainingBudget' | translate }}</div>
+        </div>
+      </div>
+    </nz-card>
+
+    <nz-card class="stat-card-user expense-stat-card">
+      <div class="stat-line">
+        <span class="stat-icon stat-icon-teal"><span nz-icon nzType="clock-circle"></span></span>
+        <div class="stat-info">
+          <div class="stat-value">{{ todaySpent | currency : 'VND' : 'symbol' : '1.0-0' }}</div>
+          <div class="stat-label">{{ 'momApp.expenses.spentToday' | translate }}</div>
+        </div>
+      </div>
+    </nz-card>
+
+    <nz-card class="stat-card-user expense-stat-card">
+      <div class="stat-line">
+        <span class="stat-icon stat-icon-orange"><span nz-icon nzType="profile"></span></span>
+        <div class="stat-info">
+          <div class="stat-value">{{ totalExpenseCount }}</div>
+          <div class="stat-label">{{ 'momApp.expenses.expenseRecords' | translate }}</div>
+        </div>
+      </div>
+    </nz-card>
+
+    <nz-card class="stat-card-user expense-stat-card">
+      <div class="stat-line">
+        <span class="stat-icon stat-icon-violet"><span nz-icon nzType="calculator"></span></span>
+        <div class="stat-info">
+          <div class="stat-value">{{ averageExpense | currency : 'VND' : 'symbol' : '1.0-0' }}</div>
+          <div class="stat-label">{{ 'momApp.expenses.averagePerExpense' | translate }}</div>
+        </div>
+      </div>
+    </nz-card>
+  </div>
+
+  <nz-card class="table-card filter-card" nzSize="small">
+    <div class="filter-row">
+      <div class="filter-field filter-field-category">
+        <label>{{ 'momApp.expenses.filters.category' | translate }}</label>
+        <select
+          class="filter-select"
+          [value]="selectedCategoryId === null ? '' : selectedCategoryId"
+          (change)="onCategoryFilterChange($any($event.target).value)">
+          <option value="">{{ 'momApp.expenses.filters.allCategories' | translate }}</option>
+          <option *ngFor="let option of categoryFilters" [value]="option.id">{{ option.name }}</option>
+        </select>
+      </div>
+
+      <div class="filter-field filter-field-search">
+        <label>{{ 'momApp.expenses.filters.search' | translate }}</label>
+        <input
+          nz-input
+          [value]="searchKeyword"
+          (input)="onSearchKeywordChange($any($event.target).value)"
+          [placeholder]="'momApp.expenses.filters.searchPlaceholder' | translate"
+        />
+      </div>
+
+      <div class="filter-field filter-field-sort">
+        <label>{{ 'momApp.expenses.filters.sortLabel' | translate }}</label>
+        <select class="filter-select" [value]="sortMode" (change)="onSortModeChange($any($event.target).value)">
+          <option *ngFor="let option of sortOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
+        </select>
+      </div>
+
+      <div class="filter-actions">
+        <button nz-button nzType="default" (click)="clearQuickFilters()" [disabled]="!hasActiveQuickFilter">
+          {{ 'momApp.expenses.filters.clear' | translate }}
+        </button>
+      </div>
     </div>
-    <div class="expense-row">
-      <p>{{ 'momApp.expenses.budgetLabel' | translate }}</p>
-      <strong style="color:var(--text-secondary)">{{ expense.monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+
+    <div class="category-chip-row" *ngIf="categoryInsights.length > 0">
+      <button
+        class="category-chip-btn"
+        [class.active]="selectedCategoryId === null"
+        (click)="selectCategoryChip(null)">
+        {{ 'momApp.expenses.filters.allCategories' | translate }}
+      </button>
+
+      <button
+        *ngFor="let item of categoryInsights | slice : 0 : 8; trackBy: trackByCategoryId"
+        class="category-chip-btn"
+        [class.active]="selectedCategoryId === item.categoryId"
+        (click)="selectCategoryChip(item.categoryId)">
+        <span class="chip-dot" [style.background]="item.colorCode || 'var(--user-primary)'"></span>
+        {{ item.categoryName }}
+        <span class="chip-value">{{ item.percentage | number : '1.0-1' }}%</span>
+      </button>
     </div>
-    <div class="user-progress-bar" style="margin-top: 14px; margin-bottom: 8px;">
-      <div class="user-progress-fill" [style.width.%]="expense.budgetPercent > 100 ? 100 : expense.budgetPercent" [style.background]="expense.budgetPercent > 85 ? '#ef4444' : 'var(--user-grad-1)'"></div>
-    </div>
-    <p class="top-category">{{ 'momApp.expenses.topCategory' | translate }}: {{ expense.topCategory || ('momApp.common.notAvailable' | translate) }}</p>
   </nz-card>
 
+  <div class="analytics-grid">
+    <nz-card [nzTitle]="'momApp.expenses.monthlyOverview' | translate" class="table-card budget-health-card">
+      <div class="expense-row">
+        <p>{{ 'momApp.expenses.spentLabel' | translate }}</p>
+        <strong>{{ monthlySpent | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+      </div>
+      <div class="expense-row">
+        <p>{{ 'momApp.expenses.budgetLabel' | translate }}</p>
+        <strong class="muted-value">{{ monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+      </div>
+      <div class="expense-row">
+        <p>{{ 'momApp.expenses.remainingLabel' | translate }}</p>
+        <strong [class.value-danger]="remainingBudget < 0">{{ remainingBudget | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+      </div>
+
+      <div class="user-progress-bar budget-progress">
+        <div
+          class="user-progress-fill"
+          [style.width.%]="budgetProgressWidth"
+          [style.background]="budgetStatusClass === 'budget-danger' ? '#ef4444' : (budgetStatusClass === 'budget-warning' ? '#f59e0b' : 'var(--user-grad-1)')">
+        </div>
+      </div>
+
+      <div class="budget-status-row">
+        <span class="pill-chip" [ngClass]="budgetStatusClass">{{ budgetStatusText }}</span>
+        <span class="pill-chip">{{ 'momApp.expenses.budgetUsed' | translate }} {{ budgetPercent }}%</span>
+      </div>
+
+      <p class="top-category">
+        {{ 'momApp.expenses.topCategory' | translate }}:
+        {{ topCategoryName || ('momApp.common.notAvailable' | translate) }}
+      </p>
+    </nz-card>
+
+    <nz-card [nzTitle]="'momApp.expenses.categoryBreakdown.title' | translate" class="table-card category-breakdown-card">
+      <div class="empty-state" *ngIf="categoryInsights.length === 0">{{ 'momApp.expenses.categoryBreakdown.empty' | translate }}</div>
+
+      <div class="category-breakdown-list" *ngIf="categoryInsights.length > 0">
+        <div class="category-breakdown-item" *ngFor="let item of categoryInsights | slice : 0 : 6; trackBy: trackByCategoryId">
+          <div class="category-breakdown-head">
+            <div class="category-name-wrap">
+              <span class="category-dot" [style.background]="item.colorCode || 'var(--user-primary)'"></span>
+              <span class="category-name">{{ item.categoryName }}</span>
+            </div>
+
+            <div class="category-value-wrap">
+              <strong>{{ item.totalAmount | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+              <span>{{ item.percentage | number : '1.0-1' }}%</span>
+            </div>
+          </div>
+
+          <div class="user-progress-bar">
+            <div
+              class="user-progress-fill"
+              [style.width.%]="item.percentage > 100 ? 100 : item.percentage"
+              [style.background]="item.colorCode || 'var(--user-primary)'">
+            </div>
+          </div>
+
+          <p class="category-meta">{{ 'momApp.expenses.categoryBreakdown.expenseCount' | translate : { count: item.expenseCount } }}</p>
+        </div>
+      </div>
+    </nz-card>
+  </div>
+
   <nz-card class="table-card expense-history-card" [nzTitle]="'momApp.expenses.receipts.title' | translate">
-    <div class="empty-state" *ngIf="(expenseRecords$ | async)?.length === 0">
-      {{ 'momApp.expenses.receipts.emptyExpenses' | translate }}
+    <div class="table-summary-row">
+      <span class="table-summary-item">
+        {{ 'momApp.expenses.table.showing' | translate }}
+        <strong>{{ visibleExpenseCount }}</strong> / {{ totalExpenseCount }} {{ 'momApp.expenses.table.records' | translate }}
+      </span>
+      <span class="table-summary-item">
+        {{ 'momApp.expenses.table.filter' | translate }}: <strong>{{ currentCategoryLabel }}</strong>
+      </span>
+      <span class="table-summary-item">
+        {{ 'momApp.expenses.table.visibleTotal' | translate }}:
+        <strong>{{ visibleSpentTotal | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+      </span>
     </div>
-    <table class="expense-table" *ngIf="(expenseRecords$ | async) as expenseRecords">
-      <thead>
-        <tr>
-          <th>{{ 'momApp.expenses.receipts.columns.category' | translate }}</th>
-          <th>{{ 'momApp.expenses.receipts.columns.amount' | translate }}</th>
-          <th>{{ 'momApp.expenses.receipts.columns.spentAt' | translate }}</th>
-          <th>{{ 'momApp.expenses.receipts.columns.note' | translate }}</th>
-          <th>{{ 'momApp.expenses.receipts.columns.actions' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let item of expenseRecords">
-          <td>{{ item.categoryName }}</td>
-          <td>{{ item.amount | currency : item.currency : 'symbol' : '1.0-0' }}</td>
-          <td>{{ formatSpentAt(item.spentAt) }}</td>
-          <td>{{ item.note || '-' }}</td>
-          <td>
-            <button nz-button nzType="default" (click)="openReceiptModal(item)">
-              {{ 'momApp.expenses.receipts.actions.manage' | translate }}
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+
+    <div class="empty-state" *ngIf="loading">{{ 'momApp.expenses.table.loading' | translate }}</div>
+
+    <div class="empty-state" *ngIf="!loading && filteredExpenseRecords.length === 0">
+      {{ totalExpenseCount === 0 ? ('momApp.expenses.receipts.emptyExpenses' | translate) : ('momApp.expenses.table.noFilterMatch' | translate) }}
+    </div>
+
+    <div class="expense-table-wrap" *ngIf="!loading && filteredExpenseRecords.length > 0">
+      <table class="expense-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>{{ 'momApp.expenses.receipts.columns.category' | translate }}</th>
+            <th>{{ 'momApp.expenses.receipts.columns.amount' | translate }}</th>
+            <th>{{ 'momApp.expenses.receipts.columns.spentAt' | translate }}</th>
+            <th>{{ 'momApp.expenses.receipts.columns.note' | translate }}</th>
+            <th>{{ 'momApp.expenses.receipts.columns.actions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of filteredExpenseRecords; let idx = index; trackBy: trackByExpenseId">
+            <td>{{ idx + 1 }}</td>
+            <td>
+              <div class="category-cell">
+                <span
+                  class="category-dot"
+                  [style.background]="resolveCategoryColor(item.categoryId)">
+                </span>
+                {{ item.categoryName }}
+              </div>
+            </td>
+            <td>{{ item.amount | currency : item.currency : 'symbol' : '1.0-0' }}</td>
+            <td>{{ formatSpentAt(item.spentAt) }}</td>
+            <td>{{ item.note || '-' }}</td>
+            <td>
+              <button nz-button nzType="default" (click)="openReceiptModal(item)">
+                {{ 'momApp.expenses.receipts.actions.manage' | translate }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </nz-card>
 </section>
 
@@ -85,11 +299,19 @@
       <nz-form-item>
         <nz-form-label nzRequired>{{ 'momApp.expenses.modal.categoryLabel' | translate }}</nz-form-label>
         <nz-form-control>
-          <input nz-input formControlName="categoryName" [placeholder]="'momApp.expenses.modal.categoryPlaceholder' | translate" />
+          <input
+            nz-input
+            formControlName="categoryName"
+            [placeholder]="'momApp.expenses.modal.categoryPlaceholder' | translate"
+            list="expense-category-options"
+          />
+          <datalist id="expense-category-options">
+            <option *ngFor="let category of categoryFilters" [value]="category.name"></option>
+          </datalist>
         </nz-form-control>
       </nz-form-item>
 
-      <nz-form-item>
+      <nz-form-item class="modal-field-full">
         <nz-form-label>{{ 'momApp.expenses.modal.noteLabel' | translate }}</nz-form-label>
         <nz-form-control>
           <textarea nz-input rows="3" formControlName="note" [placeholder]="'momApp.expenses.modal.notePlaceholder' | translate"></textarea>

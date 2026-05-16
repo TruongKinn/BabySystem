@@ -1,39 +1,39 @@
-<section class="admin-dashboard-page">
+﻿<section class="admin-dashboard-page">
   <header class="admin-hero">
     <div class="hero-content">
-      <span class="hero-kicker">Admin Operations</span>
-      <h1>System Control Dashboard</h1>
-      <p>Monitor account health, security posture, and family data coverage from one place.</p>
+      <span class="hero-kicker">{{ 'momApp.admin.dashboard.hero.kicker' | translate }}</span>
+      <h1>{{ 'momApp.admin.dashboard.hero.title' | translate }}</h1>
+      <p>{{ 'momApp.admin.dashboard.hero.subtitle' | translate }}</p>
     </div>
 
     <div class="hero-meta">
       <div class="meta-item">
-        <span>Lock rate</span>
+        <span>{{ 'momApp.admin.dashboard.lockRate' | translate }}</span>
         <strong>{{ lockRate }}</strong>
       </div>
       <div class="meta-item">
-        <span>Updated at</span>
+        <span>{{ 'momApp.admin.dashboard.updatedAt' | translate }}</span>
         <strong>{{ lastUpdatedAt }}</strong>
       </div>
       <button nz-button nzType="primary" class="refresh-btn" (click)="loadSummary()" [disabled]="loading">
-        Refresh snapshot
+        {{ 'momApp.admin.dashboard.refresh' | translate }}
       </button>
     </div>
   </header>
 
   <div class="metric-grid">
     <nz-card class="metric-card" *ngFor="let metric of metricCards; trackBy: trackByMetric" [ngClass]="metric.tone">
-      <span class="metric-label">{{ metric.label }}</span>
+      <span class="metric-label">{{ metric.labelKey | translate }}</span>
       <strong class="metric-value">{{ metric.value }}</strong>
-      <span class="metric-description">{{ metric.description }}</span>
+      <span class="metric-description">{{ metric.descriptionKey | translate }}</span>
     </nz-card>
   </div>
 
-  <nz-card class="admin-actions" nzTitle="Quick actions">
+  <nz-card class="admin-actions" [nzTitle]="'momApp.admin.dashboard.quickActions.title' | translate">
     <div class="quick-actions">
-      <a routerLink="/admin/users" nz-button nzType="primary">Open user management</a>
-      <a routerLink="/admin/families" nz-button nzType="default">Open family tree board</a>
-      <a routerLink="/app/login" nz-button nzType="default">Go to user portal login</a>
+      <a routerLink="/admin/users" nz-button nzType="primary">{{ 'momApp.admin.dashboard.quickActions.openUsers' | translate }}</a>
+      <a routerLink="/admin/families" nz-button nzType="default">{{ 'momApp.admin.dashboard.quickActions.openFamilies' | translate }}</a>
+      <a routerLink="/app/login" nz-button nzType="default">{{ 'momApp.admin.dashboard.quickActions.goUserLogin' | translate }}</a>
     </div>
   </nz-card>
 </section>

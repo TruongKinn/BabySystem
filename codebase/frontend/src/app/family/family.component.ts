@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -6,17 +6,22 @@ import { BehaviorSubject, switchMap } from 'rxjs';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
-import { NzDividerModule } from 'ng-zorro-antd/divider';
-import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
-import { FamilyMemberProfile, FamilyRelation, FamilyRole, SuperAppCommandService } from '../core/services/super-app-command.service';
+import {
+  FamilyMemberProfile,
+  FamilyRelation,
+  FamilyRole,
+  SuperAppCommandService
+} from '../core/services/super-app-command.service';
 import { I18nService } from '../i18n/i18n.service';
 
 @Component({
@@ -231,7 +236,6 @@ export class FamilyComponent {
           );
         },
         error: (err) => {
-          // Fallback: try updating role only if full update fails
           const role = this.editMemberForm.controls.role.value!;
           this.command.updateFamilyMemberRole(Number(this.selectedMember!.userId), role).subscribe({
             next: () => {
@@ -263,22 +267,25 @@ export class FamilyComponent {
         this.refresh$.next();
         this.notification.success(
           this.i18n.translate('momApp.common.success'),
-          'Đã xóa thành viên khỏi gia đình'
+          this.i18n.translate('momApp.family.messages.deleteSuccess')
         );
       },
       error: (err) => {
         this.isSubmitting = false;
         this.notification.error(
           this.i18n.translate('common.errorTitle'),
-          err?.error?.message || 'Xóa thành viên thất bại'
+          err?.error?.message || this.i18n.translate('momApp.family.messages.deleteFailed')
         );
       }
     });
   }
 
   getParentName(parentUserId: number | null, members: FamilyMemberProfile[]): string {
-    if (!parentUserId) return '';
-    const parent = members.find(m => m.userId === parentUserId);
+    if (!parentUserId) {
+      return '';
+    }
+
+    const parent = members.find((member) => member.userId === parentUserId);
     return parent?.displayName ?? `#${parentUserId}`;
   }
 
