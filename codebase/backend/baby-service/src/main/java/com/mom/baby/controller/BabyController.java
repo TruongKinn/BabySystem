@@ -1,6 +1,7 @@
 package com.mom.baby.controller;
 
 import com.mom.baby.controller.dto.BabyDailySummaryResponse;
+import com.mom.baby.controller.dto.BabyDashboardResponse;
 import com.mom.baby.controller.dto.BabyLogResponse;
 import com.mom.baby.controller.dto.BabyResponse;
 import com.mom.baby.controller.dto.CreateBabyLogRequest;
@@ -112,5 +113,16 @@ public class BabyController {
             @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date
     ) {
         return ApiResponse.ok("Success", babyService.getDailySummary(babyId, date));
+    }
+
+    @GetMapping("/babies/{id}/dashboard")
+    public ApiResponse<BabyDashboardResponse> getDashboard(
+            @PathVariable("id") Long babyId,
+            @RequestParam(value = "date", required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(value = "trendDays", defaultValue = "7") int trendDays,
+            @RequestParam(value = "recentLogLimit", defaultValue = "12") int recentLogLimit,
+            @RequestParam(value = "upcomingVaccineLimit", defaultValue = "5") int upcomingVaccineLimit
+    ) {
+        return ApiResponse.ok("Success", babyService.getDashboard(babyId, date, trendDays, recentLogLimit, upcomingVaccineLimit));
     }
 }

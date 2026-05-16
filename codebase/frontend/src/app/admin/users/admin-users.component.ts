@@ -25,7 +25,7 @@ interface AdminUser {
   phone?: string;
   dateOfBirth?: string;
   type?: string;
-  status: UserStatus;
+  status: string;
 }
 
 interface UserPageResponse {
@@ -179,28 +179,31 @@ export class AdminUsersComponent implements OnInit {
     return fullName || '-';
   }
 
-  statusColorOf(status: UserStatus): string {
-    if (status === 'ACTIVE') {
+  statusColorOf(status: string): string {
+    const normalized = this.normalizeUserStatus(status);
+    if (normalized === 'ACTIVE') {
       return 'green';
     }
-    if (status === 'LOCKED') {
+    if (normalized === 'LOCKED') {
       return 'red';
     }
     return 'gold';
   }
 
-  statusClassOf(status: UserStatus): string {
-    if (status === 'ACTIVE') {
+  statusClassOf(status: string): string {
+    const normalized = this.normalizeUserStatus(status);
+    if (normalized === 'ACTIVE') {
       return 'status-active';
     }
-    if (status === 'LOCKED') {
+    if (normalized === 'LOCKED') {
       return 'status-locked';
     }
     return 'status-inactive';
   }
 
-  statusLabel(status: UserStatus): string {
-    return this.i18n.translate(`momApp.admin.users.status.${status}`);
+  statusLabel(status: string): string {
+    const normalized = this.normalizeUserStatus(status).toLowerCase();
+    return this.i18n.translate(`momApp.admin.users.status.${normalized}`);
   }
 
   roleLabel(type?: string): string {
@@ -240,6 +243,14 @@ export class AdminUsersComponent implements OnInit {
   private isAdminType(type?: string): boolean {
     const normalized = (type ?? '').toUpperCase();
     return normalized === 'ADMIN' || normalized === 'OWNER';
+  }
+
+  private normalizeUserStatus(status: string | null | undefined): UserStatus {
+    const normalized = (status ?? '').trim().toUpperCase();
+    if (normalized === 'ACTIVE' || normalized === 'INACTIVE' || normalized === 'LOCKED') {
+      return normalized;
+    }
+    return 'INACTIVE';
   }
 
   private applySearch(): void {

@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, forkJoin, map, of, shareReplay, switchMap, tap } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
-import { NzDescriptionsModule } from 'ng-zorro-antd/descriptions';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
@@ -16,12 +16,16 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzTagModule } from 'ng-zorro-antd/tag';
 import {
-  BabyDailySummary,
+  BabyCareTrendPoint,
+  BabyDashboard,
   BabyGender,
+  BabyGrowthRecord,
   BabyLogEntry,
   BabyLogType,
   BabyProfile,
+  BabyVaccination,
   FileMetadata,
   SuperAppCommandService
 } from '../core/services/super-app-command.service';
@@ -39,7 +43,6 @@ interface GalleryFileView extends FileMetadata {
     ReactiveFormsModule,
     TranslateModule,
     NzCardModule,
-    NzDescriptionsModule,
     NzButtonModule,
     NzIconModule,
     NzModalModule,
@@ -49,13 +52,15 @@ interface GalleryFileView extends FileMetadata {
     NzSelectModule,
     NzSpinModule,
     NzEmptyModule,
-    NzImageModule
+    NzImageModule,
+    NzTagModule
   ],
   templateUrl: './baby.component.html',
   styleUrl: './baby.component.css'
 })
 export class BabyComponent {
   private readonly babyGalleryBucket = 'baby-gallery';
+  private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   private readonly command = inject(SuperAppCommandService);
   private readonly notification = inject(NzNotificationService);
@@ -63,6 +68,7 @@ export class BabyComponent {
 
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
   private babyProfilesCache: BabyProfile[] = [];
+  private overviewRequestKey = '';
 
   readonly babyProfiles$ = this.refresh$.pipe(
     switchMap(() =>
@@ -88,24 +94,37 @@ export class BabyComponent {
 
   isCreateBabyModalVisible = false;
   isCreateLogModalVisible = false;
+  isCreateGrowthModalVisible = false;
+  isCreateVaccinationModalVisible = false;
+
   isSubmittingBaby = false;
   isSubmittingLog = false;
+  isSubmittingGrowth = false;
+  isSubmittingVaccination = false;
   isUploadingGallery = false;
+
+  isLoadingDashboard = false;
+  isLoadingSelectedDateLogs = false;
+  isLoadingGrowthRecords = false;
+  isLoadingVaccinations = false;
   isLoadingGallery = false;
-  isLoadingSummary = false;
-  isLoadingLogs = false;
   quickLogLoadingType: BabyLogType | null = null;
 
-  galleryLoadError: string | null = null;
-  summaryLoadError: string | null = null;
+  dashboardLoadError: string | null = null;
   logsLoadError: string | null = null;
+  growthLoadError: string | null = null;
+  vaccinationLoadError: string | null = null;
+  galleryLoadError: string | null = null;
 
   selectedBabyId: number | null = null;
-  summary: BabyDailySummary | null = null;
-  todayLogs: BabyLogEntry[] = [];
+  dashboard: BabyDashboard | null = null;
+  selectedDateLogs: BabyLogEntry[] = [];
+  growthRecords: BabyGrowthRecord[] = [];
+  vaccinations: BabyVaccination[] = [];
   galleryFiles: GalleryFileView[] = [];
 
   readonly selectedBabyControl = this.fb.control<number | null>(null);
+  readonly selectedDateControl = this.fb.control<Date>(new Date(), { nonNullable: true });
 
   readonly createBabyForm = this.fb.group({
     name: ['', [Validators.required, Validators.maxLength(120)]],
@@ -116,12 +135,27 @@ export class BabyComponent {
 
   readonly createLogForm = this.fb.group({
     logType: ['SLEEP' as BabyLogType, [Validators.required]],
-    value: [0],
+    value: [1],
+    loggedAt: [new Date(), [Validators.required]],
     note: ['', [Validators.maxLength(500)]]
   });
 
+  readonly createGrowthForm = this.fb.group({
+    measuredAt: [new Date(), [Validators.required]],
+    weightKg: [null as number | null],
+    heightCm: [null as number | null],
+    headCircumferenceCm: [null as number | null],
+    notes: ['', [Validators.maxLength(500)]]
+  });
+
+  readonly createVaccinationForm = this.fb.group({
+    vaccineName: ['', [Validators.required, Validators.maxLength(160)]],
+    dueDate: [null as Date | null, [Validators.required]],
+    notes: ['', [Validators.maxLength(500)]]
+  });
+
   constructor() {
-    this.selectedBabyControl.valueChanges.subscribe((babyId) => {
+    this.selectedBabyControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((babyId) => {
       if (!babyId) {
         this.resetSelectedBabyState();
         return;
@@ -133,6 +167,13 @@ export class BabyComponent {
 
       this.selectBaby(babyId);
     });
+
+    this.selectedDateControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(() => {
+      if (!this.selectedBabyId) {
+        return;
+      }
+      this.loadBabyCareOverview();
+    });
   }
 
   get selectedBaby(): BabyProfile | null {
@@ -140,6 +181,22 @@ export class BabyComponent {
       return null;
     }
     return this.babyProfilesCache.find((item) => item.id === this.selectedBabyId) ?? null;
+  }
+
+  get summary() {
+    return this.dashboard?.dailySummary ?? null;
+  }
+
+  get dailyTrend(): BabyCareTrendPoint[] {
+    return this.dashboard?.dailyTrend ?? [];
+  }
+
+  get recentLogs(): BabyLogEntry[] {
+    return this.dashboard?.recentLogs ?? [];
+  }
+
+  get hasOverviewData(): boolean {
+    return !!this.dashboard;
   }
 
   openCreateBabyModal(): void {
@@ -161,6 +218,13 @@ export class BabyComponent {
       this.notifySelectBabyFirst();
       return;
     }
+
+    this.createLogForm.patchValue({
+      loggedAt: this.defaultLoggedAtDate(),
+      value: 1,
+      logType: 'SLEEP',
+      note: ''
+    });
     this.isCreateLogModalVisible = true;
   }
 
@@ -168,8 +232,45 @@ export class BabyComponent {
     this.isCreateLogModalVisible = false;
     this.createLogForm.reset({
       logType: 'SLEEP',
-      value: 0,
+      value: 1,
+      loggedAt: this.defaultLoggedAtDate(),
       note: ''
+    });
+  }
+
+  openCreateGrowthModal(): void {
+    if (!this.selectedBabyId) {
+      this.notifySelectBabyFirst();
+      return;
+    }
+    this.isCreateGrowthModalVisible = true;
+  }
+
+  closeCreateGrowthModal(): void {
+    this.isCreateGrowthModalVisible = false;
+    this.createGrowthForm.reset({
+      measuredAt: this.selectedDateControl.value,
+      weightKg: null,
+      heightCm: null,
+      headCircumferenceCm: null,
+      notes: ''
+    });
+  }
+
+  openCreateVaccinationModal(): void {
+    if (!this.selectedBabyId) {
+      this.notifySelectBabyFirst();
+      return;
+    }
+    this.isCreateVaccinationModalVisible = true;
+  }
+
+  closeCreateVaccinationModal(): void {
+    this.isCreateVaccinationModalVisible = false;
+    this.createVaccinationForm.reset({
+      vaccineName: '',
+      dueDate: null,
+      notes: ''
     });
   }
 
@@ -224,22 +325,25 @@ export class BabyComponent {
     }
 
     const valueRaw = Number(this.createLogForm.controls.value.value ?? 0);
+    const loggedAt = this.createLogForm.controls.loggedAt.value;
+
     this.isSubmittingLog = true;
     this.command
       .createBabyLog({
         babyId: this.selectedBabyId,
         logType: this.createLogForm.controls.logType.value ?? 'SLEEP',
         value: Number.isFinite(valueRaw) ? valueRaw : 0,
-        note: this.createLogForm.controls.note.value?.trim() ?? ''
+        note: this.createLogForm.controls.note.value?.trim() ?? '',
+        loggedAt: loggedAt ? loggedAt.toISOString() : this.buildLogTimestampForSelectedDate()
       })
       .subscribe({
         next: () => {
           this.isSubmittingLog = false;
           this.closeCreateLogModal();
-          this.loadSelectedBabyOverview();
+          this.loadBabyCareOverview();
           this.notification.success(
             this.i18n.translate('momApp.common.success'),
-            this.i18n.translate('momApp.baby.messages.createLogSuccess')
+            this.i18n.translate('momApp.baby.messages.saveLogSuccess')
           );
         },
         error: (err) => {
@@ -247,6 +351,111 @@ export class BabyComponent {
           this.notification.error(
             this.i18n.translate('common.errorTitle'),
             err?.message || this.i18n.translate('momApp.baby.messages.createLogFailed')
+          );
+        }
+      });
+  }
+
+  submitCreateGrowthRecord(): void {
+    if (this.createGrowthForm.invalid) {
+      this.createGrowthForm.markAllAsTouched();
+      return;
+    }
+
+    if (!this.selectedBabyId) {
+      this.notifySelectBabyFirst();
+      return;
+    }
+
+    const measuredAt = this.createGrowthForm.controls.measuredAt.value;
+    if (!measuredAt) {
+      return;
+    }
+
+    const weightKg = this.numberOrNull(this.createGrowthForm.controls.weightKg.value);
+    const heightCm = this.numberOrNull(this.createGrowthForm.controls.heightCm.value);
+    const headCircumferenceCm = this.numberOrNull(this.createGrowthForm.controls.headCircumferenceCm.value);
+
+    if (weightKg === null && heightCm === null && headCircumferenceCm === null) {
+      this.notification.warning(
+        this.i18n.translate('common.errorTitle'),
+        this.i18n.translate('momApp.baby.messages.measurementRequired')
+      );
+      return;
+    }
+
+    this.isSubmittingGrowth = true;
+    this.command
+      .createGrowthRecord({
+        babyId: this.selectedBabyId,
+        measuredAt: this.formatLocalDate(measuredAt),
+        weightKg,
+        heightCm,
+        headCircumferenceCm,
+        notes: this.createGrowthForm.controls.notes.value?.trim() ?? ''
+      })
+      .subscribe({
+        next: () => {
+          this.isSubmittingGrowth = false;
+          this.closeCreateGrowthModal();
+          this.loadBabyCareOverview();
+          this.loadMedicalData();
+          this.notification.success(
+            this.i18n.translate('momApp.common.success'),
+            this.i18n.translate('momApp.baby.messages.growthCreateSuccess')
+          );
+        },
+        error: (err) => {
+          this.isSubmittingGrowth = false;
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            err?.message || this.i18n.translate('momApp.baby.messages.growthCreateFailed')
+          );
+        }
+      });
+  }
+
+  submitCreateVaccination(): void {
+    if (this.createVaccinationForm.invalid) {
+      this.createVaccinationForm.markAllAsTouched();
+      return;
+    }
+
+    if (!this.selectedBabyId) {
+      this.notifySelectBabyFirst();
+      return;
+    }
+
+    const dueDate = this.createVaccinationForm.controls.dueDate.value;
+    if (!dueDate) {
+      return;
+    }
+
+    this.isSubmittingVaccination = true;
+    this.command
+      .createVaccination({
+        babyId: this.selectedBabyId,
+        vaccineName: this.createVaccinationForm.controls.vaccineName.value?.trim() ?? '',
+        dueDate: this.formatLocalDate(dueDate),
+        completed: false,
+        notes: this.createVaccinationForm.controls.notes.value?.trim() ?? ''
+      })
+      .subscribe({
+        next: () => {
+          this.isSubmittingVaccination = false;
+          this.closeCreateVaccinationModal();
+          this.loadBabyCareOverview();
+          this.loadMedicalData();
+          this.notification.success(
+            this.i18n.translate('momApp.common.success'),
+            this.i18n.translate('momApp.baby.messages.vaccinationCreateSuccess')
+          );
+        },
+        error: (err) => {
+          this.isSubmittingVaccination = false;
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            err?.message || this.i18n.translate('momApp.baby.messages.vaccinationCreateFailed')
           );
         }
       });
@@ -267,16 +476,14 @@ export class BabyComponent {
         babyId: this.selectedBabyId,
         logType,
         value: this.defaultQuickLogValue(logType),
-        note: ''
+        note: '',
+        loggedAt: this.buildLogTimestampForSelectedDate()
       })
       .subscribe({
         next: () => {
           this.quickLogLoadingType = null;
-          this.loadSelectedBabyOverview();
-          this.notification.success(
-            this.i18n.translate('momApp.common.success'),
-            this.i18n.translate('momApp.baby.messages.createLogSuccess')
-          );
+          this.loadBabyCareOverview();
+          this.notification.success(this.i18n.translate('momApp.common.success'), this.i18n.translate('momApp.baby.messages.createLogSuccess'));
         },
         error: (err) => {
           this.quickLogLoadingType = null;
@@ -301,9 +508,83 @@ export class BabyComponent {
       return 'clock-circle';
     }
     if (logType === 'FEEDING') {
-      return 'heart';
+      return 'coffee';
     }
     return 'alert';
+  }
+
+  trendDayLabel(dateKey: string): string {
+    const date = new Date(`${dateKey}T00:00:00`);
+    if (Number.isNaN(date.getTime())) {
+      return dateKey;
+    }
+    const locale = this.i18n.getCurrentLanguage() === 'vi' ? 'vi-VN' : 'en-US';
+    return date.toLocaleDateString(locale, { weekday: 'short', month: '2-digit', day: '2-digit' });
+  }
+
+  trendSleepWidth(value: number): number {
+    const max = this.dailyTrend.reduce((currentMax, item) => Math.max(currentMax, item.sleepHours || 0), 0);
+    if (max <= 0) {
+      return 6;
+    }
+    return Math.max(6, Math.round((value / max) * 100));
+  }
+
+  ageLabel(birthDate: string | null | undefined): string {
+    if (!birthDate) {
+      return this.i18n.translate('momApp.baby.age.unknown');
+    }
+
+    const birth = new Date(`${birthDate}T00:00:00`);
+    if (Number.isNaN(birth.getTime())) {
+      return this.i18n.translate('momApp.baby.age.unknown');
+    }
+
+    const baseDate = this.selectedDateControl.value ?? new Date();
+    const days = Math.max(0, Math.floor((baseDate.getTime() - birth.getTime()) / (24 * 60 * 60 * 1000)));
+    if (days < 32) {
+      return this.i18n.translate(days === 1 ? 'momApp.baby.age.day' : 'momApp.baby.age.days', { count: days });
+    }
+
+    const months = Math.floor(days / 30.4375);
+    if (months < 24) {
+      return this.i18n.translate(months === 1 ? 'momApp.baby.age.month' : 'momApp.baby.age.months', { count: months });
+    }
+
+    const years = Math.floor(months / 12);
+    const remainMonths = months % 12;
+    if (remainMonths === 0) {
+      return this.i18n.translate(years === 1 ? 'momApp.baby.age.year' : 'momApp.baby.age.years', { count: years });
+    }
+    return this.i18n.translate('momApp.baby.age.yearsMonths', { years, months: remainMonths });
+  }
+
+  vaccinationStatus(vaccination: BabyVaccination): 'completed' | 'overdue' | 'upcoming' {
+    if (vaccination.completed) {
+      return 'completed';
+    }
+
+    const dueDate = new Date(`${vaccination.dueDate}T00:00:00`);
+    const baseDate = this.selectedDateControl.value ?? new Date();
+    const cutoff = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
+    if (!Number.isNaN(dueDate.getTime()) && dueDate.getTime() < cutoff.getTime()) {
+      return 'overdue';
+    }
+
+    return 'upcoming';
+  }
+
+  vaccinationStatusLabel(vaccination: BabyVaccination): string {
+    const status = this.vaccinationStatus(vaccination);
+    return this.i18n.translate(`momApp.baby.vaccination.status.${status}`);
+  }
+
+  formatDecimal(value: number | null | undefined, unit = ''): string {
+    if (value === null || value === undefined || Number.isNaN(value)) {
+      return '--';
+    }
+    const formatted = Number(value).toFixed(1);
+    return unit ? `${formatted}${unit}` : formatted;
   }
 
   formatGalleryFileSize(sizeBytes: number): string {
@@ -316,6 +597,24 @@ export class BabyComponent {
     return `${(sizeBytes / (1024 * 1024)).toFixed(1)} MB`;
   }
 
+  formatDate(value: string | null): string {
+    if (!value?.trim()) {
+      return this.i18n.translate('momApp.common.notAvailable');
+    }
+
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) {
+      return value;
+    }
+
+    const locale = this.i18n.getCurrentLanguage() === 'vi' ? 'vi-VN' : 'en-US';
+    return date.toLocaleDateString(locale, {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+  }
+
   formatDateTime(value: string | null): string {
     if (!value?.trim()) {
       return this.i18n.translate('momApp.common.notAvailable');
@@ -326,8 +625,7 @@ export class BabyComponent {
       return value;
     }
 
-    const lang = this.i18n.getCurrentLanguage();
-    const locale = lang === 'vi' ? 'vi-VN' : 'en-US';
+    const locale = this.i18n.getCurrentLanguage() === 'vi' ? 'vi-VN' : 'en-US';
     return date.toLocaleString(locale, {
       year: 'numeric',
       month: '2-digit',
@@ -418,47 +716,104 @@ export class BabyComponent {
 
   private selectBaby(babyId: number): void {
     this.selectedBabyId = babyId;
-    this.loadSelectedBabyOverview();
+    this.loadBabyCareOverview();
+    this.loadMedicalData();
     this.loadGalleryFiles();
   }
 
-  private loadSelectedBabyOverview(): void {
+  private loadBabyCareOverview(): void {
     if (!this.selectedBabyId) {
-      this.summary = null;
-      this.todayLogs = [];
+      this.dashboard = null;
+      this.selectedDateLogs = [];
       return;
     }
 
     const babyId = this.selectedBabyId;
     const dateKey = this.currentDateKey();
+    const requestKey = `${babyId}:${dateKey}`;
+    this.overviewRequestKey = requestKey;
 
-    this.summaryLoadError = null;
+    this.dashboardLoadError = null;
     this.logsLoadError = null;
-    this.isLoadingSummary = true;
-    this.isLoadingLogs = true;
+    this.isLoadingDashboard = true;
+    this.isLoadingSelectedDateLogs = true;
 
-    this.command.getBabySummary(babyId, dateKey).subscribe({
-      next: (summary) => {
-        this.isLoadingSummary = false;
-        this.summary = summary;
-      },
-      error: (err) => {
-        this.isLoadingSummary = false;
-        this.summary = null;
-        this.summaryLoadError = err?.message || this.i18n.translate('momApp.baby.messages.summaryLoadFailed');
-      }
-    });
+    this.command
+      .getBabyDashboard({
+        babyId,
+        date: dateKey,
+        trendDays: 7,
+        recentLogLimit: 12,
+        upcomingVaccineLimit: 6
+      })
+      .subscribe({
+        next: (dashboard) => {
+          if (this.overviewRequestKey !== requestKey) {
+            return;
+          }
+          this.isLoadingDashboard = false;
+          this.dashboard = dashboard;
+        },
+        error: (err) => {
+          if (this.overviewRequestKey !== requestKey) {
+            return;
+          }
+          this.isLoadingDashboard = false;
+          this.dashboard = null;
+          this.dashboardLoadError = err?.message || this.i18n.translate('momApp.baby.messages.summaryLoadFailed');
+        }
+      });
 
     this.command.getBabyLogs(babyId, dateKey).subscribe({
       next: (logs) => {
-        this.isLoadingLogs = false;
-        this.todayLogs = [...logs].sort((left, right) => right.loggedAt.localeCompare(left.loggedAt));
+        if (this.overviewRequestKey !== requestKey) {
+          return;
+        }
+        this.isLoadingSelectedDateLogs = false;
+        this.selectedDateLogs = [...logs].sort((left, right) => right.loggedAt.localeCompare(left.loggedAt));
       },
       error: (err) => {
-        this.isLoadingLogs = false;
-        this.todayLogs = [];
+        if (this.overviewRequestKey !== requestKey) {
+          return;
+        }
+        this.isLoadingSelectedDateLogs = false;
+        this.selectedDateLogs = [];
         this.logsLoadError = err?.message || this.i18n.translate('momApp.baby.messages.logLoadFailed');
       }
+    });
+  }
+
+  private loadMedicalData(): void {
+    if (!this.selectedBabyId) {
+      this.growthRecords = [];
+      this.vaccinations = [];
+      return;
+    }
+
+    const babyId = this.selectedBabyId;
+    this.isLoadingGrowthRecords = true;
+    this.isLoadingVaccinations = true;
+    this.growthLoadError = null;
+    this.vaccinationLoadError = null;
+
+    forkJoin({
+      growthRecords: this.command.getGrowthRecords(babyId).pipe(
+        catchError((err) => {
+          this.growthLoadError = err?.message || this.i18n.translate('momApp.baby.messages.growthLoadFailed');
+          return of([] as BabyGrowthRecord[]);
+        })
+      ),
+      vaccinations: this.command.getVaccinations(babyId).pipe(
+        catchError((err) => {
+          this.vaccinationLoadError = err?.message || this.i18n.translate('momApp.baby.messages.vaccinationLoadFailed');
+          return of([] as BabyVaccination[]);
+        })
+      )
+    }).subscribe(({ growthRecords, vaccinations }) => {
+      this.isLoadingGrowthRecords = false;
+      this.isLoadingVaccinations = false;
+      this.growthRecords = growthRecords;
+      this.vaccinations = vaccinations;
     });
   }
 
@@ -514,8 +869,10 @@ export class BabyComponent {
   private resetSelectedBabyState(): void {
     this.selectedBabyControl.setValue(null, { emitEvent: false });
     this.selectedBabyId = null;
-    this.summary = null;
-    this.todayLogs = [];
+    this.dashboard = null;
+    this.selectedDateLogs = [];
+    this.growthRecords = [];
+    this.vaccinations = [];
     this.galleryFiles = [];
   }
 
@@ -533,18 +890,58 @@ export class BabyComponent {
     return 1;
   }
 
-  private currentDateKey(): string {
+  private numberOrNull(value: unknown): number | null {
+    const numeric = Number(value);
+    if (!Number.isFinite(numeric) || numeric <= 0) {
+      return null;
+    }
+    return numeric;
+  }
+
+  private defaultLoggedAtDate(): Date {
+    const selected = this.selectedDateControl.value;
+    if (!selected) {
+      return new Date();
+    }
+
     const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    const merged = new Date(selected);
+    merged.setHours(now.getHours(), now.getMinutes(), now.getSeconds(), 0);
+    return merged;
+  }
+
+  private buildLogTimestampForSelectedDate(): string {
+    return this.defaultLoggedAtDate().toISOString();
+  }
+
+  private currentDateKey(): string {
+    return this.formatLocalDate(this.selectedDateControl.value ?? new Date());
+  }
+
+  private resolveDateValue(date: Date | string | null): Date | null {
+    if (!date) {
+      return null;
+    }
+
+    if (date instanceof Date) {
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    const parsed = new Date(date);
+    return Number.isNaN(parsed.getTime()) ? null : parsed;
   }
 
   private formatLocalDate(date: Date): string {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
+    const parsed = this.resolveDateValue(date);
+    if (!parsed) {
+      const now = new Date();
+      return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    }
+
+    const year = parsed.getFullYear();
+    const month = String(parsed.getMonth() + 1).padStart(2, '0');
+    const day = String(parsed.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
   }
 }
+

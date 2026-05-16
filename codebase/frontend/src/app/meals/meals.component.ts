@@ -154,6 +154,24 @@ export class MealsComponent implements OnInit, OnDestroy {
     this.loadMeals();
   }
 
+  onWeekPickerOpenChange(open: boolean): void {
+    if (!open) {
+      this.loadMeals();
+    }
+  }
+
+  onMonthPickerOpenChange(open: boolean): void {
+    if (!open) {
+      this.loadMeals();
+    }
+  }
+
+  onYearPickerOpenChange(open: boolean): void {
+    if (!open) {
+      this.loadMeals();
+    }
+  }
+
   loadMeals(force = false): void {
     const familyId = this.command.getFamilyId();
     const { startDate, endDate } = this.getCurrentRange();
@@ -431,7 +449,7 @@ export class MealsComponent implements OnInit, OnDestroy {
   }
 
   getWeekRange(date: Date): { start: string; end: string } {
-    const d = new Date(date);
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
     const day = d.getDay();
     const diffToMonday = day === 0 ? -6 : 1 - day;
     const monday = new Date(d);
@@ -439,8 +457,8 @@ export class MealsComponent implements OnInit, OnDestroy {
     const sunday = new Date(monday);
     sunday.setDate(monday.getDate() + 6);
     return {
-      start: monday.toISOString().slice(0, 10),
-      end: sunday.toISOString().slice(0, 10)
+      start: this.formatLocalDate(monday),
+      end: this.formatLocalDate(sunday)
     };
   }
 
@@ -450,8 +468,8 @@ export class MealsComponent implements OnInit, OnDestroy {
     const start = new Date(year, month, 1);
     const end = new Date(year, month + 1, 0);
     return {
-      start: start.toISOString().slice(0, 10),
-      end: end.toISOString().slice(0, 10)
+      start: this.formatLocalDate(start),
+      end: this.formatLocalDate(end)
     };
   }
 
@@ -538,7 +556,7 @@ export class MealsComponent implements OnInit, OnDestroy {
       if (!dayMap.has(dateKey)) return;
 
       const entry = dayMap.get(dateKey)!;
-      const mealType: MealType = plan.mealType ?? 'DINNER';
+      const mealType = this.parseMealType(plan.mealType);
       const mealName: string = plan.mealName ?? plan.name ?? '';
       if (!mealName.trim()) return;
 
@@ -560,7 +578,7 @@ export class MealsComponent implements OnInit, OnDestroy {
     const cursor = new Date(start);
 
     while (cursor <= end) {
-      const dateStr = cursor.toISOString().slice(0, 10);
+      const dateStr = this.formatLocalDate(cursor);
       days.push({
         date: dateStr,
         dayLabel: this.formatWeekdayLabel(dateStr),
@@ -660,6 +678,19 @@ export class MealsComponent implements OnInit, OnDestroy {
     );
 
     return matched.length >= 2 ? matched : allDishes;
+  }
+
+  private parseMealType(value: unknown): MealType {
+    if (typeof value !== 'string') {
+      return 'DINNER';
+    }
+
+    const normalized = value.trim().toUpperCase();
+    if (normalized === 'BREAKFAST' || normalized === 'LUNCH' || normalized === 'DINNER' || normalized === 'SNACK') {
+      return normalized;
+    }
+
+    return 'DINNER';
   }
 
   private formatLocalDate(date: Date): string {

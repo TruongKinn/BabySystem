@@ -2469,9 +2469,9 @@
           "passwordPlaceholder": "Enter temporary password"
         },
         "status": {
-          "ACTIVE": "Active",
-          "INACTIVE": "Inactive",
-          "LOCKED": "Locked"
+          "active": "Active",
+          "inactive": "Inactive",
+          "locked": "Locked"
         },
         "role": {
           "USER": "User",
@@ -2892,7 +2892,9 @@
       "unknownName": "Baby",
       "actions": {
         "addProfile": "Add profile",
-        "addLog": "Add log"
+        "addLog": "Add log",
+        "addGrowth": "Add growth",
+        "addVaccination": "Add vaccine"
       },
       "nextVaccine": "Next vaccine",
       "profileTitle": "Profile",
@@ -2900,6 +2902,49 @@
       "feedingCount": "Feeding count",
       "diaperChanges": "Diaper changes",
       "vaccineDate": "Vaccine date",
+      "age": {
+        "unknown": "Unknown age",
+        "day": "{{count}} day",
+        "days": "{{count}} days",
+        "month": "{{count}} month",
+        "months": "{{count}} months",
+        "year": "{{count}} year",
+        "years": "{{count}} years",
+        "yearsMonths": "{{years}}y {{months}}m"
+      },
+      "dashboard": {
+        "sleepSelectedDay": "Sleep (selected day)",
+        "latestWeight": "Latest weight",
+        "careTrendTitle": "Care Trend (Last 7 Days)",
+        "noTrendData": "No trend data",
+        "selectedDayLogsTitle": "Logs of Selected Day",
+        "recentActivityTitle": "Recent Activity",
+        "noRecentActivity": "No activity",
+        "noNote": "No note"
+      },
+      "growth": {
+        "title": "Growth Tracker",
+        "latestLabel": "Latest",
+        "weightLabel": "Weight",
+        "heightLabel": "Height",
+        "headLabel": "Head",
+        "deltaWeightLabel": "Delta Weight",
+        "deltaHeightLabel": "Delta Height",
+        "noRecords": "No growth records yet"
+      },
+      "vaccination": {
+        "title": "Vaccination Plan",
+        "upcomingLabel": "Upcoming",
+        "overdueLabel": "Overdue",
+        "nextDueLabel": "Next due",
+        "noPlan": "No vaccination plan",
+        "dueLabel": "Due",
+        "status": {
+          "completed": "Completed",
+          "overdue": "Overdue",
+          "upcoming": "Upcoming"
+        }
+      },
       "gender": {
         "MALE": "Male",
         "FEMALE": "Female",
@@ -2921,7 +2966,20 @@
         "createLogTitle": "Create baby log",
         "logTypeLabel": "Log type",
         "valueLabel": "Value",
-        "valuePlaceholder": "Use hours for sleep"
+        "valuePlaceholder": "Use hours for sleep",
+        "logTimeLabel": "Log time",
+        "createGrowthTitle": "Add growth record",
+        "measuredDateLabel": "Measured date",
+        "weightKgLabel": "Weight (kg)",
+        "weightKgPlaceholder": "Ex: 7.4",
+        "heightCmLabel": "Height (cm)",
+        "heightCmPlaceholder": "Ex: 66",
+        "headCircumferenceLabel": "Head circumference (cm)",
+        "headCircumferencePlaceholder": "Ex: 42",
+        "createVaccinationTitle": "Add vaccination",
+        "vaccineNameLabel": "Vaccine name",
+        "vaccineNamePlaceholder": "Ex: 6-in-1 dose 1",
+        "dueDateLabel": "Due date"
       },
       "logs": {
         "title": "Today's logs",
@@ -2933,7 +2991,15 @@
         "createLogSuccess": "Baby log created.",
         "createLogFailed": "Unable to create baby log.",
         "summaryLoadFailed": "Unable to load baby summary.",
-        "logLoadFailed": "Unable to load baby logs."
+        "logLoadFailed": "Unable to load baby logs.",
+        "saveLogSuccess": "Baby log saved.",
+        "measurementRequired": "Enter at least one measurement value.",
+        "growthCreateSuccess": "Growth record saved.",
+        "growthCreateFailed": "Unable to save growth record.",
+        "vaccinationCreateSuccess": "Vaccination item created.",
+        "vaccinationCreateFailed": "Unable to create vaccination item.",
+        "growthLoadFailed": "Unable to load growth records.",
+        "vaccinationLoadFailed": "Unable to load vaccinations."
       },
       "gallery": {
         "title": "Baby photo gallery",

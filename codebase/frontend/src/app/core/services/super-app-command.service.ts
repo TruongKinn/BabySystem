@@ -62,6 +62,58 @@ export interface BabyDailySummary {
   lastUpdatedAt: string | null;
 }
 
+export interface BabyCareTrendPoint {
+  date: string;
+  sleepHours: number;
+  feedings: number;
+  diaperChanges: number;
+  totalLogs: number;
+}
+
+export interface BabyGrowthRecord {
+  id: number;
+  babyId: number;
+  measuredAt: string;
+  weightKg: number | null;
+  heightCm: number | null;
+  headCircumferenceCm: number | null;
+  notes: string | null;
+}
+
+export interface BabyVaccination {
+  id: number;
+  babyId: number;
+  vaccineName: string;
+  dueDate: string;
+  completed: boolean;
+  completedAt: string | null;
+  notes: string | null;
+}
+
+export interface BabyGrowthInsight {
+  latest: BabyGrowthRecord | null;
+  previous: BabyGrowthRecord | null;
+  weightDeltaKg: number | null;
+  heightDeltaCm: number | null;
+  headCircumferenceDeltaCm: number | null;
+}
+
+export interface BabyVaccinationInsight {
+  nextDueDate: string | null;
+  upcomingCount: number;
+  overdueCount: number;
+  upcomingVaccinations: BabyVaccination[];
+}
+
+export interface BabyDashboard {
+  baby: BabyProfile;
+  dailySummary: BabyDailySummary;
+  dailyTrend: BabyCareTrendPoint[];
+  recentLogs: BabyLogEntry[];
+  growthInsight: BabyGrowthInsight;
+  vaccinationInsight: BabyVaccinationInsight;
+}
+
 interface UserApi {
   id: number;
   username: string;
@@ -466,6 +518,29 @@ export class SuperAppCommandService {
     return this.get<BabyDailySummary>(`/baby/babies/${babyId}/summary`, params);
   }
 
+  getBabyDashboard(input: {
+    babyId: number;
+    date?: string;
+    trendDays?: number;
+    recentLogLimit?: number;
+    upcomingVaccineLimit?: number;
+  }): Observable<BabyDashboard> {
+    let params = new HttpParams();
+    if (input.date?.trim()) {
+      params = params.set('date', input.date.trim());
+    }
+    if (input.trendDays !== undefined && Number.isFinite(input.trendDays)) {
+      params = params.set('trendDays', String(input.trendDays));
+    }
+    if (input.recentLogLimit !== undefined && Number.isFinite(input.recentLogLimit)) {
+      params = params.set('recentLogLimit', String(input.recentLogLimit));
+    }
+    if (input.upcomingVaccineLimit !== undefined && Number.isFinite(input.upcomingVaccineLimit)) {
+      params = params.set('upcomingVaccineLimit', String(input.upcomingVaccineLimit));
+    }
+    return this.get<BabyDashboard>(`/baby/babies/${input.babyId}/dashboard`, params);
+  }
+
   getBabyLogs(babyId: number, date?: string): Observable<BabyLogEntry[]> {
     let params = new HttpParams();
     if (date?.trim()) {
@@ -474,12 +549,58 @@ export class SuperAppCommandService {
     return this.get<BabyLogEntry[]>(`/baby/babies/${babyId}/logs`, params);
   }
 
-  createBabyLog(input: { logType: BabyLogType; value?: number; note?: string; babyId?: number | null }): Observable<void> {
+  getVaccinations(babyId: number): Observable<BabyVaccination[]> {
+    return this.get<BabyVaccination[]>(`/baby/babies/${babyId}/vaccinations`);
+  }
+
+  createVaccination(input: {
+    babyId: number;
+    vaccineName: string;
+    dueDate: string;
+    completed?: boolean;
+    notes?: string;
+  }): Observable<void> {
+    return this.post(`/baby/babies/${input.babyId}/vaccinations`, {
+      vaccineName: input.vaccineName,
+      dueDate: input.dueDate,
+      completed: input.completed ?? false,
+      notes: input.notes ?? ''
+    }).pipe(map(() => undefined));
+  }
+
+  getGrowthRecords(babyId: number): Observable<BabyGrowthRecord[]> {
+    return this.get<BabyGrowthRecord[]>(`/baby/babies/${babyId}/growth-records`);
+  }
+
+  createGrowthRecord(input: {
+    babyId: number;
+    measuredAt: string;
+    weightKg?: number | null;
+    heightCm?: number | null;
+    headCircumferenceCm?: number | null;
+    notes?: string;
+  }): Observable<void> {
+    return this.post(`/baby/babies/${input.babyId}/growth-records`, {
+      measuredAt: input.measuredAt,
+      weightKg: input.weightKg ?? null,
+      heightCm: input.heightCm ?? null,
+      headCircumferenceCm: input.headCircumferenceCm ?? null,
+      notes: input.notes ?? ''
+    }).pipe(map(() => undefined));
+  }
+
+  createBabyLog(input: {
+    logType: BabyLogType;
+    value?: number;
+    note?: string;
+    babyId?: number | null;
+    loggedAt?: string;
+  }): Observable<void> {
     const payload = {
       logType: input.logType,
       value: input.value ?? 0,
       note: input.note ?? '',
-      loggedAt: new Date().toISOString()
+      loggedAt: input.loggedAt ?? new Date().toISOString()
     };
 
     if (input.babyId) {

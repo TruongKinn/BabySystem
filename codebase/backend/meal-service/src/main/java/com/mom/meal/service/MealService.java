@@ -10,6 +10,7 @@ import com.mom.meal.controller.dto.UpdateMealPlanRequest;
 import com.mom.meal.controller.dto.WeeklyMealPlanResponse;
 import com.mom.meal.domain.MealEntity;
 import com.mom.meal.domain.MealPlanEntity;
+import com.mom.meal.domain.MealType;
 import com.mom.meal.event.MealEventPublisher;
 import com.mom.meal.event.MealPlanCreatedPayload;
 import com.mom.meal.repository.MealPlanRepository;
@@ -148,7 +149,7 @@ public class MealService {
                 saved.getPlanDate(),
                 saved.getNotes()
         ));
-        return toMealPlanResponse(saved, meal.getName());
+        return toMealPlanResponse(saved, meal.getName(), meal.getMealType());
     }
 
     public List<MealPlanResponse> getMealPlans(Long familyId, LocalDate from, LocalDate to) {
@@ -169,9 +170,13 @@ public class MealService {
             plans = mealPlanRepository.findByFamilyIdAndPlanDateBetweenOrderByPlanDateAscCreatedAtDesc(familyId, start, end);
         }
 
-        Map<Long, String> mealNames = loadMealNames(plans);
+        Map<Long, MealSnapshot> mealsById = loadMealsById(plans);
         return plans.stream()
-                .map(plan -> toMealPlanResponse(plan, mealNames.getOrDefault(plan.getMealId(), "Unknown")))
+                .map(plan -> toMealPlanResponse(
+                        plan,
+                        resolveMealName(mealsById.get(plan.getMealId())),
+                        resolveMealType(mealsById.get(plan.getMealId()))
+                ))
                 .toList();
     }
 
@@ -181,9 +186,13 @@ public class MealService {
         
         LocalDate today = LocalDate.now(ZoneOffset.UTC);
         List<MealPlanEntity> plans = mealPlanRepository.findByFamilyIdAndPlanDateOrderByCreatedAtDesc(familyId, today);
-        Map<Long, String> mealNames = loadMealNames(plans);
+        Map<Long, MealSnapshot> mealsById = loadMealsById(plans);
         return plans.stream()
-                .map(plan -> toMealPlanResponse(plan, mealNames.getOrDefault(plan.getMealId(), "Unknown")))
+                .map(plan -> toMealPlanResponse(
+                        plan,
+                        resolveMealName(mealsById.get(plan.getMealId())),
+                        resolveMealType(mealsById.get(plan.getMealId()))
+                ))
                 .toList();
     }
 
@@ -198,9 +207,13 @@ public class MealService {
                 weekStart,
                 weekEnd
         );
-        Map<Long, String> mealNames = loadMealNames(plans);
+        Map<Long, MealSnapshot> mealsById = loadMealsById(plans);
         List<MealPlanResponse> planResponses = plans.stream()
-                .map(plan -> toMealPlanResponse(plan, mealNames.getOrDefault(plan.getMealId(), "Unknown")))
+                .map(plan -> toMealPlanResponse(
+                        plan,
+                        resolveMealName(mealsById.get(plan.getMealId())),
+                        resolveMealType(mealsById.get(plan.getMealId()))
+                ))
                 .toList();
         return new WeeklyMealPlanResponse(weekStart, weekEnd, planResponses);
     }
@@ -240,10 +253,10 @@ public class MealService {
         }
 
         MealPlanEntity saved = mealPlanRepository.save(plan);
-        String mealName = mealRepository.findById(saved.getMealId())
-                .map(MealEntity::getName)
-                .orElse("Unknown");
-        return toMealPlanResponse(saved, mealName);
+        MealSnapshot meal = mealRepository.findById(saved.getMealId())
+                .map(entity -> new MealSnapshot(entity.getName(), entity.getMealType()))
+                .orElse(null);
+        return toMealPlanResponse(saved, resolveMealName(meal), resolveMealType(meal));
     }
 
     @Transactional
@@ -257,10 +270,21 @@ public class MealService {
         mealPlanRepository.delete(plan);
     }
 
-    private Map<Long, String> loadMealNames(List<MealPlanEntity> plans) {
+    private Map<Long, MealSnapshot> loadMealsById(List<MealPlanEntity> plans) {
         Set<Long> mealIds = plans.stream().map(MealPlanEntity::getMealId).collect(Collectors.toSet());
         return mealRepository.findAllById(mealIds).stream()
-                .collect(Collectors.toMap(MealEntity::getId, MealEntity::getName));
+                .collect(Collectors.toMap(
+                        MealEntity::getId,
+                        meal -> new MealSnapshot(meal.getName(), meal.getMealType())
+                ));
+    }
+
+    private String resolveMealName(MealSnapshot meal) {
+        return meal != null ? meal.name() : "Unknown";
+    }
+
+    private MealType resolveMealType(MealSnapshot meal) {
+        return meal != null ? meal.mealType() : MealType.DINNER;
     }
 
     private String trimToNull(String value) {
@@ -281,14 +305,18 @@ public class MealService {
         );
     }
 
-    private MealPlanResponse toMealPlanResponse(MealPlanEntity plan, String mealName) {
+    private MealPlanResponse toMealPlanResponse(MealPlanEntity plan, String mealName, MealType mealType) {
         return new MealPlanResponse(
                 plan.getId(),
                 plan.getFamilyId(),
                 plan.getMealId(),
                 mealName,
+                mealType,
                 plan.getPlanDate(),
                 plan.getNotes()
         );
+    }
+
+    private record MealSnapshot(String name, MealType mealType) {
     }
 }

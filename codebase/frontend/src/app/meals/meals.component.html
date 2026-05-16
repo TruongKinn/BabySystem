@@ -41,35 +41,38 @@
     </nz-radio-group>
 
     <div class="date-picker-wrap">
-      <nz-date-picker
+      <nz-week-picker
         *ngIf="viewMode === 'week'"
         [(ngModel)]="selectedWeek"
         (ngModelChange)="onWeekChange($event)"
-        nzMode="week"
+        (nzOnOpenChange)="onWeekPickerOpenChange($event)"
         nzFormat="w-yyyy"
+        [nzInputReadOnly]="true"
         [nzPlaceHolder]="'momApp.meals.filters.selectWeek' | translate"
         class="meals-date-picker"
-      ></nz-date-picker>
+      ></nz-week-picker>
 
-      <nz-date-picker
+      <nz-month-picker
         *ngIf="viewMode === 'month'"
         [(ngModel)]="selectedMonth"
         (ngModelChange)="onMonthChange($event)"
-        nzMode="month"
+        (nzOnOpenChange)="onMonthPickerOpenChange($event)"
         nzFormat="MM/yyyy"
+        [nzInputReadOnly]="true"
         [nzPlaceHolder]="'momApp.meals.filters.selectMonth' | translate"
         class="meals-date-picker"
-      ></nz-date-picker>
+      ></nz-month-picker>
 
-      <nz-date-picker
+      <nz-year-picker
         *ngIf="viewMode === 'year'"
         [(ngModel)]="selectedYear"
         (ngModelChange)="onYearChange($event)"
-        nzMode="year"
+        (nzOnOpenChange)="onYearPickerOpenChange($event)"
         nzFormat="yyyy"
+        [nzInputReadOnly]="true"
         [nzPlaceHolder]="'momApp.meals.filters.selectYear' | translate"
         class="meals-date-picker"
-      ></nz-date-picker>
+      ></nz-year-picker>
     </div>
   </div>
 
