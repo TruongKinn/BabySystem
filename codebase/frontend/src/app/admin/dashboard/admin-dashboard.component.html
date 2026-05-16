@@ -1,34 +1,39 @@
-<section class="admin-dashboard">
-  <div class="topbar">
-    <h1>Admin Portal</h1>
-    <button nz-button nzType="default" (click)="loadSummary()" [disabled]="loading">
-      Làm mới
-    </button>
+<section class="admin-dashboard-page">
+  <header class="admin-hero">
+    <div class="hero-content">
+      <span class="hero-kicker">Admin Operations</span>
+      <h1>System Control Dashboard</h1>
+      <p>Monitor account health, security posture, and family data coverage from one place.</p>
+    </div>
+
+    <div class="hero-meta">
+      <div class="meta-item">
+        <span>Lock rate</span>
+        <strong>{{ lockRate }}</strong>
+      </div>
+      <div class="meta-item">
+        <span>Updated at</span>
+        <strong>{{ lastUpdatedAt }}</strong>
+      </div>
+      <button nz-button nzType="primary" class="refresh-btn" (click)="loadSummary()" [disabled]="loading">
+        Refresh snapshot
+      </button>
+    </div>
+  </header>
+
+  <div class="metric-grid">
+    <nz-card class="metric-card" *ngFor="let metric of metricCards; trackBy: trackByMetric" [ngClass]="metric.tone">
+      <span class="metric-label">{{ metric.label }}</span>
+      <strong class="metric-value">{{ metric.value }}</strong>
+      <span class="metric-description">{{ metric.description }}</span>
+    </nz-card>
   </div>
 
-  <div class="summary-grid">
-    <nz-card class="metric-card">
-      <span class="label">Tổng user</span>
-      <strong class="value">{{ totalUsers }}</strong>
-    </nz-card>
-    <nz-card class="metric-card">
-      <span class="label">User đang hoạt động</span>
-      <strong class="value">{{ activeUsers }}</strong>
-    </nz-card>
-    <nz-card class="metric-card">
-      <span class="label">User bị khóa</span>
-      <strong class="value">{{ lockedUsers }}</strong>
-    </nz-card>
-    <nz-card class="metric-card">
-      <span class="label">Tài khoản quản trị</span>
-      <strong class="value">{{ adminUsers }}</strong>
-    </nz-card>
-  </div>
-
-  <nz-card class="action-card" nzTitle="Thao tác nhanh">
+  <nz-card class="admin-actions" nzTitle="Quick actions">
     <div class="quick-actions">
-      <a routerLink="/admin/users" nz-button nzType="primary">Quản lý user</a>
-      <a routerLink="/app/login" nz-button nzType="default">Mở login User Portal</a>
+      <a routerLink="/admin/users" nz-button nzType="primary">Open user management</a>
+      <a routerLink="/admin/families" nz-button nzType="default">Open family tree board</a>
+      <a routerLink="/app/login" nz-button nzType="default">Go to user portal login</a>
     </div>
   </nz-card>
 </section>

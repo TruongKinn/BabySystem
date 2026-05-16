@@ -13,6 +13,7 @@ import com.mom.shopping.domain.ShoppingItemEntity;
 import com.mom.shopping.domain.ShoppingListEntity;
 import com.mom.shopping.repository.ShoppingItemRepository;
 import com.mom.shopping.repository.ShoppingListRepository;
+import com.mom.common.security.DataIsolationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +33,8 @@ public class ShoppingService {
 
     @Transactional
     public ShoppingListResponse createList(CreateShoppingListRequest request) {
+        DataIsolationUtil.validateFamilyAccess(request.familyId());
+
         ShoppingListEntity list = new ShoppingListEntity();
         list.setFamilyId(request.familyId());
         list.setName(request.name().trim());
@@ -40,6 +43,8 @@ public class ShoppingService {
     }
 
     public List<ShoppingListResponse> getLists(Long familyId, boolean activeOnly) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         List<ShoppingListEntity> lists = activeOnly
                 ? shoppingListRepository.findByFamilyIdAndActiveTrueOrderByUpdatedAtDesc(familyId)
                 : shoppingListRepository.findByFamilyIdOrderByUpdatedAtDesc(familyId);
@@ -92,6 +97,8 @@ public class ShoppingService {
     }
 
     public List<ShoppingItemResponse> getFamilyItems(Long familyId, Boolean checked) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         List<Long> listIds = shoppingListRepository.findIdsByFamilyId(familyId);
         if (listIds.isEmpty()) {
             return Collections.emptyList();
@@ -153,6 +160,8 @@ public class ShoppingService {
     }
 
     public ShoppingPendingCountResponse getPendingCount(Long familyId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         List<Long> listIds = shoppingListRepository.findIdsByFamilyId(familyId);
         if (listIds.isEmpty()) {
             return new ShoppingPendingCountResponse(familyId, 0);
@@ -162,13 +171,17 @@ public class ShoppingService {
     }
 
     private ShoppingListEntity getListEntity(Long listId) {
-        return shoppingListRepository.findById(listId)
+        ShoppingListEntity list = shoppingListRepository.findById(listId)
                 .orElseThrow(() -> new ResourceNotFoundException("Shopping list not found"));
+        DataIsolationUtil.validateFamilyAccess(list.getFamilyId());
+        return list;
     }
 
     private ShoppingItemEntity getItemEntity(Long itemId) {
-        return shoppingItemRepository.findById(itemId)
+        ShoppingItemEntity item = shoppingItemRepository.findById(itemId)
                 .orElseThrow(() -> new ResourceNotFoundException("Shopping item not found"));
+        getListEntity(item.getListId());
+        return item;
     }
 
     private String trimToNull(String value) {

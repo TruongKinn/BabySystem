@@ -108,6 +108,8 @@
 <nz-modal
   [(nzVisible)]="isCreateBabyModalVisible"
   [nzTitle]="'momApp.baby.modal.createProfileTitle' | translate"
+  nzClassName="user-role-modal"
+  [nzWidth]="1040"
   [nzOkLoading]="isSubmittingBaby"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
@@ -115,7 +117,7 @@
   (nzOnOk)="submitCreateBaby()"
 >
   <ng-container *nzModalContent>
-    <form nz-form [formGroup]="createBabyForm" nzLayout="vertical">
+    <form nz-form [formGroup]="createBabyForm" nzLayout="vertical" class="user-modal-form-grid">
       <nz-form-item>
         <nz-form-label nzRequired>{{ 'momApp.baby.modal.nameLabel' | translate }}</nz-form-label>
         <nz-form-control>
@@ -139,7 +141,7 @@
         </nz-form-control>
       </nz-form-item>
 
-      <nz-form-item>
+      <nz-form-item class="modal-field-full">
         <nz-form-label>{{ 'momApp.baby.modal.noteLabel' | translate }}</nz-form-label>
         <nz-form-control>
           <textarea nz-input rows="3" formControlName="notes" [placeholder]="'momApp.baby.modal.notePlaceholder' | translate"></textarea>
@@ -153,6 +155,8 @@
 <nz-modal
   [(nzVisible)]="isCreateLogModalVisible"
   [nzTitle]="'momApp.baby.modal.createLogTitle' | translate"
+  nzClassName="user-role-modal"
+  [nzWidth]="980"
   [nzOkLoading]="isSubmittingLog"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
@@ -160,7 +164,7 @@
   (nzOnOk)="submitCreateLog()"
 >
   <ng-container *nzModalContent>
-    <form nz-form [formGroup]="createLogForm" nzLayout="vertical">
+    <form nz-form [formGroup]="createLogForm" nzLayout="vertical" class="user-modal-form-grid">
       <nz-form-item>
         <nz-form-label nzRequired>{{ 'momApp.baby.modal.logTypeLabel' | translate }}</nz-form-label>
         <nz-form-control>

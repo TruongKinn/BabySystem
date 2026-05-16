@@ -2,7 +2,6 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslateModule } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzInputModule } from 'ng-zorro-antd/input';
@@ -40,17 +39,16 @@ interface UserPageResponse {
   imports: [
     CommonModule,
     FormsModule,
-    TranslateModule,
     NzButtonModule,
     NzCardModule,
     NzInputModule,
     NzModalModule,
     NzPopconfirmModule,
     NzTableModule,
-    NzTagModule
+    NzTagModule,
   ],
   templateUrl: './admin-users.component.html',
-  styleUrl: './admin-users.component.css'
+  styleUrl: './admin-users.component.css',
 })
 export class AdminUsersComponent implements OnInit {
   readonly apiBase = API_CONFIG.GATEWAY_URL;
@@ -80,6 +78,14 @@ export class AdminUsersComponent implements OnInit {
     this.loadUsers();
   }
 
+  get lockedOnPage(): number {
+    return this.filteredUsers.filter((item) => item.status === 'LOCKED').length;
+  }
+
+  get adminOnPage(): number {
+    return this.filteredUsers.filter((item) => this.isAdminType(item.type)).length;
+  }
+
   loadUsers(): void {
     this.loading = true;
     const params = new HttpParams()
@@ -98,8 +104,8 @@ export class AdminUsersComponent implements OnInit {
         this.users = [];
         this.filteredUsers = [];
         this.total = 0;
-        this.message.error('Không thể tải danh sách user.');
-      }
+        this.message.error('Unable to load users.');
+      },
     });
   }
 
@@ -146,25 +152,25 @@ export class AdminUsersComponent implements OnInit {
 
     const password = this.temporaryPassword.trim();
     if (!password) {
-      this.message.warning('Vui lòng nhập mật khẩu tạm.');
+      this.message.warning('Temporary password is required.');
       return;
     }
 
     this.isResetLoading = true;
     this.http
       .post<void>(`${this.apiBase}/auth/users/${this.resetTargetUser.id}/reset-password`, {
-        temporaryPassword: password
+        temporaryPassword: password,
       })
       .subscribe({
         next: () => {
           this.isResetLoading = false;
-          this.message.success('Đặt lại mật khẩu thành công.');
+          this.message.success('Temporary password has been reset.');
           this.closeResetPasswordModal();
         },
         error: () => {
           this.isResetLoading = false;
-          this.message.error('Không thể đặt lại mật khẩu.');
-        }
+          this.message.error('Unable to reset password.');
+        },
       });
   }
 
@@ -183,19 +189,49 @@ export class AdminUsersComponent implements OnInit {
     return 'gold';
   }
 
+  statusClassOf(status: UserStatus): string {
+    if (status === 'ACTIVE') {
+      return 'status-active';
+    }
+    if (status === 'LOCKED') {
+      return 'status-locked';
+    }
+    return 'status-inactive';
+  }
+
+  roleLabel(type?: string): string {
+    const normalized = (type ?? 'USER').toUpperCase();
+    if (normalized === 'OWNER') {
+      return 'OWNER';
+    }
+    if (normalized === 'ADMIN') {
+      return 'ADMIN';
+    }
+    return 'USER';
+  }
+
+  trackByUser(_: number, user: AdminUser): number {
+    return user.id;
+  }
+
   private updateUserStatus(user: AdminUser, status: Extract<UserStatus, 'ACTIVE' | 'LOCKED'>): void {
     this.actionLoadingUserId = user.id;
     this.http.patch<void>(`${this.apiBase}/auth/users/${user.id}/status`, { status }).subscribe({
       next: () => {
         this.actionLoadingUserId = null;
-        this.message.success(status === 'LOCKED' ? 'Đã khóa tài khoản.' : 'Đã mở khóa tài khoản.');
+        this.message.success(status === 'LOCKED' ? 'Account locked.' : 'Account unlocked.');
         this.loadUsers();
       },
       error: () => {
         this.actionLoadingUserId = null;
-        this.message.error(status === 'LOCKED' ? 'Không thể khóa tài khoản.' : 'Không thể mở khóa tài khoản.');
-      }
+        this.message.error(status === 'LOCKED' ? 'Unable to lock account.' : 'Unable to unlock account.');
+      },
     });
+  }
+
+  private isAdminType(type?: string): boolean {
+    const normalized = (type ?? '').toUpperCase();
+    return normalized === 'ADMIN' || normalized === 'OWNER';
   }
 
   private applySearch(): void {
@@ -213,7 +249,7 @@ export class AdminUsersComponent implements OnInit {
         user.lastName,
         user.phone ?? '',
         user.type ?? '',
-        user.status ?? ''
+        user.status ?? '',
       ];
       return haystacks.some((value) => value?.toLowerCase().includes(keyword));
     });

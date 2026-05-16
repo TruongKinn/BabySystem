@@ -19,6 +19,7 @@ import com.mom.task.event.TaskEventPublisher;
 import com.mom.task.repository.RecurringTaskRepository;
 import com.mom.task.repository.TaskCategoryRepository;
 import com.mom.task.repository.TaskRepository;
+import com.mom.common.security.DataIsolationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -46,6 +47,8 @@ public class TaskService {
 
     @Transactional
     public TaskCategoryResponse createCategory(CreateTaskCategoryRequest request) {
+        DataIsolationUtil.validateFamilyAccess(request.familyId());
+
         if (taskCategoryRepository.existsByFamilyIdAndNameIgnoreCase(request.familyId(), request.name().trim())) {
             throw new IllegalArgumentException("Task category name already exists in this family");
         }
@@ -57,6 +60,8 @@ public class TaskService {
     }
 
     public List<TaskCategoryResponse> getCategories(Long familyId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         return taskCategoryRepository.findByFamilyIdOrderByNameAsc(familyId).stream()
                 .map(this::toTaskCategoryResponse)
                 .toList();
@@ -65,6 +70,8 @@ public class TaskService {
     @Transactional
     @CacheEvict(value = {"task-pending-count", "task-overview"}, allEntries = true)
     public TaskResponse createTask(CreateTaskRequest request) {
+        DataIsolationUtil.validateFamilyAccess(request.familyId());
+
         if (request.categoryId() != null) {
             validateCategoryBelongsToFamily(request.categoryId(), request.familyId());
         }
@@ -85,12 +92,13 @@ public class TaskService {
     }
 
     public TaskResponse getTask(Long taskId) {
-        TaskEntity task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        TaskEntity task = getTaskEntity(taskId);
         return toTaskResponse(task, getCategoryName(task.getCategoryId()));
     }
 
     public List<TaskResponse> getTasks(Long familyId, TaskStatus status, Long assigneeUserId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         List<TaskEntity> tasks;
         if (status != null && assigneeUserId != null) {
             tasks = taskRepository.findByFamilyIdAndStatusAndAssigneeUserIdOrderByDueAtAscCreatedAtDesc(
@@ -117,8 +125,7 @@ public class TaskService {
     @Transactional
     @CacheEvict(value = {"task-pending-count", "task-overview"}, allEntries = true)
     public TaskResponse updateTask(Long taskId, UpdateTaskRequest request) {
-        TaskEntity task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        TaskEntity task = getTaskEntity(taskId);
         TaskStatus previousStatus = task.getStatus();
 
         if (request.title() != null) {
@@ -156,8 +163,7 @@ public class TaskService {
     @Transactional
     @CacheEvict(value = {"task-pending-count", "task-overview"}, allEntries = true)
     public TaskResponse completeTask(Long taskId) {
-        TaskEntity task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        TaskEntity task = getTaskEntity(taskId);
 
         if (task.getStatus() != TaskStatus.DONE) {
             task.setStatus(TaskStatus.DONE);
@@ -171,19 +177,22 @@ public class TaskService {
     @Transactional
     @CacheEvict(value = {"task-pending-count", "task-overview"}, allEntries = true)
     public void deleteTask(Long taskId) {
-        TaskEntity task = taskRepository.findById(taskId)
-                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        TaskEntity task = getTaskEntity(taskId);
         taskRepository.delete(task);
     }
 
     @Cacheable(value = "task-pending-count", key = "#familyId")
     public TaskPendingCountResponse getPendingCount(Long familyId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         long pendingCount = taskRepository.countByFamilyIdAndStatus(familyId, TaskStatus.PENDING);
         return new TaskPendingCountResponse(familyId, pendingCount);
     }
 
     @Cacheable(value = "task-overview", key = "#familyId")
     public TaskOverviewResponse getOverview(Long familyId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         OffsetDateTime now = OffsetDateTime.now();
         OffsetDateTime todayStart = now.toLocalDate().atStartOfDay().atOffset(now.getOffset());
         OffsetDateTime tomorrowStart = todayStart.plusDays(1);
@@ -216,6 +225,8 @@ public class TaskService {
 
     @Transactional
     public RecurringTaskResponse createRecurringTask(CreateRecurringTaskRequest request) {
+        DataIsolationUtil.validateFamilyAccess(request.familyId());
+
         if (request.categoryId() != null) {
             validateCategoryBelongsToFamily(request.categoryId(), request.familyId());
         }
@@ -234,6 +245,8 @@ public class TaskService {
     }
 
     public List<RecurringTaskResponse> getRecurringTasks(Long familyId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         List<RecurringTaskEntity> recurringTasks = recurringTaskRepository.findByFamilyIdOrderByCreatedAtDesc(familyId);
         Map<Long, String> categoryNames = loadCategoryNames(recurringTasks.stream()
                 .map(RecurringTaskEntity::getCategoryId)
@@ -244,11 +257,20 @@ public class TaskService {
     }
 
     private void validateCategoryBelongsToFamily(Long categoryId, Long familyId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         TaskCategoryEntity category = taskCategoryRepository.findById(categoryId)
                 .orElseThrow(() -> new ResourceNotFoundException("Task category not found"));
         if (!category.getFamilyId().equals(familyId)) {
             throw new IllegalArgumentException("Task category does not belong to this family");
         }
+    }
+
+    private TaskEntity getTaskEntity(Long taskId) {
+        TaskEntity task = taskRepository.findById(taskId)
+                .orElseThrow(() -> new ResourceNotFoundException("Task not found"));
+        DataIsolationUtil.validateFamilyAccess(task.getFamilyId());
+        return task;
     }
 
     private String getCategoryName(Long categoryId) {

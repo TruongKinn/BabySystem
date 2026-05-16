@@ -1,4 +1,4 @@
-﻿{
+{
     "common": {
         "language": "Ngôn ngữ",
         "userFallback": "Người dùng",
@@ -2377,7 +2377,14 @@
             "menu": {
                 "portal": "Quản trị hệ thống",
                 "dashboard": "Dashboard admin",
-                "users": "Quản lý người dùng"
+                "users": "Quản lý người dùng",
+                "families": "Quản lý hộ gia đình"
+            },
+            "brandTitle": "MOM CONTROL",
+            "brandSubtitle": "Ops Console",
+            "roleLabel": "Điều hành hệ thống",
+            "header": {
+                "greeting": "Điều hành"
             }
         },
         "dashboard": {
@@ -2676,19 +2683,57 @@
                 "CAREGIVER": "Người chăm sóc",
                 "ADMIN": "Quản trị"
             },
+            "relation": {
+                "ONG_NOI": "Ông nội",
+                "BA_NOI": "Bà nội",
+                "ONG_NGOAI": "Ông ngoại",
+                "BA_NGOAI": "Bà ngoại",
+                "BO": "Bố",
+                "ME": "Mẹ",
+                "ANH_TRAI": "Anh trai",
+                "CHI_GAI": "Chị gái",
+                "EM_TRAI": "Em trai",
+                "EM_GAI": "Em gái",
+                "CON_TRAI": "Con trai",
+                "CON_GAI": "Con gái",
+                "CHU": "Chú",
+                "BAC": "Bác",
+                "CO": "Cô",
+                "DI": "Dì",
+                "CAU": "Cậu",
+                "MO": "Mợ",
+                "THIM": "Thím",
+                "BAO_MAU": "Bảo mẫu",
+                "THANH_VIEN_KHAC": "Thành viên khác"
+            },
             "modal": {
-                "createTitle": "Tạo thành viên gia đình",
+                "createTitle": "Thêm thành viên gia đình",
+                "editTitle": "Chỉnh sửa thông tin thành viên",
                 "displayNameLabel": "Tên hiển thị",
                 "displayNamePlaceholder": "Nhập tên hiển thị",
                 "usernameLabel": "Tên đăng nhập",
-                "usernamePlaceholder": "Nhập username",
+                "usernamePlaceholder": "Nhập tên đăng nhập",
                 "emailLabel": "Email",
-                "emailPlaceholder": "Nhập email",
-                "roleLabel": "Vai trò"
+                "emailPlaceholder": "Nhập địa chỉ email",
+                "roleLabel": "Vai trò trong gia đình",
+                "rolePlaceholder": "Chọn vai trò",
+                "relationLabel": "Quan hệ với em bé",
+                "relationPlaceholder": "Chọn quan hệ",
+                "parentLabel": "Thuộc nhánh thành viên",
+                "parentPlaceholder": "Không chọn = nút gốc",
+                "editRoleTitle": "Chỉnh sửa vai trò thành viên"
+            },
+            "card": {
+                "username": "Tài khoản",
+                "email": "Email",
+                "relation": "Quan hệ",
+                "branch": "Thuộc nhánh"
             },
             "messages": {
                 "createSuccess": "Thêm thành viên thành công.",
-                "createFailed": "Không thể thêm thành viên."
+                "createFailed": "Không thể thêm thành viên.",
+                "updateSuccess": "Cập nhật thông tin thành viên thành công.",
+                "updateFailed": "Không thể cập nhật thông tin thành viên."
             }
         },
         "insights": {

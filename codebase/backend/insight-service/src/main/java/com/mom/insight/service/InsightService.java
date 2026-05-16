@@ -5,6 +5,7 @@ import com.mom.insight.controller.dto.InsightDashboardResponse;
 import com.mom.insight.controller.dto.InsightMonthlyResponse;
 import com.mom.insight.domain.InsightDailyStatEntity;
 import com.mom.insight.repository.InsightDailyStatRepository;
+import com.mom.common.security.DataIsolationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,12 +66,16 @@ public class InsightService {
     }
 
     public InsightDailyResponse getDaily(Long familyId, LocalDate date) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         LocalDate targetDate = date != null ? date : LocalDate.now(ZoneOffset.UTC);
         InsightDailyStatEntity stat = getOrCreateView(familyId, targetDate);
         return toInsightDailyResponse(stat);
     }
 
     public InsightDashboardResponse getDashboard(Long familyId, LocalDate date) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         InsightDailyResponse daily = getDaily(familyId, date);
         int sleepScore = daily.babySleepHours()
                 .divide(BigDecimal.valueOf(12), 4, RoundingMode.HALF_UP)
@@ -94,6 +99,8 @@ public class InsightService {
     }
 
     public InsightMonthlyResponse getMonthly(Long familyId, YearMonth month) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         YearMonth yearMonth = month != null ? month : YearMonth.now(ZoneOffset.UTC);
         LocalDate from = yearMonth.atDay(1);
         LocalDate to = yearMonth.atEndOfMonth();

@@ -57,6 +57,7 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
     private final UserHasRoleRepository userHasRoleRepository;
     private final UserAuditLogRepository userAuditLogRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AccountCredentialMailService accountCredentialMailService;
     private final org.keycloak.admin.client.Keycloak keycloakAdminClient;
 
     @org.springframework.beans.factory.annotation.Value("${app.keycloak.realm:micro-services}")
@@ -69,6 +70,7 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
     @Transactional
     public Long createUser(CreateUserRequest request) {
         validateUniqueForCreate(request.getUsername(), request.getEmail());
+        boolean requirePasswordChange = Boolean.TRUE.equals(request.getRequirePasswordChange());
 
         User user = User.builder()
                 .firstName(request.getFirstName().trim())
@@ -82,7 +84,7 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
                 .type(resolvePersistedType(request.getType()))
                 .status(UserStatus.ACTIVE)
                 .isTwoFactorEnabled(false)
-                .requirePasswordChange(false)
+                .requirePasswordChange(requirePasswordChange)
                 .build();
 
         User savedUser = userRepository.save(user);
@@ -91,6 +93,14 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
         createAuditLog("CREATE_USER", savedUser,
                 "Created user with username=" + savedUser.getUsername() + ", email=" + savedUser.getEmail()
                         + ", type=" + savedUser.getType() + ", status=" + savedUser.getStatus());
+        if (Boolean.TRUE.equals(request.getSendCredentialEmail())) {
+            accountCredentialMailService.sendCredentialMail(
+                    savedUser.getEmail(),
+                    savedUser.getFirstName() + " " + savedUser.getLastName(),
+                    savedUser.getUsername(),
+                    request.getPassword()
+            );
+        }
 
         return savedUser.getId();
     }
@@ -420,10 +430,11 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
 
     private void createUserInKeycloak(CreateUserRequest request) {
         try {
+            boolean requirePasswordChange = Boolean.TRUE.equals(request.getRequirePasswordChange());
             CredentialRepresentation credential = new CredentialRepresentation();
             credential.setType(CredentialRepresentation.PASSWORD);
             credential.setValue(request.getPassword());
-            credential.setTemporary(false);
+            credential.setTemporary(requirePasswordChange);
 
             UserRepresentation keycloakUser = new UserRepresentation();
             keycloakUser.setUsername(request.getUsername());
@@ -432,6 +443,9 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
             keycloakUser.setEmail(request.getEmail());
             keycloakUser.setEnabled(true);
             keycloakUser.setCredentials(Collections.singletonList(credential));
+            if (requirePasswordChange) {
+                keycloakUser.setRequiredActions(List.of("UPDATE_PASSWORD"));
+            }
 
             usersResource().create(keycloakUser);
         } catch (Exception ignored) {

@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "language": "Language",
     "userFallback": "User",
@@ -2379,7 +2379,14 @@
       "menu": {
         "portal": "System admin",
         "dashboard": "Admin dashboard",
-        "users": "User management"
+        "users": "User management",
+        "families": "Family management"
+      },
+      "brandTitle": "MOM CONTROL",
+      "brandSubtitle": "Ops Console",
+      "roleLabel": "System operator",
+      "header": {
+        "greeting": "Operator"
       }
     },
     "dashboard": {
@@ -2686,11 +2693,14 @@
         "usernamePlaceholder": "Enter username",
         "emailLabel": "Email",
         "emailPlaceholder": "Enter email",
-        "roleLabel": "Role"
+        "roleLabel": "Role",
+        "editRoleTitle": "Edit family member role"
       },
       "messages": {
         "createSuccess": "Family member created.",
-        "createFailed": "Unable to create family member."
+        "createFailed": "Unable to create family member.",
+        "updateSuccess": "Role updated successfully.",
+        "updateFailed": "Unable to update role."
       }
     },
     "insights": {

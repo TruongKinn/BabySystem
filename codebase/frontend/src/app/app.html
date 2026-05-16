@@ -1,4 +1,4 @@
-<div class="app-shell" *ngIf="showLayout; else authLayout">
+<div class="app-shell" [class.admin-shell]="isAdminRoute" *ngIf="showLayout; else authLayout">
 
   <!-- MetisMenu Sidebar -->
   <app-sidebar
@@ -15,10 +15,14 @@
 
 
   <!-- Main area -->
-  <div class="main-area">
+  <div class="main-area" [class.admin-main-area]="isAdminRoute">
     <!-- Header -->
-    <header class="app-header">
+    <header class="app-header" [class.admin-header]="isAdminRoute">
       <div class="header-left">
+        <div class="admin-heading" *ngIf="isAdminRoute">
+          <span class="admin-heading-label">CONTROL PLANE</span>
+          <strong class="admin-heading-title">{{ 'momApp.admin.menu.portal' | translate }}</strong>
+        </div>
       </div>
 
       <div class="header-right">
@@ -51,14 +55,24 @@
         </button>
 
         <!-- User info -->
-        <div class="header-user-info" nz-popover [nzPopoverContent]="logoutTemplate" nzPopoverPlacement="bottomRight" nzPopoverTrigger="hover">
+        <div
+          class="header-user-info"
+          [class.admin-user-info]="isAdminRoute"
+          nz-popover
+          [nzPopoverContent]="logoutTemplate"
+          nzPopoverPlacement="bottomRight"
+          nzPopoverTrigger="hover"
+        >
           <nz-avatar
             [nzSrc]="avatarUrl"
             [nzText]="userInitials"
             [nzSize]="32"
             [nzIcon]="'user'"
           ></nz-avatar>
-          <span class="header-username">{{ 'momApp.layout.hello' | translate }}, <strong>{{ username }}</strong></span>
+          <span class="header-username">
+            {{ (isAdminRoute ? 'momApp.admin.header.greeting' : 'momApp.layout.hello') | translate }},
+            <strong>{{ username }}</strong>
+          </span>
         </div>
       </div>
     </header>

@@ -1,0 +1,2 @@
+com.mom.common.context.UserContextInterceptor
+com.mom.common.context.WebMvcConfig

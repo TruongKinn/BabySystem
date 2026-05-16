@@ -1,5 +1,6 @@
 package com.mom.task.service;
 
+import com.mom.common.context.UserContext;
 import com.mom.task.controller.dto.CreateTaskRequest;
 import com.mom.task.controller.dto.TaskOverviewResponse;
 import com.mom.task.domain.TaskStatus;
@@ -7,6 +8,8 @@ import com.mom.task.event.TaskEventPublisher;
 import com.mom.task.repository.RecurringTaskRepository;
 import com.mom.task.repository.TaskCategoryRepository;
 import com.mom.task.repository.TaskRepository;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -14,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,6 +43,16 @@ class TaskServiceTest {
 
     @InjectMocks
     private TaskService taskService;
+
+    @BeforeEach
+    void setUpUserContext() {
+        UserContext.setFamilyIds(List.of(1L));
+    }
+
+    @AfterEach
+    void clearUserContext() {
+        UserContext.clear();
+    }
 
     @Test
     void getOverviewShouldReturnAggregatedMetrics() {

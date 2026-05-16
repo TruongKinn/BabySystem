@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './auth/auth.guard';
 import { AdminDashboardComponent } from './admin/dashboard/admin-dashboard.component';
+import { AdminFamiliesComponent } from './admin/families/admin-families.component';
 import { AdminUsersComponent } from './admin/users/admin-users.component';
 import { LoginComponent } from './auth/login/login.component';
 import { BabyComponent } from './baby/baby.component';
@@ -48,7 +49,8 @@ export const routes: Routes = [
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'users' },
       { path: 'dashboard', component: AdminDashboardComponent },
-      { path: 'users', component: AdminUsersComponent }
+      { path: 'users', component: AdminUsersComponent },
+      { path: 'families', component: AdminFamiliesComponent }
     ]
   },
 

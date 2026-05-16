@@ -535,13 +535,119 @@
 }
 
 /* ============================================================
+   ADMIN-ROLE SIDEBAR (default mode)
+   ============================================================ */
+:host:not(.user-mode) {
+  width: 236px;
+  background:
+    linear-gradient(180deg, rgba(248, 251, 255, 0.98) 0%, rgba(239, 246, 255, 0.95) 100%);
+  border-right: 1px solid rgba(14, 116, 144, 0.14);
+  box-shadow: 4px 0 24px rgba(15, 23, 42, 0.09);
+}
+
+:host:not(.user-mode) .brand-name,
+:host:not(.user-mode) .metis-parent,
+:host:not(.user-mode) .metis-child,
+:host:not(.user-mode) .user-name {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+}
+
+:host:not(.user-mode) .brand-logo {
+  background: linear-gradient(135deg, #0ea5e9, #2563eb, #0f766e);
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.34);
+}
+
+:host:not(.user-mode) .sidebar-brand:hover .brand-logo {
+  box-shadow: 0 12px 24px rgba(14, 165, 233, 0.4);
+}
+
+:host:not(.user-mode) .metis-parent {
+  color: #1e3a5f;
+}
+
+:host:not(.user-mode) .metis-parent:hover {
+  background: rgba(14, 116, 144, 0.08);
+  color: #0b4a6e;
+}
+
+:host:not(.user-mode) .metismenu li.mm-active>.metis-parent {
+  background: linear-gradient(120deg, rgba(14, 165, 233, 0.14), rgba(37, 99, 235, 0.12));
+  color: #0f3b71;
+}
+
+:host:not(.user-mode) .metis-parent:hover .menu-icon,
+:host:not(.user-mode) .metismenu li.mm-active>.metis-parent .menu-icon {
+  color: #0369a1;
+}
+
+:host:not(.user-mode) .metis-child {
+  color: #334155;
+}
+
+:host:not(.user-mode) .metis-child:hover {
+  background: rgba(14, 165, 233, 0.09);
+  color: #0c4a6e;
+}
+
+:host:not(.user-mode) .metis-child.active-link {
+  background: linear-gradient(130deg, rgba(14, 165, 233, 0.2), rgba(16, 185, 129, 0.16));
+  color: #0b5e4a;
+}
+
+:host:not(.user-mode) .metis-child.active-link::before {
+  background: #0b8f77;
+}
+
+:host:not(.user-mode) .user-avatar {
+  background: linear-gradient(135deg, #0ea5e9, #0f766e);
+}
+
+:host:not(.user-mode) .sidebar-user-footer:hover .user-avatar {
+  border-color: #0ea5e9;
+}
+
+:host:not(.user-mode) .logout-btn-wrap:hover {
+  background: rgba(14, 165, 233, 0.14);
+  color: #0369a1;
+}
+
+:host.dark-mode:not(.user-mode) {
+  background:
+    linear-gradient(180deg, rgba(2, 6, 23, 0.96) 0%, rgba(8, 22, 37, 0.95) 100%);
+  border-right-color: rgba(56, 189, 248, 0.24);
+}
+
+:host.dark-mode:not(.user-mode) .metis-parent {
+  color: #cbd5e1;
+}
+
+:host.dark-mode:not(.user-mode) .metis-parent:hover {
+  background: rgba(56, 189, 248, 0.16);
+  color: #7dd3fc;
+}
+
+:host.dark-mode:not(.user-mode) .metis-child {
+  color: #cbd5e1;
+}
+
+:host.dark-mode:not(.user-mode) .metis-child:hover {
+  background: rgba(56, 189, 248, 0.14);
+  color: #a5f3fc;
+}
+
+:host.dark-mode:not(.user-mode) .metis-child.active-link {
+  background: linear-gradient(130deg, rgba(14, 165, 233, 0.3), rgba(16, 185, 129, 0.24));
+  color: #99f6e4;
+}
+
+/* ============================================================
    USER-ROLE SIDEBAR OVERRIDES
    Applied via :host.user-mode class (set from sidebar component)
    ============================================================ */
 
 /* Active user nav link – warm gradient instead of admin blue */
 :host.user-mode .metis-child.active-link {
-  background: linear-gradient(135deg, rgba(249,115,22,.14) 0%, rgba(236,72,153,.09) 100%);
+  background: linear-gradient(135deg, rgba(249, 115, 22, .14) 0%, rgba(236, 72, 153, .09) 100%);
   color: #f97316;
   font-weight: 600;
 }
@@ -551,12 +657,12 @@
 }
 
 :host.user-mode .metis-parent:hover {
-  background: rgba(249,115,22,.07);
+  background: rgba(249, 115, 22, .07);
   color: #f97316;
 }
 
 :host.user-mode .metismenu li.mm-active>.metis-parent {
-  background: linear-gradient(135deg, rgba(249,115,22,.1) 0%, rgba(236,72,153,.07) 100%);
+  background: linear-gradient(135deg, rgba(249, 115, 22, .1) 0%, rgba(236, 72, 153, .07) 100%);
   color: #f97316;
 }
 
@@ -579,12 +685,12 @@
 
 /* Dark mode user sidebar */
 :host.dark-mode.user-mode .metis-child.active-link {
-  background: rgba(249,115,22,.14);
+  background: rgba(249, 115, 22, .14);
   color: #fb923c;
 }
 
 :host.dark-mode.user-mode .metis-parent:hover {
-  background: rgba(249,115,22,.09);
+  background: rgba(249, 115, 22, .09);
   color: #fb923c;
 }
 
@@ -594,6 +700,3 @@
     display: none !important;
   }
 }
-
-
-

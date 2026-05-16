@@ -5,69 +5,273 @@
       <p class="page-subtitle">{{ 'momApp.family.subtitle' | translate }}</p>
     </div>
     <div class="header-buttons">
-      <button nz-button nzType="primary" (click)="openCreateMemberModal()" class="btn-user-primary">
-        <span nz-icon nzType="user-add"></span>
-        {{ 'momApp.family.actions.create' | translate }}
-      </button>
       <span class="pill-chip">
         <span nz-icon nzType="team"></span>
         {{ members.length }} {{ 'momApp.family.totalLabel' | translate }}
       </span>
+      <button nz-button nzType="primary" (click)="openCreateMemberModal()" class="btn-user-primary">
+        <span nz-icon nzType="user-add"></span>
+        {{ 'momApp.family.actions.create' | translate }}
+      </button>
     </div>
   </div>
 
   <div class="family-grid animate-slide-up">
     <div class="family-card" *ngFor="let member of members">
-      <nz-avatar [nzSize]="48" [nzText]="member.name.charAt(0)" [style.background-color]="member.avatarColor"></nz-avatar>
-      <div class="family-info">
-        <div class="family-name">{{ member.name }}</div>
-        <div class="family-role">
-          <nz-tag [nzColor]="member.role === 'MOM' || member.role === 'DAD' ? 'magenta' : 'geekblue'" style="border-radius:12px; border:none; background:rgba(249,115,22,0.1); color:var(--user-primary)">
+      <!-- Role banner -->
+      <div class="card-role-banner" [style.background]="roleGradient(member.role)">
+        <span nz-icon [nzType]="roleIcon(member.role)" class="banner-icon"></span>
+      </div>
+
+      <!-- Avatar + Name -->
+      <div class="card-header">
+        <div class="avatar-wrap">
+          <img *ngIf="member.avatarUrl" [src]="member.avatarUrl" class="member-avatar" [alt]="member.displayName"
+               (error)="$any($event.target).style.display='none'" />
+          <nz-avatar
+            [nzSize]="56"
+            [nzText]="member.displayName.charAt(0).toUpperCase()"
+            [style.background]="roleGradient(member.role)"
+            style="font-size:22px;font-weight:700;"
+          ></nz-avatar>
+        </div>
+        <div class="card-identity">
+          <div class="member-name">{{ member.displayName }}</div>
+          <div class="member-username" *ngIf="member.username && member.username !== '-'">
+            <span nz-icon nzType="user" style="opacity:0.6"></span>
+            {{ member.username }}
+          </div>
+          <nz-tag
+            [nzColor]="member.role === 'MOM' || member.role === 'DAD' ? 'magenta' : 'geekblue'"
+            class="role-tag"
+          >
             {{ roleLabel(member.role) }}
           </nz-tag>
         </div>
+      </div>
+
+      <nz-divider style="margin: 12px 0;"></nz-divider>
+
+      <!-- Detail info rows -->
+      <div class="info-rows">
+        <div class="info-row" *ngIf="member.email && member.email !== '-'">
+          <span class="info-icon"><span nz-icon nzType="mail"></span></span>
+          <span class="info-text" [title]="member.email">{{ member.email }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-icon"><span nz-icon nzType="heart"></span></span>
+          <span class="info-text">{{ relationLabel(member.relation) }}</span>
+        </div>
+        <div class="info-row" *ngIf="member.parentUserId">
+          <span class="info-icon"><span nz-icon nzType="branches"></span></span>
+          <span class="info-text">{{ getParentName(member.parentUserId, members) }}</span>
+        </div>
+      </div>
+
+      <!-- Edit and Delete buttons -->
+      <div class="card-actions" style="display: flex; gap: 8px;">
+        <button nz-button nzType="default" nzSize="small" (click)="openEditMemberModal(member, members)" class="btn-edit-member" style="flex: 1;">
+          <span nz-icon nzType="edit"></span>
+          Chỉnh sửa
+        </button>
+        <button nz-button nzType="text" nzDanger nzSize="small" 
+                nz-popconfirm nzPopconfirmTitle="Bạn có chắc muốn xóa thành viên này?" 
+                (nzOnConfirm)="deleteMember(member.userId)">
+          <span nz-icon nzType="delete"></span>
+        </button>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ===== MODAL TẠO THÀNH VIÊN ===== -->
 <nz-modal
   [(nzVisible)]="isCreateMemberModalVisible"
-  [nzTitle]="'momApp.family.modal.createTitle' | translate"
+  [nzTitle]="createModalTitle"
+  nzClassName="family-modal"
+  [nzWidth]="680"
   [nzOkLoading]="isSubmitting"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeCreateMemberModal()"
   (nzOnOk)="submitCreateMember()"
 >
+  <ng-template #createModalTitle>
+    <div class="modal-title-wrap">
+      <span nz-icon nzType="user-add" class="modal-title-icon"></span>
+      <span>{{ 'momApp.family.modal.createTitle' | translate }}</span>
+    </div>
+  </ng-template>
   <ng-container *nzModalContent>
-    <form nz-form [formGroup]="createMemberForm" nzLayout="vertical">
-      <nz-form-item>
-        <nz-form-label nzRequired>{{ 'momApp.family.modal.displayNameLabel' | translate }}</nz-form-label>
-        <nz-form-control>
-          <input nz-input formControlName="displayName" [placeholder]="'momApp.family.modal.displayNamePlaceholder' | translate" />
-        </nz-form-control>
-      </nz-form-item>
+    <form nz-form [formGroup]="createMemberForm" nzLayout="vertical" class="family-form">
+      <div class="form-grid-2">
+        <nz-form-item>
+          <nz-form-label nzRequired>{{ 'momApp.family.modal.displayNameLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'Vui lòng nhập tên hiển thị'">
+            <nz-input-group [nzPrefix]="prefixName">
+              <input nz-input formControlName="displayName" [placeholder]="'momApp.family.modal.displayNamePlaceholder' | translate" />
+            </nz-input-group>
+            <ng-template #prefixName><span nz-icon nzType="idcard"></span></ng-template>
+          </nz-form-control>
+        </nz-form-item>
 
-      <nz-form-item>
-        <nz-form-label nzRequired>{{ 'momApp.family.modal.usernameLabel' | translate }}</nz-form-label>
-        <nz-form-control>
-          <input nz-input formControlName="username" [placeholder]="'momApp.family.modal.usernamePlaceholder' | translate" />
-        </nz-form-control>
-      </nz-form-item>
+        <nz-form-item>
+          <nz-form-label nzRequired>{{ 'momApp.family.modal.usernameLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'Vui lòng nhập tên đăng nhập'">
+            <nz-input-group [nzPrefix]="prefixUser">
+              <input nz-input formControlName="username" [placeholder]="'momApp.family.modal.usernamePlaceholder' | translate" />
+            </nz-input-group>
+            <ng-template #prefixUser><span nz-icon nzType="user"></span></ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
 
       <nz-form-item>
         <nz-form-label nzRequired>{{ 'momApp.family.modal.emailLabel' | translate }}</nz-form-label>
-        <nz-form-control>
-          <input nz-input type="email" formControlName="email" [placeholder]="'momApp.family.modal.emailPlaceholder' | translate" />
+        <nz-form-control [nzErrorTip]="'Vui lòng nhập email hợp lệ'">
+          <nz-input-group [nzPrefix]="prefixEmail">
+            <input nz-input type="email" formControlName="email" [placeholder]="'momApp.family.modal.emailPlaceholder' | translate" />
+          </nz-input-group>
+          <ng-template #prefixEmail><span nz-icon nzType="mail"></span></ng-template>
         </nz-form-control>
       </nz-form-item>
 
+      <div class="form-grid-2">
+        <nz-form-item>
+          <nz-form-label nzRequired>{{ 'momApp.family.modal.roleLabel' | translate }}</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="role" [nzPlaceHolder]="'momApp.family.modal.rolePlaceholder' | translate">
+              <nz-option *ngFor="let role of roles" [nzValue]="role" [nzLabel]="roleLabel(role)"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label nzRequired>{{ 'momApp.family.modal.relationLabel' | translate }}</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="relation" nzShowSearch [nzPlaceHolder]="'momApp.family.modal.relationPlaceholder' | translate">
+              <nz-option *ngFor="let relation of relations" [nzValue]="relation" [nzLabel]="relationLabel(relation)"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
       <nz-form-item>
-        <nz-form-label nzRequired>{{ 'momApp.family.modal.roleLabel' | translate }}</nz-form-label>
+        <nz-form-label>{{ 'momApp.family.modal.parentLabel' | translate }}</nz-form-label>
         <nz-form-control>
-          <nz-select formControlName="role">
-            <nz-option *ngFor="let role of roles" [nzValue]="role" [nzLabel]="roleLabel(role)"></nz-option>
+          <nz-select formControlName="parentUserId" nzAllowClear [nzPlaceHolder]="'momApp.family.modal.parentPlaceholder' | translate">
+            <ng-container *ngIf="members$ | async as allMembers">
+              <nz-option *ngFor="let member of allMembers" [nzValue]="+member.userId" [nzLabel]="member.displayName"></nz-option>
+            </ng-container>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<!-- ===== MODAL CHỈNH SỬA THÀNH VIÊN ===== -->
+<nz-modal
+  [(nzVisible)]="isEditMemberModalVisible"
+  [nzTitle]="editModalTitle"
+  nzClassName="family-modal"
+  [nzWidth]="560"
+  [nzOkLoading]="isSubmitting"
+  [nzOkText]="'commonActions.save' | translate"
+  [nzCancelText]="'commonActions.cancel' | translate"
+  (nzOnCancel)="closeEditMemberModal()"
+  (nzOnOk)="submitUpdateMember()"
+>
+  <ng-template #editModalTitle>
+    <div class="modal-title-wrap">
+      <span nz-icon nzType="edit" class="modal-title-icon modal-title-icon--edit"></span>
+      <span>{{ 'momApp.family.modal.editTitle' | translate }}</span>
+    </div>
+  </ng-template>
+  <ng-container *nzModalContent>
+    <!-- Member identity preview -->
+    <div class="edit-member-preview" *ngIf="selectedMember">
+      <div class="preview-avatar" [style.background]="roleGradient(selectedMember.role)">
+        {{ selectedMember.displayName.charAt(0).toUpperCase() }}
+      </div>
+      <div class="preview-info">
+        <div class="preview-name">{{ selectedMember.displayName }}</div>
+        <div class="preview-email" *ngIf="selectedMember.email && selectedMember.email !== '-'">
+          <span nz-icon nzType="mail"></span>
+          {{ selectedMember.email }}
+        </div>
+        <div class="preview-username" *ngIf="selectedMember.username && selectedMember.username !== '-'">
+          <span nz-icon nzType="user"></span>
+          {{ selectedMember.username }}
+        </div>
+      </div>
+    </div>
+
+    <nz-divider style="margin: 16px 0 20px;"></nz-divider>
+
+    <form nz-form [formGroup]="editMemberForm" nzLayout="vertical" class="family-form">
+      <div class="form-grid-2">
+        <nz-form-item>
+          <nz-form-label nzRequired>{{ 'momApp.family.modal.displayNameLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'Vui lòng nhập tên hiển thị'">
+            <nz-input-group [nzPrefix]="prefixNameEdit">
+              <input nz-input formControlName="displayName" [placeholder]="'momApp.family.modal.displayNamePlaceholder' | translate" />
+            </nz-input-group>
+            <ng-template #prefixNameEdit><span nz-icon nzType="idcard"></span></ng-template>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label nzRequired>{{ 'momApp.family.modal.usernameLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'Vui lòng nhập tên đăng nhập'">
+            <nz-input-group [nzPrefix]="prefixUserEdit">
+              <input nz-input formControlName="username" [placeholder]="'momApp.family.modal.usernamePlaceholder' | translate" />
+            </nz-input-group>
+            <ng-template #prefixUserEdit><span nz-icon nzType="user"></span></ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.family.modal.emailLabel' | translate }}</nz-form-label>
+        <nz-form-control [nzErrorTip]="'Vui lòng nhập email hợp lệ'">
+          <nz-input-group [nzPrefix]="prefixEmailEdit">
+            <input nz-input type="email" formControlName="email" [placeholder]="'momApp.family.modal.emailPlaceholder' | translate" />
+          </nz-input-group>
+          <ng-template #prefixEmailEdit><span nz-icon nzType="mail"></span></ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <div class="form-grid-2">
+        <nz-form-item>
+          <nz-form-label nzRequired>{{ 'momApp.family.modal.roleLabel' | translate }}</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="role" [nzPlaceHolder]="'momApp.family.modal.rolePlaceholder' | translate">
+              <nz-option *ngFor="let role of roles" [nzValue]="role" [nzLabel]="roleLabel(role)"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label nzRequired>{{ 'momApp.family.modal.relationLabel' | translate }}</nz-form-label>
+          <nz-form-control>
+            <nz-select formControlName="relation" nzShowSearch [nzPlaceHolder]="'momApp.family.modal.relationPlaceholder' | translate">
+              <nz-option *ngFor="let relation of relations" [nzValue]="relation" [nzLabel]="relationLabel(relation)"></nz-option>
+            </nz-select>
+          </nz-form-control>
+        </nz-form-item>
+      </div>
+
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.family.modal.parentLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="parentUserId" nzAllowClear [nzPlaceHolder]="'momApp.family.modal.parentPlaceholder' | translate">
+            <nz-option
+              *ngFor="let member of allMembers"
+              [nzValue]="+member.userId"
+              [nzLabel]="member.displayName"
+              [nzDisabled]="selectedMember?.userId === member.userId"
+            ></nz-option>
           </nz-select>
         </nz-form-control>
       </nz-form-item>

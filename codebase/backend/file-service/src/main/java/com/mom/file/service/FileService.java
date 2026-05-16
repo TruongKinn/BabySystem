@@ -5,6 +5,7 @@ import com.mom.file.controller.dto.FileDownloadUrlResponse;
 import com.mom.file.controller.dto.FileMetadataResponse;
 import com.mom.file.domain.FileMetadataEntity;
 import com.mom.file.repository.FileMetadataRepository;
+import com.mom.common.security.DataIsolationUtil;
 import io.minio.BucketExistsArgs;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MakeBucketArgs;
@@ -38,6 +39,7 @@ public class FileService {
         if (familyId == null) {
             throw new IllegalArgumentException("familyId is required");
         }
+        DataIsolationUtil.validateFamilyAccess(familyId);
 
         String bucketName = normalizeBucket(bucket);
         String objectKey = buildObjectKey(file.getOriginalFilename());
@@ -76,6 +78,7 @@ public class FileService {
         if (familyId == null) {
             throw new IllegalArgumentException("familyId is required");
         }
+        DataIsolationUtil.validateFamilyAccess(familyId);
 
         String bucketName = normalizeBucketOptional(bucket);
         String normalizedTag = trimToNull(tag);
@@ -147,8 +150,10 @@ public class FileService {
     }
 
     private FileMetadataEntity getEntity(Long fileId) {
-        return fileMetadataRepository.findByIdAndDeletedFalse(fileId)
+        FileMetadataEntity entity = fileMetadataRepository.findByIdAndDeletedFalse(fileId)
                 .orElseThrow(() -> new ResourceNotFoundException("File metadata not found"));
+        DataIsolationUtil.validateFamilyAccess(entity.getFamilyId());
+        return entity;
     }
 
     private FileMetadataResponse toResponse(FileMetadataEntity entity) {

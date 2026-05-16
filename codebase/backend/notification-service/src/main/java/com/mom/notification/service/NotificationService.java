@@ -10,6 +10,7 @@ import com.mom.notification.domain.NotificationStatus;
 import com.mom.notification.domain.NotificationType;
 import com.mom.notification.event.NotificationRequestedPayload;
 import com.mom.notification.repository.NotificationRepository;
+import com.mom.common.security.DataIsolationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -28,6 +29,8 @@ public class NotificationService {
 
     @Transactional
     public NotificationResponse create(CreateNotificationRequest request) {
+        DataIsolationUtil.validateFamilyAccess(request.familyId());
+
         NotificationEntity entity = new NotificationEntity();
         entity.setFamilyId(request.familyId());
         entity.setUserId(request.userId());
@@ -64,6 +67,8 @@ public class NotificationService {
     }
 
     public List<NotificationResponse> getNotifications(Long familyId, Long userId, NotificationStatus status) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         List<NotificationEntity> entities = userId == null
                 ? notificationRepository.findByFamilyIdOrderByCreatedAtDesc(familyId)
                 : notificationRepository.findByFamilyIdAndUserIdOrderByCreatedAtDesc(familyId, userId);
@@ -84,6 +89,8 @@ public class NotificationService {
     }
 
     public NotificationUnreadCountResponse getUnreadCount(Long familyId, Long userId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
         long count = userId == null
                 ? notificationRepository.countByFamilyIdAndReadAtIsNull(familyId)
                 : notificationRepository.countByFamilyIdAndUserIdAndReadAtIsNull(familyId, userId);
@@ -110,8 +117,10 @@ public class NotificationService {
     }
 
     private NotificationEntity getEntity(Long notificationId) {
-        return notificationRepository.findById(notificationId)
+        NotificationEntity entity = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new ResourceNotFoundException("Notification not found"));
+        DataIsolationUtil.validateFamilyAccess(entity.getFamilyId());
+        return entity;
     }
 
     private NotificationResponse toResponse(NotificationEntity entity) {

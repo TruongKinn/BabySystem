@@ -14,6 +14,7 @@ import com.mom.meal.event.MealEventPublisher;
 import com.mom.meal.event.MealPlanCreatedPayload;
 import com.mom.meal.repository.MealPlanRepository;
 import com.mom.meal.repository.MealRepository;
+import com.mom.common.security.DataIsolationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -40,6 +41,8 @@ public class MealService {
     @Transactional
     @CacheEvict(value = "meal-plan-today", allEntries = true)
     public MealResponse createMeal(CreateMealRequest request) {
+        DataIsolationUtil.validateFamilyAccess(request.familyId());
+        
         if (mealRepository.existsByFamilyIdAndNameIgnoreCase(request.familyId(), request.name().trim())) {
             throw new IllegalArgumentException("Meal name already exists in this family");
         }
@@ -53,6 +56,8 @@ public class MealService {
     }
 
     public List<MealResponse> getMeals(Long familyId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        
         return mealRepository.findByFamilyIdOrderByNameAsc(familyId).stream()
                 .map(this::toMealResponse)
                 .toList();
@@ -61,6 +66,9 @@ public class MealService {
     public MealResponse getMeal(Long mealId) {
         MealEntity meal = mealRepository.findById(mealId)
                 .orElseThrow(() -> new ResourceNotFoundException("Meal not found"));
+        
+        DataIsolationUtil.validateFamilyAccess(meal.getFamilyId());
+        
         return toMealResponse(meal);
     }
 
@@ -69,6 +77,8 @@ public class MealService {
     public MealResponse updateMeal(Long mealId, UpdateMealRequest request) {
         MealEntity meal = mealRepository.findById(mealId)
                 .orElseThrow(() -> new ResourceNotFoundException("Meal not found"));
+
+        DataIsolationUtil.validateFamilyAccess(meal.getFamilyId());
 
         if (request.name() != null) {
             String normalizedName = request.name().trim();
@@ -96,6 +106,9 @@ public class MealService {
     public void deleteMeal(Long mealId) {
         MealEntity meal = mealRepository.findById(mealId)
                 .orElseThrow(() -> new ResourceNotFoundException("Meal not found"));
+        
+        DataIsolationUtil.validateFamilyAccess(meal.getFamilyId());
+        
         if (mealPlanRepository.existsByMealId(mealId)) {
             throw new IllegalArgumentException("Cannot delete meal because it is used in meal plans");
         }
@@ -105,6 +118,8 @@ public class MealService {
     @Transactional
     @CacheEvict(value = "meal-plan-today", allEntries = true)
     public MealPlanResponse createMealPlan(CreateMealPlanRequest request) {
+        DataIsolationUtil.validateFamilyAccess(request.familyId());
+        
         MealEntity meal = mealRepository.findById(request.mealId())
                 .orElseThrow(() -> new ResourceNotFoundException("Meal not found"));
         if (!meal.getFamilyId().equals(request.familyId())) {
@@ -137,6 +152,8 @@ public class MealService {
     }
 
     public List<MealPlanResponse> getMealPlans(Long familyId, LocalDate from, LocalDate to) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        
         List<MealPlanEntity> plans;
         if (from == null && to == null) {
             plans = mealPlanRepository.findByFamilyIdOrderByPlanDateDescCreatedAtDesc(familyId);
@@ -160,6 +177,8 @@ public class MealService {
 
     @Cacheable(value = "meal-plan-today", key = "#familyId")
     public List<MealPlanResponse> getTodayPlans(Long familyId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        
         LocalDate today = LocalDate.now(ZoneOffset.UTC);
         List<MealPlanEntity> plans = mealPlanRepository.findByFamilyIdAndPlanDateOrderByCreatedAtDesc(familyId, today);
         Map<Long, String> mealNames = loadMealNames(plans);
@@ -169,6 +188,8 @@ public class MealService {
     }
 
     public WeeklyMealPlanResponse getWeeklyPlans(Long familyId, LocalDate date) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        
         LocalDate referenceDate = date != null ? date : LocalDate.now(ZoneOffset.UTC);
         LocalDate weekStart = referenceDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
         LocalDate weekEnd = weekStart.plusDays(6);
@@ -189,6 +210,8 @@ public class MealService {
     public MealPlanResponse updateMealPlan(Long mealPlanId, UpdateMealPlanRequest request) {
         MealPlanEntity plan = mealPlanRepository.findById(mealPlanId)
                 .orElseThrow(() -> new ResourceNotFoundException("Meal plan not found"));
+
+        DataIsolationUtil.validateFamilyAccess(plan.getFamilyId());
 
         Long targetMealId = request.mealId() != null ? request.mealId() : plan.getMealId();
         LocalDate targetPlanDate = request.planDate() != null ? request.planDate() : plan.getPlanDate();
@@ -228,6 +251,9 @@ public class MealService {
     public void deleteMealPlan(Long mealPlanId) {
         MealPlanEntity plan = mealPlanRepository.findById(mealPlanId)
                 .orElseThrow(() -> new ResourceNotFoundException("Meal plan not found"));
+        
+        DataIsolationUtil.validateFamilyAccess(plan.getFamilyId());
+        
         mealPlanRepository.delete(plan);
     }
 

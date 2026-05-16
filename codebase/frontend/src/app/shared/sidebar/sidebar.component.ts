@@ -18,8 +18,6 @@ import { EventEmitter, Output } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
-declare const MetisMenu: any;
-
 export interface MenuItem {
   labelKey: string;
   icon: string;
@@ -49,8 +47,8 @@ const DEFAULT_MENU_ITEMS: MenuItem[] = [
   styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent implements OnInit, OnChanges, AfterViewInit, OnDestroy {
-  /** Keep sidebar expanded to avoid accidental close while navigating */
-  isCollapsed = false;
+  /** Keep sidebar collapsed by default, expand on hover */
+  isCollapsed = true;
 
   @Input() isDarkMode = false;
   @Input() username = '';
@@ -83,13 +81,15 @@ export class SidebarComponent implements OnInit, OnChanges, AfterViewInit, OnDes
   }
 
   isBrowser: boolean;
-  private metisInstance: any = null;
+  private metisInstance: { dispose?: () => void } | null = null;
+  private metisModulePromise?: Promise<typeof import('metismenujs')>;
+  private metisInitVersion = 0;
 
   constructor(@Inject(PLATFORM_ID) private readonly platformId: object) {
     this.isBrowser = isPlatformBrowser(this.platformId);
   }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (!this.isBrowser) {
@@ -97,40 +97,55 @@ export class SidebarComponent implements OnInit, OnChanges, AfterViewInit, OnDes
     }
 
     if (changes['menuItems'] && this.metisMenuEl?.nativeElement) {
-      queueMicrotask(() => this.initMetisMenu());
+      queueMicrotask(() => {
+        void this.initMetisMenu();
+      });
     }
   }
 
   ngAfterViewInit(): void {
     if (this.isBrowser) {
-      this.initMetisMenu();
+      void this.initMetisMenu();
     }
   }
 
-  private initMetisMenu(): void {
-    if (!this.metisMenuEl?.nativeElement) return;
-
-    // Destroy old instance
-    if (this.metisInstance) {
-      try {
-        this.metisInstance.dispose();
-      } catch { }
+  private async initMetisMenu(): Promise<void> {
+    const menuElement = this.metisMenuEl?.nativeElement;
+    if (!menuElement) {
+      return;
     }
 
-    import('metismenujs').then(({ MetisMenu }) => {
-      this.metisInstance = new MetisMenu(this.metisMenuEl.nativeElement, {
-        triggerElement: '.has-submenu > a',
-        toggle: true,
-      });
+    const currentVersion = ++this.metisInitVersion;
+    this.disposeMetisMenu();
+
+    this.metisModulePromise ??= import('metismenujs');
+    const { MetisMenu } = await this.metisModulePromise;
+
+    // Ignore stale async init calls to avoid duplicate listeners.
+    if (currentVersion !== this.metisInitVersion || !this.metisMenuEl?.nativeElement) {
+      return;
+    }
+
+    this.metisInstance = new MetisMenu(menuElement, {
+      triggerElement: '.has-submenu > a',
+      toggle: true,
     });
   }
 
   ngOnDestroy(): void {
-    if (this.metisInstance) {
-      try {
-        this.metisInstance.dispose();
-      } catch { }
+    this.metisInitVersion++;
+    this.disposeMetisMenu();
+  }
+
+  private disposeMetisMenu(): void {
+    if (!this.metisInstance) {
+      return;
     }
+
+    try {
+      this.metisInstance.dispose?.();
+    } catch { }
+    this.metisInstance = null;
   }
 
   /** Track-by để tránh re-render không cần thiết */

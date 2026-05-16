@@ -39,4 +39,8 @@ public class CreateUserRequest {
 
     @NotNull
     private UserType type;
+
+    private Boolean sendCredentialEmail;
+
+    private Boolean requirePasswordChange;
 }

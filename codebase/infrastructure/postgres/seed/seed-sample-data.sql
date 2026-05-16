@@ -66,20 +66,20 @@ ON CONFLICT (id) DO UPDATE SET
     name = EXCLUDED.name,
     created_by_user_id = EXCLUDED.created_by_user_id;
 
-INSERT INTO family_members (id, family_id, user_id, role, joined_at)
-SELECT 9001, 9001, 9001, 'MOM', now() - interval '35 days'
+INSERT INTO family_members (id, family_id, user_id, role, relation, parent_user_id, joined_at)
+SELECT 9001, 9001, 9001, 'MOM', 'ME', 9003, now() - interval '35 days'
 WHERE NOT EXISTS (SELECT 1 FROM family_members WHERE family_id = 9001 AND user_id = 9001);
 
-INSERT INTO family_members (id, family_id, user_id, role, joined_at)
-SELECT 9002, 9001, 9002, 'DAD', now() - interval '35 days'
+INSERT INTO family_members (id, family_id, user_id, role, relation, parent_user_id, joined_at)
+SELECT 9002, 9001, 9002, 'DAD', 'BO', null, now() - interval '35 days'
 WHERE NOT EXISTS (SELECT 1 FROM family_members WHERE family_id = 9001 AND user_id = 9002);
 
-INSERT INTO family_members (id, family_id, user_id, role, joined_at)
-SELECT 9003, 9001, 9003, 'GRANDMA', now() - interval '34 days'
+INSERT INTO family_members (id, family_id, user_id, role, relation, parent_user_id, joined_at)
+SELECT 9003, 9001, 9003, 'GRANDMA', 'BA_NOI', null, now() - interval '34 days'
 WHERE NOT EXISTS (SELECT 1 FROM family_members WHERE family_id = 9001 AND user_id = 9003);
 
-INSERT INTO family_members (id, family_id, user_id, role, joined_at)
-SELECT 9004, 9001, 9004, 'CAREGIVER', now() - interval '20 days'
+INSERT INTO family_members (id, family_id, user_id, role, relation, parent_user_id, joined_at)
+SELECT 9004, 9001, 9004, 'CAREGIVER', 'BAO_MAU', 9001, now() - interval '20 days'
 WHERE NOT EXISTS (SELECT 1 FROM family_members WHERE family_id = 9001 AND user_id = 9004);
 
 SELECT setval(pg_get_serial_sequence('users', 'id'), GREATEST((SELECT COALESCE(MAX(id), 1) FROM users), 1), true);

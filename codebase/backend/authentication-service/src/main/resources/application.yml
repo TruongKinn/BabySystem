@@ -63,6 +63,11 @@ keycloak:
     connect-timeout-ms: ${KEYCLOAK_CONNECT_TIMEOUT_MS:3000}
     response-timeout: ${KEYCLOAK_RESPONSE_TIMEOUT:5s}
 
+app:
+  mail:
+    enabled: ${APP_MAIL_ENABLED:true}
+    from: ${APP_MAIL_FROM:no-reply@babysystem.local}
+
 resilience4j:
   circuitbreaker:
     instances:

@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, map, of, switchMap } from 'rxjs';
+import { Observable, catchError, forkJoin, map, of, switchMap, throwError } from 'rxjs';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 
 interface ApiEnvelope<T> {
@@ -48,6 +48,21 @@ interface UserApi {
   displayName: string;
 }
 
+interface FamilyMemberApi {
+  userId: number;
+  displayName: string;
+  role: FamilyRole;
+  relation: FamilyRelation;
+  parentUserId: number | null;
+}
+
+interface FamilyApi {
+  id: number;
+  name: string;
+  createdByUserId: number;
+  members: FamilyMemberApi[];
+}
+
 interface ExpenseApi {
   id: number;
   familyId: number;
@@ -77,10 +92,51 @@ export interface FileMetadata {
   createdAt: string;
 }
 
+export interface ProfileInfo {
+  userId: number | null;
+  displayName: string;
+  username: string;
+  email: string;
+  avatarUrl: string | null;
+}
+
+export interface FamilyMemberProfile {
+  userId: number;
+  displayName: string;
+  username: string;
+  email: string;
+  role: FamilyRole;
+  relation: FamilyRelation;
+  parentUserId: number | null;
+  avatarUrl: string | null;
+}
+
 export type MealType = 'BREAKFAST' | 'LUNCH' | 'DINNER' | 'SNACK';
 export type BabyGender = 'MALE' | 'FEMALE' | 'OTHER';
 export type BabyLogType = 'SLEEP' | 'FEEDING' | 'DIAPER';
 export type FamilyRole = 'MOM' | 'DAD' | 'GRANDMA' | 'CAREGIVER' | 'ADMIN';
+export type FamilyRelation =
+  | 'ONG_NOI'
+  | 'BA_NOI'
+  | 'ONG_NGOAI'
+  | 'BA_NGOAI'
+  | 'BO'
+  | 'ME'
+  | 'ANH_TRAI'
+  | 'CHI_GAI'
+  | 'EM_TRAI'
+  | 'EM_GAI'
+  | 'CON_TRAI'
+  | 'CON_GAI'
+  | 'CHU'
+  | 'BAC'
+  | 'CO'
+  | 'DI'
+  | 'CAU'
+  | 'MO'
+  | 'THIM'
+  | 'BAO_MAU'
+  | 'THANH_VIEN_KHAC';
 export type TaskStatus = 'PENDING' | 'IN_PROGRESS' | 'DONE';
 
 @Injectable({
@@ -93,25 +149,11 @@ export class SuperAppCommandService {
   constructor(private readonly http: HttpClient) {}
 
   getFamilyId(): number {
-    if (typeof window === 'undefined') {
-      return API_CONFIG.DEFAULT_FAMILY_ID;
-    }
-
-    const raw = window.localStorage.getItem('mom_family_id') ?? window.localStorage.getItem('atg_family_id');
-    if (!raw) {
-      return API_CONFIG.DEFAULT_FAMILY_ID;
-    }
-
-    const parsed = Number(raw);
-    return Number.isFinite(parsed) && parsed > 0 ? parsed : API_CONFIG.DEFAULT_FAMILY_ID;
+    return this.getStoredFamilyId() ?? API_CONFIG.DEFAULT_FAMILY_ID;
   }
 
   getUserId(): number | null {
-    if (typeof window === 'undefined') {
-      return null;
-    }
-
-    const raw = window.localStorage.getItem('atg_user_id');
+    const raw = this.getStored('atg_user_id');
     if (!raw) {
       return null;
     }
@@ -120,44 +162,51 @@ export class SuperAppCommandService {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
   }
 
-  getProfile(): Observable<{
-    userId: number | null;
-    displayName: string;
-    username: string;
-    email: string;
-    avatarUrl: string | null;
-  }> {
-    const userId = this.getUserId();
+  getProfile(): Observable<ProfileInfo> {
     const fallbackName = this.getStored('atg_username') ?? 'Family User';
     const fallbackAvatar = this.resolveAvatarUrl(this.getStored('atg_avatar_url'));
+    const fallbackUserId = this.getUserId();
 
-    if (!userId) {
-      return of({
-        userId: null,
-        displayName: fallbackName,
-        username: fallbackName,
-        email: this.getStored('atg_email') ?? '-',
-        avatarUrl: fallbackAvatar
-      });
-    }
+    return this.resolveCurrentAccountUser().pipe(
+      map((user) => {
+        if (!user) {
+          return this.buildProfileFallback(fallbackUserId, fallbackName, fallbackAvatar);
+        }
 
-    return this.get<UserApi>(`/account/users/${userId}`).pipe(
-      map((user) => ({
-        userId: user.id,
-        displayName: user.displayName,
-        username: user.username,
-        email: user.email,
-        avatarUrl: fallbackAvatar ?? this.buildAvatarUrl(user.id)
-      })),
-      catchError(() =>
-        of({
-          userId,
-          displayName: fallbackName,
-          username: fallbackName,
-          email: this.getStored('atg_email') ?? '-',
-          avatarUrl: fallbackAvatar ?? this.buildAvatarUrl(userId)
+        return {
+          userId: user.id,
+          displayName: user.displayName,
+          username: user.username,
+          email: user.email,
+          avatarUrl: fallbackAvatar ?? this.buildAvatarUrl(user.id)
+        };
+      }),
+      catchError(() => of(this.buildProfileFallback(fallbackUserId, fallbackName, fallbackAvatar)))
+    );
+  }
+
+  getFamilyMembersDetailed(): Observable<FamilyMemberProfile[]> {
+    return this.resolveCurrentAccountUser().pipe(
+      switchMap((user) => {
+        if (!user) {
+          return of([]);
+        }
+
+        return this.resolveFamilyIdForUser(user.id).pipe(
+          switchMap((familyId) => this.get<FamilyApi>(`/account/families/${familyId}`)),
+          switchMap((family) => this.enrichFamilyMembers(family.members ?? []))
+        );
+      }),
+      map((members) =>
+        [...members].sort((left, right) => {
+          const byRole = this.familyRoleOrder(left.role) - this.familyRoleOrder(right.role);
+          if (byRole !== 0) {
+            return byRole;
+          }
+          return left.displayName.localeCompare(right.displayName);
         })
-      )
+      ),
+      catchError(() => of([]))
     );
   }
 
@@ -342,22 +391,51 @@ export class SuperAppCommandService {
     email: string;
     displayName: string;
     role: FamilyRole;
+    relation?: FamilyRelation;
+    parentUserId?: number | null;
   }): Observable<void> {
     const familyId = this.getFamilyId();
 
-    return this.post<UserApi>('/account/users', {
+    return this.post(`/account/families/${familyId}/members/invite`, {
       username: input.username,
       email: input.email,
-      displayName: input.displayName
-    }).pipe(
-      switchMap((user) =>
-        this.post(`/account/families/${familyId}/members`, {
-          userId: user.id,
-          role: input.role
-        })
-      ),
+      displayName: input.displayName,
+      role: input.role,
+      relation: input.relation,
+      parentUserId: input.parentUserId ?? null
+    }).pipe(map(() => undefined));
+  }
+
+  updateFamilyMemberRole(userId: number, role: FamilyRole): Observable<void> {
+    const familyId = this.getFamilyId();
+    const url = `/account/families/${familyId}/members/${userId}/role?role=${role}`;
+    return this.put<void>(url, {}).pipe(map(() => undefined));
+  }
+
+  removeFamilyMember(userId: number): Observable<void> {
+    const familyId = this.getFamilyId();
+    return this.http.delete<ApiEnvelope<unknown>>(`${this.apiBase}/account/families/${familyId}/members/${userId}`).pipe(
       map(() => undefined)
     );
+  }
+
+  updateFamilyMember(userId: number, input: {
+    displayName: string;
+    username: string;
+    email: string;
+    role: FamilyRole;
+    relation: FamilyRelation;
+    parentUserId?: number | null;
+  }): Observable<void> {
+    const familyId = this.getFamilyId();
+    return this.put<void>(`/account/families/${familyId}/members/${userId}`, {
+      displayName: input.displayName,
+      username: input.username,
+      email: input.email,
+      role: input.role,
+      relation: input.relation,
+      parentUserId: input.parentUserId ?? null
+    }).pipe(map(() => undefined));
   }
 
   getNotificationSettings(): NotificationSettings {
@@ -528,6 +606,142 @@ export class SuperAppCommandService {
     return this.get<MealApi[]>('/meal/meals', params);
   }
 
+  private enrichFamilyMembers(members: FamilyMemberApi[]): Observable<FamilyMemberProfile[]> {
+    if (members.length === 0) {
+      return of([]);
+    }
+
+    return forkJoin(
+      members.map((member) =>
+        this.get<UserApi>(`/account/users/${member.userId}`).pipe(
+          map((user) => {
+            const relation = member.relation ?? this.defaultRelationByRole(member.role);
+            return {
+              userId: user.id,
+              displayName: user.displayName?.trim() || member.displayName?.trim() || `#${member.userId}`,
+              username: user.username?.trim() || '-',
+              email: user.email?.trim() || '-',
+              role: member.role,
+              relation,
+              parentUserId: member.parentUserId ?? null,
+              avatarUrl: this.buildAvatarUrl(member.userId)
+            };
+          }),
+          catchError(() => {
+            const relation = member.relation ?? this.defaultRelationByRole(member.role);
+            return of({
+              userId: member.userId,
+              displayName: member.displayName?.trim() || `#${member.userId}`,
+              username: '-',
+              email: '-',
+              role: member.role,
+              relation,
+              parentUserId: member.parentUserId ?? null,
+              avatarUrl: this.buildAvatarUrl(member.userId)
+            });
+          })
+        )
+      )
+    );
+  }
+
+  private resolveCurrentAccountUser(): Observable<UserApi | null> {
+    const userId = this.getUserId();
+    if (userId) {
+      return this.get<UserApi>(`/account/users/${userId}`).pipe(
+        map((user) => {
+          this.persistResolvedUser(user);
+          return user;
+        }),
+        catchError(() => this.lookupAccountUserByIdentity())
+      );
+    }
+
+    return this.lookupAccountUserByIdentity();
+  }
+
+  private lookupAccountUserByIdentity(): Observable<UserApi | null> {
+    const username = this.getStored('atg_username')?.trim();
+    const email = this.getStored('atg_email')?.trim();
+    if (!username && !email) {
+      return of(null);
+    }
+
+    let params = new HttpParams();
+    if (username) {
+      params = params.set('username', username);
+    }
+    if (email) {
+      params = params.set('email', email);
+    }
+
+    return this.get<UserApi>('/account/users/lookup', params).pipe(
+      map((user) => {
+        this.persistResolvedUser(user);
+        return user;
+      }),
+      catchError(() => of(null))
+    );
+  }
+
+  private resolveFamilyIdForUser(userId: number): Observable<number> {
+    const storedFamilyId = this.getStoredFamilyId();
+
+    return this.get<FamilyApi[]>(`/account/users/${userId}/families`).pipe(
+      map((families) => {
+        const fallback = storedFamilyId ?? API_CONFIG.DEFAULT_FAMILY_ID;
+        if (!families || families.length === 0) {
+          return fallback;
+        }
+
+        const selected = storedFamilyId && families.some((family) => family.id === storedFamilyId)
+          ? storedFamilyId
+          : families[0].id;
+        this.persistFamilyId(selected);
+        return selected;
+      }),
+      catchError(() => of(storedFamilyId ?? API_CONFIG.DEFAULT_FAMILY_ID))
+    );
+  }
+
+  private getStoredFamilyId(): number | null {
+    const raw = this.getStored('mom_family_id') ?? this.getStored('atg_family_id');
+    if (!raw) {
+      return null;
+    }
+    const parsed = Number(raw);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+  }
+
+  private persistFamilyId(familyId: number): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const value = String(familyId);
+    window.localStorage.setItem('mom_family_id', value);
+    window.localStorage.setItem('atg_family_id', value);
+    window.sessionStorage.setItem('mom_family_id', value);
+    window.sessionStorage.setItem('atg_family_id', value);
+  }
+
+  private persistResolvedUser(user: UserApi): void {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const useSession = !!window.sessionStorage.getItem('atg_access_token') && !window.localStorage.getItem('atg_access_token');
+    const targetStorage = useSession ? window.sessionStorage : window.localStorage;
+    const mirrorStorage = useSession ? window.localStorage : window.sessionStorage;
+
+    targetStorage.setItem('atg_user_id', String(user.id));
+    targetStorage.setItem('atg_username', user.username);
+    targetStorage.setItem('atg_email', user.email);
+
+    mirrorStorage.removeItem('atg_user_id');
+    mirrorStorage.removeItem('atg_username');
+    mirrorStorage.removeItem('atg_email');
+  }
+
   private getStored(key: string): string | null {
     if (typeof window === 'undefined') {
       return null;
@@ -556,6 +770,45 @@ export class SuperAppCommandService {
     return `${this.apiBase}/auth/account/user/avatar/${userId}`;
   }
 
+  private buildProfileFallback(userId: number | null, fallbackName: string, avatarUrl: string | null): ProfileInfo {
+    return {
+      userId,
+      displayName: fallbackName,
+      username: fallbackName,
+      email: this.getStored('atg_email') ?? '-',
+      avatarUrl
+    };
+  }
+
+  private familyRoleOrder(role: FamilyRole): number {
+    if (role === 'GRANDMA') {
+      return 1;
+    }
+    if (role === 'MOM' || role === 'DAD') {
+      return 2;
+    }
+    if (role === 'CAREGIVER') {
+      return 3;
+    }
+    return 4;
+  }
+
+  private defaultRelationByRole(role: FamilyRole): FamilyRelation {
+    if (role === 'MOM') {
+      return 'ME';
+    }
+    if (role === 'DAD') {
+      return 'BO';
+    }
+    if (role === 'GRANDMA') {
+      return 'BA_NOI';
+    }
+    if (role === 'CAREGIVER') {
+      return 'BAO_MAU';
+    }
+    return 'THANH_VIEN_KHAC';
+  }
+
   private buildScheduleIso(reminderHour: string): string {
     const [hourRaw, minuteRaw] = reminderHour.split(':');
     const hour = Number(hourRaw);
@@ -581,18 +834,41 @@ export class SuperAppCommandService {
   private get<T>(path: string, params?: HttpParams): Observable<T> {
     return this.http
       .get<ApiEnvelope<T>>(`${this.apiBase}${path}`, { params })
-      .pipe(map((response) => response.data));
+      .pipe(
+        map((response) => {
+          if (!response.success) throw new Error(response.message || 'API error');
+          return response.data;
+        }),
+        catchError(this.handleError)
+      );
   }
 
   private post<T>(path: string, body: unknown): Observable<T> {
     return this.http
       .post<ApiEnvelope<T>>(`${this.apiBase}${path}`, body)
-      .pipe(map((response) => response.data));
+      .pipe(
+        map((response) => {
+          if (!response.success) throw new Error(response.message || 'API error');
+          return response.data;
+        }),
+        catchError(this.handleError)
+      );
   }
 
   private put<T>(path: string, body: unknown): Observable<T> {
     return this.http
       .put<ApiEnvelope<T>>(`${this.apiBase}${path}`, body)
-      .pipe(map((response) => response.data));
+      .pipe(
+        map((response) => {
+          if (!response.success) throw new Error(response.message || 'API error');
+          return response.data;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  private handleError(err: any): Observable<never> {
+    const message = err.error?.message || err.message || 'An unexpected error occurred';
+    return throwError(() => new Error(message));
   }
 }

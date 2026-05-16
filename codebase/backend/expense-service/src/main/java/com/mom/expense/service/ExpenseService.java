@@ -21,6 +21,7 @@ import com.mom.expense.repository.ExpenseCategoryRepository;
 import com.mom.expense.repository.ExpenseRepository;
 import com.mom.common.exception.ResourceNotFoundException;
 import com.mom.common.utils.MonthUtils;
+import com.mom.common.security.DataIsolationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -50,6 +51,8 @@ public class ExpenseService {
     @Transactional
     @CacheEvict(value = "expense-summary", allEntries = true)
     public ExpenseCategoryResponse createCategory(CreateExpenseCategoryRequest request) {
+        DataIsolationUtil.validateFamilyAccess(request.familyId());
+        
         if (expenseCategoryRepository.existsByFamilyIdAndNameIgnoreCase(request.familyId(), request.name().trim())) {
             throw new IllegalArgumentException("Category name already exists in this family");
         }
@@ -64,6 +67,8 @@ public class ExpenseService {
     }
 
     public List<ExpenseCategoryResponse> getCategories(Long familyId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        
         return expenseCategoryRepository.findByFamilyIdOrderByNameAsc(familyId).stream()
                 .map(this::toCategoryResponse)
                 .toList();
@@ -72,6 +77,8 @@ public class ExpenseService {
     @Transactional
     @CacheEvict(value = "expense-summary", allEntries = true)
     public BudgetResponse createBudget(CreateBudgetRequest request) {
+        DataIsolationUtil.validateFamilyAccess(request.familyId());
+        
         YearMonth month = MonthUtils.parse(request.month());
 
         budgetRepository.findByFamilyIdAndMonthKey(request.familyId(), MonthUtils.format(month))
@@ -93,11 +100,15 @@ public class ExpenseService {
         BudgetEntity budget = budgetRepository.findById(budgetId)
                 .orElseThrow(() -> new ResourceNotFoundException("Budget not found"));
 
+        DataIsolationUtil.validateFamilyAccess(budget.getFamilyId());
+
         budget.setLimitAmount(request.limitAmount());
         return toBudgetResponse(budgetRepository.save(budget));
     }
 
     public List<BudgetResponse> getBudgets(Long familyId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        
         return budgetRepository.findByFamilyIdOrderByMonthKeyDesc(familyId).stream()
                 .map(this::toBudgetResponse)
                 .toList();
@@ -106,6 +117,8 @@ public class ExpenseService {
     @Transactional
     @CacheEvict(value = "expense-summary", allEntries = true)
     public ExpenseResponse createExpense(CreateExpenseRequest request) {
+        DataIsolationUtil.validateFamilyAccess(request.familyId());
+        
         ExpenseCategoryEntity category = expenseCategoryRepository.findById(request.categoryId())
                 .orElseThrow(() -> new ResourceNotFoundException("Expense category not found"));
 
@@ -128,11 +141,16 @@ public class ExpenseService {
     public ExpenseResponse getExpense(Long expenseId) {
         ExpenseEntity expense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expense not found"));
+        
+        DataIsolationUtil.validateFamilyAccess(expense.getFamilyId());
+        
         String categoryName = getCategoryName(expense.getCategoryId());
         return toExpenseResponse(expense, categoryName);
     }
 
     public List<ExpenseResponse> getExpenses(Long familyId, String month, Long categoryId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        
         List<ExpenseEntity> expenses = queryExpenses(familyId, month, categoryId);
         Map<Long, String> categoryNameMap = loadCategoryNames(expenses);
         return expenses.stream()
@@ -145,6 +163,8 @@ public class ExpenseService {
     public ExpenseResponse updateExpense(Long expenseId, UpdateExpenseRequest request) {
         ExpenseEntity expense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expense not found"));
+
+        DataIsolationUtil.validateFamilyAccess(expense.getFamilyId());
 
         if (request.categoryId() != null && !request.categoryId().equals(expense.getCategoryId())) {
             ExpenseCategoryEntity category = expenseCategoryRepository.findById(request.categoryId())
@@ -179,16 +199,21 @@ public class ExpenseService {
     public void deleteExpense(Long expenseId) {
         ExpenseEntity expense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Expense not found"));
+        
+        DataIsolationUtil.validateFamilyAccess(expense.getFamilyId());
+        
         expenseRepository.delete(expense);
         expenseEventPublisher.publishExpenseDeleted(expense.getFamilyId(), toExpenseChangedPayload(expense));
     }
 
     @Cacheable(value = "expense-summary", key = "#familyId + ':' + #month")
     public ExpenseSummaryResponse getMonthlySummary(Long familyId, String month) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        
         YearMonth yearMonth = MonthUtils.parse(month);
         OffsetDateTime from = yearMonth.atDay(1).atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime to = yearMonth.plusMonths(1).atDay(1).atStartOfDay().atOffset(ZoneOffset.UTC).minusNanos(1);
-
+        
         List<ExpenseEntity> expenses = expenseRepository.findByFamilyIdAndSpentAtBetweenOrderBySpentAtDesc(familyId, from, to);
         Map<Long, String> categoryNameMap = loadCategoryNames(expenses);
         Map<Long, BigDecimal> totalByCategory = buildCategoryTotals(expenses);
@@ -208,6 +233,8 @@ public class ExpenseService {
     }
 
     public ExpenseDailySummaryResponse getDailySummary(Long familyId, LocalDate date) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        
         LocalDate targetDate = date != null ? date : LocalDate.now(ZoneOffset.UTC);
         OffsetDateTime from = startOfDayUtc(targetDate);
         OffsetDateTime to = endOfDayUtc(targetDate);
@@ -229,6 +256,8 @@ public class ExpenseService {
     }
 
     public ExpenseCategoryReportResponse getCategoryReport(Long familyId, String month) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        
         YearMonth yearMonth = MonthUtils.parse(month);
         OffsetDateTime from = yearMonth.atDay(1).atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime to = yearMonth.plusMonths(1).atDay(1).atStartOfDay().atOffset(ZoneOffset.UTC).minusNanos(1);

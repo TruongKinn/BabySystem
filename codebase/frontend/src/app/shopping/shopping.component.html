@@ -74,6 +74,8 @@
 <nz-modal
   [(nzVisible)]="isCreateModalVisible"
   [nzTitle]="'momApp.shopping.modal.createTitle' | translate"
+  nzClassName="user-role-modal"
+  [nzWidth]="980"
   [nzOkLoading]="isSubmitting"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
@@ -81,7 +83,7 @@
   (nzOnOk)="submitCreateItem()"
 >
   <ng-container *nzModalContent>
-    <form nz-form [formGroup]="createItemForm" nzLayout="vertical">
+    <form nz-form [formGroup]="createItemForm" nzLayout="vertical" class="user-modal-form-grid">
       <nz-form-item>
         <nz-form-label nzRequired>{{ 'momApp.shopping.modal.nameLabel' | translate }}</nz-form-label>
         <nz-form-control>

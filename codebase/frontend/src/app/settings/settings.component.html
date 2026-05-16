@@ -32,6 +32,8 @@
 <nz-modal
   [(nzVisible)]="isSaveModalVisible"
   [nzTitle]="'momApp.settings.modal.title' | translate"
+  nzClassName="user-role-modal"
+  [nzWidth]="640"
   [nzOkLoading]="isSaving"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"

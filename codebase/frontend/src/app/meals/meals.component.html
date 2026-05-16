@@ -53,6 +53,8 @@
 <nz-modal
   [(nzVisible)]="isCreateModalVisible"
   [nzTitle]="'momApp.meals.modal.createTitle' | translate"
+  nzClassName="user-role-modal"
+  [nzWidth]="1040"
   [nzOkLoading]="isSubmitting"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
@@ -60,7 +62,7 @@
   (nzOnOk)="submitCreateMealPlan()"
 >
   <ng-container *nzModalContent>
-    <form nz-form [formGroup]="createMealPlanForm" nzLayout="vertical">
+    <form nz-form [formGroup]="createMealPlanForm" nzLayout="vertical" class="user-modal-form-grid">
       <nz-form-item>
         <nz-form-label nzRequired>{{ 'momApp.meals.modal.mealNameLabel' | translate }}</nz-form-label>
         <nz-form-control>
@@ -84,7 +86,7 @@
         </nz-form-control>
       </nz-form-item>
 
-      <nz-form-item>
+      <nz-form-item class="modal-field-full">
         <nz-form-label>{{ 'momApp.meals.modal.noteLabel' | translate }}</nz-form-label>
         <nz-form-control>
           <textarea nz-input rows="3" formControlName="notes" [placeholder]="'momApp.meals.modal.notePlaceholder' | translate"></textarea>

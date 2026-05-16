@@ -33,6 +33,13 @@ public class FamilyMemberEntity {
     @Column(nullable = false)
     private FamilyRole role;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "relation", nullable = false)
+    private FamilyRelation relation = FamilyRelation.THANH_VIEN_KHAC;
+
+    @Column(name = "parent_user_id")
+    private Long parentUserId;
+
     @Column(name = "joined_at", nullable = false)
     private OffsetDateTime joinedAt = OffsetDateTime.now();
 }

@@ -80,7 +80,8 @@ export class App implements OnInit {
       icon: 'grid',
       children: [
         { labelKey: 'momApp.admin.menu.dashboard', icon: 'home', route: '/admin/dashboard' },
-        { labelKey: 'momApp.admin.menu.users', icon: 'users', route: '/admin/users' }
+        { labelKey: 'momApp.admin.menu.users', icon: 'users', route: '/admin/users' },
+        { labelKey: 'momApp.admin.menu.families', icon: 'users', route: '/admin/families' }
       ]
     }
   ];

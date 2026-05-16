@@ -22,6 +22,7 @@ import com.mom.baby.repository.BabyRepository;
 import com.mom.baby.repository.GrowthRecordRepository;
 import com.mom.baby.repository.VaccinationRepository;
 import com.mom.common.exception.ResourceNotFoundException;
+import com.mom.common.security.DataIsolationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,6 +45,8 @@ public class BabyService {
 
     @Transactional
     public BabyResponse createBaby(CreateBabyRequest request) {
+        DataIsolationUtil.validateFamilyAccess(request.familyId());
+        
         BabyEntity baby = new BabyEntity();
         baby.setFamilyId(request.familyId());
         baby.setName(request.name().trim());
@@ -54,6 +57,8 @@ public class BabyService {
     }
 
     public List<BabyResponse> getBabies(Long familyId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        
         return babyRepository.findByFamilyIdOrderByCreatedAtDesc(familyId).stream()
                 .map(this::toBabyResponse)
                 .toList();
@@ -162,6 +167,8 @@ public class BabyService {
     }
 
     public BabyDailySummaryResponse getDailySummary(Long babyId, LocalDate date) {
+        getBabyEntity(babyId);
+
         LocalDate targetDate = date != null ? date : LocalDate.now(ZoneOffset.UTC);
         OffsetDateTime from = targetDate.atStartOfDay().atOffset(ZoneOffset.UTC);
         OffsetDateTime to = targetDate.plusDays(1).atStartOfDay().atOffset(ZoneOffset.UTC).minusNanos(1);
@@ -196,8 +203,12 @@ public class BabyService {
     }
 
     private BabyEntity getBabyEntity(Long babyId) {
-        return babyRepository.findById(babyId)
+        BabyEntity baby = babyRepository.findById(babyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Baby not found"));
+        
+        DataIsolationUtil.validateFamilyAccess(baby.getFamilyId());
+        
+        return baby;
     }
 
     private String trimToNull(String value) {

@@ -1,36 +1,409 @@
-<section class="page-container" *ngIf="profile$ | async as profile">
-  <div class="header-actions">
-    <div>
-      <h1 class="page-title">{{ 'momApp.profile.title' | translate }}</h1>
-      <p class="page-subtitle">{{ 'momApp.profile.subtitle' | translate }}</p>
+<section class="profile-page" *ngIf="profile$ | async as profile">
+
+  <!-- ═══════════════════════════════════════════════════════
+       HERO BANNER
+       ═══════════════════════════════════════════════════════ -->
+  <div class="profile-hero">
+    <div class="profile-hero__bg">
+      <div class="hero-blob hero-blob--1"></div>
+      <div class="hero-blob hero-blob--2"></div>
+      <div class="hero-blob hero-blob--3"></div>
+    </div>
+
+    <div class="profile-hero__content">
+      <!-- Avatar Block -->
+      <div class="hero-avatar-wrap">
+        <div class="hero-avatar-ring">
+          <nz-avatar
+            [nzSrc]="profile.avatarUrl ?? undefined"
+            [nzText]="initialFor(profile.displayName)"
+            [nzSize]="100"
+            nzIcon="user"
+            class="hero-avatar"
+          ></nz-avatar>
+          <!-- Online dot -->
+          <span class="hero-avatar-online"></span>
+        </div>
+        <!-- Upload -->
+        <input #avatarInput type="file" accept="image/*" (change)="onAvatarFileSelected($event)" hidden />
+        <button class="btn-upload" [class.btn-upload--loading]="isUploadingAvatar" (click)="avatarInput.click()">
+          <span nz-icon nzType="camera" nzTheme="outline"></span>
+          <span *ngIf="!isUploadingAvatar">{{ 'momApp.profile.changeAvatar' | translate }}</span>
+          <span *ngIf="isUploadingAvatar">Đang tải...</span>
+        </button>
+        <p class="upload-hint">{{ 'momApp.profile.uploadHint' | translate }}</p>
+      </div>
+
+      <!-- Identity Block -->
+      <div class="hero-identity">
+        <div class="hero-name-row">
+          <h1 class="hero-name">{{ profile.displayName }}</h1>
+          <span class="hero-badge">
+            <span nz-icon nzType="star" nzTheme="fill"></span>
+            {{ profile.roleLabel }}
+          </span>
+        </div>
+        <div class="hero-meta">
+          <span class="hero-meta-item">
+            <span nz-icon nzType="user" nzTheme="outline"></span>
+            {{ profile.username }}
+          </span>
+          <span class="hero-meta-sep">·</span>
+          <span class="hero-meta-item">
+            <span nz-icon nzType="mail" nzTheme="outline"></span>
+            {{ profile.email }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="hero-stats">
+        <div class="stat-pill">
+          <span class="stat-icon" style="background: linear-gradient(135deg,#f97316,#fb923c)">
+            <span nz-icon nzType="team" nzTheme="outline"></span>
+          </span>
+          <div class="stat-text">
+            <span class="stat-value">{{ profile.familyMembers.length }}</span>
+            <span class="stat-label">Thành viên</span>
+          </div>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-icon" style="background: linear-gradient(135deg,#ec4899,#f43f5e)">
+            <span nz-icon nzType="heart" nzTheme="fill"></span>
+          </span>
+          <div class="stat-text">
+            <span class="stat-value">Gia đình</span>
+            <span class="stat-label">Vai trò</span>
+          </div>
+        </div>
+        <div class="stat-pill">
+          <span class="stat-icon" style="background: linear-gradient(135deg,#8b5cf6,#a78bfa)">
+            <span nz-icon nzType="safety-certificate" nzTheme="fill"></span>
+          </span>
+          <div class="stat-text">
+            <span class="stat-value">Active</span>
+            <span class="stat-label">Trạng thái</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
-  <nz-card class="table-card profile-card">
-    <div class="profile-box">
-      <div class="avatar-box">
-        <nz-avatar
-          [nzSrc]="profile.avatarUrl ?? undefined"
-          [nzText]="profile.displayName.charAt(0)"
-          [nzSize]="72"
-          nzIcon="user"
-        ></nz-avatar>
-        <input #avatarInput type="file" accept="image/*" (change)="onAvatarFileSelected($event)" hidden />
-        <button nz-button nzType="default" [nzLoading]="isUploadingAvatar" (click)="avatarInput.click()">
-          {{ 'momApp.profile.changeAvatar' | translate }}
-        </button>
-        <small>{{ 'momApp.profile.uploadHint' | translate }}</small>
+  <!-- ═══════════════════════════════════════════════════════
+       DETAIL CARDS GRID
+       ═══════════════════════════════════════════════════════ -->
+  <div class="detail-grid">
+
+    <!-- Card: Thông tin tài khoản -->
+    <div class="detail-card detail-card--account">
+      <div class="detail-card__header">
+        <div class="detail-card__icon" style="background: linear-gradient(135deg,#f97316,#fb923c)">
+          <span nz-icon nzType="idcard" nzTheme="outline"></span>
+        </div>
+        <div>
+          <h2 class="detail-card__title">Thông tin tài khoản</h2>
+          <p class="detail-card__sub">Thông tin đăng nhập và định danh</p>
+        </div>
       </div>
-      <div class="profile-info">
-        <h3>{{ profile.displayName }}</h3>
-        <p>
-          <nz-tag [nzColor]="profile.role === 'MOM' || profile.role === 'DAD' ? 'magenta' : 'geekblue'" style="border-radius:12px; border:none; background:rgba(249,115,22,0.1); color:var(--user-primary)">
-            {{ profile.roleLabel }}
-          </nz-tag>
-        </p>
-        <p><span nz-icon nzType="user"></span> <strong>{{ 'momApp.profile.usernameLabel' | translate }}:</strong> {{ profile.username }}</p>
-        <p><span nz-icon nzType="mail"></span> <strong>{{ 'momApp.profile.emailLabel' | translate }}:</strong> {{ profile.email }}</p>
+      <div class="detail-card__body">
+        <div class="info-row">
+          <span class="info-label">
+            <span nz-icon nzType="user" nzTheme="outline"></span>
+            Tên hiển thị
+          </span>
+          <span class="info-value">{{ profile.displayName }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">
+            <span nz-icon nzType="key" nzTheme="outline"></span>
+            {{ 'momApp.profile.usernameLabel' | translate }}
+          </span>
+          <span class="info-value info-value--mono">{{ profile.username }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">
+            <span nz-icon nzType="mail" nzTheme="outline"></span>
+            {{ 'momApp.profile.emailLabel' | translate }}
+          </span>
+          <span class="info-value">{{ profile.email }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">
+            <span nz-icon nzType="check-circle" nzTheme="outline"></span>
+            Trạng thái
+          </span>
+          <span class="info-value">
+            <span class="status-badge status-badge--active">
+              <i class="status-dot"></i> Đang hoạt động
+            </span>
+          </span>
+        </div>
       </div>
     </div>
+
+    <!-- Card: Vai trò trong gia đình -->
+    <div class="detail-card detail-card--role">
+      <div class="detail-card__header">
+        <div class="detail-card__icon" style="background: linear-gradient(135deg,#ec4899,#f43f5e)">
+          <span nz-icon nzType="home" nzTheme="fill"></span>
+        </div>
+        <div>
+          <h2 class="detail-card__title">Vai trò gia đình</h2>
+          <p class="detail-card__sub">Vị trí và quan hệ trong gia đình</p>
+        </div>
+      </div>
+      <div class="detail-card__body">
+        <div class="role-showcase">
+          <div class="role-showcase__icon">
+            <span nz-icon nzType="star" nzTheme="fill"></span>
+          </div>
+          <div class="role-showcase__info">
+            <p class="role-showcase__name">{{ profile.roleLabel }}</p>
+            <p class="role-showcase__desc">Vai trò chính trong gia đình</p>
+          </div>
+        </div>
+        <div class="info-row" style="margin-top: 12px">
+          <span class="info-label">
+            <span nz-icon nzType="team" nzTheme="outline"></span>
+            Số thành viên
+          </span>
+          <span class="info-value">
+            <strong style="color: var(--user-primary); font-size: 18px">{{ profile.familyMembers.length }}</strong>
+            <span style="color: var(--text-secondary); font-size: 13px; margin-left: 4px">người</span>
+          </span>
+        </div>
+        <div class="member-avatars" *ngIf="profile.familyMembers && profile.familyMembers.length > 0">
+          <ng-container *ngFor="let m of profile.familyMembers.slice(0, 6)">
+            <nz-avatar
+              [nzSrc]="m.avatarUrl ?? undefined"
+              [nzText]="initialFor(m.displayName)"
+              [nzSize]="32"
+              nzIcon="user"
+              [nzTooltipTitle]="m.displayName"
+              nz-tooltip
+              class="member-avatar-item"
+            ></nz-avatar>
+          </ng-container>
+          <span *ngIf="profile.familyMembers.length > 6" class="member-avatar-more">
+            +{{ profile.familyMembers.length - 6 }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card: Bảo mật & Cài đặt -->
+    <div class="detail-card detail-card--security">
+      <div class="detail-card__header">
+        <div class="detail-card__icon" style="background: linear-gradient(135deg,#8b5cf6,#a78bfa)">
+          <span nz-icon nzType="safety" nzTheme="fill"></span>
+        </div>
+        <div>
+          <h2 class="detail-card__title">Bảo mật & Cài đặt</h2>
+          <p class="detail-card__sub">Thiết lập bảo mật tài khoản</p>
+        </div>
+      </div>
+      <div class="detail-card__body">
+        <div class="security-item">
+          <div class="security-item__info">
+            <span nz-icon nzType="lock" nzTheme="outline" class="security-item__icon"></span>
+            <div>
+              <p class="security-item__title">Mật khẩu</p>
+              <p class="security-item__sub">Thay đổi mật khẩu định kỳ</p>
+            </div>
+          </div>
+          <span class="security-badge security-badge--ok">Đã bảo vệ</span>
+        </div>
+        <div class="security-item">
+          <div class="security-item__info">
+            <span nz-icon nzType="shield" nzTheme="outline" class="security-item__icon"></span>
+            <div>
+              <p class="security-item__title">Phiên đăng nhập</p>
+              <p class="security-item__sub">Quản lý các thiết bị đăng nhập</p>
+            </div>
+          </div>
+          <span class="security-badge security-badge--ok">An toàn</span>
+        </div>
+        <div class="security-item">
+          <div class="security-item__info">
+            <span nz-icon nzType="bell" nzTheme="outline" class="security-item__icon"></span>
+            <div>
+              <p class="security-item__title">Thông báo</p>
+              <p class="security-item__sub">Nhận thông báo quan trọng</p>
+            </div>
+          </div>
+          <span class="security-badge security-badge--on">Bật</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ═══════════════════════════════════════════════════════
+       CÂY PHẢ HỆ GIA ĐÌNH — KHÔNG CHỈNH SỬA
+       ═══════════════════════════════════════════════════════ -->
+  <nz-card class="table-card family-tree-card">
+    <div class="tree-header">
+      <h3>Cây phả hệ gia đình</h3>
+      <p>Hiển thị phân cấp quan hệ trong gia đình theo mô hình Việt Nam.</p>
+    </div>
+
+    <div class="fg-wrap" *ngIf="treeNodes.length > 0; else emptyFamilyTree">
+
+      <!-- ═══════════════════════════════
+           HÀNG 1: [Ông Bà] + [Bác/Chú] BỐ ❤️ MẸ [Dì/Cậu] + [Ông Bà]
+           ═══════════════════════════════ -->
+      <div class="fg-row fg-row--parents">
+
+        <!-- Nhánh nội: Bác/Chú + Bố -->
+        <div class="fg-sibling-group fg-sibling-group--paternal">
+          
+          <!-- Ông Bà Nội (Căn giữa tuyệt đối so với nhóm anh em) -->
+          <div class="absolute-grandparents">
+            <div class="fg-couple-group">
+              <ng-container *ngIf="findNodeByRel('ONG_NOI') as ongNoi">
+                <ng-container *ngTemplateOutlet="tplNode; context: { $implicit: ongNoi }"></ng-container>
+                <div class="fg-heart-sm">
+                  <span nz-icon nzType="heart" nzTheme="fill"></span>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="findNodeByRel('BA_NOI') as baNoi">
+                <ng-container *ngTemplateOutlet="tplNode; context: { $implicit: baNoi }"></ng-container>
+              </ng-container>
+              <div class="fg-vline-down"></div>
+            </div>
+          </div>
+
+          <div class="fg-sibling-bar"></div>
+          <div class="fg-siblings">
+            <ng-container *ngFor="let node of getSiblings('paternal')">
+              <div class="fg-sib-item">
+                <div class="fg-sib-vline"></div>
+                <ng-container *ngTemplateOutlet="tplNode; context: { $implicit: node }"></ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+
+        <!-- Cầu nối Bố–Mẹ -->
+        <div class="fg-marriage-bridge">
+          <div class="fg-bridge-hline left"></div>
+          <div class="fg-bridge-heart">
+            <span nz-icon nzType="heart" nzTheme="fill"></span>
+          </div>
+          <div class="fg-bridge-hline right"></div>
+          <!-- Đường dọc xuống con -->
+          <div class="fg-bridge-vdown"></div>
+        </div>
+
+        <!-- Nhánh ngoại: Mẹ + Dì/Cậu -->
+        <div class="fg-sibling-group fg-sibling-group--maternal">
+          
+          <!-- Ông Bà Ngoại (Căn giữa tuyệt đối so với nhóm anh em) -->
+          <div class="absolute-grandparents">
+            <div class="fg-couple-group">
+              <ng-container *ngIf="findNodeByRel('ONG_NGOAI') as ongNgoai">
+                <ng-container *ngTemplateOutlet="tplNode; context: { $implicit: ongNgoai }"></ng-container>
+                <div class="fg-heart-sm">
+                  <span nz-icon nzType="heart" nzTheme="fill"></span>
+                </div>
+              </ng-container>
+              <ng-container *ngIf="findNodeByRel('BA_NGOAI') as baNgoai">
+                <ng-container *ngTemplateOutlet="tplNode; context: { $implicit: baNgoai }"></ng-container>
+              </ng-container>
+              <div class="fg-vline-down"></div>
+            </div>
+          </div>
+
+          <div class="fg-sibling-bar"></div>
+          <div class="fg-siblings">
+            <ng-container *ngFor="let node of getSiblings('maternal')">
+              <div class="fg-sib-item">
+                <div class="fg-sib-vline"></div>
+                <ng-container *ngTemplateOutlet="tplNode; context: { $implicit: node }"></ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- ═══════════════════════════════
+           HÀNG 2: CON CÁI / EM BÉ
+           ═══════════════════════════════ -->
+      <div class="fg-row fg-row--children" *ngIf="getChildrenNodes().length > 0">
+        <div class="fg-children-wrap">
+          <div class="fg-children-bar"
+               [style.display]="getChildrenNodes().length < 2 ? 'none' : 'block'">
+          </div>
+          <div class="fg-children">
+            <ng-container *ngFor="let node of getChildrenNodes()">
+              <div class="fg-child-item">
+                <div class="fg-child-vline"></div>
+                <ng-container *ngTemplateOutlet="tplBabyNode; context: { $implicit: node }"></ng-container>
+              </div>
+            </ng-container>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /fg-wrap -->
+
+    <!-- ─── Template: node thành viên bình thường ─── -->
+    <ng-template #tplNode let-node>
+      <article class="fg-node" [class.fg-node--me]="node.isCurrentUser"
+               nz-popover [nzPopoverContent]="popoverContent" nzPopoverPlacement="top" nzPopoverOverlayClassName="premium-popover" [nzPopoverMouseEnterDelay]="0.1">
+        <div class="fg-node-avatar">
+          <nz-avatar
+            [nzSrc]="node.avatarUrl ?? undefined"
+            [nzText]="initialFor(node.displayName)"
+            [nzSize]="38"
+            nzIcon="user"
+          ></nz-avatar>
+          <span class="fg-node-dot" *ngIf="node.isCurrentUser"></span>
+        </div>
+        <div class="fg-node-body">
+          <div class="fg-node-name">{{ node.displayName }}</div>
+          <span class="fg-node-rel">{{ node.relationLabel }}</span>
+        </div>
+      </article>
+      <ng-template #popoverContent>
+        <div class="node-popover-inner">
+          <div class="pop-title"><span nz-icon nzType="user"></span> {{ node.displayName }}</div>
+          <div class="pop-info" *ngIf="node.username && node.username !== '-'"><span nz-icon nzType="idcard"></span> {{ node.username }}</div>
+          <div class="pop-info" *ngIf="node.email && node.email !== '-'"><span nz-icon nzType="mail"></span> {{ node.email }}</div>
+          <div class="pop-info"><span nz-icon nzType="tag"></span> {{ node.roleLabel }} • {{ node.relationLabel }}</div>
+        </div>
+      </ng-template>
+    </ng-template>
+
+    <!-- ─── Template: node em bé / con ─── -->
+    <ng-template #tplBabyNode let-node>
+      <article class="fg-node fg-node--baby" [class.fg-node--me]="node.isCurrentUser"
+               nz-popover [nzPopoverContent]="popoverContentBaby" nzPopoverPlacement="top" nzPopoverOverlayClassName="premium-popover" [nzPopoverMouseEnterDelay]="0.1">
+        <div class="fg-node-avatar">
+          <nz-avatar
+            [nzSrc]="node.avatarUrl ?? undefined"
+            [nzText]="initialFor(node.displayName)"
+            [nzSize]="38"
+            nzIcon="user"
+          ></nz-avatar>
+          <span class="fg-node-dot" *ngIf="node.isCurrentUser"></span>
+        </div>
+        <div class="fg-node-body">
+          <div class="fg-node-name">{{ node.displayName }}</div>
+          <span class="fg-node-rel fg-node-rel--baby">{{ node.relationLabel }}</span>
+        </div>
+      </article>
+      <ng-template #popoverContentBaby>
+        <div class="node-popover-inner">
+          <div class="pop-title"><span nz-icon nzType="user"></span> {{ node.displayName }}</div>
+          <div class="pop-info"><span nz-icon nzType="tag"></span> {{ node.relationLabel }}</div>
+        </div>
+      </ng-template>
+    </ng-template>
+
+    <ng-template #emptyFamilyTree>
+      <div class="fg-empty">Không có dữ liệu cây phả hệ cho gia đình này.</div>
+    </ng-template>
   </nz-card>
+
 </section>

@@ -1,14 +1,37 @@
 <section class="admin-users-page">
-  <nz-card class="users-card" [nzTitle]="'Admin - Quản lý tài khoản người dùng'">
+  <header class="users-hero">
+    <div class="hero-copy">
+      <span class="hero-kicker">Identity & Access</span>
+      <h1>User Administration</h1>
+      <p>Search, lock/unlock accounts, and trigger temporary password reset for support operations.</p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span>Visible users</span>
+        <strong>{{ filteredUsers.length }}</strong>
+      </div>
+      <div class="hero-stat">
+        <span>Locked</span>
+        <strong>{{ lockedOnPage }}</strong>
+      </div>
+      <div class="hero-stat">
+        <span>Admin/Owner</span>
+        <strong>{{ adminOnPage }}</strong>
+      </div>
+    </div>
+  </header>
+
+  <nz-card class="users-card">
     <div class="toolbar">
       <input
         nz-input
         class="search-input"
         [ngModel]="searchText"
         (ngModelChange)="onSearchChange($event)"
-        placeholder="Tìm username, email, số điện thoại..."
+        placeholder="Search by username, email, phone, status..."
       />
-      <button nz-button nzType="default" (click)="loadUsers()">Làm mới</button>
+      <button nz-button nzType="default" (click)="loadUsers()">Refresh users</button>
     </div>
 
     <nz-table
@@ -27,24 +50,26 @@
         <tr>
           <th>ID</th>
           <th>Username</th>
-          <th>Họ tên</th>
+          <th>Full name</th>
           <th>Email</th>
-          <th>SĐT</th>
-          <th>Loại</th>
-          <th>Trạng thái</th>
-          <th>Thao tác</th>
+          <th>Phone</th>
+          <th>Role type</th>
+          <th>Status</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let user of filteredUsers">
+        <tr *ngFor="let user of filteredUsers; trackBy: trackByUser">
           <td>{{ user.id }}</td>
           <td>{{ user.username }}</td>
           <td>{{ fullNameOf(user) }}</td>
           <td>{{ user.email || '-' }}</td>
           <td>{{ user.phone || '-' }}</td>
-          <td>{{ user.type || '-' }}</td>
           <td>
-            <nz-tag [nzColor]="statusColorOf(user.status)">
+            <span class="role-pill">{{ roleLabel(user.type) }}</span>
+          </td>
+          <td>
+            <nz-tag [nzColor]="statusColorOf(user.status)" [ngClass]="statusClassOf(user.status)">
               {{ user.status }}
             </nz-tag>
           </td>
@@ -56,11 +81,11 @@
                 nzType="default"
                 nzDanger
                 nz-popconfirm
-                nzPopconfirmTitle="Khóa tài khoản này?"
+                nzPopconfirmTitle="Lock this account?"
                 (nzOnConfirm)="lockUser(user)"
                 [nzLoading]="actionLoadingUserId === user.id"
               >
-                Khóa
+                Lock
               </button>
 
               <button
@@ -68,15 +93,15 @@
                 nz-button
                 nzType="default"
                 nz-popconfirm
-                nzPopconfirmTitle="Mở khóa tài khoản này?"
+                nzPopconfirmTitle="Unlock this account?"
                 (nzOnConfirm)="unlockUser(user)"
                 [nzLoading]="actionLoadingUserId === user.id"
               >
-                Mở khóa
+                Unlock
               </button>
 
               <button nz-button nzType="primary" (click)="openResetPasswordModal(user)">
-                Reset mật khẩu
+                Reset password
               </button>
             </div>
           </td>
@@ -88,23 +113,23 @@
 
 <nz-modal
   [(nzVisible)]="isResetModalVisible"
-  nzTitle="Reset mật khẩu tạm"
-  nzOkText="Xác nhận"
-  nzCancelText="Hủy"
+  nzTitle="Reset temporary password"
+  nzOkText="Confirm"
+  nzCancelText="Cancel"
   [nzOkLoading]="isResetLoading"
   (nzOnCancel)="closeResetPasswordModal()"
   (nzOnOk)="confirmResetPassword()"
 >
   <ng-container *nzModalContent>
     <p class="modal-desc">
-      User:
+      Username:
       <strong>{{ resetTargetUser?.username }}</strong>
     </p>
     <input
       nz-input
       [(ngModel)]="temporaryPassword"
       maxlength="100"
-      placeholder="Nhập mật khẩu tạm"
+      placeholder="Enter temporary password"
       (keydown.enter)="confirmResetPassword()"
     />
   </ng-container>

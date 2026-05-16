@@ -14,6 +14,13 @@
   background: var(--app-bg, #f5f7fa);
 }
 
+.app-shell.admin-shell {
+  background:
+    radial-gradient(circle at 10% 10%, rgba(14, 165, 233, 0.18), transparent 38%),
+    radial-gradient(circle at 90% 0%, rgba(16, 185, 129, 0.15), transparent 32%),
+    linear-gradient(160deg, #f4f8ff 0%, #eef4ff 45%, #f6fbff 100%);
+}
+
 /* ---- Sidebar Toggle Button (floating, desktop) ----------- */
 .sidebar-toggle-btn {
   display: none; /* managed by header-toggle-btn on mobile */
@@ -44,10 +51,40 @@
   gap: 12px;
 }
 
+.app-header.admin-header {
+  height: 68px;
+  border-bottom: 1px solid rgba(9, 30, 66, 0.08);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+}
+
 .header-left {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+
+.admin-heading {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.admin-heading-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  color: #0369a1;
+  text-transform: uppercase;
+}
+
+.admin-heading-title {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #0f172a;
 }
 
 .header-toggle-btn {
@@ -140,6 +177,15 @@
   background: var(--hover-bg, rgba(0, 0, 0, 0.04));
 }
 
+.header-user-info.admin-user-info {
+  border: 1px solid rgba(14, 116, 144, 0.2);
+  background: rgba(240, 249, 255, 0.8);
+}
+
+.header-user-info.admin-user-info:hover {
+  background: rgba(224, 242, 254, 0.96);
+}
+
 .header-username {
   font-size: 13px;
   color: var(--text-main, #262626);
@@ -153,6 +199,11 @@
   overflow-y: auto;
   overflow-x: hidden;
   background: var(--app-bg, #f5f7fa);
+}
+
+.app-shell.admin-shell .app-content {
+  background:
+    linear-gradient(180deg, rgba(248, 251, 255, 0.9) 0%, rgba(239, 246, 255, 0.78) 100%);
 }
 
 /* ---- Logout Popover -------------------------------------- */
@@ -249,6 +300,40 @@
 .dark-theme .app-header {
   background: var(--header-bg, #161b22);
   border-color: var(--border-color, #30363d);
+}
+
+.dark-theme .app-header.admin-header {
+  background: rgba(15, 23, 42, 0.88);
+  border-color: rgba(100, 116, 139, 0.35);
+  box-shadow: 0 10px 30px rgba(2, 6, 23, 0.45);
+}
+
+.dark-theme .app-shell.admin-shell {
+  background:
+    radial-gradient(circle at 10% 10%, rgba(14, 165, 233, 0.22), transparent 34%),
+    radial-gradient(circle at 88% 8%, rgba(16, 185, 129, 0.2), transparent 32%),
+    linear-gradient(160deg, #020617 0%, #0b1120 55%, #030712 100%);
+}
+
+.dark-theme .admin-heading-label {
+  color: #38bdf8;
+}
+
+.dark-theme .admin-heading-title {
+  color: #e2e8f0;
+}
+
+.dark-theme .header-user-info.admin-user-info {
+  border-color: rgba(56, 189, 248, 0.28);
+  background: rgba(12, 74, 110, 0.32);
+}
+
+.dark-theme .header-user-info.admin-user-info:hover {
+  background: rgba(14, 116, 144, 0.42);
+}
+
+.dark-theme .app-shell.admin-shell .app-content {
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.92) 0%, rgba(8, 20, 37, 0.86) 100%);
 }
 
 .dark-theme .lang-switcher {

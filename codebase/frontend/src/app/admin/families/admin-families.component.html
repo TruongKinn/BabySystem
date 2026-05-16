@@ -1,0 +1,85 @@
+<section class="admin-families-page">
+  <header class="families-hero">
+    <div class="hero-copy">
+      <span class="hero-kicker">Family Graph</span>
+      <h1>Family Tree Board</h1>
+      <p>Load household structure as a tree so operators can quickly inspect relationships and caregiver links.</p>
+    </div>
+    <div class="hero-meta">
+      <span>Total households</span>
+      <strong>{{ filteredFamilies.length }}</strong>
+    </div>
+  </header>
+
+  <nz-card class="families-card" [nzLoading]="loading">
+    <div class="toolbar">
+      <input
+        nz-input
+        class="search-input"
+        [ngModel]="searchText"
+        (ngModelChange)="onSearchChange($event)"
+        placeholder="Search by family name, creator, member..."
+      />
+      <button nz-button nzType="default" (click)="loadFamilies()">Refresh tree</button>
+    </div>
+
+    <div class="family-grid" *ngIf="filteredFamilies.length > 0; else emptyState">
+      <nz-card class="family-card" *ngFor="let family of filteredFamilies; trackBy: trackByFamily">
+        <div class="family-head">
+          <div class="head-main">
+            <h2>{{ family.name }}</h2>
+            <span class="family-id">#{{ family.id }}</span>
+          </div>
+          <div class="head-meta">
+            <span>Creator: {{ family.creatorName }}</span>
+            <span>Members: {{ family.memberCount }}</span>
+          </div>
+        </div>
+
+        <ul class="tree-root">
+          <li class="tree-branch" *ngFor="let root of family.tree; trackBy: trackByTreeNode">
+            <div class="tree-node">
+              <span class="member-name">{{ root.member.displayName }}</span>
+              <span class="role-badge" [ngClass]="roleClass(root.member.role)">
+                {{ roleLabel(root.member.role) }}
+              </span>
+              <span class="relation-badge">{{ relationLabel(root.member.relation) }}</span>
+            </div>
+
+            <ng-container
+              *ngIf="root.children.length > 0"
+              [ngTemplateOutlet]="treeBranch"
+              [ngTemplateOutletContext]="{ $implicit: root.children }"
+            ></ng-container>
+          </li>
+        </ul>
+      </nz-card>
+    </div>
+
+    <ng-template #treeBranch let-nodes>
+      <ul class="tree-children">
+        <li class="tree-branch" *ngFor="let node of nodes; trackBy: trackByTreeNode">
+          <div class="tree-node">
+            <span class="member-name">{{ node.member.displayName }}</span>
+            <span class="role-badge" [ngClass]="roleClass(node.member.role)">
+              {{ roleLabel(node.member.role) }}
+            </span>
+            <span class="relation-badge">{{ relationLabel(node.member.relation) }}</span>
+          </div>
+          <ng-container
+            *ngIf="node.children.length > 0"
+            [ngTemplateOutlet]="treeBranch"
+            [ngTemplateOutletContext]="{ $implicit: node.children }"
+          ></ng-container>
+        </li>
+      </ul>
+    </ng-template>
+
+    <ng-template #emptyState>
+      <div class="empty-state">
+        <h3>No family matched this filter</h3>
+        <p>Try another keyword or refresh to load latest household data.</p>
+      </div>
+    </ng-template>
+  </nz-card>
+</section>
