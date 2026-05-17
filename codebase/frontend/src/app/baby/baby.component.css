@@ -53,6 +53,13 @@
   margin-bottom: 12px;
 }
 
+.baby-avatar-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
 .baby-avatar {
   width: 62px;
   height: 62px;
@@ -63,6 +70,14 @@
   font-size: 30px;
   background: rgba(255, 255, 255, 0.24);
   border: 2px solid rgba(255, 255, 255, 0.4);
+  overflow: hidden;
+}
+
+.baby-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 .hero-name {

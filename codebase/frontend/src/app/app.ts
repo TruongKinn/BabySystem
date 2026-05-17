@@ -81,7 +81,9 @@ export class App implements OnInit {
       children: [
         { labelKey: 'momApp.admin.menu.dashboard', icon: 'home', route: '/admin/dashboard' },
         { labelKey: 'momApp.admin.menu.users', icon: 'users', route: '/admin/users' },
-        { labelKey: 'momApp.admin.menu.families', icon: 'users', route: '/admin/families' }
+        { labelKey: 'momApp.admin.menu.families', icon: 'users', route: '/admin/families' },
+        { labelKey: 'momApp.admin.menu.access', icon: 'check-square', route: '/admin/access' },
+        { labelKey: 'momApp.admin.menu.permissions', icon: 'settings', route: '/admin/permissions' }
       ]
     }
   ];
@@ -183,7 +185,7 @@ export class App implements OnInit {
 
   private syncPortalState(url: string): void {
     if (url.startsWith('/admin')) {
-      this.homeRoute = '/admin/users';
+      this.homeRoute = '/admin/dashboard';
       this.sidebarMenuItems = this.adminMenuItems;
       return;
     }

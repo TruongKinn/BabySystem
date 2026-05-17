@@ -34,6 +34,23 @@
             <span>{{ 'momApp.admin.families.creator' | translate }}: {{ family.creatorName }}</span>
             <span>{{ 'momApp.admin.families.members' | translate }}: {{ family.memberCount }}</span>
           </div>
+          <div class="head-actions">
+            <button nz-button nzType="default" nzSize="small" (click)="openEditFamilyModal(family)">
+              {{ 'commonActions.edit' | translate }}
+            </button>
+            <button
+              nz-button
+              nzType="default"
+              nzDanger
+              nzSize="small"
+              nz-popconfirm
+              [nzPopconfirmTitle]="'momApp.admin.families.actions.deleteConfirm' | translate"
+              [nzLoading]="deletingFamilyId === family.id"
+              (nzOnConfirm)="deleteFamily(family)"
+            >
+              {{ 'commonActions.delete' | translate }}
+            </button>
+          </div>
         </div>
 
         <ul class="tree-root">
@@ -83,3 +100,27 @@
     </ng-template>
   </nz-card>
 </section>
+
+<nz-modal
+  [(nzVisible)]="isEditModalVisible"
+  [nzTitle]="'momApp.admin.families.modal.editTitle' | translate"
+  [nzOkText]="'commonActions.save' | translate"
+  [nzCancelText]="'commonActions.cancel' | translate"
+  [nzOkLoading]="submitting"
+  (nzOnCancel)="closeEditFamilyModal()"
+  (nzOnOk)="submitEditFamily()"
+>
+  <ng-container *nzModalContent>
+    <div class="family-edit-modal">
+      <label class="field-label" for="family-name-input">{{ 'momApp.admin.families.modal.nameLabel' | translate }}</label>
+      <input
+        id="family-name-input"
+        nz-input
+        maxlength="160"
+        [(ngModel)]="editFamilyName"
+        [placeholder]="'momApp.admin.families.modal.namePlaceholder' | translate"
+        (keydown.enter)="submitEditFamily()"
+      />
+    </div>
+  </ng-container>
+</nz-modal>

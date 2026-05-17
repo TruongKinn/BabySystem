@@ -15,6 +15,7 @@ import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 
 type UserStatus = 'ACTIVE' | 'INACTIVE' | 'LOCKED';
+type UserType = 'USER' | 'ADMIN' | 'OWNER';
 
 interface AdminUser {
   id: number;
@@ -133,6 +134,14 @@ export class AdminUsersComponent implements OnInit {
     this.updateUserStatus(user, 'ACTIVE');
   }
 
+  promoteToAdmin(user: AdminUser): void {
+    this.updateUserType(user, 'ADMIN');
+  }
+
+  demoteToUser(user: AdminUser): void {
+    this.updateUserType(user, 'USER');
+  }
+
   openResetPasswordModal(user: AdminUser): void {
     this.resetTargetUser = user;
     this.temporaryPassword = '';
@@ -243,6 +252,46 @@ export class AdminUsersComponent implements OnInit {
   private isAdminType(type?: string): boolean {
     const normalized = (type ?? '').toUpperCase();
     return normalized === 'ADMIN' || normalized === 'OWNER';
+  }
+
+  private normalizeUserType(type: string | null | undefined): UserType {
+    const normalized = (type ?? '').trim().toUpperCase();
+    if (normalized === 'ADMIN' || normalized === 'OWNER') {
+      return normalized;
+    }
+    return 'USER';
+  }
+
+  private updateUserType(user: AdminUser, type: Extract<UserType, 'USER' | 'ADMIN'>): void {
+    const currentType = this.normalizeUserType(user.type);
+    if (currentType === type) {
+      return;
+    }
+
+    this.actionLoadingUserId = user.id;
+    this.http.patch<void>(`${this.apiBase}/auth/users/${user.id}/type`, { type }).subscribe({
+      next: () => {
+        this.actionLoadingUserId = null;
+        this.message.success(
+          this.i18n.translate(
+            type === 'ADMIN'
+              ? 'momApp.admin.users.messages.promoteSuccess'
+              : 'momApp.admin.users.messages.demoteSuccess'
+          )
+        );
+        this.loadUsers();
+      },
+      error: () => {
+        this.actionLoadingUserId = null;
+        this.message.error(
+          this.i18n.translate(
+            type === 'ADMIN'
+              ? 'momApp.admin.users.messages.promoteFailed'
+              : 'momApp.admin.users.messages.demoteFailed'
+          )
+        );
+      }
+    });
   }
 
   private normalizeUserStatus(status: string | null | undefined): UserStatus {

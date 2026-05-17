@@ -454,7 +454,7 @@ export class LoginComponent implements OnInit {
         return '/app/dashboard';
       }
       if (requestedRedirect.startsWith('/app') && isAdminUser) {
-        return '/admin/users';
+        return '/admin/dashboard';
       }
       return requestedRedirect;
     }

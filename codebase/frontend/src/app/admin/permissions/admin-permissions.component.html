@@ -1,0 +1,184 @@
+<section class="admin-permissions-page">
+  <header class="permissions-hero">
+    <div class="hero-copy">
+      <span class="hero-kicker">{{ 'momApp.admin.permissions.hero.kicker' | translate }}</span>
+      <h1>{{ 'momApp.admin.permissions.hero.title' | translate }}</h1>
+      <p>{{ 'momApp.admin.permissions.hero.subtitle' | translate }}</p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span>{{ 'momApp.admin.permissions.stats.total' | translate }}</span>
+        <strong>{{ totalPermissions }}</strong>
+      </div>
+      <div class="hero-stat">
+        <span>{{ 'momApp.admin.permissions.stats.menu' | translate }}</span>
+        <strong>{{ menuPermissionCount }}</strong>
+      </div>
+      <div class="hero-stat">
+        <span>{{ 'momApp.admin.permissions.stats.api' | translate }}</span>
+        <strong>{{ apiPermissionCount }}</strong>
+      </div>
+    </div>
+  </header>
+
+  <nz-card class="permissions-card" [nzLoading]="loading">
+    <div class="toolbar">
+      <input
+        nz-input
+        class="search-input"
+        [ngModel]="searchText"
+        (ngModelChange)="onSearchChange($event)"
+        [placeholder]="'momApp.admin.permissions.searchPlaceholder' | translate"
+      />
+
+      <div class="toolbar-actions">
+        <button nz-button nzType="default" (click)="loadWorkspace()">{{ 'commonActions.refresh' | translate }}</button>
+        <button nz-button nzType="default" (click)="openCreatePermissionModal('MENU')">
+          {{ 'momApp.admin.permissions.actions.createMenuPermission' | translate }}
+        </button>
+        <button nz-button nzType="primary" (click)="openCreatePermissionModal('API')">
+          {{ 'momApp.admin.permissions.actions.createApiPermission' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="filter-group">
+      <button nz-button [nzType]="filterType === 'ALL' ? 'primary' : 'default'" (click)="setFilterType('ALL')">
+        {{ 'momApp.admin.permissions.filters.all' | translate }}
+      </button>
+      <button nz-button [nzType]="filterType === 'MENU' ? 'primary' : 'default'" (click)="setFilterType('MENU')">
+        {{ 'momApp.admin.permissions.filters.menu' | translate }}
+      </button>
+      <button nz-button [nzType]="filterType === 'API' ? 'primary' : 'default'" (click)="setFilterType('API')">
+        {{ 'momApp.admin.permissions.filters.api' | translate }}
+      </button>
+    </div>
+
+    <nz-table [nzData]="filteredPermissions" [nzFrontPagination]="false" [nzLoading]="loading" [nzPageSize]="12">
+      <thead>
+        <tr>
+          <th>{{ 'momApp.admin.permissions.table.id' | translate }}</th>
+          <th>{{ 'momApp.admin.permissions.table.name' | translate }}</th>
+          <th>{{ 'momApp.admin.permissions.table.type' | translate }}</th>
+          <th>{{ 'momApp.admin.permissions.table.summary' | translate }}</th>
+          <th>{{ 'momApp.admin.permissions.table.usedByRoles' | translate }}</th>
+          <th>{{ 'momApp.admin.permissions.table.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let permission of filteredPermissions; trackBy: trackByPermission">
+          <td>{{ permission.id }}</td>
+          <td>
+            <div class="permission-name-cell">
+              <strong>{{ permission.name }}</strong>
+              <span *ngIf="permission.description">{{ permission.description }}</span>
+            </div>
+          </td>
+          <td>
+            <nz-tag [nzColor]="permission.type === 'MENU' ? 'blue' : 'purple'">{{ typeLabel(permission.type) }}</nz-tag>
+          </td>
+          <td><code>{{ permissionSummary(permission) }}</code></td>
+          <td>
+            <nz-tag nzColor="geekblue">{{ usageCount(permission.id) }}</nz-tag>
+          </td>
+          <td>
+            <div class="row-actions">
+              <button nz-button nzType="default" nzSize="small" (click)="openEditPermissionModal(permission)">
+                {{ 'commonActions.edit' | translate }}
+              </button>
+              <button
+                nz-button
+                nzType="default"
+                nzDanger
+                nzSize="small"
+                nz-popconfirm
+                [nzPopconfirmTitle]="'momApp.admin.permissions.actions.deleteConfirm' | translate"
+                [nzLoading]="deletingPermissionId === permission.id"
+                (nzOnConfirm)="deletePermission(permission)"
+              >
+                {{ 'commonActions.delete' | translate }}
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+</section>
+
+<nz-modal
+  [(nzVisible)]="isPermissionModalVisible"
+  [nzTitle]="permissionModalTitleKey | translate"
+  [nzOkText]="'commonActions.save' | translate"
+  [nzCancelText]="'commonActions.cancel' | translate"
+  [nzOkLoading]="savingPermission"
+  (nzOnCancel)="closePermissionModal()"
+  (nzOnOk)="savePermission()"
+>
+  <ng-container *nzModalContent>
+    <div class="permission-modal-form">
+      <div class="type-switch" *ngIf="isCreateMode; else typePreview">
+        <button nz-button [nzType]="permissionType === 'MENU' ? 'primary' : 'default'" (click)="permissionType = 'MENU'">
+          {{ 'momApp.admin.permissions.filters.menu' | translate }}
+        </button>
+        <button nz-button [nzType]="permissionType === 'API' ? 'primary' : 'default'" (click)="permissionType = 'API'">
+          {{ 'momApp.admin.permissions.filters.api' | translate }}
+        </button>
+      </div>
+
+      <ng-template #typePreview>
+        <nz-tag [nzColor]="permissionType === 'MENU' ? 'blue' : 'purple'">{{ typeLabel(permissionType) }}</nz-tag>
+      </ng-template>
+
+      <label class="field-label" for="permission-name">{{ 'momApp.admin.permissions.modal.name' | translate }}</label>
+      <input
+        id="permission-name"
+        nz-input
+        maxlength="120"
+        [(ngModel)]="permissionName"
+        [placeholder]="'momApp.admin.permissions.modal.namePlaceholder' | translate"
+      />
+
+      <label class="field-label" for="permission-description">{{ 'momApp.admin.permissions.modal.description' | translate }}</label>
+      <input
+        id="permission-description"
+        nz-input
+        maxlength="255"
+        [(ngModel)]="permissionDescription"
+        [placeholder]="'momApp.admin.permissions.modal.descriptionPlaceholder' | translate"
+      />
+
+      <ng-container *ngIf="permissionType === 'MENU'; else apiFields">
+        <label class="field-label" for="permission-menu-key">{{ 'momApp.admin.permissions.modal.menuKey' | translate }}</label>
+        <input
+          id="permission-menu-key"
+          nz-input
+          maxlength="150"
+          [(ngModel)]="menuKey"
+          [placeholder]="'momApp.admin.permissions.modal.menuKeyPlaceholder' | translate"
+        />
+      </ng-container>
+
+      <ng-template #apiFields>
+        <label class="field-label" for="permission-api-method">{{ 'momApp.admin.permissions.modal.apiMethod' | translate }}</label>
+        <input
+          id="permission-api-method"
+          nz-input
+          maxlength="12"
+          [(ngModel)]="apiMethod"
+          [placeholder]="'momApp.admin.permissions.modal.apiMethodPlaceholder' | translate"
+        />
+
+        <label class="field-label" for="permission-api-path">{{ 'momApp.admin.permissions.modal.apiPath' | translate }}</label>
+        <input
+          id="permission-api-path"
+          nz-input
+          maxlength="255"
+          [(ngModel)]="apiPath"
+          [placeholder]="'momApp.admin.permissions.modal.apiPathPlaceholder' | translate"
+        />
+      </ng-template>
+    </div>
+  </ng-container>
+</nz-modal>

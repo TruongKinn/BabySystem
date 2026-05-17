@@ -1,0 +1,246 @@
+<section class="admin-access-page">
+  <header class="access-hero">
+    <div class="hero-copy">
+      <span class="hero-kicker">{{ 'momApp.admin.access.hero.kicker' | translate }}</span>
+      <h1>{{ 'momApp.admin.access.hero.title' | translate }}</h1>
+      <p>{{ 'momApp.admin.access.hero.subtitle' | translate }}</p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span>{{ 'momApp.admin.access.stats.roles' | translate }}</span>
+        <strong>{{ totalRoles }}</strong>
+      </div>
+      <div class="hero-stat">
+        <span>{{ 'momApp.admin.access.stats.menuPermissions' | translate }}</span>
+        <strong>{{ totalMenuPermissions }}</strong>
+      </div>
+      <div class="hero-stat">
+        <span>{{ 'momApp.admin.access.stats.apiPermissions' | translate }}</span>
+        <strong>{{ totalApiPermissions }}</strong>
+      </div>
+    </div>
+  </header>
+
+  <nz-card class="roles-card" [nzLoading]="loadingWorkspace">
+    <div class="toolbar">
+      <input
+        nz-input
+        class="search-input"
+        [ngModel]="roleSearchText"
+        (ngModelChange)="onRoleSearchChange($event)"
+        [placeholder]="'momApp.admin.access.searchPlaceholder' | translate"
+      />
+
+      <div class="toolbar-actions">
+        <button nz-button nzType="default" (click)="loadWorkspace()">{{ 'commonActions.refresh' | translate }}</button>
+        <button nz-button nzType="primary" (click)="openCreateRoleModal()">{{ 'momApp.admin.access.actions.createRole' | translate }}</button>
+      </div>
+    </div>
+
+    <nz-table [nzData]="filteredRoles" [nzFrontPagination]="false" [nzLoading]="loadingWorkspace" [nzPageSize]="10">
+      <thead>
+        <tr>
+          <th>{{ 'momApp.admin.access.table.id' | translate }}</th>
+          <th>{{ 'momApp.admin.access.table.role' | translate }}</th>
+          <th>{{ 'momApp.admin.access.table.permissions' | translate }}</th>
+          <th>{{ 'momApp.admin.access.table.actions' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let role of filteredRoles; trackBy: trackByRole" [class.selected-row]="role.id === selectedRoleId">
+          <td>{{ role.id }}</td>
+          <td>
+            <button class="role-link" type="button" (click)="selectRole(role)">{{ role.name }}</button>
+          </td>
+          <td>
+            <nz-tag nzColor="blue">{{ role.permissionIds.length }} {{ 'momApp.admin.access.table.permissionCount' | translate }}</nz-tag>
+          </td>
+          <td>
+            <div class="row-actions">
+              <button nz-button nzType="default" nzSize="small" (click)="openEditRoleModal(role)">
+                {{ 'commonActions.edit' | translate }}
+              </button>
+              <button
+                nz-button
+                nzType="default"
+                nzDanger
+                nzSize="small"
+                nz-popconfirm
+                [nzPopconfirmTitle]="'momApp.admin.access.actions.deleteRoleConfirm' | translate"
+                [nzLoading]="deletingRoleId === role.id"
+                (nzOnConfirm)="deleteRole(role)"
+              >
+                {{ 'commonActions.delete' | translate }}
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </nz-table>
+  </nz-card>
+
+  <div class="workspace-grid">
+    <nz-card class="permission-board">
+      <ng-container *ngIf="selectedRole as role; else noRoleSelected">
+        <div class="board-head">
+          <h2>{{ role.name }}</h2>
+          <span>{{ role.permissionIds.length }} {{ 'momApp.admin.access.table.permissionCount' | translate }}</span>
+        </div>
+
+        <div class="permission-columns">
+          <div class="permission-column">
+            <h3>{{ 'momApp.admin.access.permissionGroups.menu' | translate }}</h3>
+            <ul *ngIf="sortedSelectedMenuPermissions.length > 0; else emptyMenuList">
+              <li *ngFor="let permission of sortedSelectedMenuPermissions; trackBy: trackByPermission">
+                <strong>{{ permission.name }}</strong>
+                <span>{{ permissionSummary(permission) }}</span>
+              </li>
+            </ul>
+            <ng-template #emptyMenuList>
+              <p class="empty-copy">{{ 'momApp.admin.access.empty.menuPermissions' | translate }}</p>
+            </ng-template>
+          </div>
+
+          <div class="permission-column">
+            <h3>{{ 'momApp.admin.access.permissionGroups.api' | translate }}</h3>
+            <ul *ngIf="sortedSelectedApiPermissions.length > 0; else emptyApiList">
+              <li *ngFor="let permission of sortedSelectedApiPermissions; trackBy: trackByPermission">
+                <strong>{{ permission.name }}</strong>
+                <span>{{ permissionSummary(permission) }}</span>
+              </li>
+            </ul>
+            <ng-template #emptyApiList>
+              <p class="empty-copy">{{ 'momApp.admin.access.empty.apiPermissions' | translate }}</p>
+            </ng-template>
+          </div>
+        </div>
+      </ng-container>
+
+      <ng-template #noRoleSelected>
+        <div class="empty-state">
+          <h3>{{ 'momApp.admin.access.empty.noRoleSelectedTitle' | translate }}</h3>
+          <p>{{ 'momApp.admin.access.empty.noRoleSelectedSubtitle' | translate }}</p>
+        </div>
+      </ng-template>
+    </nz-card>
+
+    <nz-card class="access-inspector" [nzTitle]="'momApp.admin.access.inspector.title' | translate">
+      <div class="inspector-form">
+        <input
+          nz-input
+          [(ngModel)]="accessLookupUserId"
+          [placeholder]="'momApp.admin.access.inspector.userIdPlaceholder' | translate"
+          (keydown.enter)="inspectUserAccess()"
+        />
+        <button nz-button nzType="primary" (click)="inspectUserAccess()" [nzLoading]="loadingUserAccess">
+          {{ 'momApp.admin.access.inspector.inspect' | translate }}
+        </button>
+      </div>
+
+      <ng-container *ngIf="accessResult as access; else noAccessData">
+        <div class="access-head">
+          <span>#{{ inspectedUserId }}</span>
+          <nz-tag [nzColor]="access.admin ? 'green' : 'default'">
+            {{ access.admin ? ('momApp.admin.access.inspector.adminUser' | translate) : ('momApp.admin.access.inspector.standardUser' | translate) }}
+          </nz-tag>
+        </div>
+
+        <div class="access-group">
+          <h4>{{ 'momApp.admin.access.inspector.roles' | translate }}</h4>
+          <div class="tag-wrap" *ngIf="access.roles.length > 0; else emptyRoles">
+            <nz-tag *ngFor="let role of access.roles">{{ role }}</nz-tag>
+          </div>
+          <ng-template #emptyRoles>
+            <p class="empty-copy">{{ 'momApp.admin.access.empty.roles' | translate }}</p>
+          </ng-template>
+        </div>
+
+        <div class="access-group">
+          <h4>{{ 'momApp.admin.access.inspector.menuKeys' | translate }}</h4>
+          <div class="tag-wrap" *ngIf="access.menuKeys.length > 0; else emptyMenuKeys">
+            <nz-tag nzColor="blue" *ngFor="let menuKey of access.menuKeys">{{ menuKey }}</nz-tag>
+          </div>
+          <ng-template #emptyMenuKeys>
+            <p class="empty-copy">{{ 'momApp.admin.access.empty.menuPermissions' | translate }}</p>
+          </ng-template>
+        </div>
+
+        <div class="access-group">
+          <h4>{{ 'momApp.admin.access.inspector.apiPermissions' | translate }}</h4>
+          <ul class="api-list" *ngIf="access.apiPermissions.length > 0; else emptyApiPermissions">
+            <li *ngFor="let api of access.apiPermissions">
+              <nz-tag nzColor="purple">{{ api.method }}</nz-tag>
+              <code>{{ api.path }}</code>
+            </li>
+          </ul>
+          <ng-template #emptyApiPermissions>
+            <p class="empty-copy">{{ 'momApp.admin.access.empty.apiPermissions' | translate }}</p>
+          </ng-template>
+        </div>
+      </ng-container>
+
+      <ng-template #noAccessData>
+        <div class="empty-state compact">
+          <h3>{{ 'momApp.admin.access.empty.userAccessTitle' | translate }}</h3>
+          <p>{{ 'momApp.admin.access.empty.userAccessSubtitle' | translate }}</p>
+        </div>
+      </ng-template>
+    </nz-card>
+  </div>
+</section>
+
+<nz-modal
+  [(nzVisible)]="isRoleModalVisible"
+  [nzTitle]="roleModalTitleKey | translate"
+  [nzOkText]="'commonActions.save' | translate"
+  [nzCancelText]="'commonActions.cancel' | translate"
+  [nzOkLoading]="savingRole"
+  (nzOnCancel)="closeRoleModal()"
+  (nzOnOk)="saveRole()"
+>
+  <ng-container *nzModalContent>
+    <div class="role-modal-form">
+      <label class="field-label" for="role-name">{{ 'momApp.admin.access.roleModal.roleName' | translate }}</label>
+      <input
+        id="role-name"
+        nz-input
+        maxlength="80"
+        [(ngModel)]="roleName"
+        [placeholder]="'momApp.admin.access.roleModal.roleNamePlaceholder' | translate"
+      />
+
+      <div class="permission-picker-grid">
+        <div class="picker-column">
+          <h4>{{ 'momApp.admin.access.permissionGroups.menu' | translate }}</h4>
+          <label class="permission-check" *ngFor="let permission of menuPermissions; trackBy: trackByPermission">
+            <input
+              type="checkbox"
+              [checked]="isPermissionSelected(permission.id)"
+              (change)="togglePermission(permission.id, $any($event.target).checked)"
+            />
+            <span class="permission-copy">
+              <strong>{{ permission.name }}</strong>
+              <small>{{ permissionSummary(permission) }}</small>
+            </span>
+          </label>
+        </div>
+
+        <div class="picker-column">
+          <h4>{{ 'momApp.admin.access.permissionGroups.api' | translate }}</h4>
+          <label class="permission-check" *ngFor="let permission of apiPermissions; trackBy: trackByPermission">
+            <input
+              type="checkbox"
+              [checked]="isPermissionSelected(permission.id)"
+              (change)="togglePermission(permission.id, $any($event.target).checked)"
+            />
+            <span class="permission-copy">
+              <strong>{{ permission.name }}</strong>
+              <small>{{ permissionSummary(permission) }}</small>
+            </span>
+          </label>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>

@@ -6,6 +6,9 @@ import { TranslateModule } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 
@@ -45,18 +48,24 @@ interface FamilyView extends FamilyApi {
 @Component({
   selector: 'app-admin-families',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, NzButtonModule, NzCardModule, NzInputModule],
+  imports: [CommonModule, FormsModule, TranslateModule, NzButtonModule, NzCardModule, NzInputModule, NzModalModule, NzPopconfirmModule],
   templateUrl: './admin-families.component.html',
   styleUrl: './admin-families.component.css'
 })
 export class AdminFamiliesComponent implements OnInit {
   private readonly http = inject(HttpClient);
+  private readonly message = inject(NzMessageService);
   private readonly i18n = inject(I18nService);
 
   loading = false;
+  submitting = false;
+  deletingFamilyId: number | null = null;
   searchText = '';
   families: FamilyView[] = [];
   filteredFamilies: FamilyView[] = [];
+  editingFamily: FamilyView | null = null;
+  editFamilyName = '';
+  isEditModalVisible = false;
 
   ngOnInit(): void {
     this.loadFamilies();
@@ -86,6 +95,7 @@ export class AdminFamiliesComponent implements OnInit {
         this.loading = false;
         this.families = [];
         this.filteredFamilies = [];
+        this.message.error(this.i18n.translate('momApp.admin.families.messages.loadFailed'));
       }
     });
   }
@@ -142,6 +152,61 @@ export class AdminFamiliesComponent implements OnInit {
 
   trackByTreeNode(_: number, node: FamilyTreeNode): string {
     return node.key;
+  }
+
+  openEditFamilyModal(family: FamilyView): void {
+    this.editingFamily = family;
+    this.editFamilyName = family.name;
+    this.isEditModalVisible = true;
+  }
+
+  closeEditFamilyModal(): void {
+    this.isEditModalVisible = false;
+    this.editingFamily = null;
+    this.editFamilyName = '';
+  }
+
+  submitEditFamily(): void {
+    if (!this.editingFamily) {
+      return;
+    }
+
+    const nextName = this.editFamilyName.trim();
+    if (!nextName) {
+      this.message.warning(this.i18n.translate('momApp.admin.families.messages.nameRequired'));
+      return;
+    }
+
+    this.submitting = true;
+    this.http
+      .put<ApiEnvelope<FamilyApi>>(`${API_CONFIG.GATEWAY_URL}/account/admin/families/${this.editingFamily.id}`, { name: nextName })
+      .subscribe({
+        next: () => {
+          this.submitting = false;
+          this.message.success(this.i18n.translate('momApp.admin.families.messages.updateSuccess'));
+          this.closeEditFamilyModal();
+          this.loadFamilies();
+        },
+        error: () => {
+          this.submitting = false;
+          this.message.error(this.i18n.translate('momApp.admin.families.messages.updateFailed'));
+        }
+      });
+  }
+
+  deleteFamily(family: FamilyView): void {
+    this.deletingFamilyId = family.id;
+    this.http.delete<ApiEnvelope<void>>(`${API_CONFIG.GATEWAY_URL}/account/admin/families/${family.id}`).subscribe({
+      next: () => {
+        this.deletingFamilyId = null;
+        this.message.success(this.i18n.translate('momApp.admin.families.messages.deleteSuccess'));
+        this.loadFamilies();
+      },
+      error: () => {
+        this.deletingFamilyId = null;
+        this.message.error(this.i18n.translate('momApp.admin.families.messages.deleteFailed'));
+      }
+    });
   }
 
   private applySearch(): void {

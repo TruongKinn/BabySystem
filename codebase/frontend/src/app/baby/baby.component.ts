@@ -60,6 +60,7 @@ interface GalleryFileView extends FileMetadata {
 })
 export class BabyComponent {
   private readonly babyGalleryBucket = 'baby-gallery';
+  private readonly maxUploadImageSizeBytes = 30 * 1024 * 1024;
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   private readonly command = inject(SuperAppCommandService);
@@ -122,6 +123,7 @@ export class BabyComponent {
   growthRecords: BabyGrowthRecord[] = [];
   vaccinations: BabyVaccination[] = [];
   galleryFiles: GalleryFileView[] = [];
+  selectedBabyAvatarUrl: string | null = null;
 
   readonly selectedBabyControl = this.fb.control<number | null>(null);
   readonly selectedDateControl = this.fb.control<Date>(new Date(), { nonNullable: true });
@@ -648,6 +650,22 @@ export class BabyComponent {
       return;
     }
 
+    if (!file.type.toLowerCase().startsWith('image/')) {
+      this.notification.warning(
+        this.i18n.translate('common.errorTitle'),
+        this.i18n.translate('momApp.profile.messages.selectImageOnly')
+      );
+      return;
+    }
+
+    if (file.size > this.maxUploadImageSizeBytes) {
+      this.notification.warning(
+        this.i18n.translate('common.errorTitle'),
+        this.i18n.translate('momApp.profile.messages.fileTooLarge')
+      );
+      return;
+    }
+
     this.isUploadingGallery = true;
     this.command.uploadFile(file, this.babyGalleryBucket, `baby:${this.selectedBabyId}`).subscribe({
       next: () => {
@@ -820,6 +838,7 @@ export class BabyComponent {
   private loadGalleryFiles(): void {
     if (!this.selectedBabyId) {
       this.galleryFiles = [];
+      this.selectedBabyAvatarUrl = null;
       return;
     }
 
@@ -857,10 +876,12 @@ export class BabyComponent {
         next: (files) => {
           this.isLoadingGallery = false;
           this.galleryFiles = files;
+          this.selectedBabyAvatarUrl = files.find((file) => !!file.previewUrl)?.previewUrl ?? null;
         },
         error: (err) => {
           this.isLoadingGallery = false;
           this.galleryFiles = [];
+          this.selectedBabyAvatarUrl = null;
           this.galleryLoadError = err?.message || this.i18n.translate('momApp.baby.gallery.messages.loadFailed');
         }
       });
@@ -874,6 +895,7 @@ export class BabyComponent {
     this.growthRecords = [];
     this.vaccinations = [];
     this.galleryFiles = [];
+    this.selectedBabyAvatarUrl = null;
   }
 
   private notifySelectBabyFirst(): void {

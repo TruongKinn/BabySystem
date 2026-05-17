@@ -2387,7 +2387,9 @@
         "portal": "System admin",
         "dashboard": "Admin dashboard",
         "users": "User management",
-        "families": "Family management"
+        "families": "Family management",
+        "access": "Access control",
+        "permissions": "Permission catalog"
       },
       "brandTitle": "MOM CONTROL",
       "brandSubtitle": "Ops Console",
@@ -2402,13 +2404,47 @@
           "subtitle": "Monitor account health, security posture, and family data coverage in one place."
         },
         "lockRate": "Lock rate",
+        "activeRate": "Active rate",
         "updatedAt": "Updated at",
         "refresh": "Refresh snapshot",
         "quickActions": {
           "title": "Quick actions",
           "openUsers": "Open user management",
           "openFamilies": "Open family tree board",
+          "openAccess": "Open access control",
+          "openPermissions": "Open permission catalog",
           "goUserLogin": "Go to user portal login"
+        },
+        "alerts": {
+          "title": "Operational alerts",
+          "lockedUsers": {
+            "title": "Locked accounts detected",
+            "hint": "{{count}} accounts are currently locked."
+          },
+          "inactiveUsers": {
+            "title": "Inactive users still exist",
+            "hint": "{{count}} accounts are not in active state."
+          },
+          "rolesWithoutPermissions": {
+            "title": "Roles without permissions",
+            "hint": "{{count}} roles are not mapped to any permission."
+          },
+          "stable": {
+            "title": "Control plane is stable",
+            "hint": "No immediate IAM or account-risk warning right now."
+          }
+        },
+        "lockedUsers": {
+          "title": "Recently locked accounts",
+          "username": "Username",
+          "roleType": "Role type",
+          "empty": "No locked accounts found."
+        },
+        "largestFamilies": {
+          "title": "Largest households",
+          "name": "Household",
+          "members": "Members",
+          "empty": "No household data available."
         },
         "metrics": {
           "totalUsers": {
@@ -2430,6 +2466,18 @@
           "totalFamilies": {
             "label": "Family groups",
             "description": "Family entities in account service"
+          },
+          "totalRoles": {
+            "label": "Roles",
+            "description": "Role definitions in IAM workspace"
+          },
+          "menuPermissions": {
+            "label": "Menu permissions",
+            "description": "Frontend menu access entries"
+          },
+          "apiPermissions": {
+            "label": "API permissions",
+            "description": "Backend endpoint access policies"
           }
         }
       },
@@ -2460,7 +2508,9 @@
           "unlockConfirm": "Unlock this account?",
           "lock": "Lock",
           "unlock": "Unlock",
-          "resetPassword": "Reset password"
+          "resetPassword": "Reset password",
+          "promoteToAdmin": "Promote to admin",
+          "demoteToUser": "Demote to user"
         },
         "resetModal": {
           "title": "Reset temporary password",
@@ -2486,7 +2536,11 @@
           "lockSuccess": "Account locked.",
           "unlockSuccess": "Account unlocked.",
           "lockFailed": "Unable to lock account.",
-          "unlockFailed": "Unable to unlock account."
+          "unlockFailed": "Unable to unlock account.",
+          "promoteSuccess": "User promoted to admin.",
+          "promoteFailed": "Unable to promote user.",
+          "demoteSuccess": "Admin demoted to user.",
+          "demoteFailed": "Unable to demote admin."
         }
       },
       "families": {
@@ -2500,12 +2554,154 @@
         "refresh": "Refresh tree",
         "creator": "Creator",
         "members": "Members",
+        "actions": {
+          "deleteConfirm": "Delete this household? This action cannot be undone."
+        },
+        "modal": {
+          "editTitle": "Edit household",
+          "nameLabel": "Household name",
+          "namePlaceholder": "Enter household name"
+        },
+        "messages": {
+          "loadFailed": "Unable to load household list.",
+          "nameRequired": "Household name is required.",
+          "updateSuccess": "Household updated successfully.",
+          "updateFailed": "Unable to update household.",
+          "deleteSuccess": "Household deleted successfully.",
+          "deleteFailed": "Unable to delete household."
+        },
         "role": {
           "member": "Member"
         },
         "empty": {
           "title": "No family matched this filter",
           "subtitle": "Try another keyword or refresh to load latest household data."
+        }
+      },
+      "access": {
+        "hero": {
+          "kicker": "Role governance",
+          "title": "Access control workspace",
+          "subtitle": "Manage role mappings and inspect effective menu/API access for each account."
+        },
+        "stats": {
+          "roles": "Roles",
+          "menuPermissions": "Menu permissions",
+          "apiPermissions": "API permissions"
+        },
+        "searchPlaceholder": "Search role by name, id or permission id...",
+        "table": {
+          "id": "ID",
+          "role": "Role",
+          "permissions": "Permissions",
+          "permissionCount": "permissions",
+          "actions": "Actions"
+        },
+        "actions": {
+          "createRole": "Create role",
+          "deleteRoleConfirm": "Delete this role?"
+        },
+        "permissionGroups": {
+          "menu": "Menu permissions",
+          "api": "API permissions"
+        },
+        "inspector": {
+          "title": "User access inspector",
+          "userIdPlaceholder": "Enter user id",
+          "inspect": "Inspect access",
+          "adminUser": "Admin account",
+          "standardUser": "Standard account",
+          "roles": "Roles",
+          "menuKeys": "Menu keys",
+          "apiPermissions": "API permissions"
+        },
+        "roleModal": {
+          "createTitle": "Create role",
+          "editTitle": "Edit role",
+          "roleName": "Role name",
+          "roleNamePlaceholder": "Enter role name"
+        },
+        "messages": {
+          "loadWorkspaceFailed": "Unable to load role workspace.",
+          "roleNameRequired": "Role name is required.",
+          "createRoleSuccess": "Role created successfully.",
+          "createRoleFailed": "Unable to create role.",
+          "updateRoleSuccess": "Role updated successfully.",
+          "updateRoleFailed": "Unable to update role.",
+          "deleteRoleSuccess": "Role deleted successfully.",
+          "deleteRoleFailed": "Unable to delete role.",
+          "invalidUserId": "Please enter a valid user id.",
+          "loadUserAccessFailed": "Unable to load user access."
+        },
+        "empty": {
+          "noRoleSelectedTitle": "No role selected",
+          "noRoleSelectedSubtitle": "Pick a role from the table to inspect permission mapping.",
+          "roles": "No roles assigned.",
+          "menuPermissions": "No permissions available for this section.",
+          "apiPermissions": "No permissions available for this section.",
+          "userAccessTitle": "User access data not loaded",
+          "userAccessSubtitle": "Enter an account id and run inspect access."
+        }
+      },
+      "permissions": {
+        "hero": {
+          "kicker": "Policy registry",
+          "title": "Permission catalog",
+          "subtitle": "Curate MENU/API permissions and monitor how many roles are using each policy."
+        },
+        "stats": {
+          "total": "Total permissions",
+          "menu": "Menu permissions",
+          "api": "API permissions"
+        },
+        "searchPlaceholder": "Search permission by name, description, method or path...",
+        "filters": {
+          "all": "All",
+          "menu": "Menu",
+          "api": "API"
+        },
+        "types": {
+          "menu": "Menu permission",
+          "api": "API permission"
+        },
+        "table": {
+          "id": "ID",
+          "name": "Permission name",
+          "type": "Type",
+          "summary": "Summary",
+          "usedByRoles": "Used by roles",
+          "actions": "Actions"
+        },
+        "actions": {
+          "createMenuPermission": "New menu permission",
+          "createApiPermission": "New API permission",
+          "deleteConfirm": "Delete this permission?"
+        },
+        "modal": {
+          "createTitle": "Create permission",
+          "editTitle": "Edit permission",
+          "name": "Permission name",
+          "namePlaceholder": "Enter permission name",
+          "description": "Description",
+          "descriptionPlaceholder": "Enter permission description",
+          "menuKey": "Menu key",
+          "menuKeyPlaceholder": "Enter menu key",
+          "apiMethod": "API method",
+          "apiMethodPlaceholder": "Example: GET",
+          "apiPath": "API path",
+          "apiPathPlaceholder": "Example: /api/orders/**"
+        },
+        "messages": {
+          "loadFailed": "Unable to load permission workspace.",
+          "nameRequired": "Permission name is required.",
+          "menuKeyRequired": "Menu key is required for MENU permission.",
+          "apiFieldRequired": "API method and path are required for API permission.",
+          "createSuccess": "Permission created successfully.",
+          "createFailed": "Unable to create permission.",
+          "updateSuccess": "Permission updated successfully.",
+          "updateFailed": "Unable to update permission.",
+          "deleteSuccess": "Permission deleted successfully.",
+          "deleteFailed": "Unable to delete permission."
         }
       }
     },

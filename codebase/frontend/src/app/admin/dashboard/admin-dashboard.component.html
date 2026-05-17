@@ -1,4 +1,4 @@
-﻿<section class="admin-dashboard-page">
+<section class="admin-dashboard-page">
   <header class="admin-hero">
     <div class="hero-content">
       <span class="hero-kicker">{{ 'momApp.admin.dashboard.hero.kicker' | translate }}</span>
@@ -10,6 +10,10 @@
       <div class="meta-item">
         <span>{{ 'momApp.admin.dashboard.lockRate' | translate }}</span>
         <strong>{{ lockRate }}</strong>
+      </div>
+      <div class="meta-item">
+        <span>{{ 'momApp.admin.dashboard.activeRate' | translate }}</span>
+        <strong>{{ activeRate }}</strong>
       </div>
       <div class="meta-item">
         <span>{{ 'momApp.admin.dashboard.updatedAt' | translate }}</span>
@@ -29,10 +33,69 @@
     </nz-card>
   </div>
 
+  <div class="insight-grid">
+    <nz-card class="alert-card" [nzTitle]="'momApp.admin.dashboard.alerts.title' | translate">
+      <div class="alert-list">
+        <article class="alert-item" *ngFor="let alert of alerts; trackBy: trackByAlert" [ngClass]="alertClass(alert.level)">
+          <h3>{{ alert.titleKey | translate }}</h3>
+          <p>{{ alert.hintKey | translate: { count: alert.value } }}</p>
+        </article>
+      </div>
+    </nz-card>
+
+    <nz-card class="locked-card" [nzTitle]="'momApp.admin.dashboard.lockedUsers.title' | translate">
+      <nz-table [nzData]="lockedUsersPreview" [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="loading">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>{{ 'momApp.admin.dashboard.lockedUsers.username' | translate }}</th>
+            <th>{{ 'momApp.admin.dashboard.lockedUsers.roleType' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let user of lockedUsersPreview; trackBy: trackByUser">
+            <td>{{ user.id }}</td>
+            <td>{{ user.username || '-' }}</td>
+            <td><nz-tag nzColor="red">{{ user.type || 'USER' }}</nz-tag></td>
+          </tr>
+        </tbody>
+      </nz-table>
+
+      <div class="empty-copy" *ngIf="!loading && lockedUsersPreview.length === 0">
+        {{ 'momApp.admin.dashboard.lockedUsers.empty' | translate }}
+      </div>
+    </nz-card>
+
+    <nz-card class="family-card" [nzTitle]="'momApp.admin.dashboard.largestFamilies.title' | translate">
+      <nz-table [nzData]="largestFamilies" [nzFrontPagination]="false" [nzShowPagination]="false" [nzLoading]="loading">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>{{ 'momApp.admin.dashboard.largestFamilies.name' | translate }}</th>
+            <th>{{ 'momApp.admin.dashboard.largestFamilies.members' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let family of largestFamilies; trackBy: trackByFamily">
+            <td>{{ family.id }}</td>
+            <td>{{ family.name }}</td>
+            <td><nz-tag nzColor="blue">{{ family.memberCount }}</nz-tag></td>
+          </tr>
+        </tbody>
+      </nz-table>
+
+      <div class="empty-copy" *ngIf="!loading && largestFamilies.length === 0">
+        {{ 'momApp.admin.dashboard.largestFamilies.empty' | translate }}
+      </div>
+    </nz-card>
+  </div>
+
   <nz-card class="admin-actions" [nzTitle]="'momApp.admin.dashboard.quickActions.title' | translate">
     <div class="quick-actions">
       <a routerLink="/admin/users" nz-button nzType="primary">{{ 'momApp.admin.dashboard.quickActions.openUsers' | translate }}</a>
       <a routerLink="/admin/families" nz-button nzType="default">{{ 'momApp.admin.dashboard.quickActions.openFamilies' | translate }}</a>
+      <a routerLink="/admin/access" nz-button nzType="default">{{ 'momApp.admin.dashboard.quickActions.openAccess' | translate }}</a>
+      <a routerLink="/admin/permissions" nz-button nzType="default">{{ 'momApp.admin.dashboard.quickActions.openPermissions' | translate }}</a>
       <a routerLink="/app/login" nz-button nzType="default">{{ 'momApp.admin.dashboard.quickActions.goUserLogin' | translate }}</a>
     </div>
   </nz-card>

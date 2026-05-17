@@ -2398,38 +2398,74 @@
                                            }
                               },
                    "admin":  {
-                                 "menu":  {
-                                              "portal":  "Quản trị hệ thống",
-                                              "dashboard":  "Dashboard admin",
-                                              "users":  "Quản lý người dùng",
-                                              "families":  "Quản lý hộ gia đình"
-                                          },
+                                  "menu":  {
+                                               "portal":  "Quản trị hệ thống",
+                                               "dashboard":  "Dashboard admin",
+                                               "users":  "Quản lý người dùng",
+                                               "families":  "Quản lý hộ gia đình",
+                                               "access":  "Kiểm soát truy cập",
+                                               "permissions":  "Danh mục quyền"
+                                           },
                                  "brandTitle":  "MOM CONTROL",
                                  "brandSubtitle":  "Ops Console",
                                  "roleLabel":  "Điều hành hệ thống",
                                  "header":  {
                                                 "greeting":  "Điều hành"
                                             },
-                                 "dashboard":  {
-                                                   "hero":  {
-                                                                "kicker":  "Vận hành quản trị",
-                                                                "title":  "Dashboard điều khiển hệ thống",
-                                                                "subtitle":  "Theo dõi sức khỏe tài khoản, an ninh và độ phủ dữ liệu gia đình tại một nơi."
-                                                            },
-                                                   "lockRate":  "Tỷ lệ khóa",
-                                                   "updatedAt":  "Cập nhật lúc",
-                                                   "refresh":  "Làm mới snapshot",
-                                                   "quickActions":  {
-                                                                        "title":  "Thao tác nhanh",
-                                                                        "openUsers":  "Mở quản lý người dùng",
-                                                                        "openFamilies":  "Mở bảng cây gia đình",
-                                                                        "goUserLogin":  "Đến đăng nhập User Portal"
+                                  "dashboard":  {
+                                                    "hero":  {
+                                                                 "kicker":  "Vận hành quản trị",
+                                                                 "title":  "Dashboard điều khiển hệ thống",
+                                                                 "subtitle":  "Theo dõi sức khỏe tài khoản, an ninh và độ phủ dữ liệu gia đình tại một nơi."
+                                                             },
+                                                    "lockRate":  "Tỷ lệ khóa",
+                                                    "activeRate":  "Tỷ lệ hoạt động",
+                                                    "updatedAt":  "Cập nhật lúc",
+                                                    "refresh":  "Làm mới snapshot",
+                                                    "quickActions":  {
+                                                                         "title":  "Thao tác nhanh",
+                                                                         "openUsers":  "Mở quản lý người dùng",
+                                                                         "openFamilies":  "Mở bảng cây gia đình",
+                                                                         "openAccess":  "Mở kiểm soát truy cập",
+                                                                         "openPermissions":  "Mở danh mục quyền",
+                                                                         "goUserLogin":  "Đến đăng nhập User Portal"
+                                                                     },
+                                                    "alerts":  {
+                                                                   "title":  "Cảnh báo vận hành",
+                                                                   "lockedUsers":  {
+                                                                                       "title":  "Phát hiện tài khoản bị khóa",
+                                                                                       "hint":  "Hiện có {{count}} tài khoản đang bị khóa."
+                                                                                   },
+                                                                   "inactiveUsers":  {
+                                                                                         "title":  "Vẫn còn tài khoản không hoạt động",
+                                                                                         "hint":  "Có {{count}} tài khoản chưa ở trạng thái hoạt động."
+                                                                                     },
+                                                                   "rolesWithoutPermissions":  {
+                                                                                                   "title":  "Role chưa gán quyền",
+                                                                                                   "hint":  "Có {{count}} role chưa map permission nào."
+                                                                                               },
+                                                                   "stable":  {
+                                                                                  "title":  "Hệ điều hành đang ổn định",
+                                                                                  "hint":  "Hiện chưa có cảnh báo IAM hoặc tài khoản cần xử lý ngay."
+                                                                              }
+                                                               },
+                                                    "lockedUsers":  {
+                                                                        "title":  "Tài khoản khóa gần đây",
+                                                                        "username":  "Username",
+                                                                        "roleType":  "Loại vai trò",
+                                                                        "empty":  "Không có tài khoản bị khóa."
                                                                     },
-                                                   "metrics":  {
-                                                                   "totalUsers":  {
-                                                                                      "label":  "Tổng người dùng",
-                                                                                      "description":  "Tất cả tài khoản trong hệ auth"
-                                                                                  },
+                                                    "largestFamilies":  {
+                                                                            "title":  "Hộ gia đình lớn nhất",
+                                                                            "name":  "Hộ gia đình",
+                                                                            "members":  "Thành viên",
+                                                                            "empty":  "Chưa có dữ liệu hộ gia đình."
+                                                                        },
+                                                    "metrics":  {
+                                                                    "totalUsers":  {
+                                                                                       "label":  "Tổng người dùng",
+                                                                                       "description":  "Tất cả tài khoản trong hệ auth"
+                                                                                   },
                                                                    "activeUsers":  {
                                                                                        "label":  "Người dùng hoạt động",
                                                                                        "description":  "Tài khoản có thể đăng nhập"
@@ -2442,12 +2478,24 @@
                                                                                       "label":  "Tài khoản admin",
                                                                                       "description":  "Tài khoản vận hành không phải user thường"
                                                                                   },
-                                                                   "totalFamilies":  {
-                                                                                         "label":  "Nhóm gia đình",
-                                                                                         "description":  "Thực thể gia đình trong account service"
-                                                                                     }
-                                                               }
-                                               },
+                                                                    "totalFamilies":  {
+                                                                                          "label":  "Nhóm gia đình",
+                                                                                          "description":  "Thực thể gia đình trong account service"
+                                                                                      },
+                                                                    "totalRoles":  {
+                                                                                       "label":  "Role",
+                                                                                       "description":  "Định nghĩa role trong không gian IAM"
+                                                                                   },
+                                                                    "menuPermissions":  {
+                                                                                             "label":  "Quyền menu",
+                                                                                             "description":  "Các quyền truy cập menu phía frontend"
+                                                                                         },
+                                                                    "apiPermissions":  {
+                                                                                            "label":  "Quyền API",
+                                                                                            "description":  "Chính sách truy cập endpoint backend"
+                                                                                      }
+                                                                }
+                                                },
                                  "users":  {
                                                "hero":  {
                                                             "kicker":  "Định danh \u0026 truy cập",
@@ -2470,13 +2518,15 @@
                                                              "status":  "Trạng thái",
                                                              "actions":  "Thao tác"
                                                          },
-                                               "actions":  {
-                                                               "lockConfirm":  "Khóa tài khoản này?",
-                                                               "unlockConfirm":  "Mở khóa tài khoản này?",
-                                                               "lock":  "Khóa",
-                                                               "unlock":  "Mở khóa",
-                                                               "resetPassword":  "Đặt lại mật khẩu"
-                                                           },
+                                                "actions":  {
+                                                                "lockConfirm":  "Khóa tài khoản này?",
+                                                                "unlockConfirm":  "Mở khóa tài khoản này?",
+                                                                "lock":  "Khóa",
+                                                                "unlock":  "Mở khóa",
+                                                                "resetPassword":  "Đặt lại mật khẩu",
+                                                                "promoteToAdmin":  "Nâng lên admin",
+                                                                "demoteToUser":  "Hạ xuống user"
+                                                            },
                                                "resetModal":  {
                                                                   "title":  "Đặt lại mật khẩu tạm",
                                                                   "confirm":  "Xác nhận",
@@ -2493,17 +2543,21 @@
                                                             "ADMIN":  "Admin",
                                                             "OWNER":  "Owner"
                                                         },
-                                               "messages":  {
-                                                                "loadFailed":  "Không thể tải danh sách người dùng.",
-                                                                "passwordRequired":  "Cần nhập mật khẩu tạm.",
-                                                                "resetSuccess":  "Đã đặt lại mật khẩu tạm.",
-                                                                "resetFailed":  "Không thể đặt lại mật khẩu.",
-                                                                "lockSuccess":  "Đã khóa tài khoản.",
-                                                                "unlockSuccess":  "Đã mở khóa tài khoản.",
-                                                                "lockFailed":  "Không thể khóa tài khoản.",
-                                                                "unlockFailed":  "Không thể mở khóa tài khoản."
-                                                            }
-                                           },
+                                                "messages":  {
+                                                                 "loadFailed":  "Không thể tải danh sách người dùng.",
+                                                                 "passwordRequired":  "Cần nhập mật khẩu tạm.",
+                                                                 "resetSuccess":  "Đã đặt lại mật khẩu tạm.",
+                                                                 "resetFailed":  "Không thể đặt lại mật khẩu.",
+                                                                 "lockSuccess":  "Đã khóa tài khoản.",
+                                                                 "unlockSuccess":  "Đã mở khóa tài khoản.",
+                                                                 "lockFailed":  "Không thể khóa tài khoản.",
+                                                                 "unlockFailed":  "Không thể mở khóa tài khoản.",
+                                                                 "promoteSuccess":  "Đã nâng user lên admin.",
+                                                                 "promoteFailed":  "Không thể nâng user lên admin.",
+                                                                 "demoteSuccess":  "Đã hạ admin xuống user.",
+                                                                 "demoteFailed":  "Không thể hạ admin xuống user."
+                                                             }
+                                            },
                                  "families":  {
                                                   "hero":  {
                                                                "kicker":  "Đồ thị gia đình",
@@ -2515,15 +2569,157 @@
                                                   "refresh":  "Làm mới cây",
                                                   "creator":  "Người tạo",
                                                   "members":  "Thành viên",
+                                                  "actions":  {
+                                                                  "deleteConfirm":  "Bạn có chắc muốn xóa hộ gia đình này? Hành động này không thể hoàn tác."
+                                                              },
+                                                  "modal":  {
+                                                                "editTitle":  "Chỉnh sửa hộ gia đình",
+                                                                "nameLabel":  "Tên hộ gia đình",
+                                                                "namePlaceholder":  "Nhập tên hộ gia đình"
+                                                            },
+                                                  "messages":  {
+                                                                   "loadFailed":  "Không thể tải danh sách hộ gia đình.",
+                                                                   "nameRequired":  "Tên hộ gia đình là bắt buộc.",
+                                                                   "updateSuccess":  "Cập nhật hộ gia đình thành công.",
+                                                                   "updateFailed":  "Không thể cập nhật hộ gia đình.",
+                                                                   "deleteSuccess":  "Đã xóa hộ gia đình.",
+                                                                   "deleteFailed":  "Không thể xóa hộ gia đình."
+                                                               },
                                                   "role":  {
                                                                "member":  "Thành viên"
                                                            },
-                                                  "empty":  {
-                                                                "title":  "Không có gia đình phù hợp bộ lọc",
-                                                                "subtitle":  "Thử từ khóa khác hoặc làm mới để tải dữ liệu mới nhất."
-                                                            }
-                                              }
-                             },
+                                                   "empty":  {
+                                                                 "title":  "Không có gia đình phù hợp bộ lọc",
+                                                                 "subtitle":  "Thử từ khóa khác hoặc làm mới để tải dữ liệu mới nhất."
+                                                             }
+                                               },
+                                  "access":  {
+                                                 "hero":  {
+                                                              "kicker":  "Quản trị role",
+                                                              "title":  "Không gian kiểm soát truy cập",
+                                                              "subtitle":  "Quản lý role, gán quyền và kiểm tra quyền menu/API hiệu lực theo từng tài khoản."
+                                                          },
+                                                 "stats":  {
+                                                               "roles":  "Role",
+                                                               "menuPermissions":  "Quyền menu",
+                                                               "apiPermissions":  "Quyền API"
+                                                           },
+                                                 "searchPlaceholder":  "Tìm role theo tên, id hoặc permission id...",
+                                                 "table":  {
+                                                               "id":  "ID",
+                                                               "role":  "Role",
+                                                               "permissions":  "Quyền",
+                                                               "permissionCount":  "quyền",
+                                                               "actions":  "Thao tác"
+                                                           },
+                                                 "actions":  {
+                                                                 "createRole":  "Tạo role",
+                                                                 "deleteRoleConfirm":  "Xóa role này?"
+                                                             },
+                                                 "permissionGroups":  {
+                                                                          "menu":  "Quyền menu",
+                                                                          "api":  "Quyền API"
+                                                                      },
+                                                 "inspector":  {
+                                                                   "title":  "Kiểm tra quyền theo user",
+                                                                   "userIdPlaceholder":  "Nhập user id",
+                                                                   "inspect":  "Kiểm tra quyền",
+                                                                   "adminUser":  "Tài khoản admin",
+                                                                   "standardUser":  "Tài khoản thường",
+                                                                   "roles":  "Role",
+                                                                   "menuKeys":  "Menu key",
+                                                                   "apiPermissions":  "Quyền API"
+                                                               },
+                                                 "roleModal":  {
+                                                                   "createTitle":  "Tạo role",
+                                                                   "editTitle":  "Sửa role",
+                                                                   "roleName":  "Tên role",
+                                                                   "roleNamePlaceholder":  "Nhập tên role"
+                                                               },
+                                                 "messages":  {
+                                                                  "loadWorkspaceFailed":  "Không thể tải không gian role.",
+                                                                  "roleNameRequired":  "Tên role là bắt buộc.",
+                                                                  "createRoleSuccess":  "Tạo role thành công.",
+                                                                  "createRoleFailed":  "Không thể tạo role.",
+                                                                  "updateRoleSuccess":  "Cập nhật role thành công.",
+                                                                  "updateRoleFailed":  "Không thể cập nhật role.",
+                                                                  "deleteRoleSuccess":  "Đã xóa role.",
+                                                                  "deleteRoleFailed":  "Không thể xóa role.",
+                                                                  "invalidUserId":  "Vui lòng nhập user id hợp lệ.",
+                                                                  "loadUserAccessFailed":  "Không thể tải quyền truy cập của user."
+                                                              },
+                                                 "empty":  {
+                                                               "noRoleSelectedTitle":  "Chưa chọn role",
+                                                               "noRoleSelectedSubtitle":  "Chọn một role trong bảng để xem mapping quyền.",
+                                                               "roles":  "User chưa có role nào.",
+                                                               "menuPermissions":  "Không có quyền phù hợp trong nhóm này.",
+                                                               "apiPermissions":  "Không có quyền phù hợp trong nhóm này.",
+                                                               "userAccessTitle":  "Chưa tải dữ liệu quyền user",
+                                                               "userAccessSubtitle":  "Nhập id tài khoản và chạy kiểm tra quyền."
+                                                           }
+                                             },
+                                  "permissions":  {
+                                                      "hero":  {
+                                                                   "kicker":  "Kho chính sách",
+                                                                   "title":  "Danh mục permission",
+                                                                   "subtitle":  "Quản trị quyền MENU/API và theo dõi số role đang sử dụng từng policy."
+                                                               },
+                                                      "stats":  {
+                                                                    "total":  "Tổng permission",
+                                                                    "menu":  "Quyền menu",
+                                                                    "api":  "Quyền API"
+                                                                },
+                                                      "searchPlaceholder":  "Tìm permission theo tên, mô tả, method hoặc path...",
+                                                      "filters":  {
+                                                                      "all":  "Tất cả",
+                                                                      "menu":  "Menu",
+                                                                      "api":  "API"
+                                                                  },
+                                                      "types":  {
+                                                                    "menu":  "Permission menu",
+                                                                    "api":  "Permission API"
+                                                                },
+                                                      "table":  {
+                                                                    "id":  "ID",
+                                                                    "name":  "Tên permission",
+                                                                    "type":  "Loại",
+                                                                    "summary":  "Tóm tắt",
+                                                                    "usedByRoles":  "Role đang dùng",
+                                                                    "actions":  "Thao tác"
+                                                                },
+                                                      "actions":  {
+                                                                      "createMenuPermission":  "Tạo quyền menu",
+                                                                      "createApiPermission":  "Tạo quyền API",
+                                                                      "deleteConfirm":  "Xóa permission này?"
+                                                                  },
+                                                      "modal":  {
+                                                                    "createTitle":  "Tạo permission",
+                                                                    "editTitle":  "Sửa permission",
+                                                                    "name":  "Tên permission",
+                                                                    "namePlaceholder":  "Nhập tên permission",
+                                                                    "description":  "Mô tả",
+                                                                    "descriptionPlaceholder":  "Nhập mô tả permission",
+                                                                    "menuKey":  "Menu key",
+                                                                    "menuKeyPlaceholder":  "Ví dụ: /shipments",
+                                                                    "apiMethod":  "API method",
+                                                                    "apiMethodPlaceholder":  "Ví dụ: GET",
+                                                                    "apiPath":  "API path",
+                                                                    "apiPathPlaceholder":  "Ví dụ: /api/orders/**"
+                                                                },
+                                                      "messages":  {
+                                                                     "loadFailed":  "Không thể tải không gian permission.",
+                                                                     "nameRequired":  "Tên permission là bắt buộc.",
+                                                                     "menuKeyRequired":  "Menu key là bắt buộc cho quyền MENU.",
+                                                                     "apiFieldRequired":  "API method và path là bắt buộc cho quyền API.",
+                                                                     "createSuccess":  "Tạo permission thành công.",
+                                                                     "createFailed":  "Không thể tạo permission.",
+                                                                     "updateSuccess":  "Cập nhật permission thành công.",
+                                                                     "updateFailed":  "Không thể cập nhật permission.",
+                                                                     "deleteSuccess":  "Đã xóa permission.",
+                                                                     "deleteFailed":  "Không thể xóa permission."
+                                                                 }
+                                               }
+                              },
                    "dashboard":  {
                                      "title":  "Dashboard Gia Đình",
                                      "subtitle":  "tổng quan trong ngày",

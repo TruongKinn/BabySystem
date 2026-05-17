@@ -38,7 +38,19 @@
   <div *ngIf="selectedBaby as baby; else noSelectedBaby" class="baby-hero animate-slide-up">
     <div class="hero-main">
       <div class="hero-id-row">
-        <div class="baby-avatar"><span nz-icon nzType="smile"></span></div>
+        <div class="baby-avatar-wrap">
+          <div class="baby-avatar">
+            <img *ngIf="selectedBabyAvatarUrl; else babyAvatarFallback" [src]="selectedBabyAvatarUrl" [alt]="baby.name" />
+            <ng-template #babyAvatarFallback>
+              <span nz-icon nzType="smile"></span>
+            </ng-template>
+          </div>
+          <input #heroAvatarInput type="file" accept="image/*" (change)="onGalleryFileSelected($event)" hidden />
+          <button nz-button nzType="default" nzSize="small" [nzLoading]="isUploadingGallery" (click)="heroAvatarInput.click()">
+            <span nz-icon nzType="camera"></span>
+            {{ 'momApp.baby.gallery.actions.upload' | translate }}
+          </button>
+        </div>
         <div>
           <h2 class="hero-name">{{ baby.name }}</h2>
           <p class="hero-sub">

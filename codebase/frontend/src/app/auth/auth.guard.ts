@@ -41,7 +41,7 @@ export const authGuard: CanActivateFn = (route, state) => {
     }
 
     if (portal === 'user' && authService.isAdminUser()) {
-        return router.createUrlTree(['/admin/users']);
+        return router.createUrlTree(['/admin/dashboard']);
     }
 
     return true;

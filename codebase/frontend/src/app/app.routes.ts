@@ -1,7 +1,9 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './auth/auth.guard';
 import { AdminDashboardComponent } from './admin/dashboard/admin-dashboard.component';
+import { AdminAccessComponent } from './admin/access/admin-access.component';
 import { AdminFamiliesComponent } from './admin/families/admin-families.component';
+import { AdminPermissionsComponent } from './admin/permissions/admin-permissions.component';
 import { AdminUsersComponent } from './admin/users/admin-users.component';
 import { LoginComponent } from './auth/login/login.component';
 import { BabyComponent } from './baby/baby.component';
@@ -47,10 +49,12 @@ export const routes: Routes = [
     canActivate: [authGuard],
     data: { portal: 'admin', roles: ['ADMIN', 'OWNER'] },
     children: [
-      { path: '', pathMatch: 'full', redirectTo: 'users' },
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'users', component: AdminUsersComponent },
-      { path: 'families', component: AdminFamiliesComponent }
+      { path: 'families', component: AdminFamiliesComponent },
+      { path: 'access', component: AdminAccessComponent },
+      { path: 'permissions', component: AdminPermissionsComponent }
     ]
   },
 

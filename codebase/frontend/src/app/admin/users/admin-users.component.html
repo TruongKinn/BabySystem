@@ -103,6 +103,26 @@
               <button nz-button nzType="primary" (click)="openResetPasswordModal(user)">
                 {{ 'momApp.admin.users.actions.resetPassword' | translate }}
               </button>
+
+              <button
+                *ngIf="user.type !== 'ADMIN' && user.type !== 'OWNER'"
+                nz-button
+                nzType="default"
+                (click)="promoteToAdmin(user)"
+                [nzLoading]="actionLoadingUserId === user.id"
+              >
+                {{ 'momApp.admin.users.actions.promoteToAdmin' | translate }}
+              </button>
+
+              <button
+                *ngIf="user.type === 'ADMIN'"
+                nz-button
+                nzType="default"
+                (click)="demoteToUser(user)"
+                [nzLoading]="actionLoadingUserId === user.id"
+              >
+                {{ 'momApp.admin.users.actions.demoteToUser' | translate }}
+              </button>
             </div>
           </td>
         </tr>

@@ -314,7 +314,7 @@ export class AuthService {
   }
 
   getDefaultRouteByRole(): string {
-    return this.isAdminUser() ? '/admin/users' : '/app/dashboard';
+    return this.isAdminUser() ? '/admin/dashboard' : '/app/dashboard';
   }
 
   private decodeJwtPayload(token: string): Record<string, unknown> | null {
