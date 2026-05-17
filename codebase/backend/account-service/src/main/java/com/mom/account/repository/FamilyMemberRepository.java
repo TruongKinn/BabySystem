@@ -8,4 +8,5 @@ import java.util.List;
 public interface FamilyMemberRepository extends JpaRepository<FamilyMemberEntity, Long> {
     List<FamilyMemberEntity> findByFamilyId(Long familyId);
     List<FamilyMemberEntity> findByUserId(Long userId);
+    void deleteAllByFamilyId(Long familyId);
 }

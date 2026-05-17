@@ -11,6 +11,7 @@ import vn.agent.controller.request.UpdatePermissionRequest;
 import vn.agent.controller.request.UpdateRoleRequest;
 import vn.agent.controller.request.UpdateRolePermissionsRequest;
 import vn.agent.controller.response.ApiAccessPermissionResponse;
+import vn.agent.controller.response.MissingApiPermissionResponse;
 import vn.agent.controller.response.PermissionResponse;
 import vn.agent.controller.response.RolePermissionResponse;
 import vn.agent.controller.response.RolePermissionWorkspaceResponse;
@@ -24,12 +25,14 @@ import vn.agent.repository.PermissionRepository;
 import vn.agent.repository.RoleHasPermissionRepository;
 import vn.agent.repository.RoleRepository;
 import vn.agent.repository.UserHasRoleRepository;
+import vn.agent.service.GatewayApiCatalogService;
 import vn.agent.service.RolePermissionService;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -43,6 +46,7 @@ public class RolePermissionServiceImpl implements RolePermissionService {
     private final PermissionRepository permissionRepository;
     private final RoleHasPermissionRepository roleHasPermissionRepository;
     private final UserHasRoleRepository userHasRoleRepository;
+    private final GatewayApiCatalogService gatewayApiCatalogService;
 
     @Override
     @Transactional(readOnly = true)
@@ -303,6 +307,32 @@ public class RolePermissionServiceImpl implements RolePermissionService {
                 .build();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<MissingApiPermissionResponse> getMissingApiPermissions(String authorizationHeader) {
+        Set<String> existingApiPermissionKeys = permissionRepository.findAllByType(PermissionType.API).stream()
+                .filter(item -> StringUtils.hasText(item.getApiMethod()) && StringUtils.hasText(item.getApiPath()))
+                .map(item -> buildPermissionKey(item.getApiMethod(), item.getApiPath()))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+
+        return gatewayApiCatalogService.discoverApiEndpoints(authorizationHeader).stream()
+                .filter(item -> !existingApiPermissionKeys.contains(buildPermissionKey(item.method(), item.path())))
+                .map(item -> MissingApiPermissionResponse.builder()
+                        .source(item.source())
+                        .method(item.method())
+                        .path(normalizeApiPath(item.path()))
+                        .suggestedName(buildSuggestedPermissionName(item.method(), item.path()))
+                        .suggestedDescription(buildSuggestedDescription(item.source(), item.method(), item.path()))
+                        .build())
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toMap(
+                                item -> buildPermissionKey(item.getMethod(), item.getPath()),
+                                Function.identity(),
+                                (first, ignored) -> first,
+                                java.util.LinkedHashMap::new),
+                        map -> map.values().stream().toList()));
+    }
+
     private List<Long> upsertRolePermissions(Role role, List<Long> requestedPermissionIds) {
         Set<Long> normalizedIds = requestedPermissionIds == null
                 ? Set.of()
@@ -344,6 +374,58 @@ public class RolePermissionServiceImpl implements RolePermissionService {
                 .apiMethod(permission.getApiMethod())
                 .apiPath(permission.getApiPath())
                 .build();
+    }
+
+    private String buildPermissionKey(String method, String path) {
+        String normalizedMethod = trimToNull(method);
+        String normalizedPath = normalizeApiPath(path);
+        if (!StringUtils.hasText(normalizedMethod) || !StringUtils.hasText(normalizedPath)) {
+            return "";
+        }
+        return normalizedMethod.toUpperCase(Locale.ROOT) + ":" + normalizedPath;
+    }
+
+    private String normalizeApiPath(String path) {
+        String value = trimToNull(path);
+        if (!StringUtils.hasText(value)) {
+            return "";
+        }
+        String normalized = value.replaceAll("/{2,}", "/");
+        if (!normalized.startsWith("/")) {
+            normalized = "/" + normalized;
+        }
+        if (normalized.length() > 1 && normalized.endsWith("/")) {
+            normalized = normalized.substring(0, normalized.length() - 1);
+        }
+        return normalized;
+    }
+
+    private String buildSuggestedPermissionName(String method, String path) {
+        String normalizedMethod = trimToNull(method);
+        String normalizedPath = normalizeApiPath(path);
+        String methodPart = StringUtils.hasText(normalizedMethod)
+                ? normalizedMethod.toUpperCase(Locale.ROOT)
+                : "API";
+        String pathPart = normalizedPath
+                .replaceAll("\\{[^}]+}", "PARAM")
+                .replaceAll("[^A-Za-z0-9]+", "_")
+                .replaceAll("_+", "_")
+                .replaceAll("^_|_$", "")
+                .toUpperCase(Locale.ROOT);
+
+        if (!StringUtils.hasText(pathPart)) {
+            pathPart = "ENDPOINT";
+        }
+        return "API:" + methodPart + ":" + pathPart;
+    }
+
+    private String buildSuggestedDescription(String source, String method, String path) {
+        String safeSource = trimToNull(source);
+        String safeMethod = trimToNull(method);
+        String safePath = normalizeApiPath(path);
+        String target = StringUtils.hasText(safeSource) ? safeSource : "service";
+        String action = StringUtils.hasText(safeMethod) ? safeMethod.toUpperCase(Locale.ROOT) : "API";
+        return "Auto generated from " + target + " - " + action + " " + safePath;
     }
 
     private String normalizeRoleName(String roleName) {

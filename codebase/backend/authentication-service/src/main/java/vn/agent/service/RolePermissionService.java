@@ -6,9 +6,12 @@ import vn.agent.controller.request.UpdatePermissionRequest;
 import vn.agent.controller.request.UpdateRoleRequest;
 import vn.agent.controller.request.UpdateRolePermissionsRequest;
 import vn.agent.controller.response.PermissionResponse;
+import vn.agent.controller.response.MissingApiPermissionResponse;
 import vn.agent.controller.response.RolePermissionResponse;
 import vn.agent.controller.response.RolePermissionWorkspaceResponse;
 import vn.agent.controller.response.UserAccessResponse;
+
+import java.util.List;
 
 public interface RolePermissionService {
 
@@ -29,4 +32,6 @@ public interface RolePermissionService {
     void deletePermission(Long permissionId);
 
     UserAccessResponse getUserAccess(Long userId);
+
+    List<MissingApiPermissionResponse> getMissingApiPermissions(String authorizationHeader);
 }

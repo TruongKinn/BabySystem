@@ -5,6 +5,7 @@ import com.mom.account.controller.dto.CreateFamilyRequest;
 import com.mom.account.controller.dto.CreateUserRequest;
 import com.mom.account.controller.dto.FamilyResponse;
 import com.mom.account.controller.dto.InviteFamilyMemberRequest;
+import com.mom.account.controller.dto.UpdateFamilyRequest;
 import com.mom.account.controller.dto.UserResponse;
 import com.mom.account.service.AccountService;
 import com.mom.common.dto.ApiResponse;
@@ -61,6 +62,20 @@ public class AccountController {
     @GetMapping("/admin/families")
     public ApiResponse<List<FamilyResponse>> getAllFamiliesForAdmin() {
         return ApiResponse.ok("Success", accountService.getAllFamiliesForAdmin());
+    }
+
+    @PutMapping("/admin/families/{id}")
+    public ApiResponse<FamilyResponse> updateFamilyForAdmin(
+            @PathVariable("id") Long familyId,
+            @Valid @RequestBody UpdateFamilyRequest request
+    ) {
+        return ApiResponse.ok("Family updated", accountService.updateFamilyForAdmin(familyId, request));
+    }
+
+    @DeleteMapping("/admin/families/{id}")
+    public ApiResponse<Void> deleteFamilyForAdmin(@PathVariable("id") Long familyId) {
+        accountService.deleteFamilyForAdmin(familyId);
+        return ApiResponse.ok("Family deleted", null);
     }
 
     @PostMapping("/families/{id}/members")

@@ -33,7 +33,7 @@
       />
 
       <div class="toolbar-actions">
-        <button nz-button nzType="default" (click)="loadWorkspace()">{{ 'commonActions.refresh' | translate }}</button>
+        <button nz-button nzType="default" (click)="refreshAll()">{{ 'commonActions.refresh' | translate }}</button>
         <button nz-button nzType="default" (click)="openCreatePermissionModal('MENU')">
           {{ 'momApp.admin.permissions.actions.createMenuPermission' | translate }}
         </button>
@@ -104,6 +104,36 @@
         </tr>
       </tbody>
     </nz-table>
+  </nz-card>
+
+  <nz-card class="permissions-card missing-api-card" [nzLoading]="loadingMissingApis">
+    <div class="missing-api-header">
+      <div>
+        <h2>{{ 'momApp.admin.permissions.missingApis.title' | translate }}</h2>
+        <p>{{ 'momApp.admin.permissions.missingApis.subtitle' | translate }}</p>
+      </div>
+      <nz-tag nzColor="volcano">{{ missingApiPermissionCount }}</nz-tag>
+    </div>
+
+    <div *ngIf="missingApiPermissionCount > 0; else emptyMissingApis" class="missing-api-list">
+      <div class="missing-api-item" *ngFor="let candidate of missingApiPermissions">
+        <div class="missing-api-copy">
+          <div class="missing-api-main">
+            <nz-tag nzColor="purple">{{ candidate.method }}</nz-tag>
+            <code>{{ candidate.path }}</code>
+          </div>
+          <strong>{{ candidate.suggestedName }}</strong>
+          <small>{{ candidate.source }}</small>
+        </div>
+        <button nz-button nzType="primary" nzSize="small" (click)="openCreateApiPermissionFromSuggestion(candidate)">
+          {{ 'momApp.admin.permissions.missingApis.addAction' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <ng-template #emptyMissingApis>
+      <p class="missing-api-empty">{{ 'momApp.admin.permissions.missingApis.empty' | translate }}</p>
+    </ng-template>
   </nz-card>
 </section>
 

@@ -1,4 +1,4 @@
-﻿<section class="page-container shopping-page" *ngIf="items$ | async as items">
+<section class="page-container shopping-page" *ngIf="viewModel$ | async as vm">
   <div class="header-actions">
     <div>
       <h1 class="page-title">{{ 'momApp.shopping.title' | translate }}</h1>
@@ -11,56 +11,175 @@
       </button>
       <span class="pill-chip">
         <span nz-icon nzType="shopping-cart"></span>
-        {{ items.length }} {{ 'momApp.shopping.totalLabel' | translate }}
+        {{ vm.items.length }} {{ 'momApp.shopping.totalLabel' | translate }}
       </span>
     </div>
   </div>
 
   <div class="shopping-summary animate-slide-up">
     <div class="shopping-summary-item">
-      <span class="ssm-val" style="color:var(--user-primary)">{{ items.length }}</span>
+      <span class="ssm-val" style="color:var(--user-primary)">{{ vm.items.length }}</span>
       <span class="ssm-lbl">{{ 'momApp.shopping.summary.totalItems' | translate }}</span>
     </div>
     <div class="shopping-summary-divider"></div>
     <div class="shopping-summary-item">
-      <span class="ssm-val" style="color:var(--user-teal)">{{ getCheckedCount(items) }}</span>
+      <span class="ssm-val" style="color:var(--user-teal)">{{ vm.checkedCount }}</span>
       <span class="ssm-lbl">{{ 'momApp.shopping.summary.checkedItems' | translate }}</span>
     </div>
     <div class="shopping-summary-divider"></div>
     <div class="shopping-summary-item">
-      <span class="ssm-val" style="color:var(--user-secondary)">{{ items.length - getCheckedCount(items) }}</span>
+      <span class="ssm-val" style="color:var(--user-secondary)">{{ vm.remainingCount }}</span>
       <span class="ssm-lbl">{{ 'momApp.shopping.summary.remainingItems' | translate }}</span>
     </div>
 
-    <div class="shopping-progress-wrap" *ngIf="items.length > 0">
+    <div class="shopping-progress-wrap" *ngIf="vm.items.length > 0">
       <div class="user-progress-bar" style="flex:1;margin:0">
-        <div
-          class="user-progress-fill"
-          [style.width.%]="(getCheckedCount(items) / items.length) * 100"
-          style="background: var(--user-grad-3)"
-        ></div>
+        <div class="user-progress-fill" [style.width.%]="vm.completionPercent" style="background: var(--user-grad-3)"></div>
       </div>
-      <span class="ssm-lbl">{{ ((getCheckedCount(items) / items.length) * 100) | number:'1.0-0' }}%</span>
+      <span class="ssm-lbl">{{ vm.completionPercent }}%</span>
     </div>
   </div>
 
-  <nz-card class="table-card shopping-list-card animate-slide-up" style="animation-delay:.06s">
-    <nz-empty *ngIf="items.length === 0" [nzNotFoundContent]="'momApp.shopping.empty' | translate"></nz-empty>
+  <nz-card class="table-card shopping-controls-card animate-slide-up" style="animation-delay:.04s">
+    <form [formGroup]="quickAddForm" class="quick-add-grid" (ngSubmit)="submitQuickAdd()">
+      <input
+        nz-input
+        formControlName="itemName"
+        [placeholder]="'momApp.shopping.quickAdd.namePlaceholder' | translate"
+      />
+      <input
+        nz-input
+        formControlName="quantity"
+        [placeholder]="'momApp.shopping.quickAdd.quantityPlaceholder' | translate"
+      />
+      <input
+        nz-input
+        formControlName="note"
+        [placeholder]="'momApp.shopping.quickAdd.notePlaceholder' | translate"
+      />
+      <button nz-button nzType="primary" class="btn-user-primary" [nzLoading]="isQuickAdding">
+        <span nz-icon nzType="plus"></span>
+        {{ 'momApp.shopping.quickAdd.submit' | translate }}
+      </button>
+    </form>
 
-    <div *ngFor="let item of items" class="shop-item" [class.item-checked]="item.checked">
-      <div class="shop-checkbox" (click)="toggleChecked(item.id, item.checked)">
-        <span nz-icon nzType="check" *ngIf="item.checked" style="font-size:13px;"></span>
+    <div class="shopping-toolbar">
+      <div class="shopping-filter-group">
+        <button
+          *ngFor="let option of filterOptions"
+          type="button"
+          nz-button
+          nzShape="round"
+          nzSize="small"
+          class="filter-btn"
+          [class.filter-btn-active]="activeFilter === option.value"
+          (click)="setFilter(option.value)">
+          {{ option.labelKey | translate }}
+          <span class="filter-count-chip">
+            {{
+              option.value === 'ALL'
+                ? vm.items.length
+                : option.value === 'PENDING'
+                  ? vm.remainingCount
+                  : vm.checkedCount
+            }}
+          </span>
+        </button>
       </div>
 
-      <div style="flex:1;min-width:0;">
-        <div class="shop-item-name">{{ item.name }}</div>
-        <div class="shop-item-qty" *ngIf="item.quantity">{{ item.quantity }}</div>
-      </div>
+      <div class="shopping-search-wrap">
+        <div class="search-input-wrap">
+          <span nz-icon nzType="search"></span>
+          <input
+            nz-input
+            [formControl]="searchControl"
+            [placeholder]="'momApp.shopping.searchPlaceholder' | translate"
+          />
+        </div>
 
-      <nz-tag [nzColor]="item.checked ? 'cyan' : 'orange'" style="border-radius:8px;margin:0;">
-        {{ item.checked ? ('momApp.shopping.status.bought' | translate) : ('momApp.shopping.status.toBuy' | translate) }}
-      </nz-tag>
+        <button type="button" nz-button nzSize="small" (click)="clearSearch()" *ngIf="searchControl.value">
+          {{ 'momApp.shopping.actions.clearSearch' | translate }}
+        </button>
+
+        <label class="sort-label">{{ 'momApp.shopping.sort.label' | translate }}</label>
+        <select class="sort-select" [value]="activeSort" #sortSelect (change)="onSortChange(sortSelect.value)">
+          <option *ngFor="let option of sortOptions" [value]="option.value">
+            {{ option.labelKey | translate }}
+          </option>
+        </select>
+      </div>
     </div>
+  </nz-card>
+
+  <nz-card class="table-card shopping-list-card animate-slide-up" style="animation-delay:.06s">
+    <div class="shopping-loading" *ngIf="isLoading">
+      <span nz-icon nzType="sync" nzSpin></span>
+      {{ 'momApp.shopping.loading' | translate }}
+    </div>
+
+    <div class="shopping-error" *ngIf="loadFailed">
+      {{ 'momApp.shopping.messages.loadFailed' | translate }}
+    </div>
+
+    <nz-empty *ngIf="!isLoading && vm.items.length === 0" [nzNotFoundContent]="'momApp.shopping.empty' | translate"></nz-empty>
+    <nz-empty
+      *ngIf="!isLoading && vm.items.length > 0 && vm.filteredItems.length === 0"
+      [nzNotFoundContent]="'momApp.shopping.noFilterMatch' | translate">
+    </nz-empty>
+
+    <ng-container *ngIf="!isLoading && vm.pendingItems.length > 0">
+      <div class="group-title">
+        {{ 'momApp.shopping.sections.pending' | translate }} ({{ vm.pendingItems.length }})
+      </div>
+      <div
+        *ngFor="let item of vm.pendingItems; trackBy: trackByItemId"
+        class="shop-item"
+        [class.item-checked]="item.checked"
+        (click)="toggleChecked(item.id, item.checked)">
+        <div class="shop-checkbox">
+          <span nz-icon nzType="check" *ngIf="item.checked" style="font-size:13px;"></span>
+        </div>
+
+        <div class="shop-item-main">
+          <div class="shop-item-name">{{ item.name }}</div>
+          <div class="shop-item-meta">
+            <span class="shop-item-qty" *ngIf="item.quantity">{{ item.quantity }}</span>
+            <span class="shop-item-note" *ngIf="item.note">{{ item.note }}</span>
+          </div>
+        </div>
+
+        <nz-tag [nzColor]="'orange'" style="border-radius:8px;margin:0;">
+          {{ 'momApp.shopping.status.toBuy' | translate }}
+        </nz-tag>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!isLoading && vm.boughtItems.length > 0">
+      <div class="group-title group-title-checked">
+        {{ 'momApp.shopping.sections.bought' | translate }} ({{ vm.boughtItems.length }})
+      </div>
+      <div
+        *ngFor="let item of vm.boughtItems; trackBy: trackByItemId"
+        class="shop-item"
+        [class.item-checked]="item.checked"
+        (click)="toggleChecked(item.id, item.checked)">
+        <div class="shop-checkbox">
+          <span nz-icon nzType="check" *ngIf="item.checked" style="font-size:13px;"></span>
+        </div>
+
+        <div class="shop-item-main">
+          <div class="shop-item-name">{{ item.name }}</div>
+          <div class="shop-item-meta">
+            <span class="shop-item-qty" *ngIf="item.quantity">{{ item.quantity }}</span>
+            <span class="shop-item-note" *ngIf="item.note">{{ item.note }}</span>
+          </div>
+        </div>
+
+        <nz-tag [nzColor]="'cyan'" style="border-radius:8px;margin:0;">
+          {{ 'momApp.shopping.status.bought' | translate }}
+        </nz-tag>
+      </div>
+    </ng-container>
   </nz-card>
 </section>
 

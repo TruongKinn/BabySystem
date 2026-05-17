@@ -51,6 +51,7 @@ export interface ShoppingItem {
   id: string;
   name: string;
   quantity: string;
+  note: string;
   checked: boolean;
 }
 

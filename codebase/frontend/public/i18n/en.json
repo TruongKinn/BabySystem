@@ -2555,9 +2555,11 @@
         "creator": "Creator",
         "members": "Members",
         "actions": {
+          "createFamily": "Create household",
           "deleteConfirm": "Delete this household? This action cannot be undone."
         },
         "modal": {
+          "createTitle": "Create household",
           "editTitle": "Edit household",
           "nameLabel": "Household name",
           "namePlaceholder": "Enter household name"
@@ -2565,6 +2567,9 @@
         "messages": {
           "loadFailed": "Unable to load household list.",
           "nameRequired": "Household name is required.",
+          "creatorRequired": "Creator account is required.",
+          "createSuccess": "Household created successfully.",
+          "createFailed": "Unable to create household.",
           "updateSuccess": "Household updated successfully.",
           "updateFailed": "Unable to update household.",
           "deleteSuccess": "Household deleted successfully.",
@@ -2677,6 +2682,12 @@
           "createApiPermission": "New API permission",
           "deleteConfirm": "Delete this permission?"
         },
+        "missingApis": {
+          "title": "Unregistered permission APIs",
+          "subtitle": "Endpoints discovered from gateway docs that are not yet in the permission database.",
+          "addAction": "Add permission",
+          "empty": "No missing permission APIs."
+        },
         "modal": {
           "createTitle": "Create permission",
           "editTitle": "Edit permission",
@@ -2701,7 +2712,8 @@
           "updateSuccess": "Permission updated successfully.",
           "updateFailed": "Unable to update permission.",
           "deleteSuccess": "Permission deleted successfully.",
-          "deleteFailed": "Unable to delete permission."
+          "deleteFailed": "Unable to delete permission.",
+          "loadMissingApiFailed": "Unable to load unregistered permission APIs."
         }
       }
     },
@@ -2871,12 +2883,36 @@
       "actions": {
         "create": "Add item",
         "check": "Mark bought",
-        "uncheck": "Mark pending"
+        "uncheck": "Mark pending",
+        "clearSearch": "Clear"
+      },
+      "quickAdd": {
+        "namePlaceholder": "Quick add item...",
+        "quantityPlaceholder": "Qty",
+        "notePlaceholder": "Note",
+        "submit": "Quick add"
+      },
+      "filters": {
+        "all": "All",
+        "pending": "Pending",
+        "bought": "Bought"
+      },
+      "sort": {
+        "label": "Sort",
+        "smart": "Smart",
+        "nameAsc": "Name A-Z",
+        "nameDesc": "Name Z-A"
       },
       "status": {
         "bought": "Bought",
         "toBuy": "To buy"
       },
+      "sections": {
+        "pending": "To buy",
+        "bought": "Bought"
+      },
+      "searchPlaceholder": "Search item, quantity, note...",
+      "loading": "Loading shopping list...",
       "modal": {
         "createTitle": "Add shopping item",
         "nameLabel": "Item name",
@@ -2888,10 +2924,13 @@
       },
       "messages": {
         "createSuccess": "Shopping item created.",
+        "quickAddSuccess": "Item added quickly.",
         "createFailed": "Unable to create shopping item.",
+        "loadFailed": "Unable to load shopping list.",
         "updateFailed": "Unable to update shopping item."
       },
       "empty": "No shopping items yet. Add one to get started.",
+      "noFilterMatch": "No items match your current filter.",
       "summary": {
         "totalItems": "Total items",
         "checkedItems": "Bought",

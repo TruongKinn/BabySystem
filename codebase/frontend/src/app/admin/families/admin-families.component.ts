@@ -9,6 +9,7 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { AuthService } from '../../auth/auth.service';
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 
@@ -56,6 +57,7 @@ export class AdminFamiliesComponent implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly message = inject(NzMessageService);
   private readonly i18n = inject(I18nService);
+  private readonly authService = inject(AuthService);
 
   loading = false;
   submitting = false;
@@ -65,6 +67,8 @@ export class AdminFamiliesComponent implements OnInit {
   filteredFamilies: FamilyView[] = [];
   editingFamily: FamilyView | null = null;
   editFamilyName = '';
+  createFamilyName = '';
+  isCreateModalVisible = false;
   isEditModalVisible = false;
 
   ngOnInit(): void {
@@ -152,6 +156,46 @@ export class AdminFamiliesComponent implements OnInit {
 
   trackByTreeNode(_: number, node: FamilyTreeNode): string {
     return node.key;
+  }
+
+  openCreateFamilyModal(): void {
+    this.createFamilyName = '';
+    this.isCreateModalVisible = true;
+  }
+
+  closeCreateFamilyModal(): void {
+    this.isCreateModalVisible = false;
+    this.createFamilyName = '';
+  }
+
+  submitCreateFamily(): void {
+    const name = this.createFamilyName.trim();
+    if (!name) {
+      this.message.warning(this.i18n.translate('momApp.admin.families.messages.nameRequired'));
+      return;
+    }
+
+    const createdByUserId = this.getCurrentUserId();
+    if (!createdByUserId) {
+      this.message.error(this.i18n.translate('momApp.admin.families.messages.creatorRequired'));
+      return;
+    }
+
+    this.submitting = true;
+    this.http
+      .post<ApiEnvelope<FamilyApi>>(`${API_CONFIG.GATEWAY_URL}/account/families`, { name, createdByUserId })
+      .subscribe({
+        next: () => {
+          this.submitting = false;
+          this.message.success(this.i18n.translate('momApp.admin.families.messages.createSuccess'));
+          this.closeCreateFamilyModal();
+          this.loadFamilies();
+        },
+        error: () => {
+          this.submitting = false;
+          this.message.error(this.i18n.translate('momApp.admin.families.messages.createFailed'));
+        }
+      });
   }
 
   openEditFamilyModal(family: FamilyView): void {
@@ -302,5 +346,15 @@ export class AdminFamiliesComponent implements OnInit {
       return 4;
     }
     return 9;
+  }
+
+  private getCurrentUserId(): number | null {
+    const raw = this.authService.getStoredItem('atg_user_id');
+    if (!raw) {
+      return null;
+    }
+
+    const parsed = Number(raw);
+    return Number.isInteger(parsed) && parsed > 0 ? parsed : null;
   }
 }

@@ -77,6 +77,11 @@
   margin-bottom: 16px;
 }
 
+.toolbar-actions {
+  display: flex;
+  gap: 8px;
+}
+
 .search-input {
   max-width: 420px;
 }
@@ -278,6 +283,10 @@
 
   .toolbar {
     flex-direction: column;
+  }
+
+  .toolbar-actions {
+    width: 100%;
   }
 
   .search-input {

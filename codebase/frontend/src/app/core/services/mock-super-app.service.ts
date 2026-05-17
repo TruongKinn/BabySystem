@@ -11,6 +11,27 @@ import {
   TaskOverview
 } from '../models/super-app.model';
 
+export interface InsightDailyBreakdownItem {
+  date: string;
+  expenseTotal: number;
+  pendingTasks: number;
+  babySleepHours: number;
+}
+
+export interface InsightMonthlyReport {
+  familyId: number;
+  month: string;
+  expenseTotal: number;
+  expenseCount: number;
+  mealsPlanned: number;
+  tasksCreated: number;
+  tasksCompleted: number;
+  babySleepHours: number;
+  babyFeedings: number;
+  diaperChanges: number;
+  dailyBreakdown: InsightDailyBreakdownItem[];
+}
+
 interface ApiEnvelope<T> {
   success: boolean;
   message: string;
@@ -52,6 +73,27 @@ interface InsightDashboardApi {
   babyFeedings: number;
   diaperChanges: number;
   moodScore: number;
+}
+
+interface InsightMonthlyApi {
+  familyId: number;
+  month: string;
+  expenseTotal: number;
+  expenseCount: number;
+  mealsPlanned: number;
+  tasksCreated: number;
+  tasksCompleted: number;
+  babySleepHours: number;
+  babyFeedings: number;
+  diaperChanges: number;
+  dailyBreakdown: InsightDailyBreakdownApi[];
+}
+
+interface InsightDailyBreakdownApi {
+  date: string;
+  expenseTotal: number;
+  pendingTasks: number;
+  babySleepHours: number;
 }
 
 interface MealPlanApi {
@@ -231,6 +273,36 @@ export class MockSuperAppService {
     }).pipe(map(({ weeklyPlans, meals }) => this.mapWeeklyMeals(weeklyPlans, meals)));
   }
 
+  getInsightMonthlyReport(month?: string): Observable<InsightMonthlyReport> {
+    const familyId = this.getFamilyId();
+    const monthKey = this.normalizeMonthKey(month);
+    const params = new HttpParams().set('familyId', String(familyId)).set('month', monthKey);
+
+    return this.get<InsightMonthlyApi>('/insight/insights/monthly', params).pipe(
+      map((report) => ({
+        familyId: Math.max(0, Math.trunc(this.asNumber(report.familyId))),
+        month: report.month || monthKey,
+        expenseTotal: this.asNumber(report.expenseTotal),
+        expenseCount: Math.max(0, Math.trunc(this.asNumber(report.expenseCount))),
+        mealsPlanned: Math.max(0, Math.trunc(this.asNumber(report.mealsPlanned))),
+        tasksCreated: Math.max(0, Math.trunc(this.asNumber(report.tasksCreated))),
+        tasksCompleted: Math.max(0, Math.trunc(this.asNumber(report.tasksCompleted))),
+        babySleepHours: this.asNumber(report.babySleepHours),
+        babyFeedings: Math.max(0, Math.trunc(this.asNumber(report.babyFeedings))),
+        diaperChanges: Math.max(0, Math.trunc(this.asNumber(report.diaperChanges))),
+        dailyBreakdown: (report.dailyBreakdown ?? [])
+          .map((item) => ({
+            date: item.date,
+            expenseTotal: this.asNumber(item.expenseTotal),
+            pendingTasks: Math.max(0, Math.trunc(this.asNumber(item.pendingTasks))),
+            babySleepHours: this.asNumber(item.babySleepHours)
+          }))
+          .sort((left, right) => left.date.localeCompare(right.date))
+      })),
+      catchError(() => of(this.emptyInsightMonthlyReport(familyId, monthKey)))
+    );
+  }
+
   getTasks(status?: TaskApi['status'] | null): Observable<TaskItem[]> {
     const familyId = this.getFamilyId();
     let params = new HttpParams().set('familyId', String(familyId));
@@ -296,7 +368,8 @@ export class MockSuperAppService {
         items.map((item) => ({
           id: String(item.id),
           name: item.itemName,
-          quantity: item.quantity?.trim() || '-',
+          quantity: item.quantity?.trim() ?? '',
+          note: item.note?.trim() ?? '',
           checked: item.checked
         }))
       ),
@@ -507,6 +580,14 @@ export class MockSuperAppService {
     return `${year}-${month}`;
   }
 
+  private normalizeMonthKey(rawMonth?: string): string {
+    const normalized = rawMonth?.trim();
+    if (normalized && /^\d{4}-\d{2}$/.test(normalized)) {
+      return normalized;
+    }
+    return this.currentMonth();
+  }
+
   private getFamilyId(): number {
     if (typeof window === 'undefined') {
       return API_CONFIG.DEFAULT_FAMILY_ID;
@@ -631,6 +712,22 @@ export class MockSuperAppService {
       dueTodayTasks: 0,
       unassignedTasks: 0,
       completionRate: 0
+    };
+  }
+
+  private emptyInsightMonthlyReport(familyId: number, month: string): InsightMonthlyReport {
+    return {
+      familyId,
+      month,
+      expenseTotal: 0,
+      expenseCount: 0,
+      mealsPlanned: 0,
+      tasksCreated: 0,
+      tasksCompleted: 0,
+      babySleepHours: 0,
+      babyFeedings: 0,
+      diaperChanges: 0,
+      dailyBreakdown: []
     };
   }
 }

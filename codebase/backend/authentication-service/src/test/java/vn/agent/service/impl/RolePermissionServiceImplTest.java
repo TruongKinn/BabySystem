@@ -12,6 +12,7 @@ import vn.agent.controller.request.CreateRoleRequest;
 import vn.agent.controller.request.UpdatePermissionRequest;
 import vn.agent.controller.request.UpdateRoleRequest;
 import vn.agent.controller.request.UpdateRolePermissionsRequest;
+import vn.agent.controller.response.MissingApiPermissionResponse;
 import vn.agent.controller.response.PermissionResponse;
 import vn.agent.controller.response.RolePermissionResponse;
 import vn.agent.exception.InvalidDataException;
@@ -21,6 +22,7 @@ import vn.agent.repository.PermissionRepository;
 import vn.agent.repository.RoleHasPermissionRepository;
 import vn.agent.repository.RoleRepository;
 import vn.agent.repository.UserHasRoleRepository;
+import vn.agent.service.GatewayApiCatalogService;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,6 +45,8 @@ class RolePermissionServiceImplTest {
     private RoleHasPermissionRepository roleHasPermissionRepository;
     @Mock
     private UserHasRoleRepository userHasRoleRepository;
+    @Mock
+    private GatewayApiCatalogService gatewayApiCatalogService;
 
     @InjectMocks
     private RolePermissionServiceImpl service;
@@ -175,5 +179,28 @@ class RolePermissionServiceImplTest {
         assertEquals("API:PATCH:NEW", response.getName());
         assertEquals("PATCH", response.getApiMethod());
         assertEquals("/new-path", response.getApiPath());
+    }
+
+    @Test
+    void getMissingApiPermissionsShouldOnlyReturnEndpointsAbsentInDatabase() {
+        Permission existingApiPermission = new Permission();
+        existingApiPermission.setType(PermissionType.API);
+        existingApiPermission.setApiMethod("GET");
+        existingApiPermission.setApiPath("/account/users");
+
+        when(permissionRepository.findAllByType(PermissionType.API)).thenReturn(List.of(existingApiPermission));
+        when(gatewayApiCatalogService.discoverApiEndpoints("Bearer test-token")).thenReturn(List.of(
+                new GatewayApiCatalogService.DiscoveredApiEndpoint("Account Service", "GET", "/account/users"),
+                new GatewayApiCatalogService.DiscoveredApiEndpoint("Account Service", "POST", "/account/users"),
+                new GatewayApiCatalogService.DiscoveredApiEndpoint("Account Service", "POST", "/account/users")
+        ));
+
+        List<MissingApiPermissionResponse> missingApis = service.getMissingApiPermissions("Bearer test-token");
+
+        assertEquals(1, missingApis.size());
+        assertEquals("POST", missingApis.get(0).getMethod());
+        assertEquals("/account/users", missingApis.get(0).getPath());
+        assertEquals("API:POST:ACCOUNT_USERS", missingApis.get(0).getSuggestedName());
+        verify(gatewayApiCatalogService).discoverApiEndpoints("Bearer test-token");
     }
 }

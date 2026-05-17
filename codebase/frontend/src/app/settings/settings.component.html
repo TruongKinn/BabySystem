@@ -1,32 +1,120 @@
-<section class="page-container">
+<section class="page-container settings-page">
   <div class="header-actions">
     <div>
       <h1 class="page-title">{{ 'momApp.settings.title' | translate }}</h1>
       <p class="page-subtitle">{{ 'momApp.settings.subtitle' | translate }}</p>
     </div>
-    <button nz-button nzType="primary" (click)="openSaveModal()" class="btn-user-primary">
-      <span nz-icon nzType="save"></span>
-      {{ 'commonActions.save' | translate }}
-    </button>
+    <div class="header-button-group">
+      <button nz-button nzType="default" class="btn-user-secondary" (click)="restoreDefaults()" [disabled]="isSaving">
+        <span nz-icon nzType="undo"></span>
+        {{ 'commonActions.refresh' | translate }}
+      </button>
+      <button nz-button nzType="primary" (click)="openSaveModal()" class="btn-user-primary" [disabled]="!canSave">
+        <span nz-icon nzType="save"></span>
+        {{ 'commonActions.save' | translate }}
+      </button>
+    </div>
   </div>
 
-  <nz-card class="table-card settings-card">
-    <div class="setting-row">
-      <div>
-        <p class="setting-title">{{ 'momApp.settings.dailyReminder.title' | translate }}</p>
-        <span>{{ 'momApp.settings.dailyReminder.desc' | translate }}</span>
-      </div>
-      <nz-switch [(ngModel)]="notificationEnabled"></nz-switch>
+  <section class="settings-hero animate-slide-up">
+    <div class="settings-hero__orb orb-1"></div>
+    <div class="settings-hero__orb orb-2"></div>
+    <div class="settings-hero__orb orb-3"></div>
+
+    <div class="settings-hero__content">
+      <span class="hero-kicker">{{ 'momApp.settings.dailyReminder.title' | translate }}</span>
+      <h2>{{ 'momApp.settings.subtitle' | translate }}</h2>
+      <p>{{ 'momApp.settings.dailyReminder.desc' | translate }}</p>
     </div>
 
-    <div class="setting-row">
-      <div>
-        <p class="setting-title">{{ 'momApp.settings.reminderTime.title' | translate }}</p>
-        <span>{{ 'momApp.settings.reminderTime.desc' | translate }}</span>
+    <div class="settings-hero__status">
+      <div class="status-tile" [class.status-tile--off]="!notificationEnabled">
+        <span nz-icon nzType="notification" nzTheme="outline"></span>
+        <div>
+          <p class="status-label">{{ 'momApp.settings.dailyReminder.title' | translate }}</p>
+          <strong>{{ notificationEnabled ? ('commonValues.yes' | translate) : ('commonValues.no' | translate) }}</strong>
+        </div>
       </div>
-      <input nz-input [(ngModel)]="reminderHour" />
+      <div class="status-tile">
+        <span nz-icon nzType="clock-circle" nzTheme="outline"></span>
+        <div>
+          <p class="status-label">{{ 'momApp.settings.reminderTime.title' | translate }}</p>
+          <strong>{{ reminderHourDisplay }}</strong>
+        </div>
+      </div>
     </div>
-  </nz-card>
+  </section>
+
+  <div class="settings-grid">
+    <nz-card class="table-card settings-card animate-slide-up">
+      <div class="settings-card__head">
+        <h3>{{ 'momApp.settings.title' | translate }}</h3>
+        <span class="pill-chip">
+          <span nz-icon nzType="clock-circle"></span>
+          {{ reminderHourDisplay }}
+        </span>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-main">
+          <div class="setting-icon setting-icon--bell">
+            <span nz-icon nzType="bell" nzTheme="fill"></span>
+          </div>
+          <div>
+            <p class="setting-title">{{ 'momApp.settings.dailyReminder.title' | translate }}</p>
+            <span class="setting-description">{{ 'momApp.settings.dailyReminder.desc' | translate }}</span>
+          </div>
+        </div>
+        <nz-switch [(ngModel)]="notificationEnabled"></nz-switch>
+      </div>
+
+      <div class="setting-row" [class.setting-row--disabled]="!notificationEnabled">
+        <div class="setting-main">
+          <div class="setting-icon setting-icon--time">
+            <span nz-icon nzType="clock-circle" nzTheme="fill"></span>
+          </div>
+          <div>
+            <p class="setting-title">{{ 'momApp.settings.reminderTime.title' | translate }}</p>
+            <span class="setting-description">{{ 'momApp.settings.reminderTime.desc' | translate }}</span>
+          </div>
+        </div>
+        <div class="time-input-wrap">
+          <input
+            nz-input
+            type="time"
+            step="60"
+            [(ngModel)]="reminderHour"
+            [disabled]="!notificationEnabled"
+            [class.time-input--invalid]="!isReminderHourValid"
+          />
+          <small class="input-format">HH:mm</small>
+        </div>
+      </div>
+    </nz-card>
+
+    <nz-card class="table-card settings-summary-card animate-fade-in">
+      <div class="summary-top">
+        <h3>{{ 'momApp.settings.modal.title' | translate }}</h3>
+        <p>{{ 'momApp.settings.modal.description' | translate : { hour: reminderHourDisplay } }}</p>
+      </div>
+
+      <div class="summary-list">
+        <div class="summary-item">
+          <span>{{ 'momApp.settings.dailyReminder.title' | translate }}</span>
+          <strong>{{ notificationEnabled ? ('commonValues.yes' | translate) : ('commonValues.no' | translate) }}</strong>
+        </div>
+        <div class="summary-item">
+          <span>{{ 'momApp.settings.reminderTime.title' | translate }}</span>
+          <strong>{{ reminderHourDisplay }}</strong>
+        </div>
+      </div>
+
+      <button nz-button nzType="primary" class="btn-user-primary summary-save-btn" [disabled]="!canSave" (click)="openSaveModal()">
+        <span nz-icon nzType="save"></span>
+        {{ 'commonActions.save' | translate }}
+      </button>
+    </nz-card>
+  </div>
 </section>
 
 <nz-modal
@@ -41,6 +129,16 @@
   (nzOnOk)="confirmSaveSettings()"
 >
   <ng-container *nzModalContent>
-    <p>{{ 'momApp.settings.modal.description' | translate : { hour: reminderHour } }}</p>
+    <p>{{ 'momApp.settings.modal.description' | translate : { hour: reminderHourDisplay } }}</p>
+    <div class="modal-summary">
+      <div class="modal-summary__item">
+        <span>{{ 'momApp.settings.dailyReminder.title' | translate }}</span>
+        <strong>{{ notificationEnabled ? ('commonValues.yes' | translate) : ('commonValues.no' | translate) }}</strong>
+      </div>
+      <div class="modal-summary__item">
+        <span>{{ 'momApp.settings.reminderTime.title' | translate }}</span>
+        <strong>{{ reminderHourDisplay }}</strong>
+      </div>
+    </div>
   </ng-container>
 </nz-modal>

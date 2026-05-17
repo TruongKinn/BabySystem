@@ -6,6 +6,7 @@ import com.mom.account.controller.dto.CreateUserRequest;
 import com.mom.account.controller.dto.FamilyMemberResponse;
 import com.mom.account.controller.dto.FamilyResponse;
 import com.mom.account.controller.dto.InviteFamilyMemberRequest;
+import com.mom.account.controller.dto.UpdateFamilyRequest;
 import com.mom.account.controller.dto.UserResponse;
 import com.mom.account.domain.FamilyEntity;
 import com.mom.account.domain.FamilyMemberEntity;
@@ -194,6 +195,28 @@ public class AccountService {
         return familyRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(this::buildFamilyResponse)
                 .toList();
+    }
+
+    @Transactional
+    public FamilyResponse updateFamilyForAdmin(Long familyId, UpdateFamilyRequest request) {
+        ensureRequestAuthenticated();
+
+        FamilyEntity family = familyRepository.findById(familyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Family not found"));
+        family.setName(request.name().trim());
+        familyRepository.save(family);
+
+        return buildFamilyResponse(family);
+    }
+
+    @Transactional
+    public void deleteFamilyForAdmin(Long familyId) {
+        ensureRequestAuthenticated();
+
+        FamilyEntity family = familyRepository.findById(familyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Family not found"));
+        familyMemberRepository.deleteAllByFamilyId(familyId);
+        familyRepository.delete(family);
     }
 
     public List<FamilyResponse> getUserFamilies(Long userId) {

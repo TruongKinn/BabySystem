@@ -2567,22 +2567,27 @@
                                                   "totalHouseholds":  "Tổng hộ gia đình",
                                                   "searchPlaceholder":  "Tìm theo tên gia đình, người tạo, thành viên...",
                                                   "refresh":  "Làm mới cây",
-                                                  "creator":  "Người tạo",
-                                                  "members":  "Thành viên",
-                                                  "actions":  {
-                                                                  "deleteConfirm":  "Bạn có chắc muốn xóa hộ gia đình này? Hành động này không thể hoàn tác."
-                                                              },
-                                                  "modal":  {
-                                                                "editTitle":  "Chỉnh sửa hộ gia đình",
-                                                                "nameLabel":  "Tên hộ gia đình",
-                                                                "namePlaceholder":  "Nhập tên hộ gia đình"
-                                                            },
-                                                  "messages":  {
-                                                                   "loadFailed":  "Không thể tải danh sách hộ gia đình.",
-                                                                   "nameRequired":  "Tên hộ gia đình là bắt buộc.",
-                                                                   "updateSuccess":  "Cập nhật hộ gia đình thành công.",
-                                                                   "updateFailed":  "Không thể cập nhật hộ gia đình.",
-                                                                   "deleteSuccess":  "Đã xóa hộ gia đình.",
+                                    "creator":  "Người tạo",
+                                    "members":  "Thành viên",
+                                    "actions":  {
+                                                    "createFamily":  "Tạo hộ gia đình",
+                                                    "deleteConfirm":  "Bạn có chắc muốn xóa hộ gia đình này? Hành động này không thể hoàn tác."
+                                                },
+                                    "modal":  {
+                                                  "createTitle":  "Tạo hộ gia đình",
+                                                  "editTitle":  "Chỉnh sửa hộ gia đình",
+                                                  "nameLabel":  "Tên hộ gia đình",
+                                                  "namePlaceholder":  "Nhập tên hộ gia đình"
+                                              },
+                                    "messages":  {
+                                                     "loadFailed":  "Không thể tải danh sách hộ gia đình.",
+                                                     "nameRequired":  "Tên hộ gia đình là bắt buộc.",
+                                                     "creatorRequired":  "Thiếu tài khoản người tạo gia đình.",
+                                                     "createSuccess":  "Tạo hộ gia đình thành công.",
+                                                     "createFailed":  "Không thể tạo hộ gia đình.",
+                                                     "updateSuccess":  "Cập nhật hộ gia đình thành công.",
+                                                     "updateFailed":  "Không thể cập nhật hộ gia đình.",
+                                                     "deleteSuccess":  "Đã xóa hộ gia đình.",
                                                                    "deleteFailed":  "Không thể xóa hộ gia đình."
                                                                },
                                                   "role":  {
@@ -2692,6 +2697,12 @@
                                                                       "createApiPermission":  "Tạo quyền API",
                                                                       "deleteConfirm":  "Xóa permission này?"
                                                                   },
+                                                      "missingApis":  {
+                                                                          "title":  "API chưa đăng ký permission",
+                                                                          "subtitle":  "Danh sách endpoint lấy từ gateway docs nhưng chưa có trong DB permission.",
+                                                                          "addAction":  "Thêm permission",
+                                                                          "empty":  "Không còn API thiếu permission."
+                                                                      },
                                                       "modal":  {
                                                                     "createTitle":  "Tạo permission",
                                                                     "editTitle":  "Sửa permission",
@@ -2716,7 +2727,8 @@
                                                                      "updateSuccess":  "Cập nhật permission thành công.",
                                                                      "updateFailed":  "Không thể cập nhật permission.",
                                                                      "deleteSuccess":  "Đã xóa permission.",
-                                                                     "deleteFailed":  "Không thể xóa permission."
+                                                                     "deleteFailed":  "Không thể xóa permission.",
+                                                                     "loadMissingApiFailed":  "Không thể tải danh sách API chưa đăng ký permission."
                                                                  }
                                                }
                               },
@@ -2886,12 +2898,36 @@
                                     "actions":  {
                                                     "create":  "Thêm món",
                                                     "check":  "Đã mua",
-                                                    "uncheck":  "Đánh dấu lại"
+                                                    "uncheck":  "Đánh dấu lại",
+                                                    "clearSearch":  "Xóa tìm kiếm"
+                                                },
+                                    "quickAdd":  {
+                                                    "namePlaceholder":  "Thêm nhanh món...",
+                                                    "quantityPlaceholder":  "Số lượng",
+                                                    "notePlaceholder":  "Ghi chú",
+                                                    "submit":  "Thêm nhanh"
+                                                },
+                                    "filters":  {
+                                                   "all":  "Tất cả",
+                                                   "pending":  "Cần mua",
+                                                   "bought":  "Đã mua"
+                                               },
+                                    "sort":  {
+                                                "label":  "Sắp xếp",
+                                                "smart":  "Thông minh",
+                                                "nameAsc":  "Tên A-Z",
+                                                "nameDesc":  "Tên Z-A"
                                                 },
                                     "status":  {
                                                    "bought":  "Đã mua",
                                                    "toBuy":  "Cần mua"
                                                },
+                                    "sections":  {
+                                                    "pending":  "Cần mua",
+                                                    "bought":  "Đã mua"
+                                                },
+                                    "searchPlaceholder":  "Tìm theo tên món, số lượng, ghi chú...",
+                                    "loading":  "Đang tải danh sách mua sắm...",
                                     "modal":  {
                                                   "createTitle":  "Thêm món mua sắm",
                                                   "nameLabel":  "Tên món",
@@ -2903,10 +2939,13 @@
                                               },
                                     "messages":  {
                                                      "createSuccess":  "Thêm món thành công.",
+                                                     "quickAddSuccess":  "Đã thêm nhanh món.",
                                                      "createFailed":  "Không thể thêm món.",
+                                                     "loadFailed":  "Không thể tải danh sách mua sắm.",
                                                      "updateFailed":  "Không thể cập nhật trạng thái món."
                                                  },
                                     "empty":  "Chưa có mặt hàng nào. Hãy thêm vào!",
+                                    "noFilterMatch":  "Không có mặt hàng nào khớp bộ lọc hiện tại.",
                                     "summary":  {
                                                     "totalItems":  "Tổng mặt hàng",
                                                     "checkedItems":  "Đã mua",
@@ -3272,10 +3311,10 @@
                                                    "THANH_VIEN_KHAC":  "Thành viên khác"
                                                },
                                   "modal":  {
-                                                "createTitle":  "Thêm thành viên gia đình",
-                                                "editTitle":  "Ch?nh s?a th?nh vi?n",
-                                                "displayNameLabel":  "Tên hiển thị",
-                                                "displayNamePlaceholder":  "Nhập tên hiển thị",
+                                               "createTitle":  "Thêm thành viên gia đình",
+                                               "editTitle":  "Chỉnh sửa thành viên",
+                                               "displayNameLabel":  "Tên hiển thị",
+                                               "displayNamePlaceholder":  "Nhập tên hiển thị",
                                                 "usernameLabel":  "Tên đăng nhập",
                                                 "usernamePlaceholder":  "Nhập tên đăng nhập",
                                                 "emailLabel":  "Email",

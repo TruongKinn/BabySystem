@@ -40,6 +40,14 @@ interface RolePermissionWorkspaceResponse {
   apiPermissions: PermissionResponse[];
 }
 
+interface MissingApiPermissionResponse {
+  source: string;
+  method: string;
+  path: string;
+  suggestedName: string;
+  suggestedDescription: string;
+}
+
 @Component({
   selector: 'app-admin-permissions',
   standalone: true,
@@ -64,12 +72,14 @@ export class AdminPermissionsComponent implements OnInit {
   private readonly i18n = inject(I18nService);
 
   loading = false;
+  loadingMissingApis = false;
   savingPermission = false;
   deletingPermissionId: number | null = null;
 
   permissions: PermissionResponse[] = [];
   filteredPermissions: PermissionResponse[] = [];
   roles: RolePermissionResponse[] = [];
+  missingApiPermissions: MissingApiPermissionResponse[] = [];
 
   searchText = '';
   filterType: PermissionFilterType = 'ALL';
@@ -86,7 +96,7 @@ export class AdminPermissionsComponent implements OnInit {
   apiPath = '';
 
   ngOnInit(): void {
-    this.loadWorkspace();
+    this.refreshAll();
   }
 
   get totalPermissions(): number {
@@ -101,6 +111,10 @@ export class AdminPermissionsComponent implements OnInit {
     return this.permissions.filter((permission) => permission.type === 'API').length;
   }
 
+  get missingApiPermissionCount(): number {
+    return this.missingApiPermissions.length;
+  }
+
   get permissionModalTitleKey(): string {
     return this.permissionModalMode === 'create'
       ? 'momApp.admin.permissions.modal.createTitle'
@@ -109,6 +123,11 @@ export class AdminPermissionsComponent implements OnInit {
 
   get isCreateMode(): boolean {
     return this.permissionModalMode === 'create';
+  }
+
+  refreshAll(): void {
+    this.loadWorkspace();
+    this.loadMissingApiPermissions();
   }
 
   loadWorkspace(): void {
@@ -133,6 +152,23 @@ export class AdminPermissionsComponent implements OnInit {
         this.message.error(this.i18n.translate('momApp.admin.permissions.messages.loadFailed'));
       }
     });
+  }
+
+  loadMissingApiPermissions(): void {
+    this.loadingMissingApis = true;
+    this.http
+      .get<MissingApiPermissionResponse[]>(`${API_CONFIG.GATEWAY_URL}/auth/roles/permissions/missing-apis`)
+      .subscribe({
+        next: (missingApis) => {
+          this.loadingMissingApis = false;
+          this.missingApiPermissions = [...(missingApis ?? [])];
+        },
+        error: () => {
+          this.loadingMissingApis = false;
+          this.missingApiPermissions = [];
+          this.message.error(this.i18n.translate('momApp.admin.permissions.messages.loadMissingApiFailed'));
+        }
+      });
   }
 
   onSearchChange(value: string): void {
@@ -208,7 +244,7 @@ export class AdminPermissionsComponent implements OnInit {
             this.savingPermission = false;
             this.message.success(this.i18n.translate('momApp.admin.permissions.messages.createSuccess'));
             this.closePermissionModal();
-            this.loadWorkspace();
+            this.refreshAll();
           },
           error: () => {
             this.savingPermission = false;
@@ -233,7 +269,7 @@ export class AdminPermissionsComponent implements OnInit {
           this.savingPermission = false;
           this.message.success(this.i18n.translate('momApp.admin.permissions.messages.updateSuccess'));
           this.closePermissionModal();
-          this.loadWorkspace();
+          this.refreshAll();
         },
         error: () => {
           this.savingPermission = false;
@@ -248,7 +284,7 @@ export class AdminPermissionsComponent implements OnInit {
       next: () => {
         this.deletingPermissionId = null;
         this.message.success(this.i18n.translate('momApp.admin.permissions.messages.deleteSuccess'));
-        this.loadWorkspace();
+        this.refreshAll();
       },
       error: () => {
         this.deletingPermissionId = null;
@@ -277,6 +313,18 @@ export class AdminPermissionsComponent implements OnInit {
 
   trackByPermission(_: number, permission: PermissionResponse): number {
     return permission.id;
+  }
+
+  openCreateApiPermissionFromSuggestion(candidate: MissingApiPermissionResponse): void {
+    this.permissionModalMode = 'create';
+    this.editingPermissionId = null;
+    this.permissionType = 'API';
+    this.permissionName = candidate.suggestedName;
+    this.permissionDescription = candidate.suggestedDescription ?? '';
+    this.menuKey = '';
+    this.apiMethod = candidate.method;
+    this.apiPath = candidate.path;
+    this.isPermissionModalVisible = true;
   }
 
   private applyFilters(): void {

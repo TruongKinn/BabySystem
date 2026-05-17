@@ -1,40 +1,169 @@
-<section class="page-container" *ngIf="insight$ | async as insight">
+<section class="page-container insights-page">
   <div class="header-actions">
     <div>
       <h1 class="page-title">{{ 'momApp.insights.title' | translate }}</h1>
       <p class="page-subtitle">{{ 'momApp.insights.subtitle' | translate }}</p>
     </div>
+
+    <div class="header-buttons">
+      <label class="month-picker-wrap" aria-label="Report month">
+        <span nz-icon nzType="calendar"></span>
+        <input
+          type="month"
+          class="month-picker"
+          [value]="monthKey"
+          (change)="onMonthChange($any($event.target).value)"
+        />
+      </label>
+
+      <button nz-button nzType="default" class="btn-user-outline" (click)="loadInsights()">
+        <span nz-icon nzType="reload"></span>
+        {{ 'commonActions.refresh' | translate }}
+      </button>
+
+      <button nz-button nzType="primary" class="btn-user-primary" (click)="exportCsv()" [disabled]="dailyRows.length === 0">
+        <span nz-icon nzType="download"></span>
+        Export CSV
+      </button>
+    </div>
   </div>
 
-  <div class="insight-grid animate-slide-up">
-    <nz-card [nzTitle]="'momApp.insights.sleepScore' | translate" class="table-card insight-card">
-      <div class="insight-score-row">
-        <span class="insight-score-value tone-blue">{{ insight.sleepScore }}</span>
-        <span class="insight-score-label">/ 100</span>
+  <div class="loading-state" *ngIf="loading">Loading insight report...</div>
+
+  <ng-container *ngIf="!loading">
+    <div class="insight-grid animate-slide-up">
+      <nz-card [nzTitle]="'momApp.insights.sleepScore' | translate" class="table-card insight-card">
+        <div class="insight-score-row">
+          <span class="insight-score-value tone-blue">{{ sleepScore }}</span>
+          <span class="insight-score-label">/ 100</span>
+        </div>
+        <div class="user-progress-bar">
+          <div class="user-progress-fill" [style.width.%]="sleepScore" style="background: var(--user-grad-2)"></div>
+        </div>
+      </nz-card>
+
+      <nz-card [nzTitle]="'momApp.insights.budgetScore' | translate" class="table-card insight-card">
+        <div class="insight-score-row">
+          <span class="insight-score-value tone-cyan">{{ budgetScore }}</span>
+          <span class="insight-score-label">/ 100</span>
+        </div>
+        <div class="user-progress-bar">
+          <div class="user-progress-fill" [style.width.%]="budgetScore" style="background: var(--user-teal)"></div>
+        </div>
+      </nz-card>
+
+      <nz-card [nzTitle]="'momApp.insights.workloadScore' | translate" class="table-card insight-card">
+        <div class="insight-score-row">
+          <span class="insight-score-value" [class.tone-volcano]="workloadScore < 40">{{ workloadScore }}</span>
+          <span class="insight-score-label">/ 100</span>
+        </div>
+        <div class="user-progress-bar">
+          <div class="user-progress-fill" [style.width.%]="workloadScore" [style.background]="workloadScore < 40 ? '#ef4444' : 'var(--user-grad-1)'"></div>
+        </div>
+      </nz-card>
+
+      <nz-card nzTitle="Task completion rate" class="table-card insight-card">
+        <div class="insight-score-row">
+          <span class="insight-score-value tone-green">{{ taskCompletionRate }}</span>
+          <span class="insight-score-label">%</span>
+        </div>
+        <div class="user-progress-bar">
+          <div class="user-progress-fill" [style.width.%]="taskCompletionRate" style="background: var(--user-grad-3)"></div>
+        </div>
+      </nz-card>
+    </div>
+
+    <div class="report-grid">
+      <nz-card nzTitle="Report summary" class="table-card insight-card">
+        <div class="summary-grid">
+          <div class="summary-item">
+            <p>Family</p>
+            <strong>{{ familyName || 'N/A' }}</strong>
+          </div>
+          <div class="summary-item">
+            <p>Mood score</p>
+            <strong>{{ moodScore }} / 100</strong>
+          </div>
+          <div class="summary-item">
+            <p>Monthly expense</p>
+            <strong>{{ monthlyExpenseTotal | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+          </div>
+          <div class="summary-item">
+            <p>Expense count</p>
+            <strong>{{ monthlyExpenseCount }}</strong>
+          </div>
+          <div class="summary-item">
+            <p>Meals planned</p>
+            <strong>{{ monthlyMealsPlanned }}</strong>
+          </div>
+          <div class="summary-item">
+            <p>Sleep hours</p>
+            <strong>{{ monthlySleepHours | number : '1.0-1' }}</strong>
+          </div>
+          <div class="summary-item">
+            <p>Feedings</p>
+            <strong>{{ monthlyFeedings }}</strong>
+          </div>
+          <div class="summary-item">
+            <p>Diaper changes</p>
+            <strong>{{ monthlyDiaperChanges }}</strong>
+          </div>
+        </div>
+
+        <div class="budget-row">
+          <span class="pill-chip">Budget used: {{ budgetPercent }}%</span>
+          <span class="pill-chip">Pending task gap: {{ pendingTaskGap }}</span>
+        </div>
+      </nz-card>
+
+      <nz-card nzTitle="Recommended actions" class="table-card insight-card">
+        <div class="recommendation-list">
+          <div class="recommendation-item" *ngFor="let item of recommendations" [ngClass]="'tone-' + item.tone">
+            <p class="recommendation-title">{{ item.title }}</p>
+            <p class="recommendation-detail">{{ item.detail }}</p>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+
+    <nz-card nzTitle="Daily breakdown" class="table-card insight-card">
+      <div class="table-summary-row">
+        <span class="table-summary-item">
+          {{ dailyRows.length }} day(s) in report
+        </span>
+        <span class="table-summary-item">
+          Month: {{ monthKey }}
+        </span>
       </div>
-      <div class="user-progress-bar">
-        <div class="user-progress-fill" [style.width.%]="insight.sleepScore" style="background: var(--user-grad-2)"></div>
+
+      <div class="empty-state" *ngIf="dailyRows.length === 0">No daily insight data in this period.</div>
+
+      <div class="report-table-wrap" *ngIf="dailyRows.length > 0">
+        <table class="report-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Expense</th>
+              <th>Pending tasks</th>
+              <th>Sleep hours</th>
+              <th>Risk level</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let row of dailyRows; trackBy: trackByReportDate">
+              <td>{{ formatReportDate(row.date) }}</td>
+              <td>{{ row.expenseTotal | currency : 'VND' : 'symbol' : '1.0-0' }}</td>
+              <td>{{ row.pendingTasks }}</td>
+              <td>{{ row.babySleepHours | number : '1.0-1' }}</td>
+              <td>
+                <span class="pill-chip risk-chip" [ngClass]="'risk-' + row.riskLevel.toLowerCase()">
+                  {{ riskLabel(row.riskLevel) }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </nz-card>
-    
-    <nz-card [nzTitle]="'momApp.insights.budgetScore' | translate" class="table-card insight-card">
-      <div class="insight-score-row">
-        <span class="insight-score-value tone-cyan">{{ insight.budgetScore }}</span>
-        <span class="insight-score-label">/ 100</span>
-      </div>
-      <div class="user-progress-bar">
-        <div class="user-progress-fill" [style.width.%]="insight.budgetScore" style="background: var(--user-teal)"></div>
-      </div>
-    </nz-card>
-    
-    <nz-card [nzTitle]="'momApp.insights.workloadScore' | translate" class="table-card insight-card">
-      <div class="insight-score-row">
-        <span class="insight-score-value" [class.tone-volcano]="insight.workloadScore < 40">{{ insight.workloadScore }}</span>
-        <span class="insight-score-label">/ 100</span>
-      </div>
-      <div class="user-progress-bar">
-        <div class="user-progress-fill" [style.width.%]="insight.workloadScore" [style.background]="insight.workloadScore < 40 ? '#ef4444' : 'var(--user-grad-1)'"></div>
-      </div>
-    </nz-card>
-  </div>
+  </ng-container>
 </section>
