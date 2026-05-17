@@ -64,6 +64,11 @@ public class AccountController {
         return ApiResponse.ok("Success", accountService.getAllFamiliesForAdmin());
     }
 
+    @PostMapping("/admin/families")
+    public ApiResponse<FamilyResponse> createFamilyForAdmin(@Valid @RequestBody CreateFamilyRequest request) {
+        return ApiResponse.ok("Family created", accountService.createFamily(request));
+    }
+
     @PutMapping("/admin/families/{id}")
     public ApiResponse<FamilyResponse> updateFamilyForAdmin(
             @PathVariable("id") Long familyId,
@@ -124,6 +129,48 @@ public class AccountController {
             @PathVariable("userId") Long userId,
             @Valid @RequestBody com.mom.account.controller.dto.UpdateFamilyMemberRequest request
     ) {
+        return ApiResponse.ok("Family member updated", accountService.updateMember(familyId, userId, request));
+    }
+
+    // --- Admin Endpoints for Member Management ---
+
+    @PostMapping("/admin/families/{id}/members/invite")
+    public ApiResponse<FamilyResponse> inviteFamilyMemberForAdmin(
+            @PathVariable("id") Long familyId,
+            @Valid @RequestBody InviteFamilyMemberRequest request
+    ) {
+        com.mom.common.context.UserContext.setFamilyIds(null); // Bypass family check
+        log.info("Admin Invitation request for family {}: {}", familyId, request);
+        return ApiResponse.ok("Family member invited", accountService.inviteMemberWithAccount(familyId, request));
+    }
+
+    @PutMapping("/admin/families/{id}/members/{userId}/role")
+    public ApiResponse<FamilyResponse> updateMemberRoleForAdmin(
+            @PathVariable("id") Long familyId,
+            @PathVariable("userId") Long userId,
+            @RequestParam("role") FamilyRole role
+    ) {
+        com.mom.common.context.UserContext.setFamilyIds(null); // Bypass family check
+        return ApiResponse.ok("Member role updated", accountService.updateMemberRole(familyId, userId, role));
+    }
+
+    @DeleteMapping("/admin/families/{id}/members/{userId}")
+    public ApiResponse<Void> removeFamilyMemberForAdmin(
+            @PathVariable("id") Long familyId,
+            @PathVariable("userId") Long userId
+    ) {
+        com.mom.common.context.UserContext.setFamilyIds(null); // Bypass family check
+        accountService.removeMember(familyId, userId);
+        return ApiResponse.ok("Member removed from family", null);
+    }
+
+    @PutMapping("/admin/families/{id}/members/{userId}")
+    public ApiResponse<FamilyResponse> updateFamilyMemberForAdmin(
+            @PathVariable("id") Long familyId,
+            @PathVariable("userId") Long userId,
+            @Valid @RequestBody com.mom.account.controller.dto.UpdateFamilyMemberRequest request
+    ) {
+        com.mom.common.context.UserContext.setFamilyIds(null); // Bypass family check
         return ApiResponse.ok("Family member updated", accountService.updateMember(familyId, userId, request));
     }
 }

@@ -84,6 +84,9 @@ export class AdminPermissionsComponent implements OnInit {
   searchText = '';
   filterType: PermissionFilterType = 'ALL';
 
+  pageIndex = 1;
+  pageSize = 12;
+
   isPermissionModalVisible = false;
   permissionModalMode: PermissionModalMode = 'create';
   editingPermissionId: number | null = null;
@@ -173,11 +176,13 @@ export class AdminPermissionsComponent implements OnInit {
 
   onSearchChange(value: string): void {
     this.searchText = value;
+    this.pageIndex = 1;
     this.applyFilters();
   }
 
   setFilterType(type: PermissionFilterType): void {
     this.filterType = type;
+    this.pageIndex = 1;
     this.applyFilters();
   }
 

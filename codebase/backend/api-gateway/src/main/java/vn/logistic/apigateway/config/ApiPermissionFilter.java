@@ -165,7 +165,7 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
     private Mono<List<Long>> loadUserFamilies(Long userId, String token) {
         return webClientBuilder.build()
                 .get()
-                .uri(accountServiceUri + "/api/users/{userId}/families", userId)
+                .uri(accountServiceUri + "/users/{userId}/families", userId)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()

@@ -2545,42 +2545,58 @@
       },
       "families": {
         "hero": {
-          "kicker": "Family graph",
-          "title": "Family tree board",
-          "subtitle": "Load household structure as a tree so operators can inspect relationships and caregiver links quickly."
+          "kicker": "Management System",
+          "title": "Household Directory",
+          "subtitle": "Manage all family households, their members, roles, and relationship hierarchies."
         },
         "totalHouseholds": "Total households",
-        "searchPlaceholder": "Search by family name, creator, member...",
-        "refresh": "Refresh tree",
+        "searchPlaceholder": "Search by family name or creator name...",
+        "refresh": "Refresh",
         "creator": "Creator",
         "members": "Members",
         "actions": {
-          "createFamily": "Create household",
-          "deleteConfirm": "Delete this household? This action cannot be undone."
-        },
-        "modal": {
-          "createTitle": "Create household",
-          "editTitle": "Edit household",
-          "nameLabel": "Household name",
-          "namePlaceholder": "Enter household name"
-        },
-        "messages": {
-          "loadFailed": "Unable to load household list.",
-          "nameRequired": "Household name is required.",
-          "creatorRequired": "Creator account is required.",
-          "createSuccess": "Household created successfully.",
-          "createFailed": "Unable to create household.",
-          "updateSuccess": "Household updated successfully.",
-          "updateFailed": "Unable to update household.",
-          "deleteSuccess": "Household deleted successfully.",
-          "deleteFailed": "Unable to delete household."
-        },
-        "role": {
-          "member": "Member"
+          "createFamily": "Create Household",
+          "manageMembers": "Manage members",
+          "deleteConfirm": "Are you sure you want to delete this household?",
+          "removeMemberConfirm": "Are you sure you want to remove this member from the household?"
         },
         "empty": {
-          "title": "No family matched this filter",
-          "subtitle": "Try another keyword or refresh to load latest household data."
+          "title": "No households found",
+          "subtitle": "Please double check your filters or create a new household."
+        },
+        "modal": {
+          "createTitle": "Create New Household",
+          "editTitle": "Edit Household",
+          "nameLabel": "Family Name",
+          "namePlaceholder": "Enter family name",
+          "manageMembersTitle": "Manage Family Members",
+          "currentMembers": "Current Members",
+          "displayName": "Display Name",
+          "role": "Role",
+          "relation": "Relation",
+          "parent": "Parent",
+          "actions": "Actions",
+          "addNewMember": "Add New Member",
+          "searchUserPlaceholder": "Enter Username or Email to lookup user...",
+          "searchUser": "Search User",
+          "addMemberBtn": "Add to Family"
+        },
+        "messages": {
+          "loadFailed": "Unable to load households.",
+          "nameRequired": "Family name is required.",
+          "creatorRequired": "Creator information is missing.",
+          "createSuccess": "Household created successfully!",
+          "createFailed": "Unable to create household.",
+          "updateSuccess": "Household updated successfully!",
+          "updateFailed": "Unable to update household.",
+          "deleteSuccess": "Household deleted successfully!",
+          "deleteFailed": "Unable to delete household.",
+          "searchKeywordRequired": "Please enter a Username or Email to search.",
+          "userFound": "User found!",
+          "userNotFound": "No user found matching the criteria.",
+          "addMemberSuccess": "Member added to household successfully!",
+          "updateMemberSuccess": "Member updated successfully!",
+          "removeMemberSuccess": "Member removed from household successfully."
         }
       },
       "access": {

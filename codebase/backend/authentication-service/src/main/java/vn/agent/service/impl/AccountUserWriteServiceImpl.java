@@ -7,7 +7,13 @@ import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
-import org.springframework.core.io.PathResource;
+import io.minio.BucketExistsArgs;
+import io.minio.GetObjectArgs;
+import io.minio.MakeBucketArgs;
+import io.minio.MinioClient;
+import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
+import java.io.InputStream;
 import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
@@ -59,12 +65,13 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
     private final PasswordEncoder passwordEncoder;
     private final AccountCredentialMailService accountCredentialMailService;
     private final org.keycloak.admin.client.Keycloak keycloakAdminClient;
+    private final io.minio.MinioClient minioClient;
 
     @org.springframework.beans.factory.annotation.Value("${app.keycloak.realm:micro-services}")
     private String keycloakRealm;
 
-    @org.springframework.beans.factory.annotation.Value("${app.avatar.storage-path:uploads/avatars}")
-    private String avatarStoragePath;
+    @org.springframework.beans.factory.annotation.Value("${minio.bucket:avatars}")
+    private String minioBucketName;
 
     @Override
     @Transactional
@@ -234,20 +241,24 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new InvalidDataException("User not found: " + userId));
 
-        Path avatarDir = resolveAvatarDirectory();
         String extension = resolveFileExtension(file);
         String newFileName = "user-" + userId + "-" + UUID.randomUUID() + "." + extension;
-        Path targetFile = avatarDir.resolve(newFileName).normalize();
-
-        if (!targetFile.startsWith(avatarDir)) {
-            throw new InvalidDataException("Invalid avatar destination path");
-        }
 
         try {
-            Files.copy(file.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
-            deleteExistingAvatar(avatarDir, user.getAvatarUrl());
-        } catch (IOException e) {
-            throw new InvalidDataException("Failed to store avatar file");
+            ensureBucket(minioBucketName);
+            try (InputStream inputStream = file.getInputStream()) {
+                minioClient.putObject(
+                        PutObjectArgs.builder()
+                                .bucket(minioBucketName)
+                                .object(newFileName)
+                                .stream(inputStream, file.getSize(), -1)
+                                .contentType(file.getContentType())
+                                .build()
+                );
+            }
+            deleteExistingAvatar(user.getAvatarUrl());
+        } catch (Exception e) {
+            throw new InvalidDataException("Failed to store avatar file: " + e.getMessage());
         }
 
         user.setAvatarUrl(newFileName);
@@ -264,18 +275,23 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
             return ResponseEntity.notFound().build();
         }
 
-        Path avatarDir = resolveAvatarDirectory();
-        Path avatarFile = avatarDir.resolve(user.getAvatarUrl()).normalize();
-        if (!avatarFile.startsWith(avatarDir) || !Files.exists(avatarFile)) {
+        try {
+            InputStream stream = minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(minioBucketName)
+                            .object(user.getAvatarUrl())
+                            .build()
+            );
+
+            MediaType mediaType = resolveMediaType(user.getAvatarUrl());
+            Resource resource = new org.springframework.core.io.InputStreamResource(stream);
+            return ResponseEntity.ok()
+                    .contentType(mediaType)
+                    .cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES).cachePrivate())
+                    .body(resource);
+        } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
-
-        MediaType mediaType = resolveMediaType(avatarFile);
-        Resource resource = new PathResource(avatarFile);
-        return ResponseEntity.ok()
-                .contentType(mediaType)
-                .cacheControl(CacheControl.maxAge(5, TimeUnit.MINUTES).cachePrivate())
-                .body(resource);
     }
 
     private void validateUniqueForCreate(String username, String email) {
@@ -375,16 +391,6 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
         return "/account/user/avatar/" + userId;
     }
 
-    private Path resolveAvatarDirectory() {
-        Path avatarDir = Path.of(avatarStoragePath).toAbsolutePath().normalize();
-        try {
-            Files.createDirectories(avatarDir);
-        } catch (IOException e) {
-            throw new InvalidDataException("Failed to prepare avatar storage");
-        }
-        return avatarDir;
-    }
-
     private String resolveFileExtension(MultipartFile file) {
         String originalFilename = file.getOriginalFilename();
         if (StringUtils.isNotBlank(originalFilename) && originalFilename.contains(".")) {
@@ -404,28 +410,39 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
         return "jpg";
     }
 
-    private void deleteExistingAvatar(Path avatarDir, String currentAvatarFileName) throws IOException {
+    private void deleteExistingAvatar(String currentAvatarFileName) {
         if (StringUtils.isBlank(currentAvatarFileName)) {
             return;
         }
-
-        Path oldAvatarFile = avatarDir.resolve(currentAvatarFileName).normalize();
-        if (!oldAvatarFile.startsWith(avatarDir)) {
-            return;
+        try {
+            minioClient.removeObject(
+                    RemoveObjectArgs.builder()
+                            .bucket(minioBucketName)
+                            .object(currentAvatarFileName)
+                            .build()
+            );
+        } catch (Exception e) {
+            // Log warning or ignore to keep flow resilient
         }
-        Files.deleteIfExists(oldAvatarFile);
     }
 
-    private MediaType resolveMediaType(Path filePath) {
-        try {
-            String mimeType = Files.probeContentType(filePath);
-            if (StringUtils.isNotBlank(mimeType)) {
-                return MediaType.parseMediaType(mimeType);
-            }
-        } catch (IOException ignored) {
-            // fallback to binary stream
+    private MediaType resolveMediaType(String fileName) {
+        String ext = StringUtils.substringAfterLast(fileName, ".").toLowerCase();
+        switch (ext) {
+            case "png": return MediaType.IMAGE_PNG;
+            case "gif": return MediaType.IMAGE_GIF;
+            case "jpg":
+            case "jpeg": return MediaType.IMAGE_JPEG;
+            case "webp": return MediaType.parseMediaType("image/webp");
+            default: return MediaType.APPLICATION_OCTET_STREAM;
         }
-        return MediaType.APPLICATION_OCTET_STREAM;
+    }
+
+    private void ensureBucket(String bucketName) throws Exception {
+        boolean exists = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucketName).build());
+        if (!exists) {
+            minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucketName).build());
+        }
     }
 
     private void createUserInKeycloak(CreateUserRequest request) {

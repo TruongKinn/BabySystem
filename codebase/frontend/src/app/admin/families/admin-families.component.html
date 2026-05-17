@@ -1,4 +1,4 @@
-﻿<section class="admin-families-page">
+<section class="admin-families-page">
   <header class="families-hero">
     <div class="hero-copy">
       <span class="hero-kicker">{{ 'momApp.admin.families.hero.kicker' | translate }}</span>
@@ -38,6 +38,9 @@
             <span>{{ 'momApp.admin.families.members' | translate }}: {{ family.memberCount }}</span>
           </div>
           <div class="head-actions">
+            <button nz-button nzType="primary" nzSize="small" (click)="openManageMembersModal(family)">
+              {{ 'momApp.admin.families.actions.manageMembers' | translate }}
+            </button>
             <button nz-button nzType="default" nzSize="small" (click)="openEditFamilyModal(family)">
               {{ 'commonActions.edit' | translate }}
             </button>
@@ -60,10 +63,12 @@
           <li class="tree-branch" *ngFor="let root of family.tree; trackBy: trackByTreeNode">
             <div class="tree-node">
               <span class="member-name">{{ root.member.displayName }}</span>
-              <span class="role-badge" [ngClass]="roleClass(root.member.role)">
-                {{ roleLabel(root.member.role) }}
-              </span>
-              <span class="relation-badge">{{ relationLabel(root.member.relation) }}</span>
+              <div class="node-badges">
+                <span class="role-badge" [ngClass]="roleClass(root.member.role)">
+                  {{ roleLabel(root.member.role) }}
+                </span>
+                <span class="relation-badge">{{ relationLabel(root.member.relation) }}</span>
+              </div>
             </div>
 
             <ng-container
@@ -81,10 +86,12 @@
         <li class="tree-branch" *ngFor="let node of nodes; trackBy: trackByTreeNode">
           <div class="tree-node">
             <span class="member-name">{{ node.member.displayName }}</span>
-            <span class="role-badge" [ngClass]="roleClass(node.member.role)">
-              {{ roleLabel(node.member.role) }}
-            </span>
-            <span class="relation-badge">{{ relationLabel(node.member.relation) }}</span>
+            <div class="node-badges">
+              <span class="role-badge" [ngClass]="roleClass(node.member.role)">
+                {{ roleLabel(node.member.role) }}
+              </span>
+              <span class="relation-badge">{{ relationLabel(node.member.relation) }}</span>
+            </div>
           </div>
           <ng-container
             *ngIf="node.children.length > 0"
@@ -148,6 +155,249 @@
         [placeholder]="'momApp.admin.families.modal.namePlaceholder' | translate"
         (keydown.enter)="submitEditFamily()"
       />
+    </div>
+  </ng-container>
+</nz-modal>
+
+<!-- MODAL QUẢN LÝ THÀNH VIÊN HỘ GIA ĐÌNH -->
+<nz-modal
+  [(nzVisible)]="isManageMembersModalVisible"
+  [nzTitle]="('momApp.admin.families.modal.manageMembersTitle' | translate) + ': ' + (selectedFamily?.name || '')"
+  [nzWidth]="850"
+  [nzFooter]="null"
+  (nzOnCancel)="closeManageMembersModal()"
+>
+  <ng-container *nzModalContent>
+    <div class="manage-members-container">
+      
+      <!-- DANH SÁCH THÀNH VIÊN HIỆN TẠI -->
+      <div class="section-title">
+        <h3>{{ 'momApp.admin.families.modal.currentMembers' | translate }}</h3>
+      </div>
+      
+      <nz-spin [nzSpinning]="membersLoading">
+        <nz-table 
+          #membersTable 
+          [nzData]="selectedFamily?.members || []" 
+          [nzFrontPagination]="false" 
+          [nzShowPagination]="false"
+          nzSize="middle"
+          nzTableLayout="fixed"
+        >
+          <thead>
+            <tr>
+              <th nzWidth="60px">ID</th>
+              <th nzWidth="180px">{{ 'momApp.admin.families.modal.displayName' | translate }}</th>
+              <th nzWidth="120px">{{ 'momApp.admin.families.modal.role' | translate }}</th>
+              <th nzWidth="150px">{{ 'momApp.admin.families.modal.relation' | translate }}</th>
+              <th nzWidth="130px">{{ 'momApp.admin.families.modal.parent' | translate }}</th>
+              <th nzWidth="150px">{{ 'momApp.admin.families.modal.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let member of membersTable.data" [class.editing-row]="editingMemberId === member.userId">
+              <!-- Chế độ Đọc -->
+              <ng-container *ngIf="editingMemberId !== member.userId; else editRow">
+                <td>{{ member.userId }}</td>
+                <td><strong>{{ member.displayName }}</strong></td>
+                <td>
+                  <span class="role-badge" [ngClass]="roleClass(member.role)">
+                    {{ roleLabel(member.role) }}
+                  </span>
+                </td>
+                <td>
+                  <span class="relation-badge">{{ relationLabel(member.relation) }}</span>
+                </td>
+                <td>
+                  {{ member.parentUserId ? member.parentUserId : ('momApp.common.notAvailable' | translate) }}
+                </td>
+                <td>
+                  <div class="action-buttons">
+                    <button nz-button nzType="default" nzSize="small" (click)="startEditMember(member)">
+                      {{ 'commonActions.edit' | translate }}
+                    </button>
+                    <button
+                      nz-button
+                      nzType="default"
+                      nzDanger
+                      nzSize="small"
+                      nz-popconfirm
+                      [nzPopconfirmTitle]="'momApp.admin.families.actions.removeMemberConfirm' | translate"
+                      [nzLoading]="removingMemberId === member.userId"
+                      (nzOnConfirm)="removeMember(member)"
+                    >
+                      {{ 'commonActions.delete' | translate }}
+                    </button>
+                  </div>
+                </td>
+              </ng-container>
+              
+              <!-- Chế độ Sửa (Inline Edit) -->
+              <ng-template #editRow>
+                <td>{{ member.userId }}</td>
+                <td>
+                  <input nz-input [(ngModel)]="editingMemberDisplayName" nzSize="small" class="edit-input" />
+                </td>
+                <td>
+                  <nz-select [(ngModel)]="editingMemberRole" nzSize="small" class="edit-input">
+                    <nz-option *ngFor="let r of rolesList" [nzValue]="r" [nzLabel]="roleLabel(r)"></nz-option>
+                  </nz-select>
+                </td>
+                <td>
+                  <nz-select [(ngModel)]="editingMemberRelation" nzSize="small" class="edit-input">
+                    <nz-option *ngFor="let rel of relationsList" [nzValue]="rel" [nzLabel]="relationLabel(rel)"></nz-option>
+                  </nz-select>
+                </td>
+                <td>
+                  <nz-select [(ngModel)]="editingMemberParentId" nzSize="small" nzAllowClear [nzPlaceHolder]="('momApp.common.none' | translate) || 'Không có'" class="edit-input">
+                    <ng-container *ngFor="let other of selectedFamily?.members">
+                      <nz-option *ngIf="other.userId !== member.userId" [nzValue]="other.userId" [nzLabel]="other.displayName"></nz-option>
+                    </ng-container>
+                  </nz-select>
+                </td>
+                <td>
+                  <div class="action-buttons edit-actions">
+                    <button nz-button nzType="primary" nzSize="small" [nzLoading]="savingMember" (click)="saveMember(member)">
+                      {{ 'commonActions.save' | translate }}
+                    </button>
+                    <button nz-button nzType="default" nzSize="small" (click)="cancelEditMember()">
+                      {{ 'commonActions.cancel' | translate }}
+                    </button>
+                  </div>
+                </td>
+              </ng-template>
+            </tr>
+          </tbody>
+        </nz-table>
+      </nz-spin>
+      
+      <nz-divider></nz-divider>
+      
+      <!-- FORM THÊM THÀNH VIÊN MỚI -->
+      <div class="section-title">
+        <h3>{{ 'momApp.admin.families.modal.addNewMember' | translate }}</h3>
+      </div>
+      
+      <div class="add-member-tabs-container">
+        <nz-tabset>
+          <!-- TAB 1: TÌM KIẾM CÓ SẴN -->
+          <nz-tab [nzTitle]="('momApp.admin.families.modal.searchExisting' | translate) || 'Tìm kiếm có sẵn'">
+            <div class="add-member-form">
+              <div class="search-user-row">
+                <input
+                  nz-input
+                  [(ngModel)]="lookupKeyword"
+                  [placeholder]="'momApp.admin.families.modal.searchUserPlaceholder' | translate"
+                  style="flex: 1; margin-right: 10px;"
+                  (keydown.enter)="lookupUser()"
+                />
+                <button nz-button nzType="default" [nzLoading]="lookupLoading" (click)="lookupUser()">
+                  {{ 'momApp.admin.families.modal.searchUser' | translate }}
+                </button>
+              </div>
+              
+              <!-- Hiển thị kết quả tìm kiếm User -->
+              <div class="user-search-result" *ngIf="foundUser">
+                <div class="found-user-card">
+                  <span class="user-info">
+                    <strong>{{ foundUser.displayName }}</strong> (@{{ foundUser.username }}) - {{ foundUser.email }}
+                  </span>
+                  <nz-tag nzColor="success">ID: {{ foundUser.id }}</nz-tag>
+                </div>
+                
+                <div class="member-meta-selectors">
+                  <div class="selector-item">
+                    <label>{{ 'momApp.admin.families.modal.role' | translate }}</label>
+                    <nz-select [(ngModel)]="newMemberRole" style="width: 100%;">
+                      <nz-option *ngFor="let r of rolesList" [nzValue]="r" [nzLabel]="roleLabel(r)"></nz-option>
+                    </nz-select>
+                  </div>
+                  
+                  <div class="selector-item">
+                    <label>{{ 'momApp.admin.families.modal.relation' | translate }}</label>
+                    <nz-select [(ngModel)]="newMemberRelation" style="width: 100%;">
+                      <nz-option *ngFor="let rel of relationsList" [nzValue]="rel" [nzLabel]="relationLabel(rel)"></nz-option>
+                    </nz-select>
+                  </div>
+                  
+                  <div class="selector-item">
+                    <label>{{ 'momApp.admin.families.modal.parent' | translate }}</label>
+                    <nz-select [(ngModel)]="newMemberParentId" nzAllowClear [nzPlaceHolder]="'momApp.common.none' | translate" style="width: 100%;">
+                      <nz-option *ngFor="let other of selectedFamily?.members" [nzValue]="other.userId" [nzLabel]="other.displayName"></nz-option>
+                    </nz-select>
+                  </div>
+                </div>
+                
+                <button 
+                  nz-button 
+                  nzType="primary" 
+                  class="submit-add-btn" 
+                  [nzLoading]="addingMember" 
+                  (click)="addMember()"
+                >
+                  {{ 'momApp.admin.families.modal.addMemberBtn' | translate }}
+                </button>
+              </div>
+            </div>
+          </nz-tab>
+
+          <!-- TAB 2: TẠO THÀNH VIÊN MỚI -->
+          <nz-tab [nzTitle]="('momApp.admin.families.modal.createNew' | translate) || 'Tạo mới'">
+            <div class="add-member-form">
+              <div class="create-new-grid">
+                <div class="form-group">
+                  <label>{{ ('momApp.admin.families.modal.displayName' | translate) || 'Họ và tên' }} <span class="required">*</span></label>
+                  <input nz-input [(ngModel)]="newMemberDisplayName" [placeholder]="('momApp.admin.families.modal.displayNamePlaceholder' | translate) || 'Vd: Nguyễn Văn A'" />
+                </div>
+                <div class="form-group">
+                  <label>{{ ('momApp.admin.families.modal.username' | translate) || 'Tên đăng nhập' }} <span class="required">*</span></label>
+                  <input nz-input [(ngModel)]="newMemberUsername" [placeholder]="('momApp.admin.families.modal.usernamePlaceholder' | translate) || 'Vd: nguyen.a'" />
+                </div>
+                <div class="form-group">
+                  <label>{{ ('momApp.admin.families.modal.email' | translate) || 'Email' }} <span class="required">*</span></label>
+                  <input nz-input [(ngModel)]="newMemberEmail" [placeholder]="('momApp.admin.families.modal.emailPlaceholder' | translate) || 'Vd: a@example.com'" />
+                </div>
+              </div>
+
+              <nz-divider></nz-divider>
+
+              <div class="member-meta-selectors">
+                <div class="selector-item">
+                  <label>{{ 'momApp.admin.families.modal.role' | translate }}</label>
+                  <nz-select [(ngModel)]="newMemberRole" style="width: 100%;">
+                    <nz-option *ngFor="let r of rolesList" [nzValue]="r" [nzLabel]="roleLabel(r)"></nz-option>
+                  </nz-select>
+                </div>
+                
+                <div class="selector-item">
+                  <label>{{ 'momApp.admin.families.modal.relation' | translate }}</label>
+                  <nz-select [(ngModel)]="newMemberRelation" style="width: 100%;">
+                    <nz-option *ngFor="let rel of relationsList" [nzValue]="rel" [nzLabel]="relationLabel(rel)"></nz-option>
+                  </nz-select>
+                </div>
+                
+                <div class="selector-item">
+                  <label>{{ 'momApp.admin.families.modal.parent' | translate }}</label>
+                  <nz-select [(ngModel)]="newMemberParentId" nzAllowClear [nzPlaceHolder]="'momApp.common.none' | translate" style="width: 100%;">
+                    <nz-option *ngFor="let other of selectedFamily?.members" [nzValue]="other.userId" [nzLabel]="other.displayName"></nz-option>
+                  </nz-select>
+                </div>
+              </div>
+              
+              <button 
+                nz-button 
+                nzType="primary" 
+                class="submit-add-btn" 
+                [nzLoading]="addingMember" 
+                (click)="inviteMember()"
+              >
+                {{ ('momApp.admin.families.modal.inviteMemberBtn' | translate) || 'Thêm thành viên mới' }}
+              </button>
+            </div>
+          </nz-tab>
+        </nz-tabset>
+      </div>
+      
     </div>
   </ng-container>
 </nz-modal>

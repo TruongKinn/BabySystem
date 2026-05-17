@@ -119,7 +119,7 @@ public class AccountService {
                 savedFamily.getCreatedByUserId()
         ));
 
-        return getFamily(savedFamily.getId());
+        return buildFamilyResponse(savedFamily);
     }
 
     @Transactional

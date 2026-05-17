@@ -55,7 +55,16 @@
       </button>
     </div>
 
-    <nz-table [nzData]="filteredPermissions" [nzFrontPagination]="false" [nzLoading]="loading" [nzPageSize]="12">
+    <nz-table
+      #permissionsTable="nzTable"
+      [nzData]="filteredPermissions"
+      [(nzPageIndex)]="pageIndex"
+      [(nzPageSize)]="pageSize"
+      [nzFrontPagination]="true"
+      [nzLoading]="loading"
+      [nzShowSizeChanger]="true"
+      [nzPageSizeOptions]="[12, 24, 48, 96]"
+    >
       <thead>
         <tr>
           <th>{{ 'momApp.admin.permissions.table.id' | translate }}</th>
@@ -67,7 +76,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let permission of filteredPermissions; trackBy: trackByPermission">
+        <tr *ngFor="let permission of permissionsTable.data; trackBy: trackByPermission">
           <td>{{ permission.id }}</td>
           <td>
             <div class="permission-name-cell">

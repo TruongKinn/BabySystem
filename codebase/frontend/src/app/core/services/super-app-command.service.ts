@@ -344,6 +344,24 @@ export class SuperAppCommandService {
       );
   }
 
+  uploadUserAvatar(userId: number, file: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return this.http
+      .post(`${this.apiBase}/auth/account/user/${userId}/avatar`, formData, { responseType: 'text' })
+      .pipe(
+        map((path) => {
+          const resolvedUrl = this.resolveAvatarUrl(path);
+          if (!resolvedUrl) {
+            return '';
+          }
+          return `${resolvedUrl}${resolvedUrl.includes('?') ? '&' : '?'}v=${Date.now()}`;
+        })
+      );
+  }
+
+
   createExpense(input: { amount: number; note: string; categoryName: string; currency?: string }): Observable<void> {
     const familyId = this.getFamilyId();
 

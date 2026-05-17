@@ -1,4 +1,4 @@
-﻿import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -11,8 +11,12 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
+import { SuperAppCommandService } from '../../core/services/super-app-command.service';
+import { AuthService } from '../../auth/auth.service';
 
 type UserStatus = 'ACTIVE' | 'INACTIVE' | 'LOCKED';
 type UserType = 'USER' | 'ADMIN' | 'OWNER';
@@ -27,6 +31,7 @@ interface AdminUser {
   dateOfBirth?: string;
   type?: string;
   status: string;
+  avatarUrl?: string;
 }
 
 interface UserPageResponse {
@@ -49,7 +54,9 @@ interface UserPageResponse {
     NzModalModule,
     NzPopconfirmModule,
     NzTableModule,
-    NzTagModule
+    NzTagModule,
+    NzAvatarModule,
+    NzIconModule
   ],
   templateUrl: './admin-users.component.html',
   styleUrl: './admin-users.component.css'
@@ -58,6 +65,8 @@ export class AdminUsersComponent implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly message = inject(NzMessageService);
   private readonly i18n = inject(I18nService);
+  private readonly command = inject(SuperAppCommandService);
+  private readonly authService = inject(AuthService);
 
   readonly apiBase = API_CONFIG.GATEWAY_URL;
 
@@ -65,6 +74,7 @@ export class AdminUsersComponent implements OnInit {
   actionLoadingUserId: number | null = null;
   users: AdminUser[] = [];
   filteredUsers: AdminUser[] = [];
+  avatarVersions: { [key: number]: number } = {};
 
   pageIndex = 1;
   pageSize = 10;
@@ -187,6 +197,81 @@ export class AdminUsersComponent implements OnInit {
     const fullName = `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
     return fullName || '-';
   }
+
+  avatarUrlOf(user: AdminUser): string | undefined {
+    if (!user.avatarUrl) {
+      return undefined;
+    }
+    const raw = user.avatarUrl.trim();
+    let resolved = '';
+    if (/^https?:\/\//i.test(raw)) {
+      resolved = raw;
+    } else if (raw.startsWith('/auth/')) {
+      resolved = `${this.apiBase}${raw}`;
+    } else if (raw.startsWith('/account/')) {
+      resolved = `${this.apiBase}/auth${raw}`;
+    } else {
+      resolved = `${this.apiBase}${raw.startsWith('/') ? raw : `/${raw}`}`;
+    }
+    const version = this.avatarVersions[user.id] || 0;
+    return `${resolved}${resolved.includes('?') ? '&' : '?'}v=${version}`;
+  }
+
+  userInitialsOf(user: AdminUser): string {
+    const fn = user.firstName?.trim() || '';
+    const ln = user.lastName?.trim() || '';
+    if (!fn && !ln) {
+      return user.username?.substring(0, 2).toUpperCase() || 'U';
+    }
+    const firstChar = fn ? fn.charAt(0) : '';
+    const lastChar = ln ? ln.charAt(0) : '';
+    return (firstChar + lastChar).toUpperCase();
+  }
+
+  onAvatarFileSelected(event: Event, user: AdminUser): void {
+    const input = event.target as HTMLInputElement;
+    if (!input.files || input.files.length === 0) {
+      return;
+    }
+
+    const file = input.files[0];
+    if (!file.type.startsWith('image/')) {
+      this.message.error(this.i18n.translate('momApp.profile.messages.selectImageOnly'));
+      return;
+    }
+
+    const maxSize = 30 * 1024 * 1024;
+    if (file.size > maxSize) {
+      this.message.error(this.i18n.translate('momApp.profile.messages.fileTooLarge'));
+      return;
+    }
+
+    this.actionLoadingUserId = user.id;
+    this.command.uploadUserAvatar(user.id, file).subscribe({
+      next: (avatarUrl) => {
+        this.actionLoadingUserId = null;
+        this.avatarVersions[user.id] = Date.now();
+        
+        // Cập nhật ngay lập tức ở local
+        user.avatarUrl = avatarUrl;
+
+        // Đồng bộ hóa ảnh đại diện mới vào phiên làm việc hiện tại của Admin nếu họ tự up ảnh cho chính mình
+        const currentUserId = this.command.getUserId();
+        if (currentUserId === user.id) {
+          this.authService.setAvatarUrl(avatarUrl || null);
+        }
+
+        this.message.success(this.i18n.translate('momApp.profile.messages.uploadSuccess'));
+        this.loadUsers();
+      },
+      error: (err) => {
+        this.actionLoadingUserId = null;
+        this.message.error(this.i18n.translate('momApp.profile.messages.uploadFailed'));
+        console.error('Avatar upload error:', err);
+      }
+    });
+  }
+
 
   statusColorOf(status: string): string {
     const normalized = this.normalizeUserStatus(status);

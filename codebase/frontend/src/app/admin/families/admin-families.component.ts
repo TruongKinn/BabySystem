@@ -1,4 +1,4 @@
-﻿import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -9,6 +9,12 @@ import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzTableModule } from 'ng-zorro-antd/table';
+import { NzDividerModule } from 'ng-zorro-antd/divider';
+import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzSpinModule } from 'ng-zorro-antd/spin';
+import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { AuthService } from '../../auth/auth.service';
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
@@ -49,7 +55,22 @@ interface FamilyView extends FamilyApi {
 @Component({
   selector: 'app-admin-families',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslateModule, NzButtonModule, NzCardModule, NzInputModule, NzModalModule, NzPopconfirmModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    TranslateModule,
+    NzButtonModule,
+    NzCardModule,
+    NzInputModule,
+    NzModalModule,
+    NzPopconfirmModule,
+    NzSelectModule,
+    NzTableModule,
+    NzDividerModule,
+    NzTagModule,
+    NzSpinModule,
+    NzTabsModule
+  ],
   templateUrl: './admin-families.component.html',
   styleUrl: './admin-families.component.css'
 })
@@ -70,6 +91,46 @@ export class AdminFamiliesComponent implements OnInit {
   createFamilyName = '';
   isCreateModalVisible = false;
   isEditModalVisible = false;
+
+  // Trạng thái modal Quản lý thành viên
+  isManageMembersModalVisible = false;
+  selectedFamily: FamilyView | null = null;
+  membersLoading = false;
+
+  // Form Thêm thành viên
+  lookupKeyword = '';
+  foundUser: { id: number; username: string; email: string; displayName: string } | null = null;
+  lookupLoading = false;
+  newMemberRole: string = 'CAREGIVER';
+  newMemberRelation: string = 'THANH_VIEN_KHAC';
+  newMemberParentId: number | null = null;
+  addingMember = false;
+
+  // Form Tạo mới thành viên
+  newMemberDisplayName = '';
+  newMemberUsername = '';
+  newMemberEmail = '';
+
+  // Inline Sửa thành viên
+  editingMemberId: number | null = null;
+  editingMemberDisplayName = '';
+  editingMemberUsername = '';
+  editingMemberEmail = '';
+  editingMemberRole = '';
+  editingMemberRelation = '';
+  editingMemberParentId: number | null = null;
+  savingMember = false;
+
+  // Xóa thành viên
+  removingMemberId: number | null = null;
+
+  // Các danh sách hỗ trợ Dropdown
+  rolesList = ['MOM', 'DAD', 'GRANDMA', 'CAREGIVER'];
+  relationsList = [
+    'ONG_NOI', 'BA_NOI', 'ONG_NGOAI', 'BA_NGOAI', 'BO', 'ME',
+    'ANH_TRAI', 'CHI_GAI', 'EM_TRAI', 'EM_GAI', 'CON_TRAI', 'CON_GAI',
+    'CHU', 'BAC', 'CO', 'DI', 'CAU', 'MO', 'THIM', 'BAO_MAU', 'THANH_VIEN_KHAC'
+  ];
 
   ngOnInit(): void {
     this.loadFamilies();
@@ -183,7 +244,7 @@ export class AdminFamiliesComponent implements OnInit {
 
     this.submitting = true;
     this.http
-      .post<ApiEnvelope<FamilyApi>>(`${API_CONFIG.GATEWAY_URL}/account/families`, { name, createdByUserId })
+      .post<ApiEnvelope<FamilyApi>>(`${API_CONFIG.GATEWAY_URL}/account/admin/families`, { name, createdByUserId })
       .subscribe({
         next: () => {
           this.submitting = false;
@@ -324,11 +385,53 @@ export class AdminFamiliesComponent implements OnInit {
   }
 
   private compareMembers(a: FamilyMemberApi, b: FamilyMemberApi): number {
+    const relOrder = this.relationWeight(a.relation) - this.relationWeight(b.relation);
+    if (relOrder !== 0) {
+      return relOrder;
+    }
+
     const roleOrder = this.roleWeight(a.role) - this.roleWeight(b.role);
     if (roleOrder !== 0) {
       return roleOrder;
     }
     return (a.displayName || '').localeCompare(b.displayName || '');
+  }
+
+  private relationWeight(relation: string): number {
+    const norm = (relation || '').toUpperCase();
+    // Thế hệ Ông Bà
+    if (norm === 'ONG_NOI') return 1;
+    if (norm === 'BA_NOI') return 2;
+    if (norm === 'ONG_NGOAI') return 3;
+    if (norm === 'BA_NGOAI') return 4;
+
+    // Thế hệ Bố Mẹ
+    if (norm === 'BO') return 10;
+    if (norm === 'ME') return 11;
+
+    // Bậc Cô, Dì, Chú, Bác
+    if (norm === 'BAC') return 20;
+    if (norm === 'CHU') return 21;
+    if (norm === 'CO') return 22;
+    if (norm === 'CAU') return 23;
+    if (norm === 'DI') return 24;
+    if (norm === 'MO') return 25;
+    if (norm === 'THIM') return 26;
+
+    // Thế hệ Anh, Chị, Em
+    if (norm === 'ANH_TRAI') return 30;
+    if (norm === 'CHI_GAI') return 31;
+    if (norm === 'EM_TRAI') return 32;
+    if (norm === 'EM_GAI') return 33;
+
+    // Hậu duệ
+    if (norm === 'CON_TRAI') return 40;
+    if (norm === 'CON_GAI') return 41;
+
+    // Khác
+    if (norm === 'BAO_MAU') return 50;
+
+    return 99; // THANH_VIEN_KHAC or others
   }
 
   private roleWeight(role: string): number {
@@ -346,6 +449,236 @@ export class AdminFamiliesComponent implements OnInit {
       return 4;
     }
     return 9;
+  }
+
+  openManageMembersModal(family: FamilyView): void {
+    this.selectedFamily = family;
+    this.isManageMembersModalVisible = true;
+    this.resetAddMemberForm();
+    this.cancelEditMember();
+  }
+
+  closeManageMembersModal(): void {
+    this.isManageMembersModalVisible = false;
+    this.selectedFamily = null;
+    this.resetAddMemberForm();
+    this.cancelEditMember();
+  }
+
+  resetAddMemberForm(): void {
+    this.lookupKeyword = '';
+    this.foundUser = null;
+    this.newMemberRole = 'CAREGIVER';
+    this.newMemberRelation = 'THANH_VIEN_KHAC';
+    this.newMemberParentId = null;
+    this.newMemberDisplayName = '';
+    this.newMemberUsername = '';
+    this.newMemberEmail = '';
+  }
+
+  lookupUser(): void {
+    const keyword = this.lookupKeyword.trim();
+    if (!keyword) {
+      this.message.warning(this.i18n.translate('momApp.admin.families.messages.searchKeywordRequired') || 'Vui lòng nhập Username hoặc Email');
+      return;
+    }
+
+    this.lookupLoading = true;
+    this.foundUser = null;
+
+    const isEmail = keyword.includes('@');
+    const params = isEmail ? `email=${encodeURIComponent(keyword)}` : `username=${encodeURIComponent(keyword)}`;
+
+    this.http.get<ApiEnvelope<any>>(`${API_CONFIG.GATEWAY_URL}/account/users/lookup?${params}`).subscribe({
+      next: (response) => {
+        this.lookupLoading = false;
+        if (response.data) {
+          this.foundUser = response.data;
+          this.message.success(this.i18n.translate('momApp.admin.families.messages.userFound') || 'Đã tìm thấy người dùng!');
+        } else {
+          this.message.error(this.i18n.translate('momApp.admin.families.messages.userNotFound') || 'Không tìm thấy người dùng');
+        }
+      },
+      error: () => {
+        this.lookupLoading = false;
+        this.message.error(this.i18n.translate('momApp.admin.families.messages.userNotFound') || 'Không tìm thấy người dùng');
+      }
+    });
+  }
+
+  addMember(): void {
+    if (!this.selectedFamily || !this.foundUser) {
+      return;
+    }
+
+    this.addingMember = true;
+    const payload = {
+      userId: this.foundUser.id,
+      role: this.newMemberRole,
+      relation: this.newMemberRelation,
+      parentUserId: this.newMemberParentId
+    };
+
+    this.http.post<ApiEnvelope<any>>(`${API_CONFIG.GATEWAY_URL}/account/families/${this.selectedFamily.id}/members`, payload).subscribe({
+      next: (response) => {
+        this.addingMember = false;
+        this.message.success(this.i18n.translate('momApp.admin.families.messages.addMemberSuccess') || 'Thêm thành viên thành công!');
+        this.resetAddMemberForm();
+        this.refreshSelectedFamily(response.data);
+      },
+      error: (err) => {
+        this.addingMember = false;
+        const msg = err?.error?.message || 'Không thể thêm thành viên';
+        this.message.error(msg);
+      }
+    });
+  }
+
+  inviteMember(): void {
+    if (!this.selectedFamily) return;
+
+    if (!this.newMemberDisplayName || !this.newMemberUsername || !this.newMemberEmail) {
+      this.message.warning(this.i18n.translate('momApp.admin.families.messages.allFieldsRequired') || 'Vui lòng nhập đầy đủ thông tin!');
+      return;
+    }
+
+    this.addingMember = true;
+    const payload = {
+      displayName: this.newMemberDisplayName,
+      username: this.newMemberUsername,
+      email: this.newMemberEmail,
+      role: this.newMemberRole,
+      relation: this.newMemberRelation,
+      parentUserId: this.newMemberParentId
+    };
+
+    this.http
+      .post<ApiEnvelope<FamilyApi>>(`${API_CONFIG.GATEWAY_URL}/account/admin/families/${this.selectedFamily.id}/members/invite`, payload)
+      .subscribe({
+      next: (response) => {
+        this.addingMember = false;
+        this.message.success(this.i18n.translate('momApp.admin.families.messages.inviteMemberSuccess') || 'Thêm thành viên mới thành công!');
+        this.resetAddMemberForm();
+        this.refreshSelectedFamily(response.data);
+      },
+      error: (err) => {
+        this.addingMember = false;
+        const msg = err?.error?.message || 'Không thể tạo thành viên mới';
+        this.message.error(msg);
+      }
+    });
+  }
+
+  startEditMember(member: FamilyMemberApi): void {
+    this.editingMemberId = member.userId;
+    this.editingMemberDisplayName = member.displayName;
+    this.editingMemberRole = member.role;
+    this.editingMemberRelation = member.relation;
+    this.editingMemberParentId = member.parentUserId;
+
+    this.membersLoading = true;
+    this.http.get<ApiEnvelope<any>>(`${API_CONFIG.GATEWAY_URL}/account/users/${member.userId}`).subscribe({
+      next: (response) => {
+        this.membersLoading = false;
+        if (response.data) {
+          this.editingMemberUsername = response.data.username;
+          this.editingMemberEmail = response.data.email;
+        }
+      },
+      error: () => {
+        this.membersLoading = false;
+        this.message.error('Không thể tải chi tiết tài khoản người dùng');
+        this.cancelEditMember();
+      }
+    });
+  }
+
+  cancelEditMember(): void {
+    this.editingMemberId = null;
+    this.editingMemberDisplayName = '';
+    this.editingMemberUsername = '';
+    this.editingMemberEmail = '';
+    this.editingMemberRole = '';
+    this.editingMemberRelation = '';
+    this.editingMemberParentId = null;
+  }
+
+  saveMember(member: FamilyMemberApi): void {
+    if (!this.selectedFamily) {
+      return;
+    }
+
+    this.savingMember = true;
+    const updateRequest = {
+      displayName: this.editingMemberDisplayName,
+      username: this.editingMemberUsername,
+      email: this.editingMemberEmail,
+      role: this.editingMemberRole,
+      relation: this.editingMemberRelation,
+      parentUserId: this.editingMemberParentId
+    };
+
+    this.http
+      .put<ApiEnvelope<FamilyApi>>(`${API_CONFIG.GATEWAY_URL}/account/admin/families/${this.selectedFamily.id}/members/${this.editingMemberId}`, updateRequest)
+      .subscribe({
+      next: (response) => {
+        this.savingMember = false;
+        this.message.success(this.i18n.translate('momApp.admin.families.messages.updateMemberSuccess') || 'Cập nhật thành viên thành công!');
+        this.cancelEditMember();
+        this.refreshSelectedFamily(response.data);
+      },
+      error: (err) => {
+        this.savingMember = false;
+        const msg = err?.error?.message || 'Không thể cập nhật thành viên';
+        this.message.error(msg);
+      }
+    });
+  }
+
+  removeMember(member: FamilyMemberApi): void {
+    if (!this.selectedFamily) {
+      return;
+    }
+
+    this.removingMemberId = member.userId;
+    this.http
+      .delete<ApiEnvelope<void>>(`${API_CONFIG.GATEWAY_URL}/account/admin/families/${this.selectedFamily.id}/members/${member.userId}`)
+      .subscribe({
+      next: () => {
+        this.removingMemberId = null;
+        this.message.success(this.i18n.translate('momApp.admin.families.messages.removeMemberSuccess') || 'Đã xóa thành viên khỏi gia đình!');
+
+        this.http.get<ApiEnvelope<any>>(`${API_CONFIG.GATEWAY_URL}/account/admin/families/${this.selectedFamily!.id}`).subscribe({
+          next: (res) => {
+            if (res.data) {
+              this.refreshSelectedFamily(res.data);
+            }
+          }
+        });
+      },
+      error: (err) => {
+        this.removingMemberId = null;
+        const msg = err?.error?.message || 'Không thể xóa thành viên';
+        this.message.error(msg);
+      }
+    });
+  }
+
+  private refreshSelectedFamily(updatedFamilyRaw: FamilyApi): void {
+    const index = this.families.findIndex(f => f.id === updatedFamilyRaw.id);
+    if (index !== -1) {
+      const creatorName = this.families[index].creatorName;
+      const tree = this.buildFamilyTree(updatedFamilyRaw.members ?? []);
+      const updatedFamilyView: FamilyView = {
+        ...updatedFamilyRaw,
+        creatorName,
+        memberCount: updatedFamilyRaw.members?.length ?? 0,
+        tree
+      };
+      this.families[index] = updatedFamilyView;
+      this.selectedFamily = updatedFamilyView;
+      this.applySearch();
+    }
   }
 
   private getCurrentUserId(): number | null {

@@ -89,3 +89,10 @@ resilience4j:
       keycloakUserInfo:
         maxAttempts: ${KEYCLOAK_RETRY_MAX_ATTEMPTS:3}
         waitDuration: ${KEYCLOAK_RETRY_WAIT_DURATION:500ms}
+
+minio:
+  endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+  access-key: ${MINIO_ACCESS_KEY:minioadmin}
+  secret-key: ${MINIO_SECRET_KEY:minioadmin}
+  bucket: ${MINIO_BUCKET_AVATAR:avatars}
+
