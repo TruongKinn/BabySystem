@@ -48,8 +48,7 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
             "/actuator",
             "/v3/api-docs",
             "/swagger-ui",
-            "/gateway/fallback"
-    );
+            "/gateway/fallback");
 
     private final WebClient.Builder webClientBuilder;
     private final GatewayErrorResponseFactory errorResponseFactory;
@@ -61,7 +60,7 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
 
     @Value("${COMMON_SERVICE_URI:http://localhost:8099}")
     private String commonServiceUri;
-    
+
     @Value("${ACCOUNT_SERVICE_URI:http://localhost:8082}")
     private String accountServiceUri;
 
@@ -89,7 +88,8 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
                         AuthDecision decision = tuple.getT1();
                         ServerWebExchange mutatedExchange = tuple.getT2();
                         if (decision.allowed()) {
-                            log.debug("Gateway authTypeResolved={} path={} method={}", decision.authTypeResolved(), requestPath, requestMethod);
+                            log.debug("Gateway authTypeResolved={} path={} method={}", decision.authTypeResolved(),
+                                    requestPath, requestMethod);
                             return chain.filter(mutatedExchange);
                         }
 
@@ -108,10 +108,12 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
         return authorizeByApiKey(exchange)
                 .flatMap(apiKeyDecision -> {
                     if (apiKeyDecision.allowed()) {
-                        log.debug("Gateway authTypeResolved={} path={} method={}", apiKeyDecision.authTypeResolved(), requestPath, requestMethod);
+                        log.debug("Gateway authTypeResolved={} path={} method={}", apiKeyDecision.authTypeResolved(),
+                                requestPath, requestMethod);
                         return chain.filter(exchange);
                     }
-                    HttpStatus status = apiKeyDecision.status() != null ? apiKeyDecision.status() : HttpStatus.FORBIDDEN;
+                    HttpStatus status = apiKeyDecision.status() != null ? apiKeyDecision.status()
+                            : HttpStatus.FORBIDDEN;
                     String message = StringUtils.hasText(apiKeyDecision.message())
                             ? apiKeyDecision.message()
                             : "Forbidden by API key policy";
@@ -123,13 +125,15 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
                 });
     }
 
-    private Mono<reactor.util.function.Tuple2<AuthDecision, ServerWebExchange>> authorizeByBearer(String requestMethod, String requestPath, String token, ServerWebExchange exchange) {
+    private Mono<reactor.util.function.Tuple2<AuthDecision, ServerWebExchange>> authorizeByBearer(String requestMethod,
+            String requestPath, String token, ServerWebExchange exchange) {
         Long userId;
         try {
             userId = extractUserId(token);
         } catch (Exception ex) {
             log.warn("Reject request due to invalid access token: {}", ex.getMessage());
-            return Mono.just(reactor.util.function.Tuples.of(AuthDecision.rejected(HttpStatus.UNAUTHORIZED, "Invalid or expired access token"), exchange));
+            return Mono.just(reactor.util.function.Tuples
+                    .of(AuthDecision.rejected(HttpStatus.UNAUTHORIZED, "Invalid or expired access token"), exchange));
         }
 
         return Mono.zip(loadUserAccess(userId, token), loadUserFamilies(userId, token))
@@ -138,9 +142,11 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
                     List<Long> familyIds = tuple.getT2();
 
                     if (access == null) {
-                        return reactor.util.function.Tuples.of(AuthDecision.rejected(HttpStatus.FORBIDDEN, "Unable to resolve user access policy"), exchange);
+                        return reactor.util.function.Tuples.of(
+                                AuthDecision.rejected(HttpStatus.FORBIDDEN, "Unable to resolve user access policy"),
+                                exchange);
                     }
-                    
+
                     String familyIdsStr = familyIds.stream().map(String::valueOf).collect(Collectors.joining(","));
                     ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                             .header("X-User-Id", String.valueOf(userId))
@@ -154,18 +160,22 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
                     if (isAllowed(access, requestMethod, requestPath)) {
                         return reactor.util.function.Tuples.of(AuthDecision.allowed("BEARER"), mutatedExchange);
                     }
-                    return reactor.util.function.Tuples.of(AuthDecision.rejected(HttpStatus.FORBIDDEN, "Forbidden by API permission policy"), mutatedExchange);
+                    return reactor.util.function.Tuples.of(
+                            AuthDecision.rejected(HttpStatus.FORBIDDEN, "Forbidden by API permission policy"),
+                            mutatedExchange);
                 })
                 .onErrorResume(ex -> {
                     log.error("Bearer authorization check failed: {}", ex.getMessage(), ex);
-                    return Mono.just(reactor.util.function.Tuples.of(AuthDecision.rejected(HttpStatus.FORBIDDEN, "Forbidden by API permission policy"), exchange));
+                    return Mono.just(reactor.util.function.Tuples.of(
+                            AuthDecision.rejected(HttpStatus.FORBIDDEN, "Forbidden by API permission policy"),
+                            exchange));
                 });
     }
-    
+
     private Mono<List<Long>> loadUserFamilies(Long userId, String token) {
         return webClientBuilder.build()
                 .get()
-                .uri(accountServiceUri + "/users/{userId}/families", userId)
+                .uri(accountServiceUri + "/api/users/{userId}/families", userId)
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve()
@@ -199,7 +209,8 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
                 .map(response -> {
                     if (response != null && response.allowed()) {
                         return AuthDecision.allowed(
-                                StringUtils.hasText(response.authTypeResolved()) ? response.authTypeResolved() : "API_KEY");
+                                StringUtils.hasText(response.authTypeResolved()) ? response.authTypeResolved()
+                                        : "API_KEY");
                     }
                     String reason = response != null && StringUtils.hasText(response.reason())
                             ? response.reason()
@@ -232,8 +243,7 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
                 exchange.getRequest().getMethod() != null ? exchange.getRequest().getMethod().name() : "",
                 exchange.getRequest().getPath().value(),
                 headers,
-                queryParams
-        );
+                queryParams);
     }
 
     private record ApiKeyValidationRequest(
@@ -311,9 +321,8 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
         }
         return access.apiPermissions().stream()
                 .filter(item -> item != null && StringUtils.hasText(item.method()) && StringUtils.hasText(item.path()))
-                .anyMatch(item ->
-                        requestMethod.equalsIgnoreCase(item.method())
-                                && matchPathPattern(item.path(), requestPath));
+                .anyMatch(item -> requestMethod.equalsIgnoreCase(item.method())
+                        && matchPathPattern(item.path(), requestPath));
     }
 
     private boolean matchPathPattern(String pattern, String actualPath) {
@@ -351,7 +360,10 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
 
     private record ApiPermissionRule(String method, String path) {
     }
-    
-    private record FamilyListApiResponse(String message, List<FamilyResponse> data) {}
-    private record FamilyResponse(Long id, String name, Long createdByUserId) {}
+
+    private record FamilyListApiResponse(String message, List<FamilyResponse> data) {
+    }
+
+    private record FamilyResponse(Long id, String name, Long createdByUserId) {
+    }
 }

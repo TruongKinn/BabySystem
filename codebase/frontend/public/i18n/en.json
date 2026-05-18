@@ -77,6 +77,21 @@
       "sendTest": "Send WS Test",
       "markAll": "Mark all",
       "viewAll": "View all →"
+    },
+    "crypto": {
+      "enterSecretKey": "Please enter the secret key.",
+      "encryptSuccess": "Encryption successful.",
+      "encryptFailed": "Encryption failed.",
+      "decryptSuccess": "Decryption successful.",
+      "decryptFailed": "Decryption failed.",
+      "oneWayHash": "This algorithm is one-way hash only and cannot be decrypted.",
+      "publicKeyFetched": "Fetched public key for alias: {{alias}}",
+      "fetchPublicKeyFailed": "Failed to fetch public key.",
+      "aliasFilled": "Default alias filled.",
+      "copied": "Copied to clipboard."
+    },
+    "vault": {
+      "loadMetadataFailed": "Failed to load Vault metadata."
     }
   },
   "notification": {
@@ -2350,7 +2365,8 @@
     "common": {
       "success": "Success",
       "warning": "Warning",
-      "notAvailable": "N/A"
+      "notAvailable": "N/A",
+      "none": "None"
     },
     "home": {
       "title": "Login successful",
@@ -2501,7 +2517,8 @@
           "phone": "Phone",
           "roleType": "Role type",
           "status": "Status",
-          "actions": "Actions"
+          "actions": "Actions",
+          "avatar": "Avatar"
         },
         "actions": {
           "lockConfirm": "Lock this account?",
@@ -2579,7 +2596,15 @@
           "addNewMember": "Add New Member",
           "searchUserPlaceholder": "Enter Username or Email to lookup user...",
           "searchUser": "Search User",
-          "addMemberBtn": "Add to Family"
+          "addMemberBtn": "Add to Family",
+          "displayNamePlaceholder": "e.g., John Doe",
+          "username": "Username",
+          "usernamePlaceholder": "e.g., john.doe",
+          "email": "Email",
+          "emailPlaceholder": "e.g., john.doe@example.com",
+          "searchExisting": "Search existing",
+          "createNew": "Create new",
+          "inviteMemberBtn": "Add new member"
         },
         "messages": {
           "loadFailed": "Unable to load households.",
@@ -2596,7 +2621,9 @@
           "userNotFound": "No user found matching the criteria.",
           "addMemberSuccess": "Member added to household successfully!",
           "updateMemberSuccess": "Member updated successfully!",
-          "removeMemberSuccess": "Member removed from household successfully."
+          "removeMemberSuccess": "Member removed from household successfully.",
+          "allFieldsRequired": "Please enter all fields!",
+          "inviteMemberSuccess": "New member added successfully!"
         }
       },
       "access": {
@@ -3340,6 +3367,12 @@
         "displayNameRequired": "Please enter display name",
         "usernameRequired": "Please enter username",
         "emailInvalid": "Please enter a valid email"
+      },
+      "card": {
+        "username": "Username",
+        "email": "Email",
+        "relation": "Relationship",
+        "branch": "Branch"
       }
     },
     "insights": {

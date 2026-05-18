@@ -39,7 +39,7 @@
       "controlTower": "Control Tower",
       "trackingView": "Hành trình và Tracking",
       "accountAccessGroup": "Tài khoản và phân quyền",
-      "workspaceGroup": "Workspace",
+      "workspaceGroup": "Không gian làm việc",
       "systemGroup": "Hệ thống",
       "encryption": "Mã hóa",
       "vaultManagement": "Quản lý Vault",
@@ -59,7 +59,7 @@
       "rateLimitTester": "Rate Limit Tester",
       "notificationGroup": "Quản lý thông báo",
       "notificationHistory": "Lịch sử thông báo",
-      "aiGroup": "AI Assistant",
+      "aiGroup": "Trợ lý AI",
       "aiChat": "Hỏi đáp AI",
       "exposeApi": "Expose API"
     },
@@ -330,7 +330,7 @@
     }
   },
   "myPassword": {
-    "title": "My Password",
+    "title": "Mật khẩu của tôi",
     "subtitle": "Lưu và xem lại mật khẩu đã dùng khi export file.",
     "actions": {
       "refresh": "Làm mới danh sách"
@@ -1345,8 +1345,8 @@
       "readOnly": "Chỉ đọc"
     },
     "metadata": {
-      "health": "Health",
-      "secretPath": "Secret path",
+      "health": "Trạng thái hoạt động",
+      "secretPath": "Đường dẫn bí mật",
       "secretLoaded": "Secret đã nạp",
       "updatedAt": "Cập nhật lúc",
       "message": "Thông điệp"
@@ -1612,18 +1612,18 @@
       "apiGroup": "Quyền API",
       "apiSelectedCount": "{{selected}} / {{total}} API đã gán cho role",
       "summaryCounts": "Menu: {{menuSelected}}/{{menuTotal}} • API: {{apiSelected}}/{{apiTotal}}",
-      "apiTesterTitle": "API Tester",
+      "apiTesterTitle": "Trình kiểm thử API",
       "apiTesterNoEndpoint": "Chưa chọn endpoint",
       "apiTesterEmptyHint": "Bấm \"Test API\" ở từng endpoint để nạp request vào API Tester.",
-      "apiTesterMethod": "Method",
-      "apiTesterEndpoint": "Endpoint",
-      "apiTesterQueryParams": "Query params",
-      "apiTesterHeaders": "Headers",
+      "apiTesterMethod": "Phương thức",
+      "apiTesterEndpoint": "Điểm cuối",
+      "apiTesterQueryParams": "Tham số truy vấn",
+      "apiTesterHeaders": "Tiêu đề",
       "apiTesterEnabled": "Bật",
-      "apiTesterKey": "Key",
-      "apiTesterValue": "Value",
-      "apiTesterResponseHeaders": "Response headers",
-      "apiTesterResponseBody": "Response body",
+      "apiTesterKey": "Khóa",
+      "apiTesterValue": "Giá trị",
+      "apiTesterResponseHeaders": "Tiêu đề phản hồi",
+      "apiTesterResponseBody": "Thân phản hồi",
       "apiPaginationTotal": "Tổng {{total}} API",
       "apiTestPayload": "Payload test API (áp dụng cho POST/PUT/PATCH)",
       "apiTestPayloadPlaceholder": "Ví dụ: {\"id\":1}",
@@ -1636,10 +1636,10 @@
       "permissionName": "Mã permission",
       "permissionNamePlaceholder": "Ví dụ: MENU:SHIPMENTS hoặc API:GET:SHIPMENTS",
       "permissionType": "Loại permission",
-      "menuKey": "Menu key (route)",
+      "menuKey": "Khóa menu (tuyến đường)",
       "menuKeyPlaceholder": "Ví dụ: /shipments",
-      "apiMethod": "API method",
-      "apiPath": "API path",
+      "apiMethod": "Phương thức API",
+      "apiPath": "Đường dẫn API",
       "apiPathPlaceholder": "Ví dụ: /shipment/api/v1/shipments",
       "description": "Mô tả"
     },
@@ -1656,10 +1656,10 @@
       "newMenuPermission": "Tạo quyền menu",
       "syncApiCatalog": "Đồng bộ API từ catalog",
       "saveAssignment": "Lưu phân quyền",
-      "testApi": "Test API",
+      "testApi": "Kiểm thử API",
       "assignAllApi": "Gán tất cả API",
       "clearAllApi": "Bỏ tất cả API",
-      "sendApiRequest": "Send",
+      "sendApiRequest": "Gửi",
       "closeApiTester": "Đóng tester",
       "addRow": "Thêm dòng",
       "cancel": "Hủy",
@@ -1712,18 +1712,18 @@
     },
     "filters": {
       "keyword": "Tìm theo tên, module, endpoint...",
-      "method": "Method",
+      "method": "Phương thức",
       "source": "Nguồn",
-      "module": "Module",
+      "module": "Mô-đun",
       "allMethods": "Tất cả method",
       "allSources": "Tất cả nguồn",
       "allModules": "Tất cả module"
     },
     "table": {
       "name": "Tên API",
-      "module": "Module",
-      "method": "Method",
-      "path": "Endpoint",
+      "module": "Mô-đun",
+      "method": "Phương thức",
+      "path": "Điểm cuối",
       "source": "Nguồn",
       "description": "Mô tả",
       "actions": "Thao tác",
@@ -1736,10 +1736,10 @@
     "form": {
       "name": "Tên API",
       "namePlaceholder": "Ví dụ: Create Driver",
-      "module": "Module",
+      "module": "Mô-đun",
       "modulePlaceholder": "Ví dụ: Driver",
-      "method": "Method",
-      "path": "Endpoint",
+      "method": "Phương thức",
+      "path": "Điểm cuối",
       "pathPlaceholder": "/driver/api/v1/drivers",
       "description": "Mô tả",
       "descriptionPlaceholder": "Mục đích sử dụng API"
@@ -2055,7 +2055,7 @@
       "select": "Chọn",
       "triggerNow": "Chạy ngay",
       "delete": "Xóa",
-      "trigger": "Trigger"
+      "trigger": "Kích hoạt"
     },
     "table": {
       "name": "Tên",
@@ -2100,7 +2100,7 @@
       "enabled": "Kích hoạt"
     },
     "triggerModal": {
-      "title": "Trigger Job",
+      "title": "Kích hoạt Job",
       "description": "Job được chạy ngay lập tức qua Kafka.",
       "parametersJson": "JSON tham số",
       "tipPrefix": "Gợi ý: thêm",
@@ -2154,7 +2154,7 @@
       "empty": "Không có ngoại lệ nghiêm trọng."
     },
     "assistant": {
-      "title": "GPT Assistant",
+      "title": "Trợ lý GPT",
       "subtitle": "Tư vấn điều phối trực tiếp từ dữ liệu snapshot hiện tại.",
       "placeholder": "Hỏi GPT: cần ưu tiên đơn nào, điều xe ra sao...",
       "send": "Gửi",
@@ -2175,7 +2175,7 @@
     }
   },
   "aiAssistant": {
-    "title": "AI Assistant",
+    "title": "Trợ lý AI",
     "subtitle": "Trợ lý thông minh để hỏi đáp chung và tư vấn sản phẩm bằng tìm kiếm RAG.",
     "botName": "Antigravity Bot",
     "rag": {
@@ -2256,7 +2256,7 @@
     "subtitle": "Quản lý người dùng hệ thống và thao tác quản trị tài khoản trong một nơi.",
     "searchPlaceholder": "Tìm username, email, số điện thoại...",
     "columns": {
-      "username": "Username",
+      "username": "Tên đăng nhập",
       "email": "Email",
       "firstName": "Họ",
       "lastName": "Tên",
@@ -2299,9 +2299,9 @@
       "locked": "Đã khóa"
     },
     "userTypes": {
-      "owner": "Owner",
-      "admin": "Admin",
-      "user": "User"
+      "owner": "Chủ sở hữu",
+      "admin": "Quản trị viên",
+      "user": "Người dùng"
     },
     "messages": {
       "saveConfigSuccess": "Đã lưu cấu hình cột.",
@@ -2336,7 +2336,7 @@
         "userType": "Chọn loại tài khoản",
         "phone": "Số điện thoại",
         "email": "Địa chỉ email",
-        "username": "Username",
+        "username": "Tên đăng nhập",
         "password": "Mật khẩu"
       },
       "errors": {
@@ -2365,7 +2365,8 @@
     "common": {
       "success": "Thành công",
       "notAvailable": "N/A",
-      "warning": "Cảnh báo"
+      "warning": "Cảnh báo",
+      "none": "Không có"
     },
     "home": {
       "title": "Đăng nhập thành công",
@@ -2382,7 +2383,7 @@
       "userFallback": "Người dùng gia đình",
       "menu": {
         "overview": "Tổng quan",
-        "dashboard": "Dashboard",
+        "dashboard": "Bảng điều khiển",
         "familyCare": "Chăm sóc gia đình",
         "baby": "Em bé",
         "meals": "Bữa ăn",
@@ -2451,7 +2452,7 @@
         },
         "lockedUsers": {
           "title": "Tài khoản khóa gần đây",
-          "username": "Username",
+          "username": "Tên đăng nhập",
           "roleType": "Loại vai trò",
           "empty": "Không có tài khoản bị khóa."
         },
@@ -2505,18 +2506,19 @@
         "stats": {
           "visibleUsers": "Người dùng hiển thị",
           "locked": "Đang khóa",
-          "adminOwner": "Admin/Owner"
+          "adminOwner": "Quản trị/Chủ sở hữu"
         },
         "searchPlaceholder": "Tìm theo username, email, phone, trạng thái...",
         "table": {
           "id": "ID",
-          "username": "Username",
+          "username": "Tên đăng nhập",
           "fullName": "Họ tên",
           "email": "Email",
           "phone": "Điện thoại",
           "roleType": "Loại vai trò",
           "status": "Trạng thái",
-          "actions": "Thao tác"
+          "actions": "Thao tác",
+          "avatar": "Ảnh đại diện"
         },
         "actions": {
           "lockConfirm": "Khóa tài khoản này?",
@@ -2530,7 +2532,7 @@
         "resetModal": {
           "title": "Đặt lại mật khẩu tạm",
           "confirm": "Xác nhận",
-          "usernameLabel": "Username",
+          "usernameLabel": "Tên đăng nhập",
           "passwordPlaceholder": "Nhập mật khẩu tạm"
         },
         "status": {
@@ -2539,9 +2541,9 @@
           "locked": "Đã khóa"
         },
         "role": {
-          "USER": "User",
-          "ADMIN": "Admin",
-          "OWNER": "Owner"
+          "USER": "Người dùng",
+          "ADMIN": "Quản trị viên",
+          "OWNER": "Chủ sở hữu"
         },
         "messages": {
           "loadFailed": "Không thể tải danh sách người dùng.",
@@ -2638,7 +2640,7 @@
         "searchPlaceholder": "Tìm role theo tên, id hoặc permission id...",
         "table": {
           "id": "ID",
-          "role": "Role",
+          "role": "Vai trò",
           "permissions": "Quyền",
           "permissionCount": "quyền",
           "actions": "Thao tác"
@@ -2736,11 +2738,11 @@
           "namePlaceholder": "Nhập tên permission",
           "description": "Mô tả",
           "descriptionPlaceholder": "Nhập mô tả permission",
-          "menuKey": "Menu key",
+          "menuKey": "Khóa menu",
           "menuKeyPlaceholder": "Ví dụ: /shipments",
-          "apiMethod": "API method",
+          "apiMethod": "Phương thức API",
           "apiMethodPlaceholder": "Ví dụ: GET",
-          "apiPath": "API path",
+          "apiPath": "Đường dẫn API",
           "apiPathPlaceholder": "Ví dụ: /api/orders/**"
         },
         "messages": {
