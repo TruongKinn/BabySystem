@@ -9,6 +9,7 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { ExpenseApi, ExpenseBudgetApi, ExpenseCategoryApi, ExpenseCategoryReportApi, ExpenseCategoryReportItemApi, ExpenseDailySummaryApi, ExpenseSummaryApi, FileMetadata, SuperAppCommandService } from '../core/services/super-app-command.service';
 import { I18nService } from '../i18n/i18n.service';
@@ -53,7 +54,8 @@ type ExpenseSortMode = 'NEWEST' | 'OLDEST' | 'HIGHEST' | 'LOWEST' | 'CATEGORY';
     NzIconModule,
     NzModalModule,
     NzFormModule,
-    NzInputModule
+    NzInputModule,
+    NzToolTipModule
   ],
   templateUrl: './expenses.component.html',
   styleUrl: './expenses.component.css'

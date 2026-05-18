@@ -452,37 +452,283 @@
   margin-bottom: 10px;
 }
 
-.receipt-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+/* ---- Fintech Receipt Vault Popup styles ---- */
+.receipt-modal-body {
+  padding: 8px 4px;
 }
 
-.receipt-item {
+/* Fintech Expense Slip Card */
+.receipt-expense-summary {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  padding: 12px;
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  background: var(--surface-bg);
+  padding: 16px 22px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.04) 0%, rgba(236, 72, 153, 0.04) 100%);
+  border: 1px solid rgba(249, 115, 22, 0.12);
+  margin-bottom: 24px;
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.6);
 }
 
-.receipt-item strong {
-  display: block;
-  margin-bottom: 4px;
-}
-
-.receipt-item p {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 12px;
-}
-
-.receipt-actions {
+.summary-left {
   display: flex;
+  flex-direction: column;
   gap: 8px;
+}
+
+.category-tag-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-main);
+  background: rgba(15, 23, 42, 0.05);
+  padding: 4px 12px;
+  border-radius: 999px;
+  width: fit-content;
+}
+
+.category-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.expense-date {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  display: inline-flex;
+  align-items: center;
+}
+
+.summary-right {
+  text-align: right;
+}
+
+.summary-amount-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+
+.summary-amount {
+  font-size: 26px;
+  font-weight: 850;
+  color: var(--user-primary);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+/* Drag & Drop Upload Zone */
+.receipt-upload-zone {
+  border: 2px dashed rgba(249, 115, 22, 0.25);
+  background: rgba(249, 115, 22, 0.02);
+  border-radius: 16px;
+  padding: 32px 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.receipt-upload-zone:hover {
+  border-color: var(--user-primary);
+  background: rgba(249, 115, 22, 0.07);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(249, 115, 22, 0.08);
+}
+
+.upload-zone-content, .upload-zone-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.upload-zone-icon {
+  font-size: 40px;
+  color: var(--user-primary);
+  margin-bottom: 4px;
+  transition: transform 0.3s ease;
+}
+
+.receipt-upload-zone:hover .upload-zone-icon {
+  transform: translateY(-3px);
+}
+
+.upload-zone-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.upload-zone-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  max-width: 80%;
+}
+
+.upload-loading-icon {
+  font-size: 38px;
+  color: var(--user-primary);
+  margin-bottom: 6px;
+}
+
+/* Status Loading Msg */
+.receipt-status-msg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  color: var(--user-primary);
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Empty Vault state */
+.receipt-empty-vault {
+  text-align: center;
+  padding: 44px 20px;
+  background: rgba(15, 23, 42, 0.01);
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.04);
+}
+
+.empty-vault-icon {
+  font-size: 46px;
+  color: var(--text-muted, #9ca3af);
+  margin-bottom: 12px;
+}
+
+.empty-vault-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0 0 4px 0;
+}
+
+.empty-vault-sub {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Bento Grid */
+.receipt-bento-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+/* Doc Card */
+.receipt-doc-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 18px;
+  border: 1px solid var(--border-color);
+  background: var(--surface-bg);
+  border-radius: 14px;
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.receipt-doc-card:hover {
+  border-color: rgba(249, 115, 22, 0.35);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.04);
+  transform: translateY(-2px);
+  background: #fff;
+}
+
+.doc-card-icon-wrap {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 10px;
+  background: rgba(16, 185, 129, 0.08); /* soft green */
+  color: #10b981;
+}
+
+.doc-card-icon-wrap.doc-pdf {
+  background: rgba(239, 68, 68, 0.08); /* soft red */
+  color: #ef4444;
+}
+
+.doc-icon {
+  font-size: 22px;
+}
+
+.doc-card-details {
+  flex: 1;
+  min-width: 0; /* Bắt buộc để dấu text-overflow hoạt động! */
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.doc-file-name {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.doc-file-size {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.doc-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-circle-action.ant-btn {
+  width: 34px !important;
+  height: 34px !important;
+  min-width: 34px !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50% !important;
+}
+
+/* Animations */
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .5; }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 @media (max-width: 1100px) {
@@ -523,13 +769,12 @@
     align-items: flex-start;
   }
 
-  .receipt-item {
-    flex-direction: column;
-    align-items: flex-start;
+  .receipt-bento-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
   }
 
-  .receipt-actions {
-    width: 100%;
-    flex-wrap: wrap;
+  .receipt-doc-card {
+    padding: 12px 14px;
   }
 }

@@ -116,7 +116,7 @@
       </div>
 
       <div class="filter-actions">
-        <button nz-button nzType="default" (click)="clearQuickFilters()" [disabled]="!hasActiveQuickFilter">
+        <button nz-button nzType="default" class="btn-user-outline" (click)="clearQuickFilters()" [disabled]="!hasActiveQuickFilter">
           {{ 'momApp.expenses.filters.clear' | translate }}
         </button>
       </div>
@@ -272,7 +272,7 @@
             <td>{{ formatSpentAt(item.spentAt) }}</td>
             <td>{{ item.note || '-' }}</td>
             <td>
-              <button nz-button nzType="default" (click)="openReceiptModal(item)">
+              <button nz-button nzType="default" class="btn-user-secondary" (click)="openReceiptModal(item)">
                 {{ 'momApp.expenses.receipts.actions.manage' | translate }}
               </button>
             </td>
@@ -339,50 +339,81 @@
       </span>
       <span class="modal-title-text">
         <span class="modal-title-main">{{ 'momApp.expenses.receipts.modalTitle' | translate }}</span>
-        <span class="modal-title-sub">{{ selectedExpense?.categoryName }} — {{ selectedExpense?.amount |
-          currency:'VND':'symbol':'1.0-0' }}</span>
+        <span class="modal-title-sub">Quản lý các tài liệu hóa đơn và chứng từ giao dịch</span>
       </span>
     </div>
   </ng-template>
   <ng-container *nzModalContent>
     <div *ngIf="selectedExpense as expense" class="receipt-modal-body">
-      <p class="receipt-meta">
-        {{ expense.categoryName }} -
-        {{ expense.amount | currency : expense.currency : 'symbol' : '1.0-0' }}
-      </p>
+      
+      <!-- Fintech Expense Slip Card -->
+      <div class="receipt-expense-summary">
+        <div class="summary-left">
+          <span class="category-tag-badge">
+            <span class="category-dot" [style.background]="resolveCategoryColor(expense.categoryId)"></span>
+            {{ expense.categoryName }}
+          </span>
+          <span class="expense-date">
+            <span nz-icon nzType="calendar" style="margin-right: 4px;"></span>
+            {{ formatSpentAt(expense.spentAt) }}
+          </span>
+        </div>
+        <div class="summary-right">
+          <div class="summary-amount-label">Số tiền giao dịch</div>
+          <div class="summary-amount">{{ expense.amount | currency : expense.currency : 'symbol' : '1.0-0' }}</div>
+        </div>
+      </div>
 
-      <div class="receipt-toolbar">
+      <!-- Drag & Drop Upload Zone -->
+      <div class="receipt-upload-zone" (click)="receiptInput.click()">
         <input #receiptInput type="file" accept="image/*,.pdf" (change)="onReceiptFileSelected($event)" hidden />
-        <button nz-button nzType="primary" [nzLoading]="isUploadingReceipt" (click)="receiptInput.click()"
-          class="btn-user-primary">
-          {{ 'momApp.expenses.receipts.actions.upload' | translate }}
-        </button>
+        <div class="upload-zone-content" *ngIf="!isUploadingReceipt">
+          <span nz-icon nzType="cloud-upload" class="upload-zone-icon"></span>
+          <span class="upload-zone-text">Nhấp vào đây để tải hóa đơn lên</span>
+          <span class="upload-zone-sub">Chấp nhận tệp ảnh (PNG, JPG) hoặc tài liệu PDF (Tối đa 10MB)</span>
+        </div>
+        
+        <!-- Loading state inside Upload zone -->
+        <div class="upload-zone-loading" *ngIf="isUploadingReceipt">
+          <span nz-icon nzType="loading" class="upload-loading-icon"></span>
+          <span class="upload-zone-text">Đang truyền tải tài liệu lên hệ thống...</span>
+          <span class="upload-zone-sub">Vui lòng không đóng cửa sổ này</span>
+        </div>
       </div>
 
-      <div *ngIf="isLoadingReceipts" class="empty-state">
-        {{ 'commonActions.refresh' | translate }}...
+      <!-- Empty / Loading States -->
+      <div *ngIf="isLoadingReceipts" class="receipt-status-msg animate-pulse">
+        <span nz-icon nzType="loading" style="margin-right: 8px;"></span>
+        Đang đồng bộ danh sách tài liệu...
       </div>
 
-      <div *ngIf="!isLoadingReceipts && receiptFiles.length === 0" class="empty-state">
-        {{ 'momApp.expenses.receipts.emptyFiles' | translate }}
+      <div *ngIf="!isLoadingReceipts && receiptFiles.length === 0" class="receipt-empty-vault">
+        <span nz-icon nzType="folder-open" class="empty-vault-icon"></span>
+        <p class="empty-vault-title">Chưa có hóa đơn nào</p>
+        <p class="empty-vault-sub">Hãy tải lên hóa đơn của bạn để lưu trữ thông tin minh bạch.</p>
       </div>
 
-      <div class="receipt-list" *ngIf="!isLoadingReceipts && receiptFiles.length > 0">
-        <div class="receipt-item" *ngFor="let file of receiptFiles">
-          <div>
-            <strong>{{ file.originalFileName }}</strong>
-            <p>{{ formatFileSize(file.sizeBytes) }}</p>
+      <!-- Bento Grid list of documents -->
+      <div class="receipt-bento-grid" *ngIf="!isLoadingReceipts && receiptFiles.length > 0">
+        <div class="receipt-doc-card animate-slide-up" *ngFor="let file of receiptFiles">
+          <div class="doc-card-icon-wrap" [class.doc-pdf]="file.originalFileName.toLowerCase().endsWith('.pdf')">
+            <span nz-icon [nzType]="file.originalFileName.toLowerCase().endsWith('.pdf') ? 'file-pdf' : 'picture'" class="doc-icon"></span>
           </div>
-          <div class="receipt-actions">
-            <button nz-button nzType="default" (click)="downloadReceipt(file)" class="btn-user-outline">
-              {{ 'momApp.expenses.receipts.actions.download' | translate }}
+          <div class="doc-card-details">
+            <strong class="doc-file-name" [title]="file.originalFileName">{{ file.originalFileName }}</strong>
+            <span class="doc-file-size">{{ formatFileSize(file.sizeBytes) }}</span>
+          </div>
+          <div class="doc-card-actions">
+            <button nz-button nzType="default" (click)="downloadReceipt(file)" class="btn-user-outline btn-circle-action" nz-tooltip [nzTooltipTitle]="'momApp.expenses.receipts.actions.download' | translate">
+              <span nz-icon nzType="download"></span>
             </button>
-            <button nz-button nzType="default" nzDanger (click)="deleteReceipt(file)">
-              {{ 'momApp.expenses.receipts.actions.delete' | translate }}
+            <button nz-button nzType="default" class="btn-user-danger btn-circle-action" (click)="deleteReceipt(file)" nz-tooltip [nzTooltipTitle]="'momApp.expenses.receipts.actions.delete' | translate">
+              <span nz-icon nzType="delete"></span>
             </button>
           </div>
         </div>
       </div>
+      
     </div>
   </ng-container>
 </nz-modal>
