@@ -229,6 +229,16 @@ public class AccountService {
                 .toList();
     }
 
+    public List<FamilyResponse> getUserFamiliesForAdmin(Long userId) {
+        ensureRequestAuthenticated();
+
+        userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return familyMemberRepository.findByUserId(userId).stream()
+                .map(member -> getFamily(member.getFamilyId()))
+                .toList();
+    }
+
     @Transactional
     public FamilyResponse updateMemberRole(Long familyId, Long userId, FamilyRole newRole) {
         validateFamilyRole(newRole);

@@ -2527,7 +2527,8 @@
           "unlock": "Mở khóa",
           "resetPassword": "Đặt lại mật khẩu",
           "promoteToAdmin": "Nâng lên admin",
-          "demoteToUser": "Hạ xuống user"
+          "demoteToUser": "Hạ xuống user",
+          "viewDetails": "Xem chi tiết"
         },
         "resetModal": {
           "title": "Đặt lại mật khẩu tạm",
@@ -2558,6 +2559,40 @@
           "promoteFailed": "Không thể nâng user lên admin.",
           "demoteSuccess": "Đã hạ admin xuống user.",
           "demoteFailed": "Không thể hạ admin xuống user."
+        },
+        "detailModal": {
+          "title": "Chi Tiết Người Dùng 360 độ",
+          "profileSection": "Thông tin tài khoản",
+          "familySection": "Quản lý Gia đình & Thành viên",
+          "babySection": "Quản lý Em bé",
+          "genderLabel": "Giới tính",
+          "birthDateLabel": "Ngày sinh",
+          "createdAtLabel": "Ngày tạo",
+          "lastLoginLabel": "Đăng nhập cuối",
+          "familiesCount": "Gia đình tham gia",
+          "babiesCount": "Số em bé",
+          "editBabyTitle": "Chỉnh sửa em bé",
+          "saveSuccess": "Cập nhật thành công!",
+          "deleteSuccess": "Xóa thành công!",
+          "popconfirm": {
+            "removeMember": "Bạn có chắc chắn muốn xóa thành viên này khỏi gia đình?",
+            "deleteBaby": "Bạn có chắc chắn muốn xóa em bé này khỏi hệ thống?"
+          },
+          "role": {
+            "OWNER": "Chủ gia đình",
+            "MEMBER": "Thành viên"
+          },
+          "loading": "Đang tải dữ liệu...",
+          "noFamilies": "Chưa tham gia gia đình nào.",
+          "noBabies": "Chưa có em bé nào.",
+          "editBaby": {
+            "title": "Sửa thông tin bé",
+            "name": "Tên bé",
+            "birthDate": "Ngày sinh",
+            "gender": "Giới tính",
+            "weight": "Cân nặng (kg)",
+            "height": "Chiều cao (cm)"
+          }
         }
       },
       "families": {

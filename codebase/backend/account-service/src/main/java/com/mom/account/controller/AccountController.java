@@ -105,6 +105,11 @@ public class AccountController {
         return ApiResponse.ok("Success", accountService.getUserFamilies(userId));
     }
 
+    @GetMapping("/admin/users/{id}/families")
+    public ApiResponse<List<FamilyResponse>> getUserFamiliesForAdmin(@PathVariable("id") Long userId) {
+        return ApiResponse.ok("Success", accountService.getUserFamiliesForAdmin(userId));
+    }
+
     @PutMapping("/families/{id}/members/{userId}/role")
     public ApiResponse<FamilyResponse> updateMemberRole(
             @PathVariable("id") Long familyId,

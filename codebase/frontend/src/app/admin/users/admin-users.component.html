@@ -97,6 +97,16 @@
           <td>
             <div class="actions">
               <button
+                nz-button
+                nzType="default"
+                class="btn-detail-view"
+                (click)="openUserDetailModal(user)"
+              >
+                <span nz-icon nzType="eye" nzTheme="outline"></span>
+                {{ 'momApp.admin.users.actions.viewDetails' | translate }}
+              </button>
+
+              <button
                 *ngIf="user.status !== 'LOCKED'"
                 nz-button
                 nzType="default"

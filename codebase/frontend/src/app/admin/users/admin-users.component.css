@@ -211,3 +211,23 @@
   display: none;
 }
 
+.btn-detail-view {
+  background: rgba(255, 122, 69, 0.08) !important;
+  color: #ff7a45 !important;
+  border: 1px solid rgba(255, 122, 69, 0.2) !important;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-detail-view:hover {
+  background: linear-gradient(135deg, #ff9c6e 0%, #ff7a45 100%) !important;
+  color: #ffffff !important;
+  border-color: transparent !important;
+  box-shadow: 0 4px 12px rgba(255, 122, 69, 0.25);
+  transform: translateY(-1px);
+}
+

@@ -7,7 +7,7 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
-import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
@@ -17,6 +17,7 @@ import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 import { SuperAppCommandService } from '../../core/services/super-app-command.service';
 import { AuthService } from '../../auth/auth.service';
+import { AdminUserDetailModalComponent } from './detail-modal/admin-user-detail-modal.component';
 
 type UserStatus = 'ACTIVE' | 'INACTIVE' | 'LOCKED';
 type UserType = 'USER' | 'ADMIN' | 'OWNER';
@@ -32,6 +33,9 @@ interface AdminUser {
   type?: string;
   status: string;
   avatarUrl?: string;
+  createdAt?: string;
+  lastLogin?: string;
+  gender?: string;
 }
 
 interface UserPageResponse {
@@ -56,7 +60,8 @@ interface UserPageResponse {
     NzTableModule,
     NzTagModule,
     NzAvatarModule,
-    NzIconModule
+    NzIconModule,
+    AdminUserDetailModalComponent
   ],
   templateUrl: './admin-users.component.html',
   styleUrl: './admin-users.component.css'
@@ -67,6 +72,7 @@ export class AdminUsersComponent implements OnInit {
   private readonly i18n = inject(I18nService);
   private readonly command = inject(SuperAppCommandService);
   private readonly authService = inject(AuthService);
+  private readonly modalService = inject(NzModalService);
 
   readonly apiBase = API_CONFIG.GATEWAY_URL;
 
@@ -191,6 +197,37 @@ export class AdminUsersComponent implements OnInit {
           this.message.error(this.i18n.translate('momApp.admin.users.messages.resetFailed'));
         }
       });
+  }
+
+  openUserDetailModal(user: AdminUser): void {
+    const modal = this.modalService.create({
+      nzTitle: undefined,
+      nzContent: AdminUserDetailModalComponent,
+      nzClassName: 'user-role-modal',
+      nzFooter: null,
+      nzWidth: '90vw',
+      nzStyle: { maxWidth: '1300px', top: '20px' },
+      nzMaskClosable: true
+    });
+
+    const instance = modal.getContentComponent();
+    instance.user = {
+      id: user.id,
+      username: user.username,
+      fullName: this.fullNameOf(user),
+      email: user.email,
+      phone: user.phone || '',
+      roleType: (user.type || 'USER') as any,
+      status: (user.status || 'ACTIVE') as any,
+      createdAt: (user as any).createdAt || '',
+      lastLogin: (user as any).lastLogin || '',
+      gender: (user as any).gender || '',
+      dateOfBirth: user.dateOfBirth || ''
+    };
+
+    modal.afterClose.subscribe(() => {
+      this.loadUsers();
+    });
   }
 
   fullNameOf(user: AdminUser): string {

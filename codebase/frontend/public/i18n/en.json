@@ -2527,7 +2527,8 @@
           "unlock": "Unlock",
           "resetPassword": "Reset password",
           "promoteToAdmin": "Promote to admin",
-          "demoteToUser": "Demote to user"
+          "demoteToUser": "Demote to user",
+          "viewDetails": "View Details"
         },
         "resetModal": {
           "title": "Reset temporary password",
@@ -2558,6 +2559,40 @@
           "promoteFailed": "Unable to promote user.",
           "demoteSuccess": "Admin demoted to user.",
           "demoteFailed": "Unable to demote admin."
+        },
+        "detailModal": {
+          "title": "360-Degree User Details",
+          "profileSection": "Account Information",
+          "familySection": "Families & Members Management",
+          "babySection": "Babies Management",
+          "genderLabel": "Gender",
+          "birthDateLabel": "Birth Date",
+          "createdAtLabel": "Created At",
+          "lastLoginLabel": "Last Login",
+          "familiesCount": "Joined Families",
+          "babiesCount": "Number of Babies",
+          "editBabyTitle": "Edit Baby Details",
+          "saveSuccess": "Updated successfully!",
+          "deleteSuccess": "Deleted successfully!",
+          "popconfirm": {
+            "removeMember": "Are you sure you want to remove this member from the family?",
+            "deleteBaby": "Are you sure you want to delete this baby from the system?"
+          },
+          "role": {
+            "OWNER": "Family Owner",
+            "MEMBER": "Member"
+          },
+          "loading": "Loading data...",
+          "noFamilies": "No joined families yet.",
+          "noBabies": "No babies yet.",
+          "editBaby": {
+            "title": "Edit Baby Info",
+            "name": "Baby Name",
+            "birthDate": "Birth Date",
+            "gender": "Gender",
+            "weight": "Weight (kg)",
+            "height": "Height (cm)"
+          }
         }
       },
       "families": {
