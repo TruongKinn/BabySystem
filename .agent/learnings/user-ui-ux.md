@@ -70,13 +70,3 @@
 - **Chi tiết**:
   Áp dụng layout bento 2 cột để quản lý hóa đơn. Một thẻ giao dịch dạng Fintech Slip (nền gradient mờ, viền cam nhạt, chữ to) làm điểm nhấn visual. Thẻ upload (Dropzone) dạng lớn viền đứt nét, có icon cloud-upload bay nhẹ khi hover. Các thẻ hóa đơn dạng bento card, icon đổi màu theo định dạng tệp (PDF/Ảnh) kèm tooltip hướng dẫn rê chuột.
 - **Files liên quan**: `codebase/frontend/src/app/expenses/expenses.component.html`, `codebase/frontend/src/app/expenses/expenses.component.css`
-
----
-
-### Safe Inline PDF & Image Viewer via MinIO Presigned URL
-- **Ngày**: 2026-05-18
-- **Task**: Triển khai kế hoạch view file PDF cả BE và FE.
-- **Chi tiết**:
-  - **BE**: MinIO sinh Presigned URL qua `getPresignedObjectUrl`. Để trình duyệt có thể hiển thị inline (không tự động tải về), bổ sung `.extraQueryParams(Map.of("response-content-disposition", "inline"))` trong Java.
-  - **FE**: Nhận link presigned từ API (hoạt động trực tiếp do đã ký cryptographic). Sử dụng `DomSanitizer.bypassSecurityTrustResourceUrl(url)` để vượt qua CSP của Angular. Dùng `iframe` cho file PDF và thẻ `img` cho ảnh hóa đơn đặt trong modal xem trước premium.
-- **Files liên quan**: `codebase/backend/file-service/src/main/java/com/mom/file/service/FileService.java`, `codebase/frontend/src/app/core/services/super-app-command.service.ts`, `codebase/frontend/src/app/expenses/expenses.component.ts`, `codebase/frontend/src/app/expenses/expenses.component.html`
