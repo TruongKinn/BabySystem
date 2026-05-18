@@ -423,7 +423,7 @@
 
 <!-- Premium PDF & Image Document Viewer Modal -->
 <nz-modal [(nzVisible)]="isViewerModalVisible" [nzTitle]="viewerModalTitleTpl" nzClassName="user-role-modal document-viewer-modal"
-  [nzWidth]="1000" [nzFooter]="null" (nzOnCancel)="closeViewerModal()">
+  [nzWidth]="1200" [nzFooter]="null" (nzOnCancel)="closeViewerModal()">
   <ng-template #viewerModalTitleTpl>
     <div style="display:flex;align-items:center;justify-content:space-between;width:100%;padding-right:24px">
       <div style="display:flex;align-items:center;gap:12px">
@@ -449,8 +449,7 @@
         <iframe *ngIf="selectedViewerFile?.originalFileName?.toLowerCase()?.endsWith('.pdf')"
           [src]="sanitizedViewerUrl"
           width="100%"
-          height="700px"
-          style="border: none; border-radius: 12px; background: #fff;"
+          style="border: none; border-radius: 12px; background: #fff; height: 80vh;"
           title="PDF Document Viewer">
         </iframe>
         
