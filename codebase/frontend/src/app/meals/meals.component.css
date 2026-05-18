@@ -97,8 +97,44 @@
 .view-mode-group .ant-radio-button-wrapper {
   min-width: 106px;
   text-align: center;
-  border-radius: 8px;
-  font-weight: 500;
+  border-radius: 10px !important;
+  border: 1.5px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important;
+  background: transparent !important;
+  color: var(--text-muted, #9ca3af) !important;
+  font-weight: 600 !important;
+  height: 36px !important;
+  line-height: 33px !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  margin-right: 0 !important;
+}
+
+/* Khôi phục viền trái bị Ant Design triệt tiêu mặc định */
+.view-mode-group .ant-radio-button-wrapper:not(:first-child) {
+  border-left: 1.5px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important;
+}
+
+/* Hover state */
+.view-mode-group .ant-radio-button-wrapper:hover {
+  color: var(--user-primary) !important;
+  border-color: rgba(249, 115, 22, 0.5) !important;
+  background: rgba(249, 115, 22, 0.03) !important;
+}
+
+/* Active/Checked state - Warm Palette */
+.view-mode-group .ant-radio-button-wrapper-checked {
+  border-color: var(--user-primary) !important;
+  color: var(--user-primary) !important;
+  background: rgba(249, 115, 22, 0.08) !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1) !important;
+}
+
+.view-mode-group .ant-radio-button-wrapper-checked:not(:first-child) {
+  border-left-color: var(--user-primary) !important;
+}
+
+/* Ẩn thanh ngăn dọc mặc định của Ant Design */
+.view-mode-group .ant-radio-button-wrapper::before {
+  display: none !important;
 }
 
 .meals-date-picker {
