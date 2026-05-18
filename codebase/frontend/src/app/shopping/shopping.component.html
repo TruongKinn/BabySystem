@@ -185,15 +185,25 @@
 
 <nz-modal
   [(nzVisible)]="isCreateModalVisible"
-  [nzTitle]="'momApp.shopping.modal.createTitle' | translate"
+  [nzTitle]="shoppingModalTitleTpl"
   nzClassName="user-role-modal"
   [nzWidth]="980"
   [nzOkLoading]="isSubmitting"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeCreateModal()"
-  (nzOnOk)="submitCreateItem()"
->
+  (nzOnOk)="submitCreateItem()">
+<ng-template #shoppingModalTitleTpl>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="modal-title-icon-wrap">
+      <span nz-icon nzType="shopping-cart"></span>
+    </span>
+    <span class="modal-title-text">
+      <span class="modal-title-main">{{ 'momApp.shopping.modal.createTitle' | translate }}</span>
+      <span class="modal-title-sub">Thêm mặt hàng vào danh sách</span>
+    </span>
+  </div>
+</ng-template>
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="createItemForm" nzLayout="vertical" class="user-modal-form-grid">
       <nz-form-item>

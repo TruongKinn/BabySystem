@@ -7,19 +7,6 @@
   flex-wrap: wrap;
 }
 
-.btn-user-primary.ant-btn-primary {
-  background: var(--user-grad-1);
-  border: none;
-  border-radius: var(--user-btn-radius);
-  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
-  transition: opacity 0.2s ease, transform 0.15s ease;
-}
-
-.btn-user-primary.ant-btn-primary:hover {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
 .shopping-summary {
   display: flex;
   align-items: center;

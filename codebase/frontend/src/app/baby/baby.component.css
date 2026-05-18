@@ -19,18 +19,6 @@
   min-width: 180px;
 }
 
-.btn-gradient-primary.ant-btn-primary {
-  background: var(--user-grad-1);
-  border: none;
-  box-shadow: 0 6px 18px rgba(249, 115, 22, 0.32);
-  transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
-}
-
-.btn-gradient-primary.ant-btn-primary:hover {
-  opacity: 0.92;
-  transform: translateY(-1px);
-  box-shadow: 0 10px 22px rgba(249, 115, 22, 0.4);
-}
 
 .baby-hero {
   display: grid;

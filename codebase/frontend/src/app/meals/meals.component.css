@@ -19,25 +19,11 @@
   flex-wrap: wrap;
 }
 
-.btn-meals-primary.ant-btn-primary {
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
-  border: none;
-  border-radius: 10px;
-  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
-  font-weight: 600;
-  transition: all 0.25s ease;
-}
-
-.btn-meals-primary.ant-btn-primary:hover {
-  opacity: 0.9;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45);
-}
 
 .btn-ai-suggest.ant-btn {
   background: linear-gradient(135deg, #0ea5e9, #38bdf8);
   border: none;
-  border-radius: 10px;
+  border-radius: var(--user-btn-radius) !important;
   color: #fff;
   font-weight: 600;
   box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3);
@@ -345,7 +331,7 @@
 }
 
 .btn-add-dish.ant-btn-dashed {
-  border-radius: 8px;
+  border-radius: var(--user-btn-radius) !important;
   font-size: 12px;
   color: #7c3aed;
   border-color: #7c3aed;
@@ -418,14 +404,7 @@
   resize: none;
 }
 
-.btn-ai-search.ant-btn-primary {
-  background: linear-gradient(135deg, #0ea5e9, #7c3aed);
-  border: none;
-  border-radius: 10px;
-  font-weight: 600;
-  align-self: flex-start;
-  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3);
-}
+
 
 .ai-loading-wrap {
   display: flex;
@@ -563,23 +542,7 @@
   white-space: nowrap;
 }
 
-.btn-add-to-menu.ant-btn-primary {
-  background: linear-gradient(135deg, #7c3aed, #a855f7);
-  border: none;
-  border-radius: 10px;
-  font-weight: 600;
-  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.35);
-  padding: 0 24px;
-  height: 40px;
-  font-size: 14px;
-  align-self: flex-start;
-  transition: all 0.25s ease;
-}
 
-.btn-add-to-menu.ant-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.45);
-}
 
 .ai-select-hint {
   text-align: center;

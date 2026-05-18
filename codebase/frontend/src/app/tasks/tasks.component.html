@@ -284,7 +284,7 @@
 
 <nz-modal
   [(nzVisible)]="taskModalVisible"
-  [nzTitle]="editingTask ? ('momApp.tasks.modal.editTitle' | translate) : ('momApp.tasks.modal.createTitle' | translate)"
+  [nzTitle]="taskModalTitleTpl"
   nzClassName="user-role-modal"
   [nzWidth]="1040"
   [nzOkLoading]="saving"
@@ -292,6 +292,17 @@
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeTaskModal()"
   (nzOnOk)="submitTask()">
+<ng-template #taskModalTitleTpl>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="modal-title-icon-wrap" [ngClass]="editingTask ? 'modal-title-icon-wrap--violet' : ''">
+      <span nz-icon [nzType]="editingTask ? 'edit' : 'plus-circle'"></span>
+    </span>
+    <span class="modal-title-text">
+      <span class="modal-title-main">{{ editingTask ? ('momApp.tasks.modal.editTitle' | translate) : ('momApp.tasks.modal.createTitle' | translate) }}</span>
+      <span class="modal-title-sub">{{ editingTask ? ('momApp.tasks.modal.editSubtitle' | translate) : ('momApp.tasks.modal.createSubtitle' | translate) }}</span>
+    </span>
+  </div>
+</ng-template>
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="taskForm" nzLayout="vertical" class="user-modal-form-grid">
       <nz-form-item>
@@ -329,7 +340,7 @@
 
 <nz-modal
   [(nzVisible)]="assignModalVisible"
-  [nzTitle]="'momApp.tasks.modal.assignTitle' | translate"
+  [nzTitle]="assignModalTitleTpl"
   nzClassName="user-role-modal"
   [nzWidth]="640"
   [nzOkLoading]="assignSaving"
@@ -337,6 +348,17 @@
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeAssignModal()"
   (nzOnOk)="submitAssign()">
+<ng-template #assignModalTitleTpl>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="modal-title-icon-wrap modal-title-icon-wrap--teal">
+      <span nz-icon nzType="user-switch"></span>
+    </span>
+    <span class="modal-title-text">
+      <span class="modal-title-main">{{ 'momApp.tasks.modal.assignTitle' | translate }}</span>
+      <span class="modal-title-sub">Chọn thành viên thực hiện nhiệm vụ</span>
+    </span>
+  </div>
+</ng-template>
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="assignTaskForm" nzLayout="vertical">
       <nz-form-item>

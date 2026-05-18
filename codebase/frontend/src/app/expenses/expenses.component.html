@@ -278,15 +278,25 @@
 
 <nz-modal
   [(nzVisible)]="isCreateModalVisible"
-  [nzTitle]="'momApp.expenses.modal.createTitle' | translate"
+  [nzTitle]="expenseCreateTitleTpl"
   nzClassName="user-role-modal"
   [nzWidth]="980"
   [nzOkLoading]="isSubmitting"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeCreateModal()"
-  (nzOnOk)="submitCreateExpense()"
->
+  (nzOnOk)="submitCreateExpense()">
+<ng-template #expenseCreateTitleTpl>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="modal-title-icon-wrap">
+      <span nz-icon nzType="dollar-circle"></span>
+    </span>
+    <span class="modal-title-text">
+      <span class="modal-title-main">{{ 'momApp.expenses.modal.createTitle' | translate }}</span>
+      <span class="modal-title-sub">Ghi nhật chi tiêu trong tháng</span>
+    </span>
+  </div>
+</ng-template>
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="createExpenseForm" nzLayout="vertical" class="user-modal-form-grid">
       <nz-form-item>
@@ -323,12 +333,22 @@
 
 <nz-modal
   [(nzVisible)]="isReceiptModalVisible"
-  [nzTitle]="'momApp.expenses.receipts.modalTitle' | translate"
+  [nzTitle]="receiptModalTitleTpl"
   nzClassName="user-role-modal"
   [nzWidth]="920"
   [nzFooter]="null"
-  (nzOnCancel)="closeReceiptModal()"
->
+  (nzOnCancel)="closeReceiptModal()">
+<ng-template #receiptModalTitleTpl>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="modal-title-icon-wrap modal-title-icon-wrap--teal">
+      <span nz-icon nzType="file-done"></span>
+    </span>
+    <span class="modal-title-text">
+      <span class="modal-title-main">{{ 'momApp.expenses.receipts.modalTitle' | translate }}</span>
+      <span class="modal-title-sub">{{ selectedExpense?.categoryName }} — {{ selectedExpense?.amount | currency:'VND':'symbol':'1.0-0' }}</span>
+    </span>
+  </div>
+</ng-template>
   <ng-container *nzModalContent>
     <div *ngIf="selectedExpense as expense" class="receipt-modal-body">
       <p class="receipt-meta">
@@ -338,7 +358,7 @@
 
       <div class="receipt-toolbar">
         <input #receiptInput type="file" accept="image/*,.pdf" (change)="onReceiptFileSelected($event)" hidden />
-        <button nz-button nzType="primary" [nzLoading]="isUploadingReceipt" (click)="receiptInput.click()">
+        <button nz-button nzType="primary" [nzLoading]="isUploadingReceipt" (click)="receiptInput.click()" class="btn-user-primary">
           {{ 'momApp.expenses.receipts.actions.upload' | translate }}
         </button>
       </div>
@@ -358,7 +378,7 @@
             <p>{{ formatFileSize(file.sizeBytes) }}</p>
           </div>
           <div class="receipt-actions">
-            <button nz-button nzType="default" (click)="downloadReceipt(file)">
+            <button nz-button nzType="default" (click)="downloadReceipt(file)" class="btn-user-outline">
               {{ 'momApp.expenses.receipts.actions.download' | translate }}
             </button>
             <button nz-button nzType="default" nzDanger (click)="deleteReceipt(file)">

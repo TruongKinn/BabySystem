@@ -112,3 +112,50 @@ Với bản cập nhật này:
 * **Độ phủ i18n:** Đạt **100%** đối với các khóa thực tế được gọi trong mã nguồn ứng dụng Angular.
 * **Đồng bộ song ngữ:** Cả `en.json` và `vi.json` đã hoàn toàn đồng nhất về số lượng và cấu trúc khóa phân cấp.
 * **Giao diện Tiếng Việt:** Không còn tình trạng trộn lẫn tiếng Anh (nhãn, nút bấm, cột bảng) trong các phân hệ quản lý người dùng, quản lý gia đình và các tính năng nghiệp vụ nâng cao.
+
+---
+
+## 4. Chuẩn hóa Giao diện & Hệ thống Nút bấm vai trò User
+
+Để giải quyết triệt để sự thiếu nhất quán về giao diện (các nút bấm tự định nghĩa cục bộ, không đồng bộ về màu sắc, bo góc, bóng đổ và hiệu ứng hover) giữa các phân hệ của vai trò User (`Tasks`, `Meals`, `Baby`, `Family`, `Expenses`, `Shopping`, `Insights`, `Settings`), chúng tôi đã triển khai hệ thống nút bấm chuẩn hóa toàn cục.
+
+### A. Định nghĩa Thiết kế Chuẩn (Design Token & Global CSS)
+Tất cả các biến thiết kế toàn cục được đặt tại [src/styles.css](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/styles.css):
+- **Bo góc nút (`--user-btn-radius`):** `12px`
+- **Màu sắc:** Sử dụng dải màu ấm áp (cam - hồng - tím) đặc trưng của vai trò User.
+
+Chúng tôi đã định nghĩa 3 lớp CSS tiện ích toàn cục trong `src/styles.css` đè các thuộc tính mặc định của thư viện Ant Design (`ng-zorro-antd`):
+
+1. **Nút Primary (`.btn-user-primary`):**
+   - **Nền (Background):** Gradient cam-hồng tinh tế `linear-gradient(135deg, #f97316 0%, #ec4899 100%)`.
+   - **Hiệu ứng bóng đổ (Box Shadow):** `0 4px 14px rgba(236, 72, 153, 0.3)`.
+   - **Hiệu ứng Hover:** Di chuyển nhẹ lên trên (`translateY(-1px)`), tăng độ bóng và giảm nhẹ opacity xuống `0.9` để tạo cảm giác phản hồi tức thì.
+2. **Nút Outline (`.btn-user-outline`):**
+   - **Viền & Chữ (Border & Text):** Màu cam chuẩn `var(--user-primary)` (#f97316).
+   - **Nền (Background):** Trong suốt, hover chuyển sang nền cam nhạt mờ (`rgba(249, 115, 22, 0.05)`).
+3. **Nút Secondary (`.btn-user-secondary`):**
+   - **Nền & Viền (Background & Border):** Nền cam mờ cực kỳ sang trọng `rgba(249, 115, 22, 0.06)`, viền cam nhạt.
+   - **Hover:** Tăng độ đậm của viền và nền để làm nổi bật hành động phụ.
+
+### B. Tự động hóa Giao diện Hộp thoại (Modal Footer Buttons)
+Mọi hộp thoại (modal) của User sử dụng lớp `user-role-modal` sẽ tự động kế thừa giao diện nút bấm chuẩn hóa, là bản sao hoàn hảo (identical twins) của các nút trên trang chính:
+- Nút **Lưu/Xác nhận (Ok)** tự động mang thiết kế **Primary Gradient** (`.btn-user-primary`) với hiệu ứng hover `translateY(-1px)`, bo góc `12px` và đổ bóng chuẩn.
+- Nút **Hủy (Cancel)** tự động mang thiết kế **Outline** (`.btn-user-outline`) viền cam chuẩn, nền trong suốt và hover chuyển sang cam mờ `rgba(249, 115, 22, 0.05)`.
+Cả hai nút đều có đầy đủ định nghĩa trạng thái `[disabled]` chuẩn hóa để đảm bảo giao diện thống nhất tuyệt đối trong mọi tình huống.
+
+### C. Dọn dẹp & Đồng bộ hóa Mã nguồn các Phân hệ
+Chúng tôi đã xóa bỏ toàn bộ mã CSS cục bộ trùng lặp và chuyển đổi lớp CSS trong file template HTML của các phân hệ sau:
+- **Tasks Page:** Dọn dẹp CSS cục bộ, kế thừa trực tiếp `.btn-user-primary` và `.btn-user-outline` từ styles toàn cục.
+- **Shopping & Settings & Expenses & Insights Pages:** Loại bỏ các luật CSS `.btn-user-primary`, `.btn-user-outline`, `.btn-user-secondary` dư thừa.
+- **Meals Page:** 
+  - Đổi các nút `.btn-meals-primary`, `.btn-ai-search`, `.btn-add-to-menu` thành `.btn-user-primary` chuẩn cam-hồng.
+  - Đồng bộ bo góc nút AI gợi ý (`.btn-ai-suggest`) và thêm món ăn (`.btn-add-dish`) theo tiêu chuẩn `12px`.
+  - Cập nhật các hộp thoại kế thừa lớp `user-role-modal`.
+- **Family Page:**
+  - Đồng bộ nút chỉnh sửa thành viên `.btn-edit-member` thành `.btn-user-outline` toàn cục.
+  - Chuyển các hộp thoại quản lý gia đình sang sử dụng lớp `user-role-modal`.
+- **Expenses Page:**
+  - Đồng bộ các nút nằm bên trong nội dung (body) của Modal quản lý hoá đơn (nút "Tải hóa đơn" sử dụng `.btn-user-primary`, nút "Tải xuống" sử dụng `.btn-user-outline`).
+- **Baby Page:**
+  - Chuyển nút thêm nhật ký (`.btn-gradient-primary`) và nút tải ảnh trong thư viện thành `.btn-user-primary`.
+  - Đồng bộ các nút thao tác phụ ("Thêm bé", "Growth log", "Vaccination log") thành `.btn-user-outline` đồng bộ, gọn gàng.

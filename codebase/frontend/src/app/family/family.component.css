@@ -8,19 +8,6 @@
   flex-wrap: wrap;
 }
 
-.btn-user-primary.ant-btn-primary {
-  background: var(--user-grad-1);
-  border: none;
-  border-radius: var(--user-btn-radius);
-  box-shadow: 0 4px 14px rgba(249,115,22,.35);
-  transition: opacity .2s ease, transform .15s ease;
-}
-
-.btn-user-primary.ant-btn-primary:hover {
-  opacity: .9;
-  transform: translateY(-1px);
-}
-
 /* ===== Grid ===== */
 .family-grid {
   display: grid;
@@ -154,24 +141,6 @@
   padding: 12px 16px 14px;
   border-top: 1px solid var(--border-color);
   margin-top: 4px;
-}
-
-.btn-edit-member {
-  width: 100%;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-
-.btn-edit-member:hover {
-  background: rgba(249,115,22,0.08) !important;
-  color: var(--user-primary, #f97316) !important;
-  border-color: var(--user-primary, #f97316) !important;
 }
 
 /* ===== Modal styles ===== */

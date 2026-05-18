@@ -16,19 +16,19 @@
 
       <nz-date-picker class="baby-date-select" [formControl]="selectedDateControl" nzFormat="yyyy-MM-dd"></nz-date-picker>
 
-      <button nz-button nzType="default" (click)="openCreateBabyModal()">
+      <button nz-button nzType="default" (click)="openCreateBabyModal()" class="btn-user-outline">
         <span nz-icon nzType="user-add"></span>
         {{ 'momApp.baby.actions.addProfile' | translate }}
       </button>
-      <button nz-button nzType="default" (click)="openCreateGrowthModal()">
+      <button nz-button nzType="default" (click)="openCreateGrowthModal()" class="btn-user-outline">
         <span nz-icon nzType="line-chart"></span>
         {{ 'momApp.baby.actions.addGrowth' | translate }}
       </button>
-      <button nz-button nzType="default" (click)="openCreateVaccinationModal()">
+      <button nz-button nzType="default" (click)="openCreateVaccinationModal()" class="btn-user-outline">
         <span nz-icon nzType="medicine-box"></span>
         {{ 'momApp.baby.actions.addVaccination' | translate }}
       </button>
-      <button nz-button nzType="primary" class="btn-gradient-primary" (click)="openCreateLogModal()">
+      <button nz-button nzType="primary" class="btn-user-primary" (click)="openCreateLogModal()">
         <span nz-icon nzType="plus"></span>
         {{ 'momApp.baby.actions.addLog' | translate }}
       </button>
@@ -330,7 +330,7 @@
         nzType="primary"
         [nzLoading]="isUploadingGallery"
         (click)="galleryInput.click()"
-        class="btn-gradient-primary"
+        class="btn-user-primary"
       >
         <span nz-icon nzType="upload"></span>
         {{ 'momApp.baby.gallery.actions.upload' | translate }}
@@ -383,15 +383,25 @@
 
 <nz-modal
   [(nzVisible)]="isCreateBabyModalVisible"
-  [nzTitle]="'momApp.baby.modal.createProfileTitle' | translate"
+  [nzTitle]="babyProfileModalTitleTpl"
   nzClassName="user-role-modal"
   [nzWidth]="1040"
   [nzOkLoading]="isSubmittingBaby"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeCreateBabyModal()"
-  (nzOnOk)="submitCreateBaby()"
->
+  (nzOnOk)="submitCreateBaby()">
+<ng-template #babyProfileModalTitleTpl>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="modal-title-icon-wrap">
+      <span nz-icon nzType="smile"></span>
+    </span>
+    <span class="modal-title-text">
+      <span class="modal-title-main">{{ 'momApp.baby.modal.createProfileTitle' | translate }}</span>
+      <span class="modal-title-sub">Thêm hồ sơ cho bé yêu</span>
+    </span>
+  </div>
+</ng-template>
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="createBabyForm" nzLayout="vertical" class="user-modal-form-grid">
       <nz-form-item>
@@ -429,15 +439,25 @@
 
 <nz-modal
   [(nzVisible)]="isCreateLogModalVisible"
-  [nzTitle]="'momApp.baby.modal.createLogTitle' | translate"
+  [nzTitle]="babyLogModalTitleTpl"
   nzClassName="user-role-modal"
   [nzWidth]="980"
   [nzOkLoading]="isSubmittingLog"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeCreateLogModal()"
-  (nzOnOk)="submitCreateLog()"
->
+  (nzOnOk)="submitCreateLog()">
+<ng-template #babyLogModalTitleTpl>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="modal-title-icon-wrap modal-title-icon-wrap--violet">
+      <span nz-icon nzType="book"></span>
+    </span>
+    <span class="modal-title-text">
+      <span class="modal-title-main">{{ 'momApp.baby.modal.createLogTitle' | translate }}</span>
+      <span class="modal-title-sub">Ghi chép hoạt động hàng ngày của bé</span>
+    </span>
+  </div>
+</ng-template>
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="createLogForm" nzLayout="vertical" class="user-modal-form-grid">
       <nz-form-item>
@@ -475,15 +495,25 @@
 
 <nz-modal
   [(nzVisible)]="isCreateGrowthModalVisible"
+  [nzTitle]="babyGrowthModalTitleTpl"
   nzClassName="user-role-modal"
-  [nzTitle]="'momApp.baby.modal.createGrowthTitle' | translate"
   [nzWidth]="980"
   [nzOkLoading]="isSubmittingGrowth"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeCreateGrowthModal()"
-  (nzOnOk)="submitCreateGrowthRecord()"
->
+  (nzOnOk)="submitCreateGrowthRecord()">
+<ng-template #babyGrowthModalTitleTpl>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="modal-title-icon-wrap modal-title-icon-wrap--teal">
+      <span nz-icon nzType="line-chart"></span>
+    </span>
+    <span class="modal-title-text">
+      <span class="modal-title-main">{{ 'momApp.baby.modal.createGrowthTitle' | translate }}</span>
+      <span class="modal-title-sub">Cập nhật số đo phát triển của bé</span>
+    </span>
+  </div>
+</ng-template>
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="createGrowthForm" nzLayout="vertical" class="user-modal-form-grid">
       <nz-form-item>
@@ -531,15 +561,25 @@
 
 <nz-modal
   [(nzVisible)]="isCreateVaccinationModalVisible"
+  [nzTitle]="babyVaccineModalTitleTpl"
   nzClassName="user-role-modal"
-  [nzTitle]="'momApp.baby.modal.createVaccinationTitle' | translate"
   [nzWidth]="980"
   [nzOkLoading]="isSubmittingVaccination"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeCreateVaccinationModal()"
-  (nzOnOk)="submitCreateVaccination()"
->
+  (nzOnOk)="submitCreateVaccination()">
+<ng-template #babyVaccineModalTitleTpl>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="modal-title-icon-wrap modal-title-icon-wrap--yellow">
+      <span nz-icon nzType="medicine-box"></span>
+    </span>
+    <span class="modal-title-text">
+      <span class="modal-title-main">{{ 'momApp.baby.modal.createVaccinationTitle' | translate }}</span>
+      <span class="modal-title-sub">Thêm lịch tiêm chủng cho bé</span>
+    </span>
+  </div>
+</ng-template>
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="createVaccinationForm" nzLayout="vertical" class="user-modal-form-grid">
       <nz-form-item>

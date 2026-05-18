@@ -354,52 +354,321 @@ body {
     --user-grad-2: linear-gradient(135deg, #8b5cf6 0%, #0ea5e9 100%);
     --user-grad-3: linear-gradient(135deg, #14b8a6 0%, #0ea5e9 100%);
     --user-grad-4: linear-gradient(135deg, #f97316 0%, #facc15 100%);
-
     --user-card-radius: 18px;
     --user-btn-radius: 12px;
 }
 
-/* ---- User modal system -------------------------------------- */
+/* ---- User buttons standard --------------------------------- */
+.btn-user-primary.ant-btn-primary {
+    background: var(--user-grad-1);
+    border: none;
+    border-radius: var(--user-btn-radius) !important;
+    box-shadow: 0 4px 14px rgba(236, 72, 153, 0.3) !important;
+    transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease !important;
+    font-weight: 600;
+}
+
+.btn-user-primary.ant-btn-primary:hover:not([disabled]) {
+    opacity: 0.9 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 18px rgba(236, 72, 153, 0.45) !important;
+}
+
+.btn-user-primary.ant-btn-primary[disabled] {
+    background: #d9d9d9 !important;
+    color: rgba(0, 0, 0, 0.25) !important;
+    box-shadow: none !important;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.btn-user-outline.ant-btn {
+    border-radius: var(--user-btn-radius) !important;
+    border-color: var(--user-primary) !important;
+    color: var(--user-primary) !important;
+    background: transparent !important;
+    font-weight: 600;
+    transition: opacity 0.2s ease, border-color 0.2s ease, color 0.2s ease !important;
+}
+
+.btn-user-outline.ant-btn:hover:not([disabled]) {
+    border-color: var(--user-primary) !important;
+    color: var(--user-primary) !important;
+    opacity: 0.8 !important;
+    background: rgba(249, 115, 22, 0.05) !important;
+}
+
+.btn-user-outline.ant-btn[disabled] {
+    border-color: #d9d9d9 !important;
+    color: rgba(0, 0, 0, 0.25) !important;
+    box-shadow: none !important;
+    cursor: not-allowed;
+}
+
+.btn-user-secondary.ant-btn {
+    border-radius: var(--user-btn-radius) !important;
+    border: 1px solid rgba(249, 115, 22, 0.28) !important;
+    color: var(--user-primary) !important;
+    background: rgba(249, 115, 22, 0.06) !important;
+    font-weight: 600;
+    transition: border-color 0.2s, color 0.2s, background-color 0.2s !important;
+}
+
+.btn-user-secondary.ant-btn:hover:not([disabled]) {
+    border-color: rgba(249, 115, 22, 0.5) !important;
+    color: #ea580c !important;
+    background: rgba(249, 115, 22, 0.12) !important;
+}
+
+.btn-user-secondary.ant-btn[disabled] {
+    border-color: #d9d9d9 !important;
+    color: rgba(0, 0, 0, 0.25) !important;
+    background: #f5f5f5 !important;
+    cursor: not-allowed;
+}
+
+/* ================================================================
+   USER ROLE MODAL — Premium Upgrade
+   Glassmorphism header · Animated focus states · Rich form fields
+   ================================================================ */
+
+/* --- Backdrop blur overlay --- */
+.user-role-modal .ant-modal-mask {
+    background: rgba(15, 23, 42, 0.55) !important;
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+}
+
+/* --- Modal wrapper animation --- */
+.user-role-modal .ant-modal {
+    animation: userModalSlideIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes userModalSlideIn {
+    from { opacity: 0; transform: scale(0.93) translateY(16px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* --- Main container --- */
 .user-role-modal .ant-modal-content {
-    border-radius: var(--user-card-radius);
+    border-radius: 20px !important;
     overflow: hidden;
-    border: 1px solid rgba(249,115,22,.16);
-    box-shadow: 0 18px 48px rgba(15,23,42,.2);
+    border: 1px solid rgba(249, 115, 22, 0.18) !important;
+    box-shadow:
+        0 0 0 1px rgba(249, 115, 22, 0.08),
+        0 24px 64px rgba(15, 23, 42, 0.28),
+        0 8px 24px rgba(249, 115, 22, 0.08) !important;
+    background: var(--surface-bg) !important;
 }
 
+/* --- Header: gradient premium strip --- */
 .user-role-modal .ant-modal-header {
-    padding: 16px 20px;
-    border-bottom: 1px solid rgba(249,115,22,.14);
-    background: linear-gradient(135deg, rgba(249,115,22,.08) 0%, rgba(236,72,153,.08) 100%);
+    padding: 20px 24px 18px !important;
+    border-bottom: 1px solid rgba(249, 115, 22, 0.12) !important;
+    background: linear-gradient(
+        135deg,
+        rgba(249, 115, 22, 0.1) 0%,
+        rgba(236, 72, 153, 0.07) 50%,
+        rgba(139, 92, 246, 0.05) 100%
+    ) !important;
+    position: relative;
+    overflow: hidden;
 }
 
+/* Shimmer accent bar at top of header */
+.user-role-modal .ant-modal-header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #f97316 0%, #ec4899 50%, #8b5cf6 100%);
+}
+
+/* Decorative orb — top-right */
+.user-role-modal .ant-modal-header::after {
+    content: '';
+    position: absolute;
+    top: -20px; right: -20px;
+    width: 100px; height: 100px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(249, 115, 22, 0.18) 0%, transparent 70%);
+    pointer-events: none;
+}
+
+/* --- Title row (uses .modal-title-wrap class from each component) --- */
 .user-role-modal .ant-modal-title {
-    color: var(--text-main);
+    font-size: 17px !important;
+    font-weight: 800 !important;
+    color: var(--text-main) !important;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Premium icon badge before title */
+.modal-title-icon-wrap {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: var(--user-grad-1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
     font-size: 16px;
-    font-weight: 700;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.4);
 }
 
+.modal-title-icon-wrap--violet {
+    background: var(--user-grad-2);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.4);
+}
+
+.modal-title-icon-wrap--teal {
+    background: var(--user-grad-3);
+    box-shadow: 0 4px 12px rgba(20, 184, 166, 0.4);
+}
+
+.modal-title-icon-wrap--yellow {
+    background: var(--user-grad-4);
+    box-shadow: 0 4px 12px rgba(249, 115, 22, 0.35);
+}
+
+.modal-title-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+}
+
+.modal-title-text .modal-title-main {
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--text-main);
+    line-height: 1.3;
+}
+
+.modal-title-text .modal-title-sub {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted, #9ca3af);
+    line-height: 1;
+}
+
+/* --- Body / content area --- */
 .user-role-modal .ant-modal-body {
-    padding: 18px 20px 8px;
-    background: var(--surface-bg);
+    padding: 24px 24px 12px !important;
+    background: var(--surface-bg) !important;
 }
 
+/* --- Footer buttons --- */
 .user-role-modal .ant-modal-footer {
-    padding: 12px 20px 18px;
-    border-top: 1px solid var(--border-color);
-    background: var(--surface-bg);
+    padding: 14px 24px 20px !important;
+    border-top: 1px solid var(--border-color) !important;
+    background: var(--surface-bg) !important;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
 }
 
+/* Ok / Save button — identical twin of .btn-user-primary */
+.user-role-modal .ant-modal-footer .ant-btn-primary {
+    height: 38px !important;
+    padding: 0 22px !important;
+    background: var(--user-grad-1) !important;
+    border: none !important;
+    border-radius: var(--user-btn-radius) !important;
+    box-shadow: 0 4px 14px rgba(236, 72, 153, 0.3) !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    letter-spacing: 0.2px;
+    transition: opacity 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease !important;
+}
+
+.user-role-modal .ant-modal-footer .ant-btn-primary:hover:not([disabled]) {
+    opacity: 0.9 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 18px rgba(236, 72, 153, 0.45) !important;
+}
+
+.user-role-modal .ant-modal-footer .ant-btn-primary[disabled] {
+    background: #d9d9d9 !important;
+    color: rgba(0, 0, 0, 0.25) !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+/* Cancel button — identical twin of .btn-user-outline */
+.user-role-modal .ant-modal-footer .ant-btn:not(.ant-btn-primary) {
+    height: 38px !important;
+    padding: 0 20px !important;
+    border-radius: var(--user-btn-radius) !important;
+    border: 1.5px solid var(--user-primary) !important;
+    color: var(--user-primary) !important;
+    background: transparent !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    transition: opacity 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.15s ease !important;
+}
+
+.user-role-modal .ant-modal-footer .ant-btn:not(.ant-btn-primary):hover:not([disabled]) {
+    border-color: var(--user-primary) !important;
+    color: var(--user-primary) !important;
+    opacity: 0.8 !important;
+    background: rgba(249, 115, 22, 0.05) !important;
+    transform: translateY(-1px) !important;
+}
+
+.user-role-modal .ant-modal-footer .ant-btn:not(.ant-btn-primary)[disabled] {
+    border-color: #d9d9d9 !important;
+    color: rgba(0, 0, 0, 0.25) !important;
+    box-shadow: none !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    background: transparent !important;
+}
+
+/* Close icon */
+.user-role-modal .ant-modal-close {
+    top: 18px !important;
+    right: 18px !important;
+    color: var(--text-muted, #9ca3af) !important;
+    transition: color 0.2s, background 0.2s !important;
+    border-radius: 8px !important;
+    width: 32px; height: 32px;
+    display: flex; align-items: center; justify-content: center;
+}
+
+.user-role-modal .ant-modal-close:hover {
+    color: var(--user-primary) !important;
+    background: rgba(249, 115, 22, 0.08) !important;
+}
+
+/* ================================================================
+   PREMIUM FORM FIELD SYSTEM — inside user-role-modal
+   ================================================================ */
+
+/* --- Form grid layout --- */
 .user-modal-form-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    column-gap: 14px;
-    row-gap: 2px;
+    column-gap: 16px;
+    row-gap: 0;
     align-items: start;
 }
 
+.user-modal-form-grid.grid-2col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.user-modal-form-grid.grid-1col {
+    grid-template-columns: 1fr;
+}
+
 .user-modal-form-grid .ant-form-item {
-    margin-bottom: 14px;
+    margin-bottom: 16px !important;
     min-width: 0;
 }
 
@@ -407,17 +676,233 @@ body {
     grid-column: 1 / -1;
 }
 
+.user-modal-form-grid .ant-form-item.modal-field-half {
+    grid-column: span 2;
+}
+
+/* --- Form labels --- */
+.user-role-modal .ant-form-item-label > label {
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    color: var(--text-sub, #6b7280) !important;
+    letter-spacing: 0.2px;
+    text-transform: uppercase;
+}
+
+.user-role-modal .ant-form-item-label > label.ant-form-item-required::before {
+    color: var(--user-secondary) !important;
+}
+
+/* --- Input fields --- */
+.user-role-modal .ant-input,
+.user-role-modal .ant-input-number,
+.user-role-modal .ant-picker,
+.user-role-modal .ant-select-selector {
+    border-radius: 10px !important;
+    border: 1.5px solid var(--border-color) !important;
+    background: var(--surface-bg) !important;
+    color: var(--text-main) !important;
+    font-size: 14px !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+    height: 40px !important;
+    padding: 0 12px !important;
+}
+
+.user-role-modal textarea.ant-input {
+    height: auto !important;
+    min-height: 96px !important;
+    padding: 10px 12px !important;
+    resize: vertical;
+    line-height: 1.6 !important;
+}
+
+/* Focus glow — orange accent */
+.user-role-modal .ant-input:focus,
+.user-role-modal .ant-input-focused,
+.user-role-modal .ant-input-number-focused,
+.user-role-modal .ant-picker-focused,
+.user-role-modal .ant-select-focused .ant-select-selector {
+    border-color: var(--user-primary) !important;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
+    outline: none !important;
+}
+
+.user-role-modal .ant-input:hover:not(:focus),
+.user-role-modal .ant-input-number:hover:not(.ant-input-number-focused),
+.user-role-modal .ant-picker:hover:not(.ant-picker-focused),
+.user-role-modal .ant-select:hover:not(.ant-select-focused) .ant-select-selector {
+    border-color: rgba(249, 115, 22, 0.5) !important;
+}
+
+/* Prefix icons */
+.user-role-modal .ant-input-prefix {
+    color: var(--user-primary) !important;
+    opacity: 0.7;
+    margin-right: 8px;
+}
+
+/* Input group with prefix */
+.user-role-modal .ant-input-group-wrapper .ant-input-wrapper,
+.user-role-modal .ant-input-affix-wrapper {
+    border-radius: 10px !important;
+    border: 1.5px solid var(--border-color) !important;
+    overflow: hidden;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.user-role-modal .ant-input-affix-wrapper:focus,
+.user-role-modal .ant-input-affix-wrapper-focused {
+    border-color: var(--user-primary) !important;
+    box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
+}
+
+.user-role-modal .ant-input-affix-wrapper:hover:not(.ant-input-affix-wrapper-focused) {
+    border-color: rgba(249, 115, 22, 0.5) !important;
+}
+
+.user-role-modal .ant-input-affix-wrapper input.ant-input {
+    border: none !important;
+    box-shadow: none !important;
+    height: 36px !important;
+}
+
+/* Select */
+.user-role-modal .ant-select-selector {
+    align-items: center;
+}
+
+/* Date picker */
+.user-role-modal .ant-picker {
+    width: 100% !important;
+}
+
+/* Textarea */
+.user-role-modal .ant-form-item .ant-input[rows] {
+    min-height: 96px;
+}
+
+/* Error state */
+.user-role-modal .ant-form-item-has-error .ant-input,
+.user-role-modal .ant-form-item-has-error .ant-input-affix-wrapper,
+.user-role-modal .ant-form-item-has-error .ant-select-selector {
+    border-color: #f87171 !important;
+    box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.12) !important;
+}
+
+/* Error message */
+.user-role-modal .ant-form-item-explain-error {
+    font-size: 12px !important;
+    color: #ef4444 !important;
+    margin-top: 4px !important;
+}
+
+/* --- Dividers inside modal --- */
+.user-role-modal .ant-divider {
+    border-color: rgba(249, 115, 22, 0.15) !important;
+}
+
+.user-role-modal .ant-divider-inner-text {
+    font-size: 12px !important;
+    font-weight: 700 !important;
+    color: var(--user-primary) !important;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+}
+
+/* --- Section separator inside body --- */
+.modal-section-divider {
+    height: 1px;
+    background: linear-gradient(90deg, rgba(249,115,22,0.18), rgba(236,72,153,0.12), transparent);
+    margin: 16px 0;
+    border: none;
+}
+
+/* --- Modal info banner (preview cards) --- */
+.modal-preview-banner {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: linear-gradient(135deg, rgba(249,115,22,0.06) 0%, rgba(236,72,153,0.04) 100%);
+    border: 1px solid rgba(249,115,22,0.14);
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-bottom: 20px;
+}
+
+.modal-preview-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+    background: var(--user-grad-1);
+    box-shadow: 0 4px 12px rgba(249,115,22,0.3);
+}
+
+.modal-preview-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.modal-preview-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.modal-preview-meta {
+    font-size: 12px;
+    color: var(--text-muted, #9ca3af);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* --- Form-grid width normalizers --- */
 .user-modal-form-grid .ant-input,
 .user-modal-form-grid .ant-select,
 .user-modal-form-grid .ant-select-selector,
 .user-modal-form-grid .ant-picker,
-.user-modal-form-grid .ant-input-number {
-    width: 100%;
+.user-modal-form-grid .ant-input-number,
+.user-modal-form-grid .ant-input-affix-wrapper {
+    width: 100% !important;
 }
 
-.user-modal-form-grid textarea.ant-input {
-    min-height: 92px;
-    resize: vertical;
+/* --- Responsive (narrow modals / mobile) --- */
+@media (max-width: 640px) {
+    .user-modal-form-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    .user-role-modal .ant-modal-header {
+        padding: 16px 18px 14px !important;
+    }
+
+    .user-role-modal .ant-modal-body {
+        padding: 18px 18px 8px !important;
+    }
+
+    .user-role-modal .ant-modal-footer {
+        padding: 12px 18px 16px !important;
+        flex-direction: column-reverse;
+    }
+
+    .user-role-modal .ant-modal-footer .ant-btn {
+        width: 100% !important;
+        justify-content: center;
+    }
 }
 
 /* ---- Animated gradient text --------------------------------- */

@@ -1,4 +1,4 @@
-﻿<section class="page-container" *ngIf="members$ | async as members">
+<section class="page-container" *ngIf="members$ | async as members">
   <div class="header-actions">
     <div>
       <h1 class="page-title">{{ 'momApp.family.title' | translate }}</h1>
@@ -68,7 +68,7 @@
       </div>
 
       <div class="card-actions" style="display: flex; gap: 8px;">
-        <button nz-button nzType="default" nzSize="small" (click)="openEditMemberModal(member, members)" class="btn-edit-member" style="flex: 1;">
+        <button nz-button nzType="default" nzSize="small" (click)="openEditMemberModal(member, members)" class="btn-user-outline" style="flex: 1;">
           <span nz-icon nzType="edit"></span>
           {{ 'commonActions.edit' | translate }}
         </button>
@@ -91,7 +91,7 @@
 <nz-modal
   [(nzVisible)]="isCreateMemberModalVisible"
   [nzTitle]="createModalTitle"
-  nzClassName="family-modal"
+  nzClassName="user-role-modal family-modal"
   [nzWidth]="680"
   [nzOkLoading]="isSubmitting"
   [nzOkText]="'commonActions.save' | translate"
@@ -100,9 +100,14 @@
   (nzOnOk)="submitCreateMember()"
 >
   <ng-template #createModalTitle>
-    <div class="modal-title-wrap">
-      <span nz-icon nzType="user-add" class="modal-title-icon"></span>
-      <span>{{ 'momApp.family.modal.createTitle' | translate }}</span>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="modal-title-icon-wrap">
+        <span nz-icon nzType="user-add"></span>
+      </span>
+      <span class="modal-title-text">
+        <span class="modal-title-main">{{ 'momApp.family.modal.createTitle' | translate }}</span>
+        <span class="modal-title-sub">Mời thành viên mới vào gia đình</span>
+      </span>
     </div>
   </ng-template>
   <ng-container *nzModalContent>
@@ -176,7 +181,7 @@
 <nz-modal
   [(nzVisible)]="isEditMemberModalVisible"
   [nzTitle]="editModalTitle"
-  nzClassName="family-modal"
+  nzClassName="user-role-modal family-modal"
   [nzWidth]="560"
   [nzOkLoading]="isSubmitting"
   [nzOkText]="'commonActions.save' | translate"
@@ -185,9 +190,14 @@
   (nzOnOk)="submitUpdateMember()"
 >
   <ng-template #editModalTitle>
-    <div class="modal-title-wrap">
-      <span nz-icon nzType="edit" class="modal-title-icon modal-title-icon--edit"></span>
-      <span>{{ 'momApp.family.modal.editTitle' | translate }}</span>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="modal-title-icon-wrap modal-title-icon-wrap--violet">
+        <span nz-icon nzType="edit"></span>
+      </span>
+      <span class="modal-title-text">
+        <span class="modal-title-main">{{ 'momApp.family.modal.editTitle' | translate }}</span>
+        <span class="modal-title-sub">{{ selectedMember?.displayName }}</span>
+      </span>
     </div>
   </ng-template>
   <ng-container *nzModalContent>

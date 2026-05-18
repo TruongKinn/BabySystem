@@ -9,7 +9,7 @@
         <span nz-icon nzType="robot"></span>
         {{ 'momApp.meals.actions.aiSuggest' | translate }}
       </button>
-      <button nz-button nzType="primary" (click)="openCreateModal()" class="btn-meals-primary">
+      <button nz-button nzType="primary" (click)="openCreateModal()" class="btn-user-primary">
         <span nz-icon nzType="plus"></span>
         {{ 'momApp.meals.actions.create' | translate }}
       </button>
@@ -143,7 +143,7 @@
     <ng-template #emptyMeals>
       <div class="meals-empty-state">
         <nz-empty [nzNotFoundContent]="'momApp.meals.empty.noPlans' | translate"></nz-empty>
-        <button nz-button nzType="primary" (click)="openCreateModal()" class="btn-meals-primary">
+        <button nz-button nzType="primary" (click)="openCreateModal()" class="btn-user-primary">
           <span nz-icon nzType="plus"></span>
           {{ 'momApp.meals.empty.createFirstPlan' | translate }}
         </button>
@@ -154,15 +154,25 @@
 
 <nz-modal
   [(nzVisible)]="isCreateModalVisible"
-  [nzTitle]="'momApp.meals.modal.createTitle' | translate"
-  nzClassName="meals-modal"
+  [nzTitle]="mealsCreateTitleTpl"
+  nzClassName="user-role-modal meals-modal"
   [nzWidth]="680"
   [nzOkLoading]="isSubmitting"
   [nzOkText]="'momApp.meals.modal.savePlan' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeCreateModal()"
-  (nzOnOk)="submitCreateMealPlan()"
->
+  (nzOnOk)="submitCreateMealPlan()">
+<ng-template #mealsCreateTitleTpl>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="modal-title-icon-wrap">
+      <span nz-icon nzType="coffee"></span>
+    </span>
+    <span class="modal-title-text">
+      <span class="modal-title-main">{{ 'momApp.meals.modal.createTitle' | translate }}</span>
+      <span class="modal-title-sub">Lên thực đơn cho ngày / tuần</span>
+    </span>
+  </div>
+</ng-template>
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="createMealPlanForm" nzLayout="vertical">
       <div class="modal-apply-mode">
@@ -243,12 +253,22 @@
 
 <nz-modal
   [(nzVisible)]="isAiModalVisible"
-  [nzTitle]="'momApp.meals.ai.modalTitle' | translate"
-  nzClassName="meals-modal ai-modal"
+  [nzTitle]="mealsAiTitleTpl"
+  nzClassName="user-role-modal meals-modal ai-modal"
   [nzWidth]="720"
   [nzFooter]="null"
-  (nzOnCancel)="closeAiModal()"
->
+  (nzOnCancel)="closeAiModal()">
+<ng-template #mealsAiTitleTpl>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="modal-title-icon-wrap modal-title-icon-wrap--violet">
+      <span nz-icon nzType="robot"></span>
+    </span>
+    <span class="modal-title-text">
+      <span class="modal-title-main">{{ 'momApp.meals.ai.modalTitle' | translate }}</span>
+      <span class="modal-title-sub">Gợi ý món ăn thông minh từ AI</span>
+    </span>
+  </div>
+</ng-template>
   <ng-container *nzModalContent>
     <div class="ai-modal-body">
       <div class="ai-input-section">
@@ -263,7 +283,7 @@
           [placeholder]="'momApp.meals.ai.inputPlaceholder' | translate"
           class="ai-ingredients-input"
         ></textarea>
-        <button nz-button nzType="primary" (click)="askAiSuggestions()" [nzLoading]="isAiLoading" class="btn-ai-search">
+        <button nz-button nzType="primary" (click)="askAiSuggestions()" [nzLoading]="isAiLoading" class="btn-user-primary">
           <span nz-icon nzType="thunderbolt"></span>
           {{ 'momApp.meals.ai.searchButton' | translate }}
         </button>
@@ -339,7 +359,7 @@
             </div>
           </div>
 
-          <button nz-button nzType="primary" (click)="addSelectedToMenu()" [nzLoading]="isAddingFromAi" class="btn-add-to-menu">
+          <button nz-button nzType="primary" (click)="addSelectedToMenu()" [nzLoading]="isAddingFromAi" class="btn-user-primary">
             <span nz-icon nzType="calendar"></span>
             {{ 'momApp.meals.ai.addToMenuButton' | translate : { count: selectedAiCount } }}
           </button>

@@ -11,33 +11,6 @@
   flex-wrap: wrap;
 }
 
-.btn-user-primary.ant-btn-primary {
-  background: var(--user-grad-1);
-  border: none;
-  border-radius: var(--user-btn-radius);
-  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.35);
-  transition: opacity 0.2s ease, transform 0.15s ease;
-}
-
-.btn-user-primary.ant-btn-primary:hover:not([disabled]) {
-  opacity: 0.9;
-  transform: translateY(-1px);
-}
-
-.btn-user-secondary.ant-btn {
-  border-radius: var(--user-btn-radius);
-  border: 1px solid rgba(249, 115, 22, 0.28);
-  color: var(--user-primary);
-  background: rgba(249, 115, 22, 0.06);
-  font-weight: 600;
-}
-
-.btn-user-secondary.ant-btn:hover:not([disabled]) {
-  border-color: rgba(249, 115, 22, 0.5);
-  color: #ea580c;
-  background: rgba(249, 115, 22, 0.12);
-}
-
 .settings-hero {
   position: relative;
   overflow: hidden;

@@ -16,31 +16,6 @@
   flex-wrap: wrap;
 }
 
-.btn-user-primary.ant-btn-primary {
-  background: var(--user-grad-1);
-  border: none;
-  border-radius: var(--user-btn-radius);
-  box-shadow: 0 4px 14px rgba(236,72,153,.3);
-  transition: opacity .2s ease, transform .15s ease;
-}
-
-.btn-user-primary.ant-btn-primary:hover {
-  opacity: .9;
-  transform: translateY(-1px);
-}
-
-.btn-user-outline {
-  border-radius: var(--user-btn-radius);
-  border-color: var(--user-primary);
-  color: var(--user-primary);
-}
-
-.btn-user-outline:hover {
-  border-color: var(--user-primary);
-  color: var(--user-primary);
-  opacity: 0.8;
-}
-
 /* Summary Grid using the user-role global stat-grid */
 .stat-grid {
   display: grid;

@@ -119,15 +119,25 @@
 
 <nz-modal
   [(nzVisible)]="isSaveModalVisible"
-  [nzTitle]="'momApp.settings.modal.title' | translate"
+  [nzTitle]="settingsModalTitleTpl"
   nzClassName="user-role-modal"
   [nzWidth]="640"
   [nzOkLoading]="isSaving"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeSaveModal()"
-  (nzOnOk)="confirmSaveSettings()"
->
+  (nzOnOk)="confirmSaveSettings()">
+<ng-template #settingsModalTitleTpl>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span class="modal-title-icon-wrap modal-title-icon-wrap--yellow">
+      <span nz-icon nzType="setting"></span>
+    </span>
+    <span class="modal-title-text">
+      <span class="modal-title-main">{{ 'momApp.settings.modal.title' | translate }}</span>
+      <span class="modal-title-sub">Xác nhận thay đổi cài đặt nhắc nhở</span>
+    </span>
+  </div>
+</ng-template>
   <ng-container *nzModalContent>
     <p>{{ 'momApp.settings.modal.description' | translate : { hour: reminderHourDisplay } }}</p>
     <div class="modal-summary">
