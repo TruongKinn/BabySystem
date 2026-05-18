@@ -111,18 +111,25 @@ public class FileService {
     }
 
     public FileDownloadUrlResponse getDownloadUrl(Long fileId, int expirySeconds) {
+        return getDownloadUrl(fileId, expirySeconds, null);
+    }
+
+    public FileDownloadUrlResponse getDownloadUrl(Long fileId, int expirySeconds, String disposition) {
         FileMetadataEntity entity = getEntity(fileId);
         int normalizedExpiry = Math.max(60, Math.min(expirySeconds, 7 * 24 * 60 * 60));
 
         try {
-            String url = minioClient.getPresignedObjectUrl(
-                    GetPresignedObjectUrlArgs.builder()
-                            .method(Method.GET)
-                            .bucket(entity.getBucketName())
-                            .object(entity.getObjectKey())
-                            .expiry(normalizedExpiry)
-                            .build()
-            );
+            GetPresignedObjectUrlArgs.Builder builder = GetPresignedObjectUrlArgs.builder()
+                    .method(Method.GET)
+                    .bucket(entity.getBucketName())
+                    .object(entity.getObjectKey())
+                    .expiry(normalizedExpiry);
+
+            if (disposition != null && !disposition.isBlank()) {
+                builder.extraQueryParams(java.util.Map.of("response-content-disposition", disposition));
+            }
+
+            String url = minioClient.getPresignedObjectUrl(builder.build());
             return new FileDownloadUrlResponse(entity.getId(), url, normalizedExpiry);
         } catch (Exception ex) {
             throw new IllegalStateException("Failed to generate download url", ex);

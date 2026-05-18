@@ -778,6 +778,13 @@ export class SuperAppCommandService {
     ).pipe(map((data) => data.downloadUrl));
   }
 
+  getFileViewUrl(fileId: number): Observable<string> {
+    return this.get<{ fileId: number; downloadUrl: string; expirySeconds: number }>(
+      `/file/files/${fileId}/download-url`,
+      new HttpParams().set('expirySeconds', '900').set('disposition', 'inline')
+    ).pipe(map((data) => data.downloadUrl));
+  }
+
   deleteFile(fileId: number): Observable<void> {
     return this.http
       .delete<ApiEnvelope<unknown>>(`${this.apiBase}/file/files/${fileId}`, {

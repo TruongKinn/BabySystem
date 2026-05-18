@@ -52,9 +52,10 @@ public class FileController {
     @GetMapping("/files/{id}/download-url")
     public ApiResponse<FileDownloadUrlResponse> getDownloadUrl(
             @PathVariable("id") Long fileId,
-            @RequestParam(value = "expirySeconds", required = false, defaultValue = "900") int expirySeconds
+            @RequestParam(value = "expirySeconds", required = false, defaultValue = "900") int expirySeconds,
+            @RequestParam(value = "disposition", required = false) String disposition
     ) {
-        return ApiResponse.ok("Success", fileService.getDownloadUrl(fileId, expirySeconds));
+        return ApiResponse.ok("Success", fileService.getDownloadUrl(fileId, expirySeconds, disposition));
     }
 
     @DeleteMapping("/files/{id}")

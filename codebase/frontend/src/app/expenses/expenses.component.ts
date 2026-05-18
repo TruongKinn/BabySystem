@@ -1,6 +1,7 @@
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -66,6 +67,7 @@ export class ExpensesComponent implements OnInit {
   private readonly command = inject(SuperAppCommandService);
   private readonly notification = inject(NzNotificationService);
   private readonly i18n = inject(I18nService);
+  private readonly sanitizer = inject(DomSanitizer);
 
   readonly sortOptions: Array<{ value: ExpenseSortMode; labelKey: string }> = [
     { value: 'NEWEST', labelKey: 'momApp.expenses.filters.sort.newest' },
@@ -106,6 +108,11 @@ export class ExpensesComponent implements OnInit {
   isUploadingReceipt = false;
   selectedExpense: ExpenseRecord | null = null;
   receiptFiles: FileMetadata[] = [];
+
+  isViewerModalVisible = false;
+  selectedViewerFile: FileMetadata | null = null;
+  sanitizedViewerUrl: SafeResourceUrl | null = null;
+  isLoadingViewer = false;
 
   readonly createExpenseForm = this.fb.group({
     amount: [null as number | null, [Validators.required, Validators.min(1)]],
@@ -320,6 +327,33 @@ export class ExpensesComponent implements OnInit {
     this.isReceiptModalVisible = false;
     this.selectedExpense = null;
     this.receiptFiles = [];
+  }
+
+  viewReceipt(file: FileMetadata): void {
+    this.selectedViewerFile = file;
+    this.isViewerModalVisible = true;
+    this.isLoadingViewer = true;
+    this.sanitizedViewerUrl = null;
+
+    this.command.getFileViewUrl(file.id).subscribe({
+      next: (url) => {
+        this.isLoadingViewer = false;
+        this.sanitizedViewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
+      },
+      error: (err) => {
+        this.isLoadingViewer = false;
+        this.notification.error(
+          this.i18n.translate('common.errorTitle'),
+          err?.error?.message || 'Không thể tải tài liệu để xem trực tiếp.'
+        );
+      }
+    });
+  }
+
+  closeViewerModal(): void {
+    this.isViewerModalVisible = false;
+    this.selectedViewerFile = null;
+    this.sanitizedViewerUrl = null;
   }
 
   onReceiptFileSelected(event: Event): void {

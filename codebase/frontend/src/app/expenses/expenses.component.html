@@ -404,6 +404,9 @@
             <span class="doc-file-size">{{ formatFileSize(file.sizeBytes) }}</span>
           </div>
           <div class="doc-card-actions">
+            <button nz-button nzType="default" (click)="viewReceipt(file)" class="btn-user-outline btn-circle-action" nz-tooltip [nzTooltipTitle]="'Xem trực tiếp'">
+              <span nz-icon nzType="eye"></span>
+            </button>
             <button nz-button nzType="default" (click)="downloadReceipt(file)" class="btn-user-outline btn-circle-action" nz-tooltip [nzTooltipTitle]="'momApp.expenses.receipts.actions.download' | translate">
               <span nz-icon nzType="download"></span>
             </button>
@@ -414,6 +417,48 @@
         </div>
       </div>
       
+    </div>
+  </ng-container>
+</nz-modal>
+
+<!-- Premium PDF & Image Document Viewer Modal -->
+<nz-modal [(nzVisible)]="isViewerModalVisible" [nzTitle]="viewerModalTitleTpl" nzClassName="user-role-modal document-viewer-modal"
+  [nzWidth]="1000" [nzFooter]="null" (nzOnCancel)="closeViewerModal()">
+  <ng-template #viewerModalTitleTpl>
+    <div style="display:flex;align-items:center;justify-content:space-between;width:100%;padding-right:24px">
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="modal-title-icon-wrap modal-title-icon-wrap--teal" [class.modal-title-icon-wrap--violet]="selectedViewerFile?.originalFileName?.toLowerCase()?.endsWith('.pdf')">
+          <span nz-icon [nzType]="selectedViewerFile?.originalFileName?.toLowerCase()?.endsWith('.pdf') ? 'file-pdf' : 'picture'"></span>
+        </span>
+        <span class="modal-title-text">
+          <span class="modal-title-main">{{ selectedViewerFile?.originalFileName }}</span>
+          <span class="modal-title-sub">Dung lượng: {{ formatFileSize(selectedViewerFile?.sizeBytes || 0) }} — Tải lên ngày: {{ formatSpentAt(selectedViewerFile?.createdAt || '') }}</span>
+        </span>
+      </div>
+    </div>
+  </ng-template>
+  <ng-container *nzModalContent>
+    <div class="document-viewer-container">
+      <div *ngIf="isLoadingViewer" class="viewer-loading">
+        <span nz-icon nzType="loading" class="viewer-loading-icon"></span>
+        <p>Đang chuẩn bị hiển thị tài liệu...</p>
+      </div>
+      
+      <ng-container *ngIf="!isLoadingViewer && sanitizedViewerUrl">
+        <!-- PDF Viewer using iframe -->
+        <iframe *ngIf="selectedViewerFile?.originalFileName?.toLowerCase()?.endsWith('.pdf')"
+          [src]="sanitizedViewerUrl"
+          width="100%"
+          height="700px"
+          style="border: none; border-radius: 12px; background: #fff;"
+          title="PDF Document Viewer">
+        </iframe>
+        
+        <!-- Image Viewer with smooth zoom -->
+        <div *ngIf="!selectedViewerFile?.originalFileName?.toLowerCase()?.endsWith('.pdf')" class="image-viewer-wrap">
+          <img [src]="sanitizedViewerUrl" class="viewer-image animate-fade-in" alt="Document Receipt Image" />
+        </div>
+      </ng-container>
     </div>
   </ng-container>
 </nz-modal>
