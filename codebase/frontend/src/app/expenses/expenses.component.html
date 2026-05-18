@@ -8,12 +8,8 @@
     <div class="header-buttons">
       <label class="month-picker-wrap" [attr.aria-label]="'momApp.expenses.filters.selectMonth' | translate">
         <span nz-icon nzType="calendar"></span>
-        <input
-          type="month"
-          class="month-picker"
-          [value]="monthKey"
-          (change)="onMonthChange($any($event.target).value)"
-        />
+        <input type="month" class="month-picker" [value]="monthKey"
+          (change)="onMonthChange($any($event.target).value)" />
       </label>
 
       <button nz-button nzType="default" class="btn-user-outline" (click)="loadExpenseWorkspace()">
@@ -51,7 +47,8 @@
 
     <nz-card class="stat-card-user expense-stat-card">
       <div class="stat-line">
-        <span class="stat-icon" [ngClass]="budgetStatusClass === 'budget-danger' ? 'stat-icon-pink' : (budgetStatusClass === 'budget-warning' ? 'stat-icon-orange' : 'stat-icon-teal')">
+        <span class="stat-icon"
+          [ngClass]="budgetStatusClass === 'budget-danger' ? 'stat-icon-pink' : (budgetStatusClass === 'budget-warning' ? 'stat-icon-orange' : 'stat-icon-teal')">
           <span nz-icon nzType="line-chart"></span>
         </span>
         <div class="stat-info">
@@ -98,9 +95,7 @@
     <div class="filter-row">
       <div class="filter-field filter-field-category">
         <label>{{ 'momApp.expenses.filters.category' | translate }}</label>
-        <select
-          class="filter-select"
-          [value]="selectedCategoryId === null ? '' : selectedCategoryId"
+        <select class="filter-select" [value]="selectedCategoryId === null ? '' : selectedCategoryId"
           (change)="onCategoryFilterChange($any($event.target).value)">
           <option value="">{{ 'momApp.expenses.filters.allCategories' | translate }}</option>
           <option *ngFor="let option of categoryFilters" [value]="option.id">{{ option.name }}</option>
@@ -109,12 +104,8 @@
 
       <div class="filter-field filter-field-search">
         <label>{{ 'momApp.expenses.filters.search' | translate }}</label>
-        <input
-          nz-input
-          [value]="searchKeyword"
-          (input)="onSearchKeywordChange($any($event.target).value)"
-          [placeholder]="'momApp.expenses.filters.searchPlaceholder' | translate"
-        />
+        <input nz-input [value]="searchKeyword" (input)="onSearchKeywordChange($any($event.target).value)"
+          [placeholder]="'momApp.expenses.filters.searchPlaceholder' | translate" />
       </div>
 
       <div class="filter-field filter-field-sort">
@@ -132,17 +123,12 @@
     </div>
 
     <div class="category-chip-row" *ngIf="categoryInsights.length > 0">
-      <button
-        class="category-chip-btn"
-        [class.active]="selectedCategoryId === null"
-        (click)="selectCategoryChip(null)">
+      <button class="category-chip-btn" [class.active]="selectedCategoryId === null" (click)="selectCategoryChip(null)">
         {{ 'momApp.expenses.filters.allCategories' | translate }}
       </button>
 
-      <button
-        *ngFor="let item of categoryInsights | slice : 0 : 8; trackBy: trackByCategoryId"
-        class="category-chip-btn"
-        [class.active]="selectedCategoryId === item.categoryId"
+      <button *ngFor="let item of categoryInsights | slice : 0 : 8; trackBy: trackByCategoryId"
+        class="category-chip-btn" [class.active]="selectedCategoryId === item.categoryId"
         (click)="selectCategoryChip(item.categoryId)">
         <span class="chip-dot" [style.background]="item.colorCode || 'var(--user-primary)'"></span>
         {{ item.categoryName }}
@@ -153,23 +139,26 @@
 
   <div class="analytics-grid">
     <nz-card [nzTitle]="'momApp.expenses.monthlyOverview' | translate" class="table-card budget-health-card">
-      <div class="expense-row">
-        <p>{{ 'momApp.expenses.spentLabel' | translate }}</p>
-        <strong>{{ monthlySpent | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
-      </div>
-      <div class="expense-row">
-        <p>{{ 'momApp.expenses.budgetLabel' | translate }}</p>
-        <strong class="muted-value">{{ monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
-      </div>
-      <div class="expense-row">
-        <p>{{ 'momApp.expenses.remainingLabel' | translate }}</p>
-        <strong [class.value-danger]="remainingBudget < 0">{{ remainingBudget | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+      <!-- Fintech Hero Balance -->
+      <div class="fintech-balance-hero">
+        <div class="balance-label">{{ 'momApp.expenses.spentLabel' | translate }}</div>
+        <div class="balance-amount">
+          <span class="currency-symbol">₫</span>
+          {{ monthlySpent | number : '1.0-0' }}
+        </div>
+        <div class="balance-sub">
+          <span class="budget-meta">
+            {{ 'momApp.expenses.budgetLabel' | translate }}: {{ monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}
+          </span>
+          <span class="budget-divider">•</span>
+          <span class="budget-meta" [class.text-danger]="remainingBudget < 0">
+            {{ 'momApp.expenses.remainingLabel' | translate }}: {{ remainingBudget | currency : 'VND' : 'symbol' : '1.0-0' }}
+          </span>
+        </div>
       </div>
 
-      <div class="user-progress-bar budget-progress">
-        <div
-          class="user-progress-fill"
-          [style.width.%]="budgetProgressWidth"
+      <div class="user-progress-bar budget-progress fintech-progress">
+        <div class="user-progress-fill" [style.width.%]="budgetProgressWidth"
           [style.background]="budgetStatusClass === 'budget-danger' ? '#ef4444' : (budgetStatusClass === 'budget-warning' ? '#f59e0b' : 'var(--user-grad-1)')">
         </div>
       </div>
@@ -180,16 +169,35 @@
       </div>
 
       <p class="top-category">
+        <span nz-icon nzType="fire" class="text-orange" style="margin-right:4px;"></span>
         {{ 'momApp.expenses.topCategory' | translate }}:
-        {{ topCategoryName || ('momApp.common.notAvailable' | translate) }}
+        <strong>{{ topCategoryName || ('momApp.common.notAvailable' | translate) }}</strong>
       </p>
-    </nz-card>
 
-    <nz-card [nzTitle]="'momApp.expenses.categoryBreakdown.title' | translate" class="table-card category-breakdown-card">
-      <div class="empty-state" *ngIf="categoryInsights.length === 0">{{ 'momApp.expenses.categoryBreakdown.empty' | translate }}</div>
+      <!-- Compact Mini Stats replacing the old 6 big cards -->
+      <div class="mini-stat-row">
+        <div class="mini-stat-item">
+          <span class="mini-stat-label"><span nz-icon nzType="shop"></span> {{ 'momApp.expenses.spentToday' | translate }}</span>
+          <span class="mini-stat-val text-teal">{{ todaySpent | currency : 'VND' : 'symbol' : '1.0-0' }}</span>
+        </div>
+        <div class="mini-stat-item">
+          <span class="mini-stat-label"><span nz-icon nzType="calculator"></span> {{ 'momApp.expenses.averagePerExpense' | translate }}</span>
+          <span class="mini-stat-val text-violet">{{ averageExpense | currency : 'VND' : 'symbol' : '1.0-0' }}</span>
+        </div>
+        <div class="mini-stat-item">
+          <span class="mini-stat-label"><span nz-icon nzType="profile"></span> {{ 'momApp.expenses.expenseRecords' | translate }}</span>
+          <span class="mini-stat-val text-orange">{{ totalExpenseCount }}</span>
+        </div>
+      </div>    </nz-card>
+
+    <nz-card [nzTitle]="'momApp.expenses.categoryBreakdown.title' | translate"
+      class="table-card category-breakdown-card">
+      <div class="empty-state" *ngIf="categoryInsights.length === 0">{{ 'momApp.expenses.categoryBreakdown.empty' |
+        translate }}</div>
 
       <div class="category-breakdown-list" *ngIf="categoryInsights.length > 0">
-        <div class="category-breakdown-item" *ngFor="let item of categoryInsights | slice : 0 : 6; trackBy: trackByCategoryId">
+        <div class="category-breakdown-item"
+          *ngFor="let item of categoryInsights | slice : 0 : 6; trackBy: trackByCategoryId">
           <div class="category-breakdown-head">
             <div class="category-name-wrap">
               <span class="category-dot" [style.background]="item.colorCode || 'var(--user-primary)'"></span>
@@ -203,14 +211,13 @@
           </div>
 
           <div class="user-progress-bar">
-            <div
-              class="user-progress-fill"
-              [style.width.%]="item.percentage > 100 ? 100 : item.percentage"
+            <div class="user-progress-fill" [style.width.%]="item.percentage > 100 ? 100 : item.percentage"
               [style.background]="item.colorCode || 'var(--user-primary)'">
             </div>
           </div>
 
-          <p class="category-meta">{{ 'momApp.expenses.categoryBreakdown.expenseCount' | translate : { count: item.expenseCount } }}</p>
+          <p class="category-meta">{{ 'momApp.expenses.categoryBreakdown.expenseCount' | translate : { count:
+            item.expenseCount } }}</p>
         </div>
       </div>
     </nz-card>
@@ -220,7 +227,8 @@
     <div class="table-summary-row">
       <span class="table-summary-item">
         {{ 'momApp.expenses.table.showing' | translate }}
-        <strong>{{ visibleExpenseCount }}</strong> / {{ totalExpenseCount }} {{ 'momApp.expenses.table.records' | translate }}
+        <strong>{{ visibleExpenseCount }}</strong> / {{ totalExpenseCount }} {{ 'momApp.expenses.table.records' |
+        translate }}
       </span>
       <span class="table-summary-item">
         {{ 'momApp.expenses.table.filter' | translate }}: <strong>{{ currentCategoryLabel }}</strong>
@@ -234,7 +242,8 @@
     <div class="empty-state" *ngIf="loading">{{ 'momApp.expenses.table.loading' | translate }}</div>
 
     <div class="empty-state" *ngIf="!loading && filteredExpenseRecords.length === 0">
-      {{ totalExpenseCount === 0 ? ('momApp.expenses.receipts.emptyExpenses' | translate) : ('momApp.expenses.table.noFilterMatch' | translate) }}
+      {{ totalExpenseCount === 0 ? ('momApp.expenses.receipts.emptyExpenses' | translate) :
+      ('momApp.expenses.table.noFilterMatch' | translate) }}
     </div>
 
     <div class="expense-table-wrap" *ngIf="!loading && filteredExpenseRecords.length > 0">
@@ -254,9 +263,7 @@
             <td>{{ idx + 1 }}</td>
             <td>
               <div class="category-cell">
-                <span
-                  class="category-dot"
-                  [style.background]="resolveCategoryColor(item.categoryId)">
+                <span class="category-dot" [style.background]="resolveCategoryColor(item.categoryId)">
                 </span>
                 {{ item.categoryName }}
               </div>
@@ -276,45 +283,36 @@
   </nz-card>
 </section>
 
-<nz-modal
-  [(nzVisible)]="isCreateModalVisible"
-  [nzTitle]="expenseCreateTitleTpl"
-  nzClassName="user-role-modal"
-  [nzWidth]="980"
-  [nzOkLoading]="isSubmitting"
-  [nzOkText]="'commonActions.save' | translate"
-  [nzCancelText]="'commonActions.cancel' | translate"
-  (nzOnCancel)="closeCreateModal()"
+<nz-modal [(nzVisible)]="isCreateModalVisible" [nzTitle]="expenseCreateTitleTpl" nzClassName="user-role-modal"
+  [nzWidth]="980" [nzOkLoading]="isSubmitting" [nzOkText]="'commonActions.save' | translate"
+  [nzCancelText]="'commonActions.cancel' | translate" (nzOnCancel)="closeCreateModal()"
   (nzOnOk)="submitCreateExpense()">
-<ng-template #expenseCreateTitleTpl>
-  <div style="display:flex;align-items:center;gap:12px">
-    <span class="modal-title-icon-wrap">
-      <span nz-icon nzType="dollar-circle"></span>
-    </span>
-    <span class="modal-title-text">
-      <span class="modal-title-main">{{ 'momApp.expenses.modal.createTitle' | translate }}</span>
-      <span class="modal-title-sub">Ghi nhật chi tiêu trong tháng</span>
-    </span>
-  </div>
-</ng-template>
+  <ng-template #expenseCreateTitleTpl>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="modal-title-icon-wrap">
+        <span nz-icon nzType="dollar-circle"></span>
+      </span>
+      <span class="modal-title-text">
+        <span class="modal-title-main">{{ 'momApp.expenses.modal.createTitle' | translate }}</span>
+        <span class="modal-title-sub">Ghi nhật chi tiêu trong tháng</span>
+      </span>
+    </div>
+  </ng-template>
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="createExpenseForm" nzLayout="vertical" class="user-modal-form-grid">
       <nz-form-item>
         <nz-form-label nzRequired>{{ 'momApp.expenses.modal.amountLabel' | translate }}</nz-form-label>
         <nz-form-control>
-          <input nz-input type="number" formControlName="amount" [placeholder]="'momApp.expenses.modal.amountPlaceholder' | translate" />
+          <input nz-input type="number" formControlName="amount"
+            [placeholder]="'momApp.expenses.modal.amountPlaceholder' | translate" />
         </nz-form-control>
       </nz-form-item>
 
       <nz-form-item>
         <nz-form-label nzRequired>{{ 'momApp.expenses.modal.categoryLabel' | translate }}</nz-form-label>
         <nz-form-control>
-          <input
-            nz-input
-            formControlName="categoryName"
-            [placeholder]="'momApp.expenses.modal.categoryPlaceholder' | translate"
-            list="expense-category-options"
-          />
+          <input nz-input formControlName="categoryName"
+            [placeholder]="'momApp.expenses.modal.categoryPlaceholder' | translate" list="expense-category-options" />
           <datalist id="expense-category-options">
             <option *ngFor="let category of categoryFilters" [value]="category.name"></option>
           </datalist>
@@ -324,31 +322,28 @@
       <nz-form-item class="modal-field-full">
         <nz-form-label>{{ 'momApp.expenses.modal.noteLabel' | translate }}</nz-form-label>
         <nz-form-control>
-          <textarea nz-input rows="3" formControlName="note" [placeholder]="'momApp.expenses.modal.notePlaceholder' | translate"></textarea>
+          <textarea nz-input rows="3" formControlName="note"
+            [placeholder]="'momApp.expenses.modal.notePlaceholder' | translate"></textarea>
         </nz-form-control>
       </nz-form-item>
     </form>
   </ng-container>
 </nz-modal>
 
-<nz-modal
-  [(nzVisible)]="isReceiptModalVisible"
-  [nzTitle]="receiptModalTitleTpl"
-  nzClassName="user-role-modal"
-  [nzWidth]="920"
-  [nzFooter]="null"
-  (nzOnCancel)="closeReceiptModal()">
-<ng-template #receiptModalTitleTpl>
-  <div style="display:flex;align-items:center;gap:12px">
-    <span class="modal-title-icon-wrap modal-title-icon-wrap--teal">
-      <span nz-icon nzType="file-done"></span>
-    </span>
-    <span class="modal-title-text">
-      <span class="modal-title-main">{{ 'momApp.expenses.receipts.modalTitle' | translate }}</span>
-      <span class="modal-title-sub">{{ selectedExpense?.categoryName }} — {{ selectedExpense?.amount | currency:'VND':'symbol':'1.0-0' }}</span>
-    </span>
-  </div>
-</ng-template>
+<nz-modal [(nzVisible)]="isReceiptModalVisible" [nzTitle]="receiptModalTitleTpl" nzClassName="user-role-modal"
+  [nzWidth]="920" [nzFooter]="null" (nzOnCancel)="closeReceiptModal()">
+  <ng-template #receiptModalTitleTpl>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="modal-title-icon-wrap modal-title-icon-wrap--teal">
+        <span nz-icon nzType="file-done"></span>
+      </span>
+      <span class="modal-title-text">
+        <span class="modal-title-main">{{ 'momApp.expenses.receipts.modalTitle' | translate }}</span>
+        <span class="modal-title-sub">{{ selectedExpense?.categoryName }} — {{ selectedExpense?.amount |
+          currency:'VND':'symbol':'1.0-0' }}</span>
+      </span>
+    </div>
+  </ng-template>
   <ng-container *nzModalContent>
     <div *ngIf="selectedExpense as expense" class="receipt-modal-body">
       <p class="receipt-meta">
@@ -358,7 +353,8 @@
 
       <div class="receipt-toolbar">
         <input #receiptInput type="file" accept="image/*,.pdf" (change)="onReceiptFileSelected($event)" hidden />
-        <button nz-button nzType="primary" [nzLoading]="isUploadingReceipt" (click)="receiptInput.click()" class="btn-user-primary">
+        <button nz-button nzType="primary" [nzLoading]="isUploadingReceipt" (click)="receiptInput.click()"
+          class="btn-user-primary">
           {{ 'momApp.expenses.receipts.actions.upload' | translate }}
         </button>
       </div>
