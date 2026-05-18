@@ -38,18 +38,47 @@
 
 
 .expense-stat-grid {
-  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 1024px) {
+  .expense-stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .expense-stat-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
 
 .expense-stat-card {
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color, rgba(255,255,255,0.08));
+  background: var(--surface-bg, rgba(255,255,255,0.02));
+  border-radius: var(--user-card-radius, 16px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease;
+}
+
+.expense-stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+  border-color: rgba(249, 115, 22, 0.2);
+}
+
+.expense-stat-card .ant-card-body {
+  padding: 16px 20px !important;
 }
 
 .stat-line {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
 }
 
 .value-danger {
