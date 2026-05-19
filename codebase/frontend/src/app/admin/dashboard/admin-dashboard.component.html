@@ -25,7 +25,17 @@
     </div>
   </header>
 
-  <div class="metric-grid">
+  <!-- Skeleton Metric Grid when loading -->
+  <div class="metric-grid" *ngIf="loading">
+    <div class="skeleton-card" *ngFor="let idx of [1,2,3,4,5,6,7,8]">
+      <div class="skeleton-label"></div>
+      <div class="skeleton-value"></div>
+      <div class="skeleton-description"></div>
+    </div>
+  </div>
+
+  <!-- Real Metric Grid when loaded -->
+  <div class="metric-grid" *ngIf="!loading">
     <nz-card class="metric-card" *ngFor="let metric of metricCards; trackBy: trackByMetric" [ngClass]="metric.tone">
       <span class="metric-label">{{ metric.labelKey | translate }}</span>
       <strong class="metric-value">{{ metric.value }}</strong>
@@ -50,6 +60,7 @@
             <th>ID</th>
             <th>{{ 'momApp.admin.dashboard.lockedUsers.username' | translate }}</th>
             <th>{{ 'momApp.admin.dashboard.lockedUsers.roleType' | translate }}</th>
+            <th class="actions-header">{{ 'momApp.admin.users.table.actions' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -57,6 +68,16 @@
             <td>{{ user.id }}</td>
             <td>{{ user.username || '-' }}</td>
             <td><nz-tag nzColor="red">{{ user.type || 'USER' }}</nz-tag></td>
+            <td class="action-cell">
+              <div class="quick-actions-container">
+                <button nz-button nzType="text" nzShape="circle" class="dashboard-action-btn view-btn" (click)="openUserDetailModal(user)" nz-tooltip [nzTooltipTitle]="'momApp.admin.users.actions.viewDetail' | translate">
+                  <span nz-icon nzType="eye" nzTheme="outline"></span>
+                </button>
+                <button nz-button nzType="text" nzShape="circle" class="dashboard-action-btn unlock-btn" (click)="unlockUser(user)" [nzLoading]="actionLoadingUserId === user.id" nz-tooltip [nzTooltipTitle]="'momApp.admin.users.actions.unlock' | translate">
+                  <span nz-icon nzType="unlock" nzTheme="outline" *ngIf="actionLoadingUserId !== user.id"></span>
+                </button>
+              </div>
+            </td>
           </tr>
         </tbody>
       </nz-table>
@@ -90,13 +111,62 @@
     </nz-card>
   </div>
 
-  <nz-card class="admin-actions" [nzTitle]="'momApp.admin.dashboard.quickActions.title' | translate">
-    <div class="quick-actions">
-      <a routerLink="/admin/users" nz-button nzType="primary">{{ 'momApp.admin.dashboard.quickActions.openUsers' | translate }}</a>
-      <a routerLink="/admin/families" nz-button nzType="default">{{ 'momApp.admin.dashboard.quickActions.openFamilies' | translate }}</a>
-      <a routerLink="/admin/access" nz-button nzType="default">{{ 'momApp.admin.dashboard.quickActions.openAccess' | translate }}</a>
-      <a routerLink="/admin/permissions" nz-button nzType="default">{{ 'momApp.admin.dashboard.quickActions.openPermissions' | translate }}</a>
-      <a routerLink="/app/login" nz-button nzType="default">{{ 'momApp.admin.dashboard.quickActions.goUserLogin' | translate }}</a>
+  <nz-card class="admin-actions-card" [nzTitle]="'momApp.admin.dashboard.quickActions.title' | translate">
+    <div class="quick-actions-grid">
+      <a routerLink="/admin/users" class="action-tile tile-users">
+        <div class="tile-icon-wrapper">
+          <span nz-icon nzType="team" nzTheme="outline"></span>
+        </div>
+        <div class="tile-info">
+          <h3>{{ 'momApp.admin.dashboard.quickActions.openUsers' | translate }}</h3>
+          <p>Quản lý thành viên, tài khoản và phân quyền hệ thống</p>
+        </div>
+        <span class="tile-arrow" nz-icon nzType="right" nzTheme="outline"></span>
+      </a>
+
+      <a routerLink="/admin/families" class="action-tile tile-families">
+        <div class="tile-icon-wrapper">
+          <span nz-icon nzType="cluster" nzTheme="outline"></span>
+        </div>
+        <div class="tile-info">
+          <h3>{{ 'momApp.admin.dashboard.quickActions.openFamilies' | translate }}</h3>
+          <p>Xem sơ đồ gia phả, thành viên và thông tin gia đình</p>
+        </div>
+        <span class="tile-arrow" nz-icon nzType="right" nzTheme="outline"></span>
+      </a>
+
+      <a routerLink="/admin/access" class="action-tile tile-access">
+        <div class="tile-icon-wrapper">
+          <span nz-icon nzType="safety-certificate" nzTheme="outline"></span>
+        </div>
+        <div class="tile-info">
+          <h3>{{ 'momApp.admin.dashboard.quickActions.openAccess' | translate }}</h3>
+          <p>Cấu hình kiểm soát truy cập và bảo mật hệ thống</p>
+        </div>
+        <span class="tile-arrow" nz-icon nzType="right" nzTheme="outline"></span>
+      </a>
+
+      <a routerLink="/admin/permissions" class="action-tile tile-permissions">
+        <div class="tile-icon-wrapper">
+          <span nz-icon nzType="key" nzTheme="outline"></span>
+        </div>
+        <div class="tile-info">
+          <h3>{{ 'momApp.admin.dashboard.quickActions.openPermissions' | translate }}</h3>
+          <p>Quản lý quyền hạn Menu, API và danh mục quyền</p>
+        </div>
+        <span class="tile-arrow" nz-icon nzType="right" nzTheme="outline"></span>
+      </a>
+
+      <a routerLink="/app/login" class="action-tile tile-portal">
+        <div class="tile-icon-wrapper">
+          <span nz-icon nzType="login" nzTheme="outline"></span>
+        </div>
+        <div class="tile-info">
+          <h3>{{ 'momApp.admin.dashboard.quickActions.goUserLogin' | translate }}</h3>
+          <p>Chuyển đến màn hình đăng nhập của người dùng</p>
+        </div>
+        <span class="tile-arrow" nz-icon nzType="right" nzTheme="outline"></span>
+      </a>
     </div>
   </nz-card>
 </section>

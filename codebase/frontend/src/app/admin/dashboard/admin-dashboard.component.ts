@@ -8,8 +8,13 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
+import { NzMessageService } from 'ng-zorro-antd/message';
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
+import { AdminUserDetailModalComponent } from '../users/detail-modal/admin-user-detail-modal.component';
 
 type UserStatus = 'ACTIVE' | 'INACTIVE' | 'LOCKED';
 
@@ -20,7 +25,15 @@ interface AdminUser {
   username: string;
   email?: string;
   type?: string;
-  status: UserStatus;
+  status: string;
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  avatarUrl?: string;
+  createdAt?: string;
+  lastLogin?: string;
+  gender?: string;
+  dateOfBirth?: string;
 }
 
 interface UserPageResponse {
@@ -86,13 +99,17 @@ interface FamilyWithCount {
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, TranslateModule, NzButtonModule, NzCardModule, NzTableModule, NzTagModule],
+  imports: [CommonModule, RouterLink, TranslateModule, NzButtonModule, NzCardModule, NzTableModule, NzTagModule, NzIconModule, NzToolTipModule, NzModalModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })
 export class AdminDashboardComponent implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly i18n = inject(I18nService);
+  private readonly modalService = inject(NzModalService);
+  private readonly message = inject(NzMessageService);
+
+  actionLoadingUserId: number | null = null;
 
   totalUsers = 0;
   activeUsers = 0;
@@ -262,8 +279,8 @@ export class AdminDashboardComponent implements OnInit {
         const roles = workspace.roles ?? [];
 
         this.totalUsers = userResponse.total ?? users.length;
-        this.activeUsers = users.filter((item) => item.status === 'ACTIVE').length;
-        this.lockedUsers = users.filter((item) => item.status === 'LOCKED').length;
+        this.activeUsers = users.filter((item) => this.normalizeUserStatus(item.status) === 'ACTIVE').length;
+        this.lockedUsers = users.filter((item) => this.normalizeUserStatus(item.status) === 'LOCKED').length;
         this.adminUsers = users.filter((item) => (item.type ?? '').toUpperCase() !== 'USER').length;
 
         this.totalFamilies = families.length;
@@ -274,7 +291,7 @@ export class AdminDashboardComponent implements OnInit {
         this.rolesWithoutPermissions = roles.filter((role) => (role.permissionIds ?? []).length === 0).length;
 
         this.lockedUsersPreview = users
-          .filter((item) => item.status === 'LOCKED')
+          .filter((item) => this.normalizeUserStatus(item.status) === 'LOCKED')
           .sort((left, right) => right.id - left.id)
           .slice(0, 6);
 
@@ -342,8 +359,72 @@ export class AdminDashboardComponent implements OnInit {
     return item.id;
   }
 
+  fullNameOf(user: AdminUser): string {
+    const fullName = `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim();
+    return fullName || '-';
+  }
+
+  unlockUser(user: AdminUser): void {
+    if (this.actionLoadingUserId !== null) {
+      return;
+    }
+    this.actionLoadingUserId = user.id;
+    this.http.patch<void>(`${API_CONFIG.GATEWAY_URL}/auth/users/${user.id}/status`, { status: 'ACTIVE' }).subscribe({
+      next: () => {
+        this.actionLoadingUserId = null;
+        this.message.success(
+          this.i18n.translate('momApp.admin.users.messages.unlockSuccess')
+        );
+        this.loadSummary();
+      },
+      error: () => {
+        this.actionLoadingUserId = null;
+        this.message.error(
+          this.i18n.translate('momApp.admin.users.messages.unlockFailed')
+        );
+      }
+    });
+  }
+
+  openUserDetailModal(user: AdminUser): void {
+    const modalUser = {
+      id: user.id,
+      username: user.username,
+      fullName: this.fullNameOf(user),
+      email: user.email || '',
+      phone: user.phone || '',
+      avatarUrl: user.avatarUrl || '',
+      roleType: (user.type || 'USER') as any,
+      status: (user.status || 'ACTIVE') as any,
+      createdAt: user.createdAt || '',
+      lastLogin: user.lastLogin || '',
+      gender: user.gender || '',
+      dateOfBirth: user.dateOfBirth || ''
+    };
+
+    const modal = this.modalService.create({
+      nzTitle: undefined,
+      nzContent: AdminUserDetailModalComponent,
+      nzData: { user: modalUser },
+      nzClassName: 'admin-role-modal',
+      nzClosable: false,
+      nzFooter: null,
+      nzWidth: '90vw',
+      nzStyle: { maxWidth: '1300px', top: '20px' },
+      nzMaskClosable: true
+    });
+
+    modal.afterClose.subscribe(() => {
+      this.loadSummary();
+    });
+  }
+
   private formatTimestamp(value: Date): string {
     const locale = this.i18n.getCurrentLanguage() === 'en' ? 'en-US' : 'vi-VN';
     return value.toLocaleString(locale);
+  }
+
+  private normalizeUserStatus(status: string | null | undefined): string {
+    return (status ?? '').trim().toUpperCase();
   }
 }
