@@ -2404,6 +2404,7 @@
         "dashboard": "Admin dashboard",
         "users": "User management",
         "families": "Family management",
+        "finance": "Financial management",
         "access": "Access control",
         "permissions": "Permission catalog"
       },

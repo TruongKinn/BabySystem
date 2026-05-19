@@ -151,6 +151,7 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
                     ServerHttpRequest mutatedRequest = exchange.getRequest().mutate()
                             .header("X-User-Id", String.valueOf(userId))
                             .header("X-Family-Ids", familyIdsStr)
+                            .header("X-User-Admin", String.valueOf(access.admin()))
                             .build();
                     ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
 

@@ -206,6 +206,26 @@ public class ExpenseService {
         expenseEventPublisher.publishExpenseDeleted(expense.getFamilyId(), toExpenseChangedPayload(expense));
     }
 
+    @Transactional
+    @CacheEvict(value = "expense-summary", allEntries = true)
+    public void deleteCategory(Long categoryId) {
+        ExpenseCategoryEntity category = expenseCategoryRepository.findById(categoryId)
+                .orElseThrow(() -> new ResourceNotFoundException("Expense category not found"));
+
+        DataIsolationUtil.validateFamilyAccess(category.getFamilyId());
+
+        if (category.isDefaultCategory()) {
+            throw new IllegalArgumentException("Cannot delete default categories");
+        }
+
+        if (expenseRepository.existsByCategoryId(categoryId)) {
+            throw new IllegalArgumentException("Cannot delete category because it has associated expenses");
+        }
+
+        expenseCategoryRepository.delete(category);
+    }
+
+
     @Cacheable(value = "expense-summary", key = "#familyId + ':' + #month")
     public ExpenseSummaryResponse getMonthlySummary(Long familyId, String month) {
         DataIsolationUtil.validateFamilyAccess(familyId);

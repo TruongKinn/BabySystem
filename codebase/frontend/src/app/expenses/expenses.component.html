@@ -38,12 +38,18 @@
     <nz-card class="stat-card-user expense-stat-card">
       <div class="stat-line">
         <span class="stat-icon stat-icon-violet"><span nz-icon nzType="fund"></span></span>
-        <div class="stat-info">
-          <div class="stat-value">{{ monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}</div>
-          <div class="stat-label">{{ 'momApp.expenses.budgetLabel' | translate }}</div>
+        <div class="stat-info" style="display: flex; align-items: center; justify-content: space-between; flex: 1;">
+          <div>
+            <div class="stat-value">{{ monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}</div>
+            <div class="stat-label">{{ 'momApp.expenses.budgetLabel' | translate }}</div>
+          </div>
+          <button nz-button nzType="text" (click)="openBudgetModal()" nz-tooltip [nzTooltipTitle]="'Cấu hình hạn mức ngân sách'" style="border-radius: 8px; padding: 4px; display: flex; align-items: center; justify-content: center; height: 32px; width: 32px;">
+            <span nz-icon nzType="edit" style="font-size: 16px; color: #8b5cf6;"></span>
+          </button>
         </div>
       </div>
     </nz-card>
+
 
     <nz-card class="stat-card-user expense-stat-card">
       <div class="stat-line">
@@ -149,12 +155,16 @@
         <div class="balance-sub">
           <span class="budget-meta">
             {{ 'momApp.expenses.budgetLabel' | translate }}: {{ monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}
+            <button nz-button nzType="text" (click)="openBudgetModal()" nz-tooltip [nzTooltipTitle]="'Cấu hình hạn mức ngân sách'" style="padding: 0 4px; height: auto; min-width: auto; line-height: 1; color: inherit;">
+              <span nz-icon nzType="edit" style="font-size: 12px; vertical-align: middle;"></span>
+            </button>
           </span>
           <span class="budget-divider">•</span>
           <span class="budget-meta" [class.text-danger]="remainingBudget < 0">
             {{ 'momApp.expenses.remainingLabel' | translate }}: {{ remainingBudget | currency : 'VND' : 'symbol' : '1.0-0' }}
           </span>
         </div>
+
       </div>
 
       <div class="user-progress-bar budget-progress fintech-progress">
@@ -311,13 +321,25 @@
       <nz-form-item>
         <nz-form-label nzRequired>{{ 'momApp.expenses.modal.categoryLabel' | translate }}</nz-form-label>
         <nz-form-control>
-          <input nz-input formControlName="categoryName"
-            [placeholder]="'momApp.expenses.modal.categoryPlaceholder' | translate" list="expense-category-options" />
-          <datalist id="expense-category-options">
-            <option *ngFor="let category of categoryFilters" [value]="category.name"></option>
-          </datalist>
+          <div class="premium-category-input-group">
+            <input nz-input formControlName="categoryName" [placeholder]="'momApp.expenses.modal.categoryPlaceholder' | translate" [nzAutocomplete]="auto" class="premium-text-input" />
+            <nz-autocomplete #auto [nzBackfill]="true">
+              <nz-auto-option *ngFor="let category of categoryFilters" [nzValue]="category.name" [nzLabel]="category.name">
+                <div class="category-select-option-item" style="display:flex;align-items:center;justify-content:space-between;width:100%">
+                  <div style="display:flex;align-items:center;gap:8px">
+                    <span class="category-dot" [style.background]="category.colorCode || '#8b5cf6'"></span>
+                    <span>{{ category.name }}</span>
+                  </div>
+                  <button *ngIf="!category.defaultCategory && category.id > 0" nz-button nzType="text" nzDanger class="btn-delete-cat-inline" (click)="deleteCategory(category.id, $event)" nz-tooltip [nzTooltipTitle]="'Xóa danh mục này'">
+                    <span nz-icon nzType="delete" style="font-size: 14px;"></span>
+                  </button>
+                </div>
+              </nz-auto-option>
+            </nz-autocomplete>
+          </div>
         </nz-form-control>
       </nz-form-item>
+
 
       <nz-form-item class="modal-field-full">
         <nz-form-label>{{ 'momApp.expenses.modal.noteLabel' | translate }}</nz-form-label>
@@ -459,5 +481,33 @@
         </div>
       </ng-container>
     </div>
+  </ng-container>
+</nz-modal>
+
+<!-- Budget Config Modal -->
+<nz-modal [(nzVisible)]="isBudgetModalVisible" [nzTitle]="budgetTitleTpl" nzClassName="user-role-modal"
+  [nzWidth]="480" [nzOkLoading]="isSavingBudget" [nzOkText]="'commonActions.save' | translate"
+  [nzCancelText]="'commonActions.cancel' | translate" (nzOnCancel)="closeBudgetModal()"
+  (nzOnOk)="submitBudget()">
+  <ng-template #budgetTitleTpl>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="modal-title-icon-wrap modal-title-icon-wrap--violet">
+        <span nz-icon nzType="fund"></span>
+      </span>
+      <span class="modal-title-text">
+        <span class="modal-title-main">Cấu hình Ngân sách</span>
+        <span class="modal-title-sub">Thiết lập hạn mức ngân sách tháng {{ monthKey }}</span>
+      </span>
+    </div>
+  </ng-template>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="budgetForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>Hạn mức ngân sách (VND)</nz-form-label>
+        <nz-form-control nzErrorTip="Vui lòng nhập hạn mức hợp lệ lớn hơn hoặc bằng 0">
+          <input nz-input type="number" formControlName="limitAmount" placeholder="Nhập số tiền hạn mức (Ví dụ: 15000000)" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
   </ng-container>
 </nz-modal>

@@ -9,9 +9,10 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { ExpenseApi, ExpenseBudgetApi, ExpenseCategoryApi, ExpenseCategoryReportApi, ExpenseCategoryReportItemApi, ExpenseDailySummaryApi, ExpenseSummaryApi, FileMetadata, SuperAppCommandService } from '../core/services/super-app-command.service';
 import { I18nService } from '../i18n/i18n.service';
 
@@ -38,6 +39,7 @@ interface CategoryFilterOption {
   id: number;
   name: string;
   colorCode: string | null;
+  defaultCategory: boolean;
 }
 
 type ExpenseSortMode = 'NEWEST' | 'OLDEST' | 'HIGHEST' | 'LOWEST' | 'CATEGORY';
@@ -56,7 +58,8 @@ type ExpenseSortMode = 'NEWEST' | 'OLDEST' | 'HIGHEST' | 'LOWEST' | 'CATEGORY';
     NzModalModule,
     NzFormModule,
     NzInputModule,
-    NzToolTipModule
+    NzToolTipModule,
+    NzAutocompleteModule
   ],
   templateUrl: './expenses.component.html',
   styleUrl: './expenses.component.css'
@@ -68,6 +71,7 @@ export class ExpensesComponent implements OnInit {
   private readonly notification = inject(NzNotificationService);
   private readonly i18n = inject(I18nService);
   private readonly sanitizer = inject(DomSanitizer);
+  private readonly modalService = inject(NzModalService);
 
   readonly sortOptions: Array<{ value: ExpenseSortMode; labelKey: string }> = [
     { value: 'NEWEST', labelKey: 'momApp.expenses.filters.sort.newest' },
@@ -119,6 +123,16 @@ export class ExpensesComponent implements OnInit {
     categoryName: ['', [Validators.required, Validators.maxLength(100)]],
     note: ['', [Validators.maxLength(500)]]
   });
+
+  isBudgetModalVisible = false;
+  isSavingBudget = false;
+  allBudgets: ExpenseBudgetApi[] = [];
+  currentBudgetRecordId: number | null = null;
+
+  readonly budgetForm = this.fb.group({
+    limitAmount: [null as number | null, [Validators.required, Validators.min(0)]]
+  });
+
 
   ngOnInit(): void {
     this.loadExpenseWorkspace();
@@ -185,6 +199,7 @@ export class ExpensesComponent implements OnInit {
       .subscribe({
         next: ({ expenses, summary, daily, report, budgets, categories }) => {
           this.expenseRecords = expenses.map((item) => this.toExpenseRecord(item));
+          this.allBudgets = budgets;
 
           const summaryTotal = this.toNumber(summary.totalAmount);
           const fallbackTotal = this.expenseRecords.reduce((total, item) => total + item.amount, 0);
@@ -277,6 +292,91 @@ export class ExpensesComponent implements OnInit {
       note: ''
     });
   }
+
+  openBudgetModal(): void {
+    this.isBudgetModalVisible = true;
+    const exactBudget = this.allBudgets.find((b) => b.month === this.monthKey);
+    this.currentBudgetRecordId = exactBudget ? exactBudget.id : null;
+    this.budgetForm.reset({
+      limitAmount: exactBudget ? exactBudget.limitAmount : (this.monthlyBudget > 0 ? this.monthlyBudget : null)
+    });
+  }
+
+  closeBudgetModal(): void {
+    this.isBudgetModalVisible = false;
+    this.currentBudgetRecordId = null;
+    this.budgetForm.reset({
+      limitAmount: null
+    });
+  }
+
+  submitBudget(): void {
+    if (this.budgetForm.invalid) {
+      this.budgetForm.markAllAsTouched();
+      return;
+    }
+
+    const limitAmount = Number(this.budgetForm.controls.limitAmount.value);
+    if (!Number.isFinite(limitAmount) || limitAmount < 0) {
+      return;
+    }
+
+    this.isSavingBudget = true;
+    const request$ = this.currentBudgetRecordId
+      ? this.command.updateExpenseBudget(this.currentBudgetRecordId, { limitAmount })
+      : this.command.createExpenseBudget({ month: this.monthKey, limitAmount });
+
+    request$.subscribe({
+      next: () => {
+        this.isSavingBudget = false;
+        this.closeBudgetModal();
+        this.loadExpenseWorkspace();
+        this.notification.success(
+          this.i18n.translate('momApp.common.success'),
+          'Cập nhật hạn mức ngân sách thành công'
+        );
+      },
+      error: (err) => {
+        this.isSavingBudget = false;
+        this.notification.error(
+          this.i18n.translate('common.errorTitle'),
+          err?.error?.message || 'Không thể cập nhật ngân sách'
+        );
+      }
+    });
+  }
+
+  deleteCategory(categoryId: number, event: MouseEvent): void {
+    event.stopPropagation();
+    event.preventDefault();
+
+    this.modalService.confirm({
+      nzTitle: 'Xác nhận xóa danh mục',
+      nzContent: 'Bạn có chắc chắn muốn xóa danh mục này? Hành động này không thể hoàn tác.',
+      nzOkText: 'Xóa',
+      nzOkType: 'primary',
+      nzOkDanger: true,
+      nzCancelText: 'Hủy',
+      nzOnOk: () => {
+        this.command.deleteExpenseCategory(categoryId).subscribe({
+          next: () => {
+            this.notification.success(
+              this.i18n.translate('momApp.common.success'),
+              'Đã xóa danh mục thành công'
+            );
+            this.loadExpenseWorkspace();
+          },
+          error: (err) => {
+            this.notification.error(
+              this.i18n.translate('common.errorTitle'),
+              err?.error?.message || err?.message || 'Không thể xóa danh mục'
+            );
+          }
+        });
+      }
+    });
+  }
+
 
   submitCreateExpense(): void {
     if (this.createExpenseForm.invalid) {
@@ -550,7 +650,8 @@ export class ExpensesComponent implements OnInit {
       optionsById.set(category.id, {
         id: category.id,
         name: category.name,
-        colorCode: category.colorCode ?? null
+        colorCode: category.colorCode ?? null,
+        defaultCategory: category.defaultCategory
       });
     }
 
@@ -561,7 +662,8 @@ export class ExpensesComponent implements OnInit {
       optionsById.set(insight.categoryId, {
         id: insight.categoryId,
         name: insight.categoryName,
-        colorCode: insight.colorCode
+        colorCode: insight.colorCode,
+        defaultCategory: true
       });
     }
 

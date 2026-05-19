@@ -417,10 +417,35 @@ export class SuperAppCommandService {
     return this.get<ExpenseBudgetApi[]>('/expense/budgets', params);
   }
 
+  createExpenseBudget(input: { month: string; limitAmount: number }): Observable<void> {
+    const familyId = this.getFamilyId();
+    return this.post<void>('/expense/budgets', {
+      familyId,
+      month: input.month,
+      limitAmount: input.limitAmount
+    }).pipe(map(() => undefined));
+  }
+
+  updateExpenseBudget(budgetId: number, input: { limitAmount: number }): Observable<void> {
+    return this.put<void>(`/expense/budgets/${budgetId}`, {
+      limitAmount: input.limitAmount
+    }).pipe(map(() => undefined));
+  }
+
   getExpenseCategories(familyId?: number): Observable<ExpenseCategoryApi[]> {
     const params = new HttpParams().set('familyId', String(familyId ?? this.getFamilyId()));
     return this.get<ExpenseCategoryApi[]>('/expense/categories', params);
   }
+
+  deleteExpenseCategory(categoryId: number): Observable<void> {
+    return this.http
+      .delete<ApiEnvelope<unknown>>(`${this.apiBase}/expense/categories/${categoryId}`)
+      .pipe(
+        map(() => undefined),
+        catchError(this.handleError)
+      );
+  }
+
 
   createTask(input: {
     title: string;

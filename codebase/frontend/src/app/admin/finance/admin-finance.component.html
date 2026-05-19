@@ -1,0 +1,337 @@
+<div class="admin-finance-page animate-fade-in">
+  <!-- Hero Section -->
+  <div class="finance-hero-card">
+    <div class="finance-hero-kicker">MOM CONTROL CENTRE</div>
+    <div class="finance-hero-title">Quản lý Tài chính Hộ gia đình</div>
+    <div class="finance-hero-subtitle">Theo dõi sát sao hạn mức ngân sách, phân tích chỉ số chi tiêu thực tế, và phát hiện rủi ro vượt chi của toàn bộ hộ gia đình trong hệ thống.</div>
+  </div>
+
+  <!-- Filter & Controls Bar -->
+  <div class="filter-bar">
+    <div class="filter-left">
+      <div class="search-input-wrapper">
+        <span class="search-icon" nz-icon nzType="search"></span>
+        <input 
+          type="text" 
+          class="search-input" 
+          [placeholder]="'momApp.admin.families.searchPlaceholder' | translate" 
+          [ngModel]="searchText"
+          (ngModelChange)="onSearchChange($event)"
+        />
+      </div>
+    </div>
+    
+    <div class="filter-right">
+      <div class="month-picker-wrapper">
+        <label style="font-weight: 700; color: #475569; font-size: 0.9rem;">Tháng kiểm tra:</label>
+        <input 
+          type="month" 
+          class="month-picker" 
+          [ngModel]="monthKey" 
+          (ngModelChange)="onMonthChange($event)"
+        />
+      </div>
+      
+      <button nz-button nzType="primary" (click)="loadFinanceData()" [nzLoading]="loading" style="border-radius: 10px; height: 40px; font-weight: 600;">
+        <span nz-icon nzType="reload"></span> Làm mới
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" style="display: flex; justify-content: center; align-items: center; min-height: 300px; background: #ffffff; border-radius: 16px; box-shadow: var(--admin-shadow-sm);">
+    <nz-spin nzSimple nzSize="large" nzTip="Đang tổng hợp dữ liệu tài chính từ các vi dịch vụ..."></nz-spin>
+  </div>
+
+  <div *ngIf="!loading">
+    <!-- System KPIs Dashboard -->
+    <div class="kpi-grid animate-slide-up">
+      <!-- KPI 1 -->
+      <div class="kpi-card blue">
+        <div class="kpi-header">
+          <span class="kpi-title">Gia đình giám sát</span>
+          <div class="kpi-icon-container kpi-icon-blue">
+            <span nz-icon nzType="team"></span>
+          </div>
+        </div>
+        <div class="kpi-value">{{ familiesFinance.length }}</div>
+        <div class="kpi-meta">Hộ gia đình tham gia hệ thống</div>
+      </div>
+
+      <!-- KPI 2 -->
+      <div class="kpi-card green">
+        <div class="kpi-header">
+          <span class="kpi-title">Tổng ngân sách cấp</span>
+          <div class="kpi-icon-container kpi-icon-green">
+            <span nz-icon nzType="wallet"></span>
+          </div>
+        </div>
+        <div class="kpi-value">{{ formatCurrency(systemTotalBudget) }}</div>
+        <div class="kpi-meta">Hạn mức ngân sách tháng {{ monthKey }}</div>
+      </div>
+
+      <!-- KPI 3 -->
+      <div class="kpi-card orange">
+        <div class="kpi-header">
+          <span class="kpi-title">Tổng chi tiêu thực</span>
+          <div class="kpi-icon-container kpi-icon-orange">
+            <span nz-icon nzType="shopping-cart"></span>
+          </div>
+        </div>
+        <div class="kpi-value">{{ formatCurrency(systemTotalSpent) }}</div>
+        <div class="kpi-meta">Tổng tiền đã chi trong tháng</div>
+      </div>
+
+      <!-- KPI 4 -->
+      <div class="kpi-card purple">
+        <div class="kpi-header">
+          <span class="kpi-title">Tỷ lệ sử dụng quỹ</span>
+          <div class="kpi-icon-container kpi-icon-purple">
+            <span nz-icon nzType="pie-chart"></span>
+          </div>
+        </div>
+        <div class="kpi-value">{{ systemUsagePercent }}%</div>
+        <div class="kpi-meta">Tỷ lệ rút ruột quỹ chung hệ thống</div>
+      </div>
+    </div>
+
+    <!-- Data Table of Family Finances -->
+    <div class="premium-table-card animate-slide-up" style="animation-delay: 0.15s;">
+      <nz-table 
+        #financeTable 
+        [nzData]="filteredFamilies" 
+        [nzLoading]="loading"
+        class="premium-table"
+        [nzPageSize]="10"
+      >
+        <thead>
+          <tr>
+            <th style="width: 80px;">Mã hộ</th>
+            <th>Tên gia đình</th>
+            <th>Chủ hộ / Người tạo</th>
+            <th style="text-align: center;">Thành viên</th>
+            <th style="text-align: right;">Ngân sách tháng</th>
+            <th style="text-align: right;">Đã chi tiêu</th>
+            <th style="text-align: right;">Còn lại</th>
+            <th>Sử dụng</th>
+            <th style="text-align: center;">Trạng thái</th>
+            <th style="text-align: center; width: 160px;">Thao tác</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of financeTable.data">
+            <td style="font-weight: 700; color: #64748b;">#{{ item.id }}</td>
+            <td style="font-weight: 700; color: #1e293b;">{{ item.name }}</td>
+            <td>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <nz-avatar nzSize="small" nzIcon="user" style="background-color: #6366f1;"></nz-avatar>
+                <span style="font-weight: 500;">{{ item.creatorName }}</span>
+              </div>
+            </td>
+            <td style="text-align: center;">
+              <nz-tag nzColor="blue" style="font-weight: 600; border-radius: 6px; padding: 2px 8px;">
+                {{ item.memberCount }} người
+              </nz-tag>
+            </td>
+            <td style="text-align: right; font-weight: 700; color: #334155;">
+              {{ formatCurrency(item.monthlyBudget) }}
+            </td>
+            <td style="text-align: right; font-weight: 700; color: #4f46e5;">
+              {{ formatCurrency(item.totalSpent) }}
+            </td>
+            <td style="text-align: right; font-weight: 700;" [style.color]="item.remainingBudget > 0 ? '#16a34a' : '#ef4444'">
+              {{ item.monthlyBudget > 0 ? formatCurrency(item.remainingBudget) : 'N/A' }}
+            </td>
+            <td>
+              <div class="progress-bar-container" *ngIf="item.monthlyBudget > 0">
+                <div class="progress-track">
+                  <div 
+                    class="progress-fill" 
+                    [ngClass]="{
+                      'progress-fill-good': item.status === 'GOOD',
+                      'progress-fill-warning': item.status === 'WARNING',
+                      'progress-fill-over': item.status === 'OVER'
+                    }"
+                    [style.width.%]="item.budgetPercent > 100 ? 100 : item.budgetPercent"
+                  ></div>
+                </div>
+                <div class="progress-text">{{ item.budgetPercent }}% đã dùng</div>
+              </div>
+              <span *ngIf="item.monthlyBudget <= 0" style="color: #94a3b8; font-size: 0.85rem; font-style: italic;">Chưa đặt ngân sách</span>
+            </td>
+            <td style="text-align: center;">
+              <span class="status-badge" [ngClass]="getStatusClass(item.status)">
+                <span class="status-dot"></span>
+                {{ getStatusLabel(item.status) }}
+              </span>
+            </td>
+            <td style="text-align: center;">
+              <button class="action-btn-inspect" (click)="openDrawer(item)">
+                <span nz-icon nzType="eye"></span> Chi tiết
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredFamilies.length === 0">
+            <td colspan="10">
+              <div class="empty-state">
+                <span class="empty-icon" nz-icon nzType="inbox"></span>
+                <div class="empty-title">Không tìm thấy dữ liệu</div>
+                <div class="empty-subtitle">Hãy thử thay đổi từ khóa tìm kiếm hoặc cập nhật tháng khác.</div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </div>
+  </div>
+</div>
+
+<!-- Bento-style Premium Finance Detail Drawer -->
+<nz-drawer
+  [nzVisible]="isDrawerVisible"
+  [nzWidth]="640"
+  nzPlacement="right"
+  [nzTitle]="drawerTitle"
+  (nzOnClose)="closeDrawer()"
+  [nzBodyStyle]="{ padding: '24px', background: '#fcfcfd' }"
+>
+  <ng-template #drawerTitle>
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <span nz-icon nzType="wallet" style="font-size: 1.3rem; color: #6366f1;"></span>
+      <div>
+        <div style="font-size: 1.1rem; font-weight: 800; color: #0f172a;">Chi tiết tài chính Hộ gia đình</div>
+        <div style="font-size: 0.8rem; color: #64748b; font-weight: 500;">Gia đình: {{ selectedFamily?.name }} | Mã hộ: #{{ selectedFamily?.id }}</div>
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-container *nzDrawerContent>
+    <div class="drawer-content" *ngIf="selectedFamily">
+      <!-- Bento Grid Overview Cards -->
+      <div class="drawer-bento-grid">
+        <!-- Budget Card -->
+        <div class="bento-card">
+          <span class="bento-label">Ngân sách tháng</span>
+          <span class="bento-value" style="color: #1e293b;">
+            {{ selectedFamily.monthlyBudget > 0 ? formatCurrency(selectedFamily.monthlyBudget) : 'N/A' }}
+          </span>
+        </div>
+
+        <!-- Spent Card -->
+        <div class="bento-card">
+          <span class="bento-label">Tổng đã tiêu</span>
+          <span class="bento-value" style="color: #4f46e5;">{{ formatCurrency(selectedFamily.totalSpent) }}</span>
+        </div>
+
+        <!-- Remaining Card -->
+        <div class="bento-card">
+          <span class="bento-label">Hạn mức còn lại</span>
+          <span class="bento-value" [style.color]="selectedFamily.remainingBudget > 0 ? '#16a34a' : '#ef4444'">
+            {{ selectedFamily.monthlyBudget > 0 ? formatCurrency(selectedFamily.remainingBudget) : 'N/A' }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Usage Rate Indicator -->
+      <div class="bento-card" style="background: #ffffff; border: 1px solid #e2e8f0;" *ngIf="selectedFamily.monthlyBudget > 0">
+        <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 8px;">
+          <span style="color: #475569; font-size: 0.85rem;">Tỷ lệ dùng ngân sách tháng này:</span>
+          <span style="color: #0f172a;">{{ selectedFamily.budgetPercent }}%</span>
+        </div>
+        <div class="progress-track" style="height: 10px;">
+          <div 
+            class="progress-fill" 
+            [ngClass]="{
+              'progress-fill-good': selectedFamily.status === 'GOOD',
+              'progress-fill-warning': selectedFamily.status === 'WARNING',
+              'progress-fill-over': selectedFamily.status === 'OVER'
+            }"
+            [style.width.%]="selectedFamily.budgetPercent > 100 ? 100 : selectedFamily.budgetPercent"
+          ></div>
+        </div>
+        <div style="font-size: 0.75rem; color: #64748b; margin-top: 6px; font-weight: 500;" *ngIf="selectedFamily.status === 'OVER'">
+          🚨 Hộ gia đình này đã tiêu vượt hạn mức cấp phép {{ formatCurrency(selectedFamily.totalSpent - selectedFamily.monthlyBudget) }}.
+        </div>
+        <div style="font-size: 0.75rem; color: #d97706; margin-top: 6px; font-weight: 500;" *ngIf="selectedFamily.status === 'WARNING'">
+          ⚠️ Hộ gia đình này chạm ngưỡng cảnh báo an toàn chi tiêu (>80%).
+        </div>
+        <div style="font-size: 0.75rem; color: #16a34a; margin-top: 6px; font-weight: 500;" *ngIf="selectedFamily.status === 'GOOD'">
+          ✅ Chi tiêu trong vùng an toàn, cân đối ngân sách tốt.
+        </div>
+      </div>
+
+      <!-- Category Reports Section -->
+      <div>
+        <div class="drawer-section-title">
+          Phân rã chi tiêu theo phân loại
+        </div>
+        <div class="category-report-grid" *ngIf="selectedFamily.categoryReport.length > 0">
+          <div class="category-card" *ngFor="let cat of selectedFamily.categoryReport">
+            <div class="category-header">
+              <span class="category-name">{{ cat.categoryName }}</span>
+              <span class="category-amount">{{ formatCurrency(cat.totalAmount) }}</span>
+            </div>
+            <!-- Progress bar based on family total spent -->
+            <div class="progress-track" style="height: 4px; background: #f1f5f9;">
+              <div 
+                class="progress-fill"
+                style="background: #818cf8;"
+                [style.width.%]="selectedFamily.totalSpent > 0 ? getPercent(cat.totalAmount, selectedFamily.totalSpent) : 0"
+              ></div>
+            </div>
+            <div style="text-align: right; font-size: 0.7rem; color: #94a3b8; margin-top: 4px; font-weight: 600;">
+              {{ getPercent(cat.totalAmount, selectedFamily.totalSpent) }}% tổng chi
+            </div>
+          </div>
+        </div>
+        <div *ngIf="selectedFamily.categoryReport.length === 0" style="padding: 24px; text-align: center; background: #ffffff; border: 1px dashed #e2e8f0; border-radius: 12px; color: #94a3b8; font-style: italic;">
+          Không có dữ liệu phân rã danh mục trong tháng này.
+        </div>
+      </div>
+
+      <!-- Expense Details List Section -->
+      <div>
+        <div class="drawer-section-title">
+          Nhật ký chi tiêu tháng {{ monthKey }}
+        </div>
+        
+        <div style="max-height: 350px; overflow-y: auto; border: 1px solid #f1f5f9; border-radius: 12px;" class="custom-scrollbar">
+          <nz-table 
+            #expensesTable 
+            [nzData]="selectedFamily.expenses" 
+            [nzShowPagination]="false"
+            [nzFrontPagination]="true"
+            [nzPageSize]="100"
+            nzSize="small"
+          >
+            <thead>
+              <tr>
+                <th>Ngày chi</th>
+                <th>Danh mục</th>
+                <th>Số tiền</th>
+                <th>Ghi chú</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let exp of expensesTable.data">
+                <td style="font-weight: 600; color: #475569;">{{ exp.spentAt | date:'dd/MM/yyyy' }}</td>
+                <td>
+                  <nz-tag nzColor="blue" style="font-weight: 700; border-radius: 6px;">{{ exp.categoryName }}</nz-tag>
+                </td>
+                <td style="font-weight: 700; color: #0f172a; text-align: right;">{{ formatCurrency(exp.amount) }}</td>
+                <td style="color: #64748b; font-style: italic; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                  {{ exp.note || 'Không có ghi chú' }}
+                </td>
+              </tr>
+              <tr *ngIf="selectedFamily.expenses.length === 0">
+                <td colspan="4" style="text-align: center; color: #94a3b8; padding: 24px;">
+                  Chưa có phát sinh giao dịch chi tiêu nào trong tháng.
+                </td>
+              </tr>
+            </tbody>
+          </nz-table>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</nz-drawer>

@@ -5,6 +5,7 @@ import { AdminAccessComponent } from './admin/access/admin-access.component';
 import { AdminFamiliesComponent } from './admin/families/admin-families.component';
 import { AdminPermissionsComponent } from './admin/permissions/admin-permissions.component';
 import { AdminUsersComponent } from './admin/users/admin-users.component';
+import { AdminFinanceComponent } from './admin/finance/admin-finance.component';
 import { LoginComponent } from './auth/login/login.component';
 import { BabyComponent } from './baby/baby.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
@@ -53,6 +54,7 @@ export const routes: Routes = [
       { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'users', component: AdminUsersComponent },
       { path: 'families', component: AdminFamiliesComponent },
+      { path: 'finance', component: AdminFinanceComponent },
       { path: 'access', component: AdminAccessComponent },
       { path: 'permissions', component: AdminPermissionsComponent }
     ]

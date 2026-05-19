@@ -2404,6 +2404,7 @@
         "dashboard": "Dashboard admin",
         "users": "Quản lý người dùng",
         "families": "Quản lý hộ gia đình",
+        "finance": "Quản lý tài chính",
         "access": "Kiểm soát truy cập",
         "permissions": "Danh mục quyền"
       },

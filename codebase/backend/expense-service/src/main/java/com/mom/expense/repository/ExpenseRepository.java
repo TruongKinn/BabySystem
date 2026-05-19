@@ -24,4 +24,7 @@ public interface ExpenseRepository extends JpaRepository<ExpenseEntity, Long> {
             OffsetDateTime from,
             OffsetDateTime to
     );
+
+    boolean existsByCategoryId(Long categoryId);
 }
+

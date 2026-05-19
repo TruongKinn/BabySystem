@@ -46,6 +46,13 @@ public class ExpenseController {
         return ApiResponse.ok("Success", expenseService.getCategories(familyId));
     }
 
+    @DeleteMapping("/categories/{id}")
+    public ApiResponse<Object> deleteCategory(@PathVariable("id") Long categoryId) {
+        expenseService.deleteCategory(categoryId);
+        return ApiResponse.ok("Category deleted", null);
+    }
+
+
     @PostMapping("/budgets")
     public ApiResponse<BudgetResponse> createBudget(@Valid @RequestBody CreateBudgetRequest request) {
         return ApiResponse.ok("Budget created", expenseService.createBudget(request));

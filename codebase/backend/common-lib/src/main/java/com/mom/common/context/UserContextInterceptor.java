@@ -32,6 +32,11 @@ public class UserContextInterceptor implements HandlerInterceptor {
             UserContext.setFamilyIds(familyIds);
         }
 
+        String adminStr = request.getHeader("X-User-Admin");
+        if (StringUtils.hasText(adminStr)) {
+            UserContext.setAdmin(Boolean.parseBoolean(adminStr.trim()));
+        }
+
         return true;
     }
 
