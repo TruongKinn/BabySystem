@@ -338,6 +338,138 @@ body {
 }
 
 /* ============================================================
+   ADMIN ROLE - Button Design System
+   Distinct visual language from User role (steel / cyan / navy)
+   ============================================================ */
+
+:root {
+    --admin-btn-primary-start: #0f4c81;
+    --admin-btn-primary-end: #0aa2c0;
+    --admin-btn-primary-shadow: rgba(12, 84, 135, 0.32);
+    --admin-btn-default-bg: #f3f8fc;
+    --admin-btn-default-border: #c5d6e6;
+    --admin-btn-default-text: #184067;
+    --admin-btn-default-hover-bg: #e8f1f8;
+    --admin-btn-danger-bg: #fff3f1;
+    --admin-btn-danger-border: #f2bbb6;
+    --admin-btn-danger-text: #b93930;
+    --admin-btn-danger-hover-bg: #ffe7e4;
+}
+
+.admin-theme .ant-btn,
+.admin-role-modal .ant-btn {
+    border-radius: 10px !important;
+    font-weight: 650 !important;
+    letter-spacing: 0.02em;
+    height: 36px;
+    padding: 0 14px;
+    transition: all 0.2s ease !important;
+}
+
+.admin-theme .ant-btn.ant-btn-sm,
+.admin-role-modal .ant-btn.ant-btn-sm {
+    height: 30px;
+    padding: 0 11px;
+    border-radius: 8px !important;
+    font-size: 12px;
+}
+
+.admin-theme .ant-btn-default,
+.admin-role-modal .ant-btn-default,
+.admin-theme .ant-btn:not(.ant-btn-primary):not(.ant-btn-dangerous):not(.ant-btn-text):not(.ant-btn-link),
+.admin-role-modal .ant-btn:not(.ant-btn-primary):not(.ant-btn-dangerous):not(.ant-btn-text):not(.ant-btn-link) {
+    background: var(--admin-btn-default-bg) !important;
+    border-color: var(--admin-btn-default-border) !important;
+    color: var(--admin-btn-default-text) !important;
+}
+
+.admin-theme .ant-btn-default:hover:not([disabled]),
+.admin-role-modal .ant-btn-default:hover:not([disabled]),
+.admin-theme .ant-btn:not(.ant-btn-primary):not(.ant-btn-dangerous):not(.ant-btn-text):not(.ant-btn-link):hover:not([disabled]),
+.admin-role-modal .ant-btn:not(.ant-btn-primary):not(.ant-btn-dangerous):not(.ant-btn-text):not(.ant-btn-link):hover:not([disabled]) {
+    background: var(--admin-btn-default-hover-bg) !important;
+    border-color: #90afc9 !important;
+    color: #123653 !important;
+    transform: translateY(-1px);
+}
+
+.admin-theme .ant-btn-primary,
+.admin-role-modal .ant-btn-primary {
+    border: none !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, var(--admin-btn-primary-start) 0%, var(--admin-btn-primary-end) 100%) !important;
+    box-shadow: 0 6px 16px var(--admin-btn-primary-shadow) !important;
+}
+
+.admin-theme .ant-btn-primary:hover:not([disabled]),
+.admin-role-modal .ant-btn-primary:hover:not([disabled]) {
+    color: #ffffff !important;
+    filter: brightness(1.04);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(10, 90, 141, 0.38) !important;
+}
+
+.admin-theme .ant-btn-dangerous,
+.admin-role-modal .ant-btn-dangerous,
+.admin-theme .ant-btn-dangerous.ant-btn-default,
+.admin-role-modal .ant-btn-dangerous.ant-btn-default {
+    background: var(--admin-btn-danger-bg) !important;
+    border-color: var(--admin-btn-danger-border) !important;
+    color: var(--admin-btn-danger-text) !important;
+    box-shadow: none !important;
+}
+
+.admin-theme .ant-btn-dangerous:hover:not([disabled]),
+.admin-role-modal .ant-btn-dangerous:hover:not([disabled]),
+.admin-theme .ant-btn-dangerous.ant-btn-default:hover:not([disabled]),
+.admin-role-modal .ant-btn-dangerous.ant-btn-default:hover:not([disabled]) {
+    background: var(--admin-btn-danger-hover-bg) !important;
+    border-color: #e28d85 !important;
+    color: #9b2f28 !important;
+    transform: translateY(-1px);
+}
+
+.admin-theme .ant-btn-text,
+.admin-role-modal .ant-btn-text {
+    border-color: transparent !important;
+    background: transparent !important;
+    color: #245177 !important;
+}
+
+.admin-theme .ant-btn-text:hover:not([disabled]),
+.admin-role-modal .ant-btn-text:hover:not([disabled]) {
+    background: rgba(16, 84, 131, 0.09) !important;
+    color: #173e61 !important;
+}
+
+.admin-theme .ant-btn[disabled],
+.admin-role-modal .ant-btn[disabled] {
+    opacity: 0.6;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+.admin-theme .ant-btn:focus-visible,
+.admin-role-modal .ant-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(36, 103, 160, 0.2) !important;
+}
+
+.admin-theme button.role-link {
+    border-radius: 8px;
+    border: 1px solid transparent;
+    padding: 4px 10px;
+    font-weight: 600;
+    color: #16446d;
+    background: rgba(24, 64, 103, 0.05);
+    cursor: pointer;
+}
+
+.admin-theme button.role-link:hover {
+    background: rgba(24, 64, 103, 0.1);
+    border-color: rgba(24, 64, 103, 0.22);
+}
+/* ============================================================
    USER ROLE – Premium Design System
    Warm palette (orange / pink / purple) distinct from Admin (blue)
    ============================================================ */
@@ -1376,3 +1508,4 @@ body {
     .user-hero { padding: 18px 20px; }
     .user-hero-title { font-size: 18px; }
 }
+

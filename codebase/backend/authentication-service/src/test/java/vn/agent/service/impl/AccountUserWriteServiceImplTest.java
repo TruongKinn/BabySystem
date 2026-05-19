@@ -29,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -134,6 +135,26 @@ class AccountUserWriteServiceImplTest {
         assertEquals(UserStatus.LOCKED, user.getStatus());
         verify(userRepository).save(user);
         verify(userAuditLogRepository).save(any());
+    }
+
+    @Test
+    void updateUserTypeShouldRejectPromoteWhenUserLocked() {
+        User user = new User();
+        user.setId(6L);
+        user.setUsername("charlie");
+        user.setStatus(UserStatus.LOCKED);
+        user.setType(UserType.USER);
+        when(userRepository.findById(6L)).thenReturn(java.util.Optional.of(user));
+
+        InvalidDataException exception = assertThrows(
+                InvalidDataException.class,
+                () -> service.updateUserType(6L, UserType.ADMIN)
+        );
+
+        assertEquals("Locked user cannot be promoted to admin", exception.getMessage());
+        verify(userRepository, never()).save(any(User.class));
+        verify(userHasRoleRepository, never()).save(any(UserHasRole.class));
+        verify(userAuditLogRepository, never()).save(any());
     }
 
     @Test

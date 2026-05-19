@@ -2557,6 +2557,7 @@
           "unlockFailed": "Unable to unlock account.",
           "promoteSuccess": "User promoted to admin.",
           "promoteFailed": "Unable to promote user.",
+          "promoteLocked": "Cannot promote to admin while the account is locked.",
           "demoteSuccess": "Admin demoted to user.",
           "demoteFailed": "Unable to demote admin."
         },

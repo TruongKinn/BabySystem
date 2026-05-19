@@ -95,16 +95,20 @@
 }
 
 .role-link {
-  border: 0;
-  background: none;
-  padding: 0;
-  color: #0f172a;
+  border: 1px solid #c5d6e6;
+  background: #f3f8fc;
+  padding: 4px 10px;
+  border-radius: 8px;
+  color: #16446d;
   font-weight: 700;
   cursor: pointer;
+  transition: all 0.2s ease;
 }
 
 .role-link:hover {
-  color: #1d4ed8;
+  color: #123653;
+  border-color: #90afc9;
+  background: #e8f1f8;
 }
 
 .row-actions {

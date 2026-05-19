@@ -13,6 +13,7 @@ import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 import { SuperAppCommandService } from '../../core/services/super-app-command.service';
@@ -61,7 +62,7 @@ interface UserPageResponse {
     NzTagModule,
     NzAvatarModule,
     NzIconModule,
-    AdminUserDetailModalComponent
+    NzToolTipModule
   ],
   templateUrl: './admin-users.component.html',
   styleUrl: './admin-users.component.css'
@@ -98,7 +99,7 @@ export class AdminUsersComponent implements OnInit {
   }
 
   get lockedOnPage(): number {
-    return this.filteredUsers.filter((item) => item.status === 'LOCKED').length;
+    return this.filteredUsers.filter((item) => this.normalizeUserStatus(item.status) === 'LOCKED').length;
   }
 
   get adminOnPage(): number {
@@ -151,11 +152,31 @@ export class AdminUsersComponent implements OnInit {
   }
 
   promoteToAdmin(user: AdminUser): void {
+    if (!this.canPromoteToAdmin(user)) {
+      this.message.warning(this.i18n.translate('momApp.admin.users.messages.promoteLocked'));
+      return;
+    }
     this.updateUserType(user, 'ADMIN');
   }
 
   demoteToUser(user: AdminUser): void {
     this.updateUserType(user, 'USER');
+  }
+
+  canPromoteToAdmin(user: AdminUser): boolean {
+    return this.normalizeUserType(user.type) === 'USER' && this.normalizeUserStatus(user.status) !== 'LOCKED';
+  }
+
+  canDemoteToUser(user: AdminUser): boolean {
+    return this.normalizeUserType(user.type) === 'ADMIN';
+  }
+
+  canLockUser(user: AdminUser): boolean {
+    return this.normalizeUserStatus(user.status) !== 'LOCKED';
+  }
+
+  canUnlockUser(user: AdminUser): boolean {
+    return this.normalizeUserStatus(user.status) === 'LOCKED';
   }
 
   openResetPasswordModal(user: AdminUser): void {
@@ -200,23 +221,13 @@ export class AdminUsersComponent implements OnInit {
   }
 
   openUserDetailModal(user: AdminUser): void {
-    const modal = this.modalService.create({
-      nzTitle: undefined,
-      nzContent: AdminUserDetailModalComponent,
-      nzClassName: 'user-role-modal',
-      nzFooter: null,
-      nzWidth: '90vw',
-      nzStyle: { maxWidth: '1300px', top: '20px' },
-      nzMaskClosable: true
-    });
-
-    const instance = modal.getContentComponent();
-    instance.user = {
+    const modalUser = {
       id: user.id,
       username: user.username,
       fullName: this.fullNameOf(user),
       email: user.email,
       phone: user.phone || '',
+      avatarUrl: user.avatarUrl || '',
       roleType: (user.type || 'USER') as any,
       status: (user.status || 'ACTIVE') as any,
       createdAt: (user as any).createdAt || '',
@@ -224,6 +235,18 @@ export class AdminUsersComponent implements OnInit {
       gender: (user as any).gender || '',
       dateOfBirth: user.dateOfBirth || ''
     };
+
+    const modal = this.modalService.create({
+      nzTitle: undefined,
+      nzContent: AdminUserDetailModalComponent,
+      nzData: { user: modalUser },
+      nzClassName: 'admin-role-modal',
+      nzClosable: false,
+      nzFooter: null,
+      nzWidth: '90vw',
+      nzStyle: { maxWidth: '1300px', top: '20px' },
+      nzMaskClosable: true
+    });
 
     modal.afterClose.subscribe(() => {
       this.loadUsers();
@@ -310,17 +333,6 @@ export class AdminUsersComponent implements OnInit {
   }
 
 
-  statusColorOf(status: string): string {
-    const normalized = this.normalizeUserStatus(status);
-    if (normalized === 'ACTIVE') {
-      return 'green';
-    }
-    if (normalized === 'LOCKED') {
-      return 'red';
-    }
-    return 'gold';
-  }
-
   statusClassOf(status: string): string {
     const normalized = this.normalizeUserStatus(status);
     if (normalized === 'ACTIVE') {
@@ -346,6 +358,17 @@ export class AdminUsersComponent implements OnInit {
       return this.i18n.translate('momApp.admin.users.role.ADMIN');
     }
     return this.i18n.translate('momApp.admin.users.role.USER');
+  }
+
+  roleClassOf(type?: string): string {
+    const normalized = this.normalizeUserType(type);
+    if (normalized === 'OWNER') {
+      return 'role-owner';
+    }
+    if (normalized === 'ADMIN') {
+      return 'role-admin';
+    }
+    return 'role-user';
   }
 
   trackByUser(_: number, user: AdminUser): number {

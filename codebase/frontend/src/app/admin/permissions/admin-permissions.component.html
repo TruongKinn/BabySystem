@@ -1,4 +1,4 @@
-<section class="admin-permissions-page">
+<section class="admin-permissions-page admin-theme">
   <header class="permissions-hero">
     <div class="hero-copy">
       <span class="hero-kicker">{{ 'momApp.admin.permissions.hero.kicker' | translate }}</span>
@@ -147,6 +147,7 @@
 </section>
 
 <nz-modal
+  nzWrapClassName="admin-role-modal"
   [(nzVisible)]="isPermissionModalVisible"
   [nzTitle]="permissionModalTitleKey | translate"
   [nzOkText]="'commonActions.save' | translate"

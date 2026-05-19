@@ -1,4 +1,4 @@
-<section class="admin-access-page">
+<section class="admin-access-page admin-theme">
   <header class="access-hero">
     <div class="hero-copy">
       <span class="hero-kicker">{{ 'momApp.admin.access.hero.kicker' | translate }}</span>
@@ -191,6 +191,7 @@
 </section>
 
 <nz-modal
+  nzWrapClassName="admin-role-modal"
   [(nzVisible)]="isRoleModalVisible"
   [nzTitle]="roleModalTitleKey | translate"
   [nzOkText]="'commonActions.save' | translate"

@@ -2557,6 +2557,7 @@
           "unlockFailed": "Không thể mở khóa tài khoản.",
           "promoteSuccess": "Đã nâng user lên admin.",
           "promoteFailed": "Không thể nâng user lên admin.",
+          "promoteLocked": "Không thể nâng quyền admin khi tài khoản đang bị khóa.",
           "demoteSuccess": "Đã hạ admin xuống user.",
           "demoteFailed": "Không thể hạ admin xuống user."
         },

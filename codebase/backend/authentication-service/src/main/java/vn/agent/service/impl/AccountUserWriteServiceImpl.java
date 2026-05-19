@@ -198,7 +198,14 @@ public class AccountUserWriteServiceImpl implements AccountUserWriteService {
                 .orElseThrow(() -> new InvalidDataException("User not found: " + userId));
 
         UserType previousType = resolveDisplayType(user);
-        user.setType(resolvePersistedType(type));
+        UserType requestedPersistedType = resolvePersistedType(type);
+        if (UserStatus.LOCKED.equals(user.getStatus())
+                && previousType == UserType.USER
+                && requestedPersistedType == UserType.ADMIN) {
+            throw new InvalidDataException("Locked user cannot be promoted to admin");
+        }
+
+        user.setType(requestedPersistedType);
         User savedUser = userRepository.save(user);
         syncRoles(savedUser, type);
 

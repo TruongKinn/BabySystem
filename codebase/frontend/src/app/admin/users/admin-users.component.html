@@ -1,4 +1,4 @@
-<section class="admin-users-page">
+<section class="admin-users-page admin-theme">
   <header class="users-hero">
     <div class="hero-copy">
       <span class="hero-kicker">{{ 'momApp.admin.users.hero.kicker' | translate }}</span>
@@ -56,7 +56,7 @@
           <th>{{ 'momApp.admin.users.table.phone' | translate }}</th>
           <th>{{ 'momApp.admin.users.table.roleType' | translate }}</th>
           <th>{{ 'momApp.admin.users.table.status' | translate }}</th>
-          <th>{{ 'momApp.admin.users.table.actions' | translate }}</th>
+          <th nzWidth="180px">{{ 'momApp.admin.users.table.actions' | translate }}</th>
         </tr>
       </thead>
       <tbody>
@@ -87,10 +87,10 @@
           <td>{{ user.email || '-' }}</td>
           <td>{{ user.phone || '-' }}</td>
           <td>
-            <span class="role-pill">{{ roleLabel(user.type) }}</span>
+            <span class="role-pill" [ngClass]="roleClassOf(user.type)">{{ roleLabel(user.type) }}</span>
           </td>
           <td>
-            <nz-tag [nzColor]="statusColorOf(user.status)" [ngClass]="statusClassOf(user.status)">
+            <nz-tag class="status-pill" [ngClass]="statusClassOf(user.status)">
               {{ statusLabel(user.status) }}
             </nz-tag>
           </td>
@@ -99,60 +99,92 @@
               <button
                 nz-button
                 nzType="default"
-                class="btn-detail-view"
+                nzShape="circle"
+                class="action-icon action-icon-detail"
+                nz-tooltip
+                [nzTooltipTitle]="'momApp.admin.users.actions.viewDetails' | translate"
+                [attr.aria-label]="'momApp.admin.users.actions.viewDetails' | translate"
                 (click)="openUserDetailModal(user)"
               >
                 <span nz-icon nzType="eye" nzTheme="outline"></span>
-                {{ 'momApp.admin.users.actions.viewDetails' | translate }}
               </button>
 
               <button
-                *ngIf="user.status !== 'LOCKED'"
+                *ngIf="canLockUser(user)"
                 nz-button
                 nzType="default"
+                nzShape="circle"
+                class="action-icon action-icon-lock"
                 nzDanger
+                nz-tooltip
+                [nzTooltipTitle]="'momApp.admin.users.actions.lock' | translate"
+                [attr.aria-label]="'momApp.admin.users.actions.lock' | translate"
                 nz-popconfirm
                 [nzPopconfirmTitle]="'momApp.admin.users.actions.lockConfirm' | translate"
                 (nzOnConfirm)="lockUser(user)"
                 [nzLoading]="actionLoadingUserId === user.id"
               >
-                {{ 'momApp.admin.users.actions.lock' | translate }}
+                <span nz-icon nzType="lock" nzTheme="outline"></span>
               </button>
 
               <button
-                *ngIf="user.status === 'LOCKED'"
+                *ngIf="canUnlockUser(user)"
                 nz-button
                 nzType="default"
+                nzShape="circle"
+                class="action-icon action-icon-unlock"
+                nz-tooltip
+                [nzTooltipTitle]="'momApp.admin.users.actions.unlock' | translate"
+                [attr.aria-label]="'momApp.admin.users.actions.unlock' | translate"
                 nz-popconfirm
                 [nzPopconfirmTitle]="'momApp.admin.users.actions.unlockConfirm' | translate"
                 (nzOnConfirm)="unlockUser(user)"
                 [nzLoading]="actionLoadingUserId === user.id"
               >
-                {{ 'momApp.admin.users.actions.unlock' | translate }}
-              </button>
-
-              <button nz-button nzType="primary" (click)="openResetPasswordModal(user)">
-                {{ 'momApp.admin.users.actions.resetPassword' | translate }}
+                <span nz-icon nzType="unlock" nzTheme="outline"></span>
               </button>
 
               <button
-                *ngIf="user.type !== 'ADMIN' && user.type !== 'OWNER'"
                 nz-button
                 nzType="default"
+                nzShape="circle"
+                class="action-icon action-icon-reset"
+                nz-tooltip
+                [nzTooltipTitle]="'momApp.admin.users.actions.resetPassword' | translate"
+                [attr.aria-label]="'momApp.admin.users.actions.resetPassword' | translate"
+                (click)="openResetPasswordModal(user)"
+              >
+                <span nz-icon nzType="key" nzTheme="outline"></span>
+              </button>
+
+              <button
+                *ngIf="canPromoteToAdmin(user)"
+                nz-button
+                nzType="default"
+                nzShape="circle"
+                class="action-icon action-icon-promote"
+                nz-tooltip
+                [nzTooltipTitle]="'momApp.admin.users.actions.promoteToAdmin' | translate"
+                [attr.aria-label]="'momApp.admin.users.actions.promoteToAdmin' | translate"
                 (click)="promoteToAdmin(user)"
                 [nzLoading]="actionLoadingUserId === user.id"
               >
-                {{ 'momApp.admin.users.actions.promoteToAdmin' | translate }}
+                <span nz-icon nzType="arrow-up" nzTheme="outline"></span>
               </button>
 
               <button
-                *ngIf="user.type === 'ADMIN'"
+                *ngIf="canDemoteToUser(user)"
                 nz-button
                 nzType="default"
+                nzShape="circle"
+                class="action-icon action-icon-demote"
+                nz-tooltip
+                [nzTooltipTitle]="'momApp.admin.users.actions.demoteToUser' | translate"
+                [attr.aria-label]="'momApp.admin.users.actions.demoteToUser' | translate"
                 (click)="demoteToUser(user)"
                 [nzLoading]="actionLoadingUserId === user.id"
               >
-                {{ 'momApp.admin.users.actions.demoteToUser' | translate }}
+                <span nz-icon nzType="arrow-down" nzTheme="outline"></span>
               </button>
             </div>
           </td>
@@ -163,6 +195,7 @@
 </section>
 
 <nz-modal
+  nzWrapClassName="admin-role-modal"
   [(nzVisible)]="isResetModalVisible"
   [nzTitle]="'momApp.admin.users.resetModal.title' | translate"
   [nzOkText]="'momApp.admin.users.resetModal.confirm' | translate"

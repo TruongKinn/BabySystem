@@ -1,4 +1,4 @@
-<section class="admin-families-page">
+<section class="admin-families-page admin-theme">
   <header class="families-hero">
     <div class="hero-copy">
       <span class="hero-kicker">{{ 'momApp.admin.families.hero.kicker' | translate }}</span>
@@ -112,6 +112,7 @@
 </section>
 
 <nz-modal
+  nzWrapClassName="admin-role-modal"
   [(nzVisible)]="isCreateModalVisible"
   [nzTitle]="'momApp.admin.families.modal.createTitle' | translate"
   [nzOkText]="'commonActions.create' | translate"
@@ -136,6 +137,7 @@
 </nz-modal>
 
 <nz-modal
+  nzWrapClassName="admin-role-modal"
   [(nzVisible)]="isEditModalVisible"
   [nzTitle]="'momApp.admin.families.modal.editTitle' | translate"
   [nzOkText]="'commonActions.save' | translate"
@@ -161,9 +163,10 @@
 
 <!-- MODAL QUẢN LÝ THÀNH VIÊN HỘ GIA ĐÌNH -->
 <nz-modal
+  nzWrapClassName="admin-role-modal"
   [(nzVisible)]="isManageMembersModalVisible"
   [nzTitle]="('momApp.admin.families.modal.manageMembersTitle' | translate) + ': ' + (selectedFamily?.name || '')"
-  [nzWidth]="850"
+  [nzWidth]="1100"
   [nzFooter]="null"
   (nzOnCancel)="closeManageMembersModal()"
 >

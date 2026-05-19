@@ -1,0 +1,265 @@
+<div class="modal-header">
+  <div class="header-title">
+    <span nz-icon nzType="user" class="header-icon"></span>
+    <div>
+      <h2>{{ i18n.translate('momApp.admin.users.detailModal.title') }}</h2>
+      <p class="header-subtitle">Th&#244;ng tin chi ti&#7871;t 360&#176; c&#7911;a t&#224;i kho&#7843;n ng&#432;&#7901;i d&#249;ng</p>
+    </div>
+  </div>
+  <button class="btn-close-modal" type="button" (click)="closeModal()" aria-label="Close">
+    <span nz-icon nzType="close" aria-hidden="true"></span>
+  </button>
+</div>
+
+<div class="bento-container admin-theme admin-detail-modal">
+  <div class="bento-grid">
+    <div class="bento-card profile-card" *ngIf="userDetail">
+      <div class="profile-header">
+        <div class="avatar-container">
+          <nz-avatar
+            [nzSize]="80"
+            [nzSrc]="avatarUrlOf(userDetail)"
+            [nzText]="userInitialsOf(userDetail.fullName)"
+            class="profile-avatar">
+          </nz-avatar>
+          <span class="status-badge" [ngClass]="statusClassOf(userDetail.status)"></span>
+        </div>
+        <h3>{{ userDetail.fullName }}</h3>
+        <span class="user-role-pill" [ngClass]="roleClassOf(userDetail.roleType)">
+          {{ getRoleTypeLabel(userDetail.roleType || 'USER') }}
+        </span>
+      </div>
+
+      <div class="profile-details">
+        <div class="detail-item">
+          <span nz-icon nzType="user" class="detail-icon"></span>
+          <div class="detail-info">
+            <label>Username</label>
+            <span>{{ userDetail.username }}</span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <span nz-icon nzType="mail" class="detail-icon"></span>
+          <div class="detail-info">
+            <label>Email</label>
+            <span class="text-truncate">{{ userDetail.email || 'N/A' }}</span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <span nz-icon nzType="phone" class="detail-icon"></span>
+          <div class="detail-info">
+            <label>S&#7889; &#273;i&#7879;n tho&#7841;i</label>
+            <span>{{ userDetail.phone || 'N/A' }}</span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <span nz-icon nzType="calendar" class="detail-icon"></span>
+          <div class="detail-info">
+            <label>{{ i18n.translate('momApp.admin.users.detailModal.birthDateLabel') }}</label>
+            <span>{{ formatDate(userDetail.dateOfBirth) }}</span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <span nz-icon nzType="info-circle" class="detail-icon"></span>
+          <div class="detail-info">
+            <label>Gi&#7899;i t&#237;nh</label>
+            <span>{{ userDetail.gender === 'MALE' ? 'Nam' : userDetail.gender === 'FEMALE' ? 'N&#7919;' : 'N/A' }}</span>
+          </div>
+        </div>
+
+        <div class="detail-item">
+          <span nz-icon nzType="clock-circle" class="detail-icon"></span>
+          <div class="detail-info">
+            <label>{{ i18n.translate('momApp.admin.users.detailModal.createdAtLabel') }}</label>
+            <span>{{ formatDate(userDetail.createdAt) }}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="profile-actions">
+        <span class="status-label-indicator status-pill" [ngClass]="statusClassOf(userDetail.status)">
+          Tr&#7841;ng th&#225;i: {{ statusTextOf(userDetail.status) }}
+        </span>
+      </div>
+    </div>
+
+    <div class="right-column">
+      <div class="bento-card families-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span nz-icon nzType="home" class="card-icon"></span>
+            <h4>{{ i18n.translate('momApp.admin.users.detailModal.familySection') }}</h4>
+          </div>
+          <span class="badge-count" *ngIf="!isFamiliesLoading">{{ families.length }}</span>
+        </div>
+
+        <div class="skeleton-container" *ngIf="isFamiliesLoading">
+          <div class="skeleton-item" *ngFor="let i of [1, 2]">
+            <div class="skeleton-line title"></div>
+            <div class="skeleton-line subtitle"></div>
+          </div>
+        </div>
+
+        <div class="card-content" *ngIf="!isFamiliesLoading">
+          <div class="empty-state" *ngIf="families.length === 0">
+            <span nz-icon nzType="info-circle" class="empty-icon"></span>
+            <p>{{ i18n.translate('momApp.admin.users.detailModal.noFamilies') }}</p>
+          </div>
+
+          <div class="family-item" *ngFor="let family of families">
+            <div class="family-info">
+              <h5>{{ family.name }}</h5>
+              <span class="family-id">ID H&#7897;: #{{ family.id }}</span>
+            </div>
+
+            <div class="family-actions">
+              <nz-select
+                [ngModel]="family.currentUserRole"
+                (ngModelChange)="changeMemberRole(family.id, $event)"
+                class="modern-select role-select">
+                <nz-option nzValue="MOM" nzLabel="M&#7865; (Mom)"></nz-option>
+                <nz-option nzValue="DAD" nzLabel="B&#7889; (Dad)"></nz-option>
+                <nz-option nzValue="GRANDMA" nzLabel="B&#224; (Grandma)"></nz-option>
+                <nz-option nzValue="CAREGIVER" nzLabel="Ng&#432;&#7901;i ch&#259;m s&#243;c"></nz-option>
+                <nz-option nzValue="ADMIN" nzLabel="Qu&#7843;n tr&#7883; gia &#273;&#236;nh"></nz-option>
+              </nz-select>
+
+              <button
+                nz-button
+                nzType="text"
+                nzDanger
+                class="btn-action-icon"
+                nz-popconfirm
+                [nzPopconfirmTitle]="i18n.translate('momApp.admin.users.detailModal.popconfirm.removeMember')"
+                (nzOnConfirm)="removeMemberFromFamily(family.id)">
+                <span nz-icon nzType="delete"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bento-card babies-card">
+        <div class="card-header">
+          <div class="card-title">
+            <span nz-icon nzType="smile" class="card-icon"></span>
+            <h4>{{ i18n.translate('momApp.admin.users.detailModal.babySection') }}</h4>
+          </div>
+          <span class="badge-count" *ngIf="!isBabiesLoading">{{ babies.length }}</span>
+        </div>
+
+        <div class="skeleton-container" *ngIf="isBabiesLoading">
+          <div class="skeleton-item grid" *ngFor="let i of [1, 2]">
+            <div class="skeleton-line title"></div>
+            <div class="skeleton-line subtitle"></div>
+          </div>
+        </div>
+
+        <div class="card-content" *ngIf="!isBabiesLoading">
+          <div class="empty-state" *ngIf="babies.length === 0">
+            <span nz-icon nzType="info-circle" class="empty-icon"></span>
+            <p>{{ i18n.translate('momApp.admin.users.detailModal.noBabies') }}</p>
+          </div>
+
+          <div class="babies-grid" *ngIf="babies.length > 0">
+            <div class="baby-card" *ngFor="let baby of babies" [class.editing]="baby.isEditing">
+              <ng-container *ngIf="!baby.isEditing">
+                <div class="baby-card-header">
+                  <div class="baby-name-container">
+                    <span nz-icon [nzType]="baby.gender === 'MALE' ? 'man' : 'woman'" class="gender-icon" [ngClass]="baby.gender.toLowerCase()"></span>
+                    <h6>{{ baby.name }}</h6>
+                  </div>
+                  <div class="baby-controls">
+                    <button nz-button nzType="text" class="btn-action-icon edit" (click)="startEditBaby(baby)">
+                      <span nz-icon nzType="edit"></span>
+                    </button>
+                    <button
+                      nz-button
+                      nzType="text"
+                      nzDanger
+                      class="btn-action-icon"
+                      nz-popconfirm
+                      [nzPopconfirmTitle]="i18n.translate('momApp.admin.users.detailModal.popconfirm.deleteBaby')"
+                      (nzOnConfirm)="deleteBaby(baby.id)">
+                      <span nz-icon nzType="delete"></span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="baby-card-body">
+                  <div class="baby-metric">
+                    <span nz-icon nzType="calendar"></span>
+                    <span>{{ formatDate(baby.birthDate) }}</span>
+                  </div>
+                  <div class="baby-metric" *ngIf="baby.weightKg">
+                    <span nz-icon nzType="dashboard"></span>
+                    <span>C&#226;n n&#7863;ng: <strong>{{ baby.weightKg }} kg</strong></span>
+                  </div>
+                  <div class="baby-metric" *ngIf="baby.heightCm">
+                    <span nz-icon nzType="column-height"></span>
+                    <span>Chi&#7873;u cao: <strong>{{ baby.heightCm }} cm</strong></span>
+                  </div>
+                  <div class="baby-family-tag">
+                    <span nz-icon nzType="home"></span> Gia &#273;&#236;nh: #{{ baby.familyId }}
+                  </div>
+                </div>
+              </ng-container>
+
+              <ng-container *ngIf="baby.isEditing && baby.editData">
+                <div class="edit-baby-form">
+                  <div class="form-header">
+                    <h6>{{ i18n.translate('momApp.admin.users.detailModal.editBabyTitle') }}</h6>
+                  </div>
+
+                  <div class="form-item">
+                    <label>T&#234;n b&#233;</label>
+                    <input nz-input [(ngModel)]="baby.editData.name" placeholder="T&#234;n b&#233;" class="modern-input" />
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-item half">
+                      <label>Ng&#224;y sinh</label>
+                      <nz-date-picker [(ngModel)]="baby.editData.birthDate" nzFormat="yyyy-MM-dd" class="modern-datepicker"></nz-date-picker>
+                    </div>
+                    <div class="form-item half">
+                      <label>Gi&#7899;i t&#237;nh</label>
+                      <nz-select [(ngModel)]="baby.editData.gender" class="modern-select">
+                        <nz-option nzValue="MALE" nzLabel="Nam"></nz-option>
+                        <nz-option nzValue="FEMALE" nzLabel="N&#7919;"></nz-option>
+                        <nz-option nzValue="OTHER" nzLabel="Kh&#225;c"></nz-option>
+                      </nz-select>
+                    </div>
+                  </div>
+
+                  <div class="form-row">
+                    <div class="form-item half">
+                      <label>C&#226;n n&#7863;ng (kg)</label>
+                      <input nz-input type="number" step="0.1" [(ngModel)]="baby.editData.weightKg" class="modern-input" />
+                    </div>
+                    <div class="form-item half">
+                      <label>Chi&#7873;u cao (cm)</label>
+                      <input nz-input type="number" step="1" [(ngModel)]="baby.editData.heightCm" class="modern-input" />
+                    </div>
+                  </div>
+
+                  <div class="form-actions">
+                    <button nz-button nzType="default" (click)="cancelEditBaby(baby)" class="btn-cancel-inline">
+                      H&#7911;y
+                    </button>
+                    <button nz-button nzType="primary" (click)="saveBabyDetails(baby)" class="btn-save-inline">
+                      L&#432;u
+                    </button>
+                  </div>
+                </div>
+              </ng-container>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
