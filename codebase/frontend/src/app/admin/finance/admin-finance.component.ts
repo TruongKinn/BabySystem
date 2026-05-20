@@ -208,7 +208,7 @@ export class AdminFinanceComponent implements OnInit {
           this.familiesFinance = [];
           this.filteredFamilies = [];
           this.calculateSystemMetrics();
-          this.message.error(this.i18n.translate('momApp.admin.families.messages.loadFailed') || 'Không thể tải dữ liệu tài chính gia đình');
+          this.message.error(this.i18n.translate('momApp.admin.finance.messages.loadFailed') || 'Không thể tải dữ liệu tài chính gia đình');
         }
       });
   }
@@ -290,13 +290,13 @@ export class AdminFinanceComponent implements OnInit {
   getStatusLabel(status: string): string {
     switch (status) {
       case 'GOOD':
-        return 'An toàn';
+        return this.i18n.translate('momApp.admin.finance.status.good');
       case 'WARNING':
-        return 'Cảnh báo';
+        return this.i18n.translate('momApp.admin.finance.status.warning');
       case 'OVER':
-        return 'Vượt hạn mức';
+        return this.i18n.translate('momApp.admin.finance.status.over');
       default:
-        return 'Chưa đặt';
+        return this.i18n.translate('momApp.admin.finance.status.notSet');
     }
   }
 }

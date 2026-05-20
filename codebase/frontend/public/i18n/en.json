@@ -2728,6 +2728,93 @@
           "userAccessSubtitle": "Enter an account id and run inspect access."
         }
       },
+      "finance": {
+        "hero": {
+          "kicker": "MOM CONTROL CENTRE",
+          "title": "Family Financial Management",
+          "subtitle": "Closely monitor budget limits, analyze actual spending metrics, and detect overspending risks for all households in the system."
+        },
+        "searchPlaceholder": "Search by family name or creator name...",
+        "monthLabel": "Check month:",
+        "refresh": "Refresh",
+        "loading": "Aggregating financial data from microservices...",
+        "kpis": {
+          "families": {
+            "title": "Monitored families",
+            "meta": "Households in the system"
+          },
+          "totalBudget": {
+            "title": "Total budget allocated",
+            "meta": "Budget limit for month {{month}}"
+          },
+          "totalSpent": {
+            "title": "Total actual spending",
+            "meta": "Total money spent in the month"
+          },
+          "usageRate": {
+            "title": "Fund usage rate",
+            "meta": "System-wide fund drain rate"
+          }
+        },
+        "table": {
+          "id": "Family ID",
+          "name": "Family name",
+          "creator": "Head / Creator",
+          "members": "Members",
+          "budget": "Monthly budget",
+          "spent": "Spent",
+          "remaining": "Remaining",
+          "usage": "Usage",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "empty": {
+          "title": "No data found",
+          "subtitle": "Try changing the search keyword or update to a different month."
+        },
+        "drawer": {
+          "title": "Household Financial Details",
+          "subtitle": "Family: {{name}} | ID: #{{id}}",
+          "budget": "Monthly budget",
+          "spent": "Total spent",
+          "remaining": "Remaining limit",
+          "usageRate": "Budget usage rate this month:",
+          "alerts": {
+            "over": "🚨 This household has overspent their allocated limit by {{amount}}.",
+            "warning": "⚠️ This household is hitting the spending safety warning threshold (>80%).",
+            "good": "✅ Spending is in the safe zone, budget is well balanced."
+          },
+          "categories": {
+            "title": "Spending breakdown by category",
+            "totalSpent": "{{percent}}% of total",
+            "empty": "No category breakdown data for this month."
+          },
+          "expenses": {
+            "title": "Spending log for month {{month}}",
+            "date": "Date",
+            "category": "Category",
+            "amount": "Amount",
+            "note": "Note",
+            "noNote": "No note",
+            "empty": "No spending transactions recorded yet in the month."
+          }
+        },
+        "memberCount": "{{count}} people",
+        "usedPercent": "{{percent}}% used",
+        "notSet": "Budget not set",
+        "status": {
+          "good": "Safe",
+          "warning": "Warning",
+          "over": "Overspent",
+          "notSet": "Not set"
+        },
+        "actions": {
+          "inspect": "Details"
+        },
+        "messages": {
+          "loadFailed": "Unable to load financial data."
+        }
+      },
       "permissions": {
         "hero": {
           "kicker": "Policy registry",

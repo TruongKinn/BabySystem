@@ -2728,6 +2728,93 @@
           "userAccessSubtitle": "Nhập id tài khoản và chạy kiểm tra quyền."
         }
       },
+      "finance": {
+        "hero": {
+          "kicker": "MOM CONTROL CENTRE",
+          "title": "Quản lý Tài chính Hộ gia đình",
+          "subtitle": "Theo dõi sát sao hạn mức ngân sách, phân tích chỉ số chi tiêu thực tế, và phát hiện rủi ro vượt chi của toàn bộ hộ gia đình trong hệ thống."
+        },
+        "searchPlaceholder": "Tìm kiếm theo tên gia đình hoặc người tạo...",
+        "monthLabel": "Tháng kiểm tra:",
+        "refresh": "Làm mới",
+        "loading": "Đang tổng hợp dữ liệu tài chính từ các vi dịch vụ...",
+        "kpis": {
+          "families": {
+            "title": "Gia đình giám sát",
+            "meta": "Hộ gia đình tham gia hệ thống"
+          },
+          "totalBudget": {
+            "title": "Tổng ngân sách cấp",
+            "meta": "Hạn mức ngân sách tháng {{month}}"
+          },
+          "totalSpent": {
+            "title": "Tổng chi tiêu thực",
+            "meta": "Tổng tiền đã chi trong tháng"
+          },
+          "usageRate": {
+            "title": "Tỷ lệ sử dụng quỹ",
+            "meta": "Tỷ lệ rút ruột quỹ chung hệ thống"
+          }
+        },
+        "table": {
+          "id": "Mã hộ",
+          "name": "Tên gia đình",
+          "creator": "Chủ hộ / Người tạo",
+          "members": "Thành viên",
+          "budget": "Ngân sách tháng",
+          "spent": "Đã chi tiêu",
+          "remaining": "Còn lại",
+          "usage": "Sử dụng",
+          "status": "Trạng thái",
+          "actions": "Thao tác"
+        },
+        "empty": {
+          "title": "Không tìm thấy dữ liệu",
+          "subtitle": "Hãy thử thay đổi từ khóa tìm kiếm hoặc cập nhật tháng khác."
+        },
+        "drawer": {
+          "title": "Chi tiết tài chính Hộ gia đình",
+          "subtitle": "Gia đình: {{name}} | Mã hộ: #{{id}}",
+          "budget": "Ngân sách tháng",
+          "spent": "Tổng đã tiêu",
+          "remaining": "Hạn mức còn lại",
+          "usageRate": "Tỷ lệ dùng ngân sách tháng này:",
+          "alerts": {
+            "over": "🚨 Hộ gia đình này đã tiêu vượt hạn mức cấp phép {{amount}}.",
+            "warning": "⚠️ Hộ gia đình này chạm ngưỡng cảnh báo an toàn chi tiêu (>80%).",
+            "good": "✅ Chi tiêu trong vùng an toàn, cân đối ngân sách tốt."
+          },
+          "categories": {
+            "title": "Phân rã chi tiêu theo phân loại",
+            "totalSpent": "{{percent}}% tổng chi",
+            "empty": "Không có dữ liệu phân rã danh mục trong tháng này."
+          },
+          "expenses": {
+            "title": "Nhật ký chi tiêu tháng {{month}}",
+            "date": "Ngày chi",
+            "category": "Danh mục",
+            "amount": "Số tiền",
+            "note": "Ghi chú",
+            "noNote": "Không có ghi chú",
+            "empty": "Chưa có phát sinh giao dịch chi tiêu nào trong tháng."
+          }
+        },
+        "memberCount": "{{count}} người",
+        "usedPercent": "{{percent}}% đã dùng",
+        "notSet": "Chưa đặt ngân sách",
+        "status": {
+          "good": "An toàn",
+          "warning": "Cảnh báo",
+          "over": "Vượt mức",
+          "notSet": "Chưa đặt"
+        },
+        "actions": {
+          "inspect": "Chi tiết"
+        },
+        "messages": {
+          "loadFailed": "Không thể tải dữ liệu tài chính gia đình"
+        }
+      },
       "permissions": {
         "hero": {
           "kicker": "Kho chính sách",

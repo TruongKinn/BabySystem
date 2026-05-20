@@ -1,9 +1,9 @@
 <div class="admin-finance-page animate-fade-in">
   <!-- Hero Section -->
   <div class="finance-hero-card">
-    <div class="finance-hero-kicker">MOM CONTROL CENTRE</div>
-    <div class="finance-hero-title">Quản lý Tài chính Hộ gia đình</div>
-    <div class="finance-hero-subtitle">Theo dõi sát sao hạn mức ngân sách, phân tích chỉ số chi tiêu thực tế, và phát hiện rủi ro vượt chi của toàn bộ hộ gia đình trong hệ thống.</div>
+    <div class="finance-hero-kicker">{{ 'momApp.admin.finance.hero.kicker' | translate }}</div>
+    <div class="finance-hero-title">{{ 'momApp.admin.finance.hero.title' | translate }}</div>
+    <div class="finance-hero-subtitle">{{ 'momApp.admin.finance.hero.subtitle' | translate }}</div>
   </div>
 
   <!-- Filter & Controls Bar -->
@@ -14,7 +14,7 @@
         <input 
           type="text" 
           class="search-input" 
-          [placeholder]="'momApp.admin.families.searchPlaceholder' | translate" 
+          [placeholder]="'momApp.admin.finance.searchPlaceholder' | translate" 
           [ngModel]="searchText"
           (ngModelChange)="onSearchChange($event)"
         />
@@ -23,7 +23,7 @@
     
     <div class="filter-right">
       <div class="month-picker-wrapper">
-        <label style="font-weight: 700; color: #475569; font-size: 0.9rem;">Tháng kiểm tra:</label>
+        <label style="font-weight: 700; color: #475569; font-size: 0.9rem;">{{ 'momApp.admin.finance.monthLabel' | translate }}</label>
         <input 
           type="month" 
           class="month-picker" 
@@ -33,14 +33,14 @@
       </div>
       
       <button nz-button nzType="primary" (click)="loadFinanceData()" [nzLoading]="loading" style="border-radius: 10px; height: 40px; font-weight: 600;">
-        <span nz-icon nzType="reload"></span> Làm mới
+        <span nz-icon nzType="reload"></span> {{ 'momApp.admin.finance.refresh' | translate }}
       </button>
     </div>
   </div>
 
   <!-- Loading State -->
   <div *ngIf="loading" style="display: flex; justify-content: center; align-items: center; min-height: 300px; background: #ffffff; border-radius: 16px; box-shadow: var(--admin-shadow-sm);">
-    <nz-spin nzSimple nzSize="large" nzTip="Đang tổng hợp dữ liệu tài chính từ các vi dịch vụ..."></nz-spin>
+    <nz-spin nzSimple nzSize="large" [nzTip]="'momApp.admin.finance.loading' | translate"></nz-spin>
   </div>
 
   <div *ngIf="!loading">
@@ -49,49 +49,49 @@
       <!-- KPI 1 -->
       <div class="kpi-card blue">
         <div class="kpi-header">
-          <span class="kpi-title">Gia đình giám sát</span>
+          <span class="kpi-title">{{ 'momApp.admin.finance.kpis.families.title' | translate }}</span>
           <div class="kpi-icon-container kpi-icon-blue">
             <span nz-icon nzType="team"></span>
           </div>
         </div>
         <div class="kpi-value">{{ familiesFinance.length }}</div>
-        <div class="kpi-meta">Hộ gia đình tham gia hệ thống</div>
+        <div class="kpi-meta">{{ 'momApp.admin.finance.kpis.families.meta' | translate }}</div>
       </div>
 
       <!-- KPI 2 -->
       <div class="kpi-card green">
         <div class="kpi-header">
-          <span class="kpi-title">Tổng ngân sách cấp</span>
+          <span class="kpi-title">{{ 'momApp.admin.finance.kpis.totalBudget.title' | translate }}</span>
           <div class="kpi-icon-container kpi-icon-green">
             <span nz-icon nzType="wallet"></span>
           </div>
         </div>
         <div class="kpi-value">{{ formatCurrency(systemTotalBudget) }}</div>
-        <div class="kpi-meta">Hạn mức ngân sách tháng {{ monthKey }}</div>
+        <div class="kpi-meta">{{ 'momApp.admin.finance.kpis.totalBudget.meta' | translate: { month: monthKey } }}</div>
       </div>
 
       <!-- KPI 3 -->
       <div class="kpi-card orange">
         <div class="kpi-header">
-          <span class="kpi-title">Tổng chi tiêu thực</span>
+          <span class="kpi-title">{{ 'momApp.admin.finance.kpis.totalSpent.title' | translate }}</span>
           <div class="kpi-icon-container kpi-icon-orange">
             <span nz-icon nzType="shopping-cart"></span>
           </div>
         </div>
         <div class="kpi-value">{{ formatCurrency(systemTotalSpent) }}</div>
-        <div class="kpi-meta">Tổng tiền đã chi trong tháng</div>
+        <div class="kpi-meta">{{ 'momApp.admin.finance.kpis.totalSpent.meta' | translate }}</div>
       </div>
 
       <!-- KPI 4 -->
       <div class="kpi-card purple">
         <div class="kpi-header">
-          <span class="kpi-title">Tỷ lệ sử dụng quỹ</span>
+          <span class="kpi-title">{{ 'momApp.admin.finance.kpis.usageRate.title' | translate }}</span>
           <div class="kpi-icon-container kpi-icon-purple">
             <span nz-icon nzType="pie-chart"></span>
           </div>
         </div>
         <div class="kpi-value">{{ systemUsagePercent }}%</div>
-        <div class="kpi-meta">Tỷ lệ rút ruột quỹ chung hệ thống</div>
+        <div class="kpi-meta">{{ 'momApp.admin.finance.kpis.usageRate.meta' | translate }}</div>
       </div>
     </div>
 
@@ -106,16 +106,16 @@
       >
         <thead>
           <tr>
-            <th style="width: 80px;">Mã hộ</th>
-            <th>Tên gia đình</th>
-            <th>Chủ hộ / Người tạo</th>
-            <th style="text-align: center;">Thành viên</th>
-            <th style="text-align: right;">Ngân sách tháng</th>
-            <th style="text-align: right;">Đã chi tiêu</th>
-            <th style="text-align: right;">Còn lại</th>
-            <th>Sử dụng</th>
-            <th style="text-align: center;">Trạng thái</th>
-            <th style="text-align: center; width: 160px;">Thao tác</th>
+            <th style="width: 80px;">{{ 'momApp.admin.finance.table.id' | translate }}</th>
+            <th>{{ 'momApp.admin.finance.table.name' | translate }}</th>
+            <th>{{ 'momApp.admin.finance.table.creator' | translate }}</th>
+            <th style="text-align: center;">{{ 'momApp.admin.finance.table.members' | translate }}</th>
+            <th style="text-align: right;">{{ 'momApp.admin.finance.table.budget' | translate }}</th>
+            <th style="text-align: right;">{{ 'momApp.admin.finance.table.spent' | translate }}</th>
+            <th style="text-align: right;">{{ 'momApp.admin.finance.table.remaining' | translate }}</th>
+            <th>{{ 'momApp.admin.finance.table.usage' | translate }}</th>
+            <th style="text-align: center;">{{ 'momApp.admin.finance.table.status' | translate }}</th>
+            <th style="text-align: center; width: 160px;">{{ 'momApp.admin.finance.table.actions' | translate }}</th>
           </tr>
         </thead>
         <tbody>
@@ -130,7 +130,7 @@
             </td>
             <td style="text-align: center;">
               <nz-tag nzColor="blue" style="font-weight: 600; border-radius: 6px; padding: 2px 8px;">
-                {{ item.memberCount }} người
+                {{ 'momApp.admin.finance.memberCount' | translate: { count: item.memberCount } }}
               </nz-tag>
             </td>
             <td style="text-align: right; font-weight: 700; color: #334155;">
@@ -155,9 +155,9 @@
                     [style.width.%]="item.budgetPercent > 100 ? 100 : item.budgetPercent"
                   ></div>
                 </div>
-                <div class="progress-text">{{ item.budgetPercent }}% đã dùng</div>
+                <div class="progress-text">{{ 'momApp.admin.finance.usedPercent' | translate: { percent: item.budgetPercent } }}</div>
               </div>
-              <span *ngIf="item.monthlyBudget <= 0" style="color: #94a3b8; font-size: 0.85rem; font-style: italic;">Chưa đặt ngân sách</span>
+              <span *ngIf="item.monthlyBudget <= 0" style="color: #94a3b8; font-size: 0.85rem; font-style: italic;">{{ 'momApp.admin.finance.notSet' | translate }}</span>
             </td>
             <td style="text-align: center;">
               <span class="status-badge" [ngClass]="getStatusClass(item.status)">
@@ -167,7 +167,7 @@
             </td>
             <td style="text-align: center;">
               <button class="action-btn-inspect" (click)="openDrawer(item)">
-                <span nz-icon nzType="eye"></span> Chi tiết
+                <span nz-icon nzType="eye"></span> {{ 'momApp.admin.finance.actions.inspect' | translate }}
               </button>
             </td>
           </tr>
@@ -175,8 +175,8 @@
             <td colspan="10">
               <div class="empty-state">
                 <span class="empty-icon" nz-icon nzType="inbox"></span>
-                <div class="empty-title">Không tìm thấy dữ liệu</div>
-                <div class="empty-subtitle">Hãy thử thay đổi từ khóa tìm kiếm hoặc cập nhật tháng khác.</div>
+                <div class="empty-title">{{ 'momApp.admin.finance.empty.title' | translate }}</div>
+                <div class="empty-subtitle">{{ 'momApp.admin.finance.empty.subtitle' | translate }}</div>
               </div>
             </td>
           </tr>
@@ -199,8 +199,8 @@
     <div style="display: flex; align-items: center; gap: 10px;">
       <span nz-icon nzType="wallet" style="font-size: 1.3rem; color: #6366f1;"></span>
       <div>
-        <div style="font-size: 1.1rem; font-weight: 800; color: #0f172a;">Chi tiết tài chính Hộ gia đình</div>
-        <div style="font-size: 0.8rem; color: #64748b; font-weight: 500;">Gia đình: {{ selectedFamily?.name }} | Mã hộ: #{{ selectedFamily?.id }}</div>
+        <div style="font-size: 1.1rem; font-weight: 800; color: #0f172a;">{{ 'momApp.admin.finance.drawer.title' | translate }}</div>
+        <div style="font-size: 0.8rem; color: #64748b; font-weight: 500;">{{ 'momApp.admin.finance.drawer.subtitle' | translate: { name: selectedFamily?.name, id: selectedFamily?.id } }}</div>
       </div>
     </div>
   </ng-template>
@@ -211,23 +211,23 @@
       <div class="drawer-bento-grid">
         <!-- Budget Card -->
         <div class="bento-card">
-          <span class="bento-label">Ngân sách tháng</span>
+          <span class="bento-label">{{ 'momApp.admin.finance.drawer.budget' | translate }}</span>
           <span class="bento-value" style="color: #1e293b;">
-            {{ selectedFamily.monthlyBudget > 0 ? formatCurrency(selectedFamily.monthlyBudget) : 'N/A' }}
+            {{ selectedFamily.monthlyBudget > 0 ? formatCurrency(selectedFamily.monthlyBudget) : ('momApp.common.notAvailable' | translate) }}
           </span>
         </div>
 
         <!-- Spent Card -->
         <div class="bento-card">
-          <span class="bento-label">Tổng đã tiêu</span>
+          <span class="bento-label">{{ 'momApp.admin.finance.drawer.spent' | translate }}</span>
           <span class="bento-value" style="color: #4f46e5;">{{ formatCurrency(selectedFamily.totalSpent) }}</span>
         </div>
 
         <!-- Remaining Card -->
         <div class="bento-card">
-          <span class="bento-label">Hạn mức còn lại</span>
+          <span class="bento-label">{{ 'momApp.admin.finance.drawer.remaining' | translate }}</span>
           <span class="bento-value" [style.color]="selectedFamily.remainingBudget > 0 ? '#16a34a' : '#ef4444'">
-            {{ selectedFamily.monthlyBudget > 0 ? formatCurrency(selectedFamily.remainingBudget) : 'N/A' }}
+            {{ selectedFamily.monthlyBudget > 0 ? formatCurrency(selectedFamily.remainingBudget) : ('momApp.common.notAvailable' | translate) }}
           </span>
         </div>
       </div>
@@ -235,7 +235,7 @@
       <!-- Usage Rate Indicator -->
       <div class="bento-card" style="background: #ffffff; border: 1px solid #e2e8f0;" *ngIf="selectedFamily.monthlyBudget > 0">
         <div style="display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 8px;">
-          <span style="color: #475569; font-size: 0.85rem;">Tỷ lệ dùng ngân sách tháng này:</span>
+          <span style="color: #475569; font-size: 0.85rem;">{{ 'momApp.admin.finance.drawer.usageRate' | translate }}</span>
           <span style="color: #0f172a;">{{ selectedFamily.budgetPercent }}%</span>
         </div>
         <div class="progress-track" style="height: 10px;">
@@ -250,20 +250,20 @@
           ></div>
         </div>
         <div style="font-size: 0.75rem; color: #64748b; margin-top: 6px; font-weight: 500;" *ngIf="selectedFamily.status === 'OVER'">
-          🚨 Hộ gia đình này đã tiêu vượt hạn mức cấp phép {{ formatCurrency(selectedFamily.totalSpent - selectedFamily.monthlyBudget) }}.
+          {{ 'momApp.admin.finance.drawer.alerts.over' | translate: { amount: formatCurrency(selectedFamily.totalSpent - selectedFamily.monthlyBudget) } }}
         </div>
         <div style="font-size: 0.75rem; color: #d97706; margin-top: 6px; font-weight: 500;" *ngIf="selectedFamily.status === 'WARNING'">
-          ⚠️ Hộ gia đình này chạm ngưỡng cảnh báo an toàn chi tiêu (>80%).
+          {{ 'momApp.admin.finance.drawer.alerts.warning' | translate }}
         </div>
         <div style="font-size: 0.75rem; color: #16a34a; margin-top: 6px; font-weight: 500;" *ngIf="selectedFamily.status === 'GOOD'">
-          ✅ Chi tiêu trong vùng an toàn, cân đối ngân sách tốt.
+          {{ 'momApp.admin.finance.drawer.alerts.good' | translate }}
         </div>
       </div>
 
       <!-- Category Reports Section -->
       <div>
         <div class="drawer-section-title">
-          Phân rã chi tiêu theo phân loại
+          {{ 'momApp.admin.finance.drawer.categories.title' | translate }}
         </div>
         <div class="category-report-grid" *ngIf="selectedFamily.categoryReport.length > 0">
           <div class="category-card" *ngFor="let cat of selectedFamily.categoryReport">
@@ -280,19 +280,19 @@
               ></div>
             </div>
             <div style="text-align: right; font-size: 0.7rem; color: #94a3b8; margin-top: 4px; font-weight: 600;">
-              {{ getPercent(cat.totalAmount, selectedFamily.totalSpent) }}% tổng chi
+              {{ 'momApp.admin.finance.drawer.categories.totalSpent' | translate: { percent: getPercent(cat.totalAmount, selectedFamily.totalSpent) } }}
             </div>
           </div>
         </div>
         <div *ngIf="selectedFamily.categoryReport.length === 0" style="padding: 24px; text-align: center; background: #ffffff; border: 1px dashed #e2e8f0; border-radius: 12px; color: #94a3b8; font-style: italic;">
-          Không có dữ liệu phân rã danh mục trong tháng này.
+          {{ 'momApp.admin.finance.drawer.categories.empty' | translate }}
         </div>
       </div>
 
       <!-- Expense Details List Section -->
       <div>
         <div class="drawer-section-title">
-          Nhật ký chi tiêu tháng {{ monthKey }}
+          {{ 'momApp.admin.finance.drawer.expenses.title' | translate: { month: monthKey } }}
         </div>
         
         <div style="max-height: 350px; overflow-y: auto; border: 1px solid #f1f5f9; border-radius: 12px;" class="custom-scrollbar">
@@ -306,10 +306,10 @@
           >
             <thead>
               <tr>
-                <th>Ngày chi</th>
-                <th>Danh mục</th>
-                <th>Số tiền</th>
-                <th>Ghi chú</th>
+                <th>{{ 'momApp.admin.finance.drawer.expenses.date' | translate }}</th>
+                <th>{{ 'momApp.admin.finance.drawer.expenses.category' | translate }}</th>
+                <th>{{ 'momApp.admin.finance.drawer.expenses.amount' | translate }}</th>
+                <th>{{ 'momApp.admin.finance.drawer.expenses.note' | translate }}</th>
               </tr>
             </thead>
             <tbody>
@@ -320,12 +320,12 @@
                 </td>
                 <td style="font-weight: 700; color: #0f172a; text-align: right;">{{ formatCurrency(exp.amount) }}</td>
                 <td style="color: #64748b; font-style: italic; max-width: 150px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
-                  {{ exp.note || 'Không có ghi chú' }}
+                  {{ exp.note || ('momApp.admin.finance.drawer.expenses.noNote' | translate) }}
                 </td>
               </tr>
               <tr *ngIf="selectedFamily.expenses.length === 0">
                 <td colspan="4" style="text-align: center; color: #94a3b8; padding: 24px;">
-                  Chưa có phát sinh giao dịch chi tiêu nào trong tháng.
+                  {{ 'momApp.admin.finance.drawer.expenses.empty' | translate }}
                 </td>
               </tr>
             </tbody>
