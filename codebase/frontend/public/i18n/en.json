@@ -3125,7 +3125,9 @@
         "categoryLabel": "Category",
         "categoryPlaceholder": "e.g. Milk and diaper",
         "noteLabel": "Note",
-        "notePlaceholder": "Optional note"
+        "notePlaceholder": "Optional note",
+        "createSub": "Record expenses for the month",
+        "deleteCategory": "Delete this category"
       },
       "messages": {
         "createSuccess": "Expense created successfully.",
@@ -3154,7 +3156,16 @@
           "upload": "Upload receipt",
           "download": "Download",
           "delete": "Delete"
-        }
+        },
+        "modalSub": "Manage invoices and transaction documents",
+        "summaryAmount": "Transaction amount",
+        "uploadTitle": "Click here to upload receipt",
+        "uploadSub": "Accept image (PNG, JPG) or PDF document (Max 10MB)",
+        "uploadingTitle": "Uploading document to the system...",
+        "uploadingSub": "Please do not close this window",
+        "syncing": "Synchronizing document list...",
+        "emptyVaultTitle": "No receipts yet",
+        "emptyVaultSub": "Upload your receipt to store transparent information."
       },
       "remainingBudget": "Remaining budget",
       "spentToday": "Spent today",
@@ -3196,6 +3207,20 @@
         "visibleTotal": "Visible total",
         "loading": "Loading expense data...",
         "noFilterMatch": "No expense matches your current filters."
+      },
+      "budgetConfig": {
+        "title": "Config budget limit",
+        "modalTitle": "Budget Configuration",
+        "modalSub": "Set budget limit for month {{month}}",
+        "limitLabel": "Budget limit (VND)",
+        "limitError": "Please enter a valid limit greater than or equal to 0",
+        "limitPlaceholder": "Enter limit amount (e.g., 15000000)"
+      },
+      "viewer": {
+        "viewDirectly": "View directly",
+        "size": "Size",
+        "uploadedAt": "Uploaded on",
+        "preparing": "Preparing to display document..."
       }
     },
     "baby": {

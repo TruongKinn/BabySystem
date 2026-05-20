@@ -15,3 +15,8 @@ AND NOT EXISTS (
     WHERE rhp.role_id = r.id
       AND rhp.permission_id = p.id
 );
+
+-- Correct typo in EXPENSE_CATEGORY_REPORT permission path
+UPDATE tbl_permission
+SET api_path = '/expense/expenses/reports/categories'
+WHERE name = 'API:GET:EXPENSE_CATEGORY_REPORT';

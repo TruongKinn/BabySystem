@@ -3125,7 +3125,9 @@
         "categoryLabel": "Danh mục",
         "categoryPlaceholder": "Ví dụ: Sữa và bỉm",
         "noteLabel": "Ghi chú",
-        "notePlaceholder": "Ghi chú thêm"
+        "notePlaceholder": "Ghi chú thêm",
+        "createSub": "Ghi nhật chi tiêu trong tháng",
+        "deleteCategory": "Xóa danh mục này"
       },
       "messages": {
         "createSuccess": "Tạo khoản chi thành công.",
@@ -3154,7 +3156,16 @@
           "upload": "Tải hóa đơn",
           "download": "Tải xuống",
           "delete": "Xóa"
-        }
+        },
+        "modalSub": "Quản lý các tài liệu hóa đơn và chứng từ giao dịch",
+        "summaryAmount": "Số tiền giao dịch",
+        "uploadTitle": "Nhấp vào đây để tải hóa đơn lên",
+        "uploadSub": "Chấp nhận tệp ảnh (PNG, JPG) hoặc tài liệu PDF (Tối đa 10MB)",
+        "uploadingTitle": "Đang truyền tải tài liệu lên hệ thống...",
+        "uploadingSub": "Vui lòng không đóng cửa sổ này",
+        "syncing": "Đang đồng bộ danh sách tài liệu...",
+        "emptyVaultTitle": "Chưa có hóa đơn nào",
+        "emptyVaultSub": "Hãy tải lên hóa đơn của bạn để lưu trữ thông tin minh bạch."
       },
       "remainingBudget": "Ngân sách còn lại",
       "spentToday": "Chi hôm nay",
@@ -3196,6 +3207,20 @@
         "visibleTotal": "Tổng hiển thị",
         "loading": "Đang tải dữ liệu chi tiêu...",
         "noFilterMatch": "Không có khoản chi nào khớp bộ lọc hiện tại."
+      },
+      "budgetConfig": {
+        "title": "Cấu hình hạn mức ngân sách",
+        "modalTitle": "Cấu hình Ngân sách",
+        "modalSub": "Thiết lập hạn mức ngân sách tháng {{month}}",
+        "limitLabel": "Hạn mức ngân sách (VND)",
+        "limitError": "Vui lòng nhập hạn mức hợp lệ lớn hơn hoặc bằng 0",
+        "limitPlaceholder": "Nhập số tiền hạn mức (Ví dụ: 15000000)"
+      },
+      "viewer": {
+        "viewDirectly": "Xem trực tiếp",
+        "size": "Dung lượng",
+        "uploadedAt": "Tải lên ngày",
+        "preparing": "Đang chuẩn bị hiển thị tài liệu..."
       }
     },
     "baby": {
