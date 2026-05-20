@@ -119,6 +119,7 @@ interface UserApi {
   username: string;
   email: string;
   displayName: string;
+  dateOfBirth?: string | null;
 }
 
 interface FamilyMemberApi {
@@ -127,6 +128,7 @@ interface FamilyMemberApi {
   role: FamilyRole;
   relation: FamilyRelation;
   parentUserId: number | null;
+  dateOfBirth?: string | null;
 }
 
 interface FamilyApi {
@@ -221,6 +223,18 @@ export interface FamilyMemberProfile {
   relation: FamilyRelation;
   parentUserId: number | null;
   avatarUrl: string | null;
+  dateOfBirth: string | null;
+}
+
+export interface UpcomingBirthdayNotification {
+  userId: number;
+  displayName: string;
+  role: FamilyRole;
+  relation: FamilyRelation;
+  dateOfBirth: string;
+  nextBirthday: string;
+  daysUntilBirthday: number;
+  turningAge: number;
 }
 
 export type MealType = 'BREAKFAST' | 'LUNCH' | 'DINNER' | 'SNACK';
@@ -314,6 +328,24 @@ export class SuperAppCommandService {
           const byRole = this.familyRoleOrder(left.role) - this.familyRoleOrder(right.role);
           if (byRole !== 0) {
             return byRole;
+          }
+          return left.displayName.localeCompare(right.displayName);
+        })
+      ),
+      catchError(() => of([]))
+    );
+  }
+
+  getUpcomingFamilyBirthdays(daysAhead = 14): Observable<UpcomingBirthdayNotification[]> {
+    const familyId = this.getFamilyId();
+    const safeDays = Number.isFinite(daysAhead) ? Math.max(0, Math.trunc(daysAhead)) : 14;
+    const params = new HttpParams().set('days', String(safeDays));
+    return this.get<UpcomingBirthdayNotification[]>(`/account/families/${familyId}/birthdays/upcoming`, params).pipe(
+      map((items) =>
+        [...(items ?? [])].sort((left, right) => {
+          const byDay = left.daysUntilBirthday - right.daysUntilBirthday;
+          if (byDay !== 0) {
+            return byDay;
           }
           return left.displayName.localeCompare(right.displayName);
         })
@@ -668,6 +700,7 @@ export class SuperAppCommandService {
     role: FamilyRole;
     relation?: FamilyRelation;
     parentUserId?: number | null;
+    dateOfBirth?: string | null;
   }): Observable<void> {
     const familyId = this.getFamilyId();
 
@@ -677,7 +710,8 @@ export class SuperAppCommandService {
       displayName: input.displayName,
       role: input.role,
       relation: input.relation,
-      parentUserId: input.parentUserId ?? null
+      parentUserId: input.parentUserId ?? null,
+      dateOfBirth: input.dateOfBirth ?? null
     }).pipe(map(() => undefined));
   }
 
@@ -701,6 +735,7 @@ export class SuperAppCommandService {
     role: FamilyRole;
     relation: FamilyRelation;
     parentUserId?: number | null;
+    dateOfBirth?: string | null;
   }): Observable<void> {
     const familyId = this.getFamilyId();
     return this.put<void>(`/account/families/${familyId}/members/${userId}`, {
@@ -709,7 +744,8 @@ export class SuperAppCommandService {
       email: input.email,
       role: input.role,
       relation: input.relation,
-      parentUserId: input.parentUserId ?? null
+      parentUserId: input.parentUserId ?? null,
+      dateOfBirth: input.dateOfBirth ?? null
     }).pipe(map(() => undefined));
   }
 
@@ -901,7 +937,8 @@ export class SuperAppCommandService {
               role: member.role,
               relation,
               parentUserId: member.parentUserId ?? null,
-              avatarUrl: this.buildAvatarUrl(member.userId)
+              avatarUrl: this.buildAvatarUrl(member.userId),
+              dateOfBirth: user.dateOfBirth ?? member.dateOfBirth ?? null
             };
           }),
           catchError(() => {
@@ -914,7 +951,8 @@ export class SuperAppCommandService {
               role: member.role,
               relation,
               parentUserId: member.parentUserId ?? null,
-              avatarUrl: this.buildAvatarUrl(member.userId)
+              avatarUrl: this.buildAvatarUrl(member.userId),
+              dateOfBirth: member.dateOfBirth ?? null
             });
           })
         )

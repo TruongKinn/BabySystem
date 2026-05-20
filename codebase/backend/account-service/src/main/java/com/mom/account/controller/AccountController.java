@@ -5,6 +5,7 @@ import com.mom.account.controller.dto.CreateFamilyRequest;
 import com.mom.account.controller.dto.CreateUserRequest;
 import com.mom.account.controller.dto.FamilyResponse;
 import com.mom.account.controller.dto.InviteFamilyMemberRequest;
+import com.mom.account.controller.dto.UpcomingBirthdayResponse;
 import com.mom.account.controller.dto.UpdateFamilyRequest;
 import com.mom.account.controller.dto.UserResponse;
 import com.mom.account.service.AccountService;
@@ -64,6 +65,12 @@ public class AccountController {
         return ApiResponse.ok("Success", accountService.getAllFamiliesForAdmin());
     }
 
+    @GetMapping("/admin/families/{id}")
+    public ApiResponse<FamilyResponse> getFamilyForAdmin(@PathVariable("id") Long familyId) {
+        com.mom.common.context.UserContext.setFamilyIds(null); // Bypass family check
+        return ApiResponse.ok("Success", accountService.getFamily(familyId));
+    }
+
     @PostMapping("/admin/families")
     public ApiResponse<FamilyResponse> createFamilyForAdmin(@Valid @RequestBody CreateFamilyRequest request) {
         return ApiResponse.ok("Family created", accountService.createFamily(request));
@@ -105,9 +112,26 @@ public class AccountController {
         return ApiResponse.ok("Success", accountService.getUserFamilies(userId));
     }
 
+    @GetMapping("/families/{id}/birthdays/upcoming")
+    public ApiResponse<List<UpcomingBirthdayResponse>> getUpcomingBirthdays(
+            @PathVariable("id") Long familyId,
+            @RequestParam(value = "days", required = false, defaultValue = "14") int days
+    ) {
+        return ApiResponse.ok("Success", accountService.getUpcomingBirthdays(familyId, days));
+    }
+
     @GetMapping("/admin/users/{id}/families")
     public ApiResponse<List<FamilyResponse>> getUserFamiliesForAdmin(@PathVariable("id") Long userId) {
         return ApiResponse.ok("Success", accountService.getUserFamiliesForAdmin(userId));
+    }
+
+    @GetMapping("/admin/families/{id}/birthdays/upcoming")
+    public ApiResponse<List<UpcomingBirthdayResponse>> getUpcomingBirthdaysForAdmin(
+            @PathVariable("id") Long familyId,
+            @RequestParam(value = "days", required = false, defaultValue = "14") int days
+    ) {
+        com.mom.common.context.UserContext.setFamilyIds(null); // Bypass family check
+        return ApiResponse.ok("Success", accountService.getUpcomingBirthdays(familyId, days));
     }
 
     @PutMapping("/families/{id}/members/{userId}/role")

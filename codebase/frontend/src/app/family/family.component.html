@@ -16,6 +16,35 @@
     </div>
   </div>
 
+  <div class="birthday-alerts" *ngIf="upcomingBirthdays$ | async as upcomingBirthdays">
+    <div class="alerts-header">
+      <span nz-icon nzType="notification" class="alerts-header-icon"></span>
+      <div>
+        <h3>{{ 'momApp.family.birthdays.title' | translate }}</h3>
+        <p>{{ 'momApp.family.birthdays.subtitle' | translate }}</p>
+      </div>
+    </div>
+
+    <div class="alerts-empty" *ngIf="upcomingBirthdays.length === 0">
+      {{ 'momApp.family.birthdays.empty' | translate }}
+    </div>
+
+    <div class="alerts-list" *ngIf="upcomingBirthdays.length > 0">
+      <div class="alert-item" *ngFor="let item of upcomingBirthdays">
+        <div class="alert-main">
+          <strong>{{ item.displayName }}</strong>
+          <span class="alert-meta">
+            {{ relationLabel(item.relation) }} - {{ formatBirthday(item.nextBirthday) }}
+          </span>
+        </div>
+        <div class="alert-side">
+          <span class="alert-chip">{{ upcomingBirthdayLabel(item) }}</span>
+          <span class="alert-age">#{{ item.turningAge }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="family-grid animate-slide-up">
     <div class="family-card" *ngFor="let member of members">
       <div class="card-role-banner" [style.background]="roleGradient(member.role)">
@@ -60,6 +89,10 @@
         <div class="info-row">
           <span class="info-icon"><span nz-icon nzType="heart"></span></span>
           <span class="info-text">{{ relationLabel(member.relation) }}</span>
+        </div>
+        <div class="info-row">
+          <span class="info-icon"><span nz-icon nzType="gift"></span></span>
+          <span class="info-text">{{ formatBirthday(member.dateOfBirth) }}</span>
         </div>
         <div class="info-row" *ngIf="member.parentUserId">
           <span class="info-icon"><span nz-icon nzType="branches"></span></span>
@@ -106,7 +139,7 @@
       </span>
       <span class="modal-title-text">
         <span class="modal-title-main">{{ 'momApp.family.modal.createTitle' | translate }}</span>
-        <span class="modal-title-sub">Mời thành viên mới vào gia đình</span>
+        <span class="modal-title-sub">{{ 'momApp.family.modal.createSub' | translate }}</span>
       </span>
     </div>
   </ng-template>
@@ -141,6 +174,13 @@
             <input nz-input type="email" formControlName="email" [placeholder]="'momApp.family.modal.emailPlaceholder' | translate" />
           </nz-input-group>
           <ng-template #prefixEmail><span nz-icon nzType="mail"></span></ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.family.modal.birthDateLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input type="date" formControlName="dateOfBirth" />
         </nz-form-control>
       </nz-form-item>
 
@@ -250,6 +290,13 @@
             <input nz-input type="email" formControlName="email" [placeholder]="'momApp.family.modal.emailPlaceholder' | translate" />
           </nz-input-group>
           <ng-template #prefixEmailEdit><span nz-icon nzType="mail"></span></ng-template>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.family.modal.birthDateLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input type="date" formControlName="dateOfBirth" />
         </nz-form-control>
       </nz-form-item>
 

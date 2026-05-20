@@ -31,6 +31,7 @@ interface FamilyMemberApi {
   role: string;
   relation: string;
   parentUserId: number | null;
+  dateOfBirth?: string | null;
 }
 
 interface FamilyApi {
@@ -50,6 +51,17 @@ interface FamilyView extends FamilyApi {
   creatorName: string;
   memberCount: number;
   tree: FamilyTreeNode[];
+}
+
+interface UpcomingBirthdayApi {
+  userId: number;
+  displayName: string;
+  role: string;
+  relation: string;
+  dateOfBirth: string;
+  nextBirthday: string;
+  daysUntilBirthday: number;
+  turningAge: number;
 }
 
 @Component({
@@ -96,6 +108,8 @@ export class AdminFamiliesComponent implements OnInit {
   isManageMembersModalVisible = false;
   selectedFamily: FamilyView | null = null;
   membersLoading = false;
+  upcomingBirthdays: UpcomingBirthdayApi[] = [];
+  upcomingBirthdaysLoading = false;
 
   // Form Thêm thành viên
   lookupKeyword = '';
@@ -104,6 +118,7 @@ export class AdminFamiliesComponent implements OnInit {
   newMemberRole: string = 'CAREGIVER';
   newMemberRelation: string = 'THANH_VIEN_KHAC';
   newMemberParentId: number | null = null;
+  newMemberDateOfBirth = '';
   addingMember = false;
 
   // Form Tạo mới thành viên
@@ -116,6 +131,7 @@ export class AdminFamiliesComponent implements OnInit {
   editingMemberDisplayName = '';
   editingMemberUsername = '';
   editingMemberEmail = '';
+  editingMemberDateOfBirth = '';
   editingMemberRole = '';
   editingMemberRelation = '';
   editingMemberParentId: number | null = null;
@@ -456,6 +472,7 @@ export class AdminFamiliesComponent implements OnInit {
     this.isManageMembersModalVisible = true;
     this.resetAddMemberForm();
     this.cancelEditMember();
+    this.loadUpcomingBirthdays(family.id);
   }
 
   closeManageMembersModal(): void {
@@ -463,6 +480,8 @@ export class AdminFamiliesComponent implements OnInit {
     this.selectedFamily = null;
     this.resetAddMemberForm();
     this.cancelEditMember();
+    this.upcomingBirthdays = [];
+    this.upcomingBirthdaysLoading = false;
   }
 
   resetAddMemberForm(): void {
@@ -471,6 +490,7 @@ export class AdminFamiliesComponent implements OnInit {
     this.newMemberRole = 'CAREGIVER';
     this.newMemberRelation = 'THANH_VIEN_KHAC';
     this.newMemberParentId = null;
+    this.newMemberDateOfBirth = '';
     this.newMemberDisplayName = '';
     this.newMemberUsername = '';
     this.newMemberEmail = '';
@@ -516,7 +536,8 @@ export class AdminFamiliesComponent implements OnInit {
       userId: this.foundUser.id,
       role: this.newMemberRole,
       relation: this.newMemberRelation,
-      parentUserId: this.newMemberParentId
+      parentUserId: this.newMemberParentId,
+      dateOfBirth: this.normalizeDateInput(this.newMemberDateOfBirth)
     };
 
     this.http.post<ApiEnvelope<any>>(`${API_CONFIG.GATEWAY_URL}/account/families/${this.selectedFamily.id}/members`, payload).subscribe({
@@ -549,7 +570,8 @@ export class AdminFamiliesComponent implements OnInit {
       email: this.newMemberEmail,
       role: this.newMemberRole,
       relation: this.newMemberRelation,
-      parentUserId: this.newMemberParentId
+      parentUserId: this.newMemberParentId,
+      dateOfBirth: this.normalizeDateInput(this.newMemberDateOfBirth)
     };
 
     this.http
@@ -575,6 +597,7 @@ export class AdminFamiliesComponent implements OnInit {
     this.editingMemberRole = member.role;
     this.editingMemberRelation = member.relation;
     this.editingMemberParentId = member.parentUserId;
+    this.editingMemberDateOfBirth = member.dateOfBirth ?? '';
 
     this.membersLoading = true;
     this.http.get<ApiEnvelope<any>>(`${API_CONFIG.GATEWAY_URL}/account/users/${member.userId}`).subscribe({
@@ -583,6 +606,7 @@ export class AdminFamiliesComponent implements OnInit {
         if (response.data) {
           this.editingMemberUsername = response.data.username;
           this.editingMemberEmail = response.data.email;
+          this.editingMemberDateOfBirth = response.data.dateOfBirth || member.dateOfBirth || '';
         }
       },
       error: () => {
@@ -598,6 +622,7 @@ export class AdminFamiliesComponent implements OnInit {
     this.editingMemberDisplayName = '';
     this.editingMemberUsername = '';
     this.editingMemberEmail = '';
+    this.editingMemberDateOfBirth = '';
     this.editingMemberRole = '';
     this.editingMemberRelation = '';
     this.editingMemberParentId = null;
@@ -615,7 +640,8 @@ export class AdminFamiliesComponent implements OnInit {
       email: this.editingMemberEmail,
       role: this.editingMemberRole,
       relation: this.editingMemberRelation,
-      parentUserId: this.editingMemberParentId
+      parentUserId: this.editingMemberParentId,
+      dateOfBirth: this.normalizeDateInput(this.editingMemberDateOfBirth)
     };
 
     this.http
@@ -678,7 +704,54 @@ export class AdminFamiliesComponent implements OnInit {
       this.families[index] = updatedFamilyView;
       this.selectedFamily = updatedFamilyView;
       this.applySearch();
+      this.loadUpcomingBirthdays(updatedFamilyRaw.id);
     }
+  }
+
+  formatDate(dateValue: string | null | undefined): string {
+    if (!dateValue?.trim()) {
+      return this.i18n.translate('momApp.common.notAvailable');
+    }
+
+    const parsed = new Date(`${dateValue}T00:00:00`);
+    if (Number.isNaN(parsed.getTime())) {
+      return dateValue;
+    }
+
+    return parsed.toLocaleDateString();
+  }
+
+  upcomingBirthdayLabel(item: UpcomingBirthdayApi): string {
+    if (item.daysUntilBirthday === 0) {
+      return this.i18n.translate('momApp.family.birthdays.today');
+    }
+    if (item.daysUntilBirthday === 1) {
+      return this.i18n.translate('momApp.family.birthdays.tomorrow');
+    }
+    return this.i18n.translate('momApp.family.birthdays.inDays', { days: item.daysUntilBirthday });
+  }
+
+  private loadUpcomingBirthdays(familyId: number): void {
+    this.upcomingBirthdaysLoading = true;
+    this.http
+      .get<ApiEnvelope<UpcomingBirthdayApi[]>>(
+        `${API_CONFIG.GATEWAY_URL}/account/admin/families/${familyId}/birthdays/upcoming?days=14`
+      )
+      .subscribe({
+        next: (response) => {
+          this.upcomingBirthdaysLoading = false;
+          this.upcomingBirthdays = response.data ?? [];
+        },
+        error: () => {
+          this.upcomingBirthdaysLoading = false;
+          this.upcomingBirthdays = [];
+        }
+      });
+  }
+
+  private normalizeDateInput(raw: string | null | undefined): string | null {
+    const value = raw?.trim() ?? '';
+    return value ? value : null;
   }
 
   private getCurrentUserId(): number | null {

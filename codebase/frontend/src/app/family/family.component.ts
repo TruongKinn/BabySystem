@@ -20,6 +20,7 @@ import {
   FamilyMemberProfile,
   FamilyRelation,
   FamilyRole,
+  UpcomingBirthdayNotification,
   SuperAppCommandService
 } from '../core/services/super-app-command.service';
 import { I18nService } from '../i18n/i18n.service';
@@ -56,6 +57,9 @@ export class FamilyComponent {
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
 
   readonly members$ = this.refresh$.pipe(switchMap(() => this.command.getFamilyMembersDetailed()));
+  readonly upcomingBirthdays$ = this.refresh$.pipe(
+    switchMap(() => this.command.getUpcomingFamilyBirthdays(14))
+  );
   readonly roles: FamilyRole[] = ['MOM', 'DAD', 'GRANDMA', 'CAREGIVER'];
   readonly relations: FamilyRelation[] = [
     'ONG_NOI',
@@ -91,6 +95,7 @@ export class FamilyComponent {
     displayName: ['', [Validators.required, Validators.maxLength(120)]],
     username: ['', [Validators.required, Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email]],
+    dateOfBirth: [''],
     role: ['CAREGIVER' as FamilyRole, [Validators.required]],
     relation: ['BAO_MAU' as FamilyRelation, [Validators.required]],
     parentUserId: [null as number | null]
@@ -100,6 +105,7 @@ export class FamilyComponent {
     username: ['', [Validators.required, Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email]],
     displayName: ['', [Validators.required, Validators.maxLength(120)]],
+    dateOfBirth: [''],
     role: ['CAREGIVER' as FamilyRole, [Validators.required]],
     relation: ['BAO_MAU' as FamilyRelation, [Validators.required]],
     parentUserId: [null as number | null]
@@ -115,6 +121,7 @@ export class FamilyComponent {
       username: '',
       email: '',
       displayName: '',
+      dateOfBirth: '',
       role: 'CAREGIVER',
       relation: 'BAO_MAU',
       parentUserId: null
@@ -133,6 +140,7 @@ export class FamilyComponent {
         username: this.createMemberForm.controls.username.value?.trim() ?? '',
         email: this.createMemberForm.controls.email.value?.trim() ?? '',
         displayName: this.createMemberForm.controls.displayName.value?.trim() ?? '',
+        dateOfBirth: this.normalizeDateInput(this.createMemberForm.controls.dateOfBirth.value),
         role: this.createMemberForm.controls.role.value ?? 'CAREGIVER',
         relation:
           this.createMemberForm.controls.relation.value ??
@@ -196,6 +204,7 @@ export class FamilyComponent {
       displayName: member.displayName,
       username: member.username !== '-' ? member.username : '',
       email: member.email !== '-' ? member.email : '',
+      dateOfBirth: member.dateOfBirth ?? '',
       role: member.role,
       relation: member.relation,
       parentUserId: member.parentUserId
@@ -221,6 +230,7 @@ export class FamilyComponent {
         displayName: this.editMemberForm.controls.displayName.value?.trim() ?? '',
         username: this.editMemberForm.controls.username.value?.trim() ?? '',
         email: this.editMemberForm.controls.email.value?.trim() ?? '',
+        dateOfBirth: this.normalizeDateInput(this.editMemberForm.controls.dateOfBirth.value),
         role: this.editMemberForm.controls.role.value!,
         relation: this.editMemberForm.controls.relation.value!,
         parentUserId: this.editMemberForm.controls.parentUserId.value ?? null
@@ -287,6 +297,34 @@ export class FamilyComponent {
 
     const parent = members.find((member) => member.userId === parentUserId);
     return parent?.displayName ?? `#${parentUserId}`;
+  }
+
+  formatBirthday(dateOfBirth: string | null | undefined): string {
+    if (!dateOfBirth?.trim()) {
+      return this.i18n.translate('momApp.common.notAvailable');
+    }
+
+    const parsed = new Date(`${dateOfBirth}T00:00:00`);
+    if (Number.isNaN(parsed.getTime())) {
+      return dateOfBirth;
+    }
+
+    return parsed.toLocaleDateString();
+  }
+
+  upcomingBirthdayLabel(item: UpcomingBirthdayNotification): string {
+    if (item.daysUntilBirthday === 0) {
+      return this.i18n.translate('momApp.family.birthdays.today');
+    }
+    if (item.daysUntilBirthday === 1) {
+      return this.i18n.translate('momApp.family.birthdays.tomorrow');
+    }
+    return this.i18n.translate('momApp.family.birthdays.inDays', { days: item.daysUntilBirthday });
+  }
+
+  private normalizeDateInput(raw: string | null | undefined): string | null {
+    const value = raw?.trim() ?? '';
+    return value ? value : null;
   }
 
   private defaultRelationByRole(role: FamilyRole): FamilyRelation {

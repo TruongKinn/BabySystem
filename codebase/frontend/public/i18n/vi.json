@@ -3453,6 +3453,14 @@
       "title": "Thành Viên Gia Đình",
       "subtitle": "Tổng quan vai trò và phối hợp của từng thành viên",
       "totalLabel": "thành viên hoạt động",
+      "birthdays": {
+        "title": "Sinh nhật sắp tới",
+        "subtitle": "Các thành viên có sinh nhật trong 14 ngày tới",
+        "empty": "Chưa có sinh nhật nào sắp tới trong khoảng thời gian này.",
+        "today": "Hôm nay",
+        "tomorrow": "Ngày mai",
+        "inDays": "Còn {{days}} ngày"
+      },
       "actions": {
         "create": "Thêm thành viên",
         "deleteConfirm": "Bạn có chắc muốn xóa thành viên này?"
@@ -3489,6 +3497,7 @@
       },
       "modal": {
         "createTitle": "Thêm thành viên gia đình",
+        "createSub": "Mời thành viên mới vào gia đình",
         "editTitle": "Chỉnh sửa thành viên",
         "displayNameLabel": "Tên hiển thị",
         "displayNamePlaceholder": "Nhập tên hiển thị",
@@ -3496,6 +3505,7 @@
         "usernamePlaceholder": "Nhập tên đăng nhập",
         "emailLabel": "Email",
         "emailPlaceholder": "Nhập địa chỉ email",
+        "birthDateLabel": "Ngày sinh",
         "roleLabel": "Vai trò trong gia đình",
         "rolePlaceholder": "Chọn vai trò",
         "relationLabel": "Quan hệ với em bé",

@@ -364,6 +364,84 @@
   padding: 8px 4px;
 }
 
+.upcoming-birthday-panel {
+  border: 1px solid #fed7aa;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fff7ed 0%, #ffffff 100%);
+  padding: 14px;
+}
+
+.upcoming-panel-head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 10px;
+}
+
+.upcoming-panel-head h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #7c2d12;
+}
+
+.upcoming-panel-head small {
+  color: #9a3412;
+}
+
+.upcoming-empty {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.upcoming-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.upcoming-item {
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  background: #ffffff;
+  padding: 8px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.upcoming-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.upcoming-main span {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.upcoming-side {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.upcoming-chip {
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 999px;
+  background: #ffedd5;
+  color: #c2410c;
+  padding: 2px 8px;
+}
+
+.upcoming-age {
+  font-size: 11px;
+  font-weight: 700;
+  color: #92400e;
+}
+
 /* Beautiful Table Styling */
 ::ng-deep .manage-members-container .ant-table {
   background: #ffffff;
@@ -519,7 +597,7 @@
 
 .create-new-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 16px;
 }
 
@@ -592,7 +670,7 @@
 
 .member-meta-selectors {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
 }
 

@@ -5,12 +5,14 @@ import com.mom.account.domain.FamilyRole;
 
 import java.time.LocalDate;
 
-public record FamilyMemberResponse(
+public record UpcomingBirthdayResponse(
         Long userId,
         String displayName,
         FamilyRole role,
         FamilyRelation relation,
-        Long parentUserId,
-        LocalDate dateOfBirth
+        LocalDate dateOfBirth,
+        LocalDate nextBirthday,
+        long daysUntilBirthday,
+        int turningAge
 ) {
 }

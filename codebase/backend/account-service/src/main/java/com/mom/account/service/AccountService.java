@@ -6,6 +6,7 @@ import com.mom.account.controller.dto.CreateUserRequest;
 import com.mom.account.controller.dto.FamilyMemberResponse;
 import com.mom.account.controller.dto.FamilyResponse;
 import com.mom.account.controller.dto.InviteFamilyMemberRequest;
+import com.mom.account.controller.dto.UpcomingBirthdayResponse;
 import com.mom.account.controller.dto.UpdateFamilyRequest;
 import com.mom.account.controller.dto.UserResponse;
 import com.mom.account.domain.FamilyEntity;
@@ -33,6 +34,7 @@ import org.springframework.web.client.RestClientResponseException;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -65,6 +67,7 @@ public class AccountService {
         user.setUsername(request.username().trim());
         user.setEmail(request.email().trim().toLowerCase());
         user.setDisplayName(request.displayName().trim());
+        user.setDateOfBirth(request.dateOfBirth());
         UserEntity saved = userRepository.save(user);
         accountEventPublisher.publishUserCreated(new UserCreatedPayload(
                 saved.getId(),
@@ -129,7 +132,7 @@ public class AccountService {
 
         familyRepository.findById(familyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Family not found"));
-        userRepository.findById(request.userId())
+        UserEntity user = userRepository.findById(request.userId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         boolean alreadyInFamily = familyMemberRepository.findByFamilyId(familyId).stream()
@@ -145,6 +148,11 @@ public class AccountService {
         member.setRelation(request.relation() != null ? request.relation() : defaultRelationByRole(request.role()));
         member.setParentUserId(validateParentUserId(familyId, request.userId(), request.parentUserId()));
         familyMemberRepository.save(member);
+
+        if (request.dateOfBirth() != null) {
+            user.setDateOfBirth(request.dateOfBirth());
+            userRepository.save(user);
+        }
 
         return getFamily(familyId);
     }
@@ -162,13 +170,20 @@ public class AccountService {
         validateLocalIdentityAvailable(normalizedUsername, normalizedEmail);
         String temporaryPassword = generateTemporaryPassword();
 
-        Long authUserId = provisionAuthenticationAccount(normalizedUsername, normalizedEmail, normalizedDisplayName, temporaryPassword);
+        Long authUserId = provisionAuthenticationAccount(
+                normalizedUsername,
+                normalizedEmail,
+                normalizedDisplayName,
+                temporaryPassword,
+                request.dateOfBirth()
+        );
 
         UserResponse accountUser = createUser(new CreateUserRequest(
                 authUserId,
                 normalizedUsername,
                 normalizedEmail,
-                normalizedDisplayName
+                normalizedDisplayName,
+                request.dateOfBirth()
         ));
 
         return addMember(
@@ -177,7 +192,8 @@ public class AccountService {
                         accountUser.id(),
                         request.role(),
                         request.relation(),
-                        request.parentUserId()
+                        request.parentUserId(),
+                        request.dateOfBirth()
                 )
         );
     }
@@ -239,6 +255,51 @@ public class AccountService {
                 .toList();
     }
 
+    public List<UpcomingBirthdayResponse> getUpcomingBirthdays(Long familyId, int days) {
+        validateFamilyAccessIfContextPresent(familyId);
+        if (days < 0) {
+            throw new IllegalArgumentException("days must be greater than or equal to 0");
+        }
+
+        familyRepository.findById(familyId)
+                .orElseThrow(() -> new ResourceNotFoundException("Family not found"));
+
+        LocalDate today = LocalDate.now();
+        return familyMemberRepository.findByFamilyId(familyId).stream()
+                .map(member -> {
+                    UserEntity user = userRepository.findById(member.getUserId()).orElse(null);
+                    if (user == null || user.getDateOfBirth() == null) {
+                        return null;
+                    }
+
+                    LocalDate nextBirthday = resolveNextBirthday(user.getDateOfBirth(), today);
+                    long daysUntil = ChronoUnit.DAYS.between(today, nextBirthday);
+                    if (daysUntil > days) {
+                        return null;
+                    }
+
+                    return new UpcomingBirthdayResponse(
+                            member.getUserId(),
+                            user.getDisplayName(),
+                            member.getRole(),
+                            member.getRelation(),
+                            user.getDateOfBirth(),
+                            nextBirthday,
+                            daysUntil,
+                            nextBirthday.getYear() - user.getDateOfBirth().getYear()
+                    );
+                })
+                .filter(java.util.Objects::nonNull)
+                .sorted((left, right) -> {
+                    int byDay = Long.compare(left.daysUntilBirthday(), right.daysUntilBirthday());
+                    if (byDay != 0) {
+                        return byDay;
+                    }
+                    return left.displayName().compareToIgnoreCase(right.displayName());
+                })
+                .toList();
+    }
+
     @Transactional
     public FamilyResponse updateMemberRole(Long familyId, Long userId, FamilyRole newRole) {
         validateFamilyRole(newRole);
@@ -297,27 +358,29 @@ public class AccountService {
         user.setDisplayName(request.displayName().trim());
         user.setUsername(request.username().trim());
         user.setEmail(request.email().trim().toLowerCase());
+        user.setDateOfBirth(request.dateOfBirth());
         userRepository.save(user);
 
         return getFamily(familyId);
     }
 
     private UserResponse toUserResponse(UserEntity user) {
-        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getDisplayName());
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getDisplayName(), user.getDateOfBirth());
     }
 
     private FamilyResponse buildFamilyResponse(FamilyEntity family) {
         List<FamilyMemberResponse> members = familyMemberRepository.findByFamilyId(family.getId()).stream()
                 .map(member -> {
-                    String displayName = userRepository.findById(member.getUserId())
-                            .map(UserEntity::getDisplayName)
-                            .orElse("Unknown");
+                    UserEntity user = userRepository.findById(member.getUserId()).orElse(null);
+                    String displayName = user != null ? user.getDisplayName() : "Unknown";
+                    LocalDate dateOfBirth = user != null ? user.getDateOfBirth() : null;
                     return new FamilyMemberResponse(
                             member.getUserId(),
                             displayName,
                             member.getRole(),
                             member.getRelation(),
-                            member.getParentUserId()
+                            member.getParentUserId(),
+                            dateOfBirth
                     );
                 })
                 .toList();
@@ -377,13 +440,15 @@ public class AccountService {
             String username,
             String email,
             String displayName,
-            String temporaryPassword
+            String temporaryPassword,
+            LocalDate dateOfBirth
     ) {
         NameParts nameParts = splitDisplayName(displayName);
+        LocalDate normalizedBirthDate = dateOfBirth != null ? dateOfBirth : defaultBirthDate();
         AuthCreateUserRequest payload = new AuthCreateUserRequest(
                 nameParts.firstName(),
                 nameParts.lastName(),
-                java.util.Date.from(defaultBirthDate().atStartOfDay(ZoneId.systemDefault()).toInstant()),
+                java.util.Date.from(normalizedBirthDate.atStartOfDay(ZoneId.systemDefault()).toInstant()),
                 "other",
                 "0000000000",
                 email,
@@ -425,6 +490,20 @@ public class AccountService {
         String firstName = parts[0];
         String lastName = String.join(" ", java.util.Arrays.copyOfRange(parts, 1, parts.length));
         return new NameParts(firstName, lastName);
+    }
+
+    private LocalDate resolveNextBirthday(LocalDate dateOfBirth, LocalDate referenceDate) {
+        LocalDate thisYearBirthday = normalizeBirthday(dateOfBirth, referenceDate.getYear());
+        if (!thisYearBirthday.isBefore(referenceDate)) {
+            return thisYearBirthday;
+        }
+        return normalizeBirthday(dateOfBirth, referenceDate.getYear() + 1);
+    }
+
+    private LocalDate normalizeBirthday(LocalDate dateOfBirth, int year) {
+        int month = dateOfBirth.getMonthValue();
+        int day = Math.min(dateOfBirth.getDayOfMonth(), LocalDate.of(year, month, 1).lengthOfMonth());
+        return LocalDate.of(year, month, day);
     }
 
     private LocalDate defaultBirthDate() {

@@ -172,6 +172,29 @@
 >
   <ng-container *nzModalContent>
     <div class="manage-members-container">
+      <div class="upcoming-birthday-panel">
+        <div class="upcoming-panel-head">
+          <h3>{{ 'momApp.family.birthdays.title' | translate }}</h3>
+          <small>{{ 'momApp.family.birthdays.subtitle' | translate }}</small>
+        </div>
+        <nz-spin [nzSpinning]="upcomingBirthdaysLoading">
+          <div class="upcoming-empty" *ngIf="!upcomingBirthdaysLoading && upcomingBirthdays.length === 0">
+            {{ 'momApp.family.birthdays.empty' | translate }}
+          </div>
+          <div class="upcoming-list" *ngIf="upcomingBirthdays.length > 0">
+            <div class="upcoming-item" *ngFor="let item of upcomingBirthdays">
+              <div class="upcoming-main">
+                <strong>{{ item.displayName }}</strong>
+                <span>{{ relationLabel(item.relation) }} • {{ formatDate(item.nextBirthday) }}</span>
+              </div>
+              <div class="upcoming-side">
+                <span class="upcoming-chip">{{ upcomingBirthdayLabel(item) }}</span>
+                <span class="upcoming-age">#{{ item.turningAge }}</span>
+              </div>
+            </div>
+          </div>
+        </nz-spin>
+      </div>
       
       <!-- DANH SÁCH THÀNH VIÊN HIỆN TẠI -->
       <div class="section-title">
@@ -193,6 +216,7 @@
               <th nzWidth="180px">{{ 'momApp.admin.families.modal.displayName' | translate }}</th>
               <th nzWidth="120px">{{ 'momApp.admin.families.modal.role' | translate }}</th>
               <th nzWidth="150px">{{ 'momApp.admin.families.modal.relation' | translate }}</th>
+              <th nzWidth="130px">{{ 'momApp.family.modal.birthDateLabel' | translate }}</th>
               <th nzWidth="130px">{{ 'momApp.admin.families.modal.parent' | translate }}</th>
               <th nzWidth="150px">{{ 'momApp.admin.families.modal.actions' | translate }}</th>
             </tr>
@@ -211,6 +235,7 @@
                 <td>
                   <span class="relation-badge">{{ relationLabel(member.relation) }}</span>
                 </td>
+                <td>{{ formatDate(member.dateOfBirth) }}</td>
                 <td>
                   {{ member.parentUserId ? member.parentUserId : ('momApp.common.notAvailable' | translate) }}
                 </td>
@@ -250,6 +275,9 @@
                   <nz-select [(ngModel)]="editingMemberRelation" nzSize="small" class="edit-input">
                     <nz-option *ngFor="let rel of relationsList" [nzValue]="rel" [nzLabel]="relationLabel(rel)"></nz-option>
                   </nz-select>
+                </td>
+                <td>
+                  <input nz-input type="date" [(ngModel)]="editingMemberDateOfBirth" nzSize="small" class="edit-input" />
                 </td>
                 <td>
                   <nz-select [(ngModel)]="editingMemberParentId" nzSize="small" nzAllowClear [nzPlaceHolder]="('momApp.common.none' | translate) || 'Không có'" class="edit-input">
@@ -329,6 +357,11 @@
                       <nz-option *ngFor="let other of selectedFamily?.members" [nzValue]="other.userId" [nzLabel]="other.displayName"></nz-option>
                     </nz-select>
                   </div>
+
+                  <div class="selector-item">
+                    <label>{{ 'momApp.family.modal.birthDateLabel' | translate }}</label>
+                    <input nz-input type="date" [(ngModel)]="newMemberDateOfBirth" />
+                  </div>
                 </div>
                 
                 <button 
@@ -359,6 +392,10 @@
                 <div class="form-group">
                   <label>{{ ('momApp.admin.families.modal.email' | translate) || 'Email' }} <span class="required">*</span></label>
                   <input nz-input [(ngModel)]="newMemberEmail" [placeholder]="('momApp.admin.families.modal.emailPlaceholder' | translate) || 'Vd: a@example.com'" />
+                </div>
+                <div class="form-group">
+                  <label>{{ 'momApp.family.modal.birthDateLabel' | translate }}</label>
+                  <input nz-input type="date" [(ngModel)]="newMemberDateOfBirth" />
                 </div>
               </div>
 

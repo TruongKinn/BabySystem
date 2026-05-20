@@ -3453,6 +3453,14 @@
       "title": "Family Members",
       "subtitle": "Role and collaboration overview for each member",
       "totalLabel": "active members",
+      "birthdays": {
+        "title": "Upcoming birthdays",
+        "subtitle": "Family members having birthdays in the next 14 days",
+        "empty": "No upcoming birthdays in the selected window.",
+        "today": "Today",
+        "tomorrow": "Tomorrow",
+        "inDays": "In {{days}} days"
+      },
       "actions": {
         "create": "Add member",
         "deleteConfirm": "Delete this family member?"
@@ -3466,12 +3474,14 @@
       },
       "modal": {
         "createTitle": "Create family member",
+        "createSub": "Invite a new member to this household",
         "displayNameLabel": "Display name",
         "displayNamePlaceholder": "Enter display name",
         "usernameLabel": "Username",
         "usernamePlaceholder": "Enter username",
         "emailLabel": "Email",
         "emailPlaceholder": "Enter email",
+        "birthDateLabel": "Birth date",
         "roleLabel": "Role",
         "editRoleTitle": "Edit family member role",
         "editTitle": "Edit family member",
