@@ -804,6 +804,10 @@ export class SuperAppCommandService {
     return this.put(`/account/users/${userId}/preferences`, { preferences: prefs }).pipe(map(() => undefined));
   }
 
+  getUserPreferences(userId: number): Observable<any> {
+    return this.get<any>(`/account/users/${userId}/preferences`);
+  }
+
   uploadFile(file: File, bucket: string, tag?: string): Observable<FileMetadata> {
     const familyId = this.getFamilyId();
     const userId = this.getUserId();

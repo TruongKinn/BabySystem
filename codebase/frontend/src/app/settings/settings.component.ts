@@ -76,7 +76,7 @@ export class SettingsComponent implements OnInit {
     // 1. Fetch user preferences from DB via command service
     const userId = this.command.getUserId();
     if (userId) {
-      this.command.get(`/account/users/${userId}/preferences`).subscribe({
+      this.command.getUserPreferences(userId).subscribe({
         next: (res: any) => {
           const data = res?.data || {};
           
