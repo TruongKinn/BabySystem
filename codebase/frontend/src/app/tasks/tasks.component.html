@@ -124,7 +124,7 @@
                     <div class="task-name">{{ task.title }}</div>
                     <div class="task-sub">{{ task.description || ('momApp.tasks.noDescription' | translate) }}</div>
                   </td>
-                  <td><nz-tag [nzColor]="statusColor(task.status)">{{ statusLabelKey(task.status) | translate }}</nz-tag></td>
+                  <td><nz-tag class="premium-tag" [nzColor]="statusColor(task.status)">{{ statusLabelKey(task.status) | translate }}</nz-tag></td>
                   <td>{{ formatDate(task.dueAtRaw) }}</td>
                   <td>{{ task.assignee || ('momApp.tasks.unassigned' | translate) }}</td>
                   <td>{{ task.createdByUserId || ('momApp.tasks.notTracked' | translate) }}</td>
@@ -184,7 +184,7 @@
             <ng-container *ngIf="selectedTask; else noTaskSelection">
               <div class="detail-header">
                 <div class="detail-title">{{ selectedTask.title }}</div>
-                <nz-tag [nzColor]="statusColor(selectedTask.status)">{{ statusLabelKey(selectedTask.status) | translate }}</nz-tag>
+                <nz-tag class="premium-tag" [nzColor]="statusColor(selectedTask.status)">{{ statusLabelKey(selectedTask.status) | translate }}</nz-tag>
               </div>
               <div class="detail-desc">{{ selectedTask.description || ('momApp.tasks.noDescription' | translate) }}</div>
 
@@ -238,7 +238,7 @@
                   <div class="task-name">{{ task.title }}</div>
                   <div class="task-sub">{{ formatDate(task.dueAtRaw) }}</div>
                 </div>
-                <nz-tag [nzColor]="statusColor(task.status)">{{ statusLabelKey(task.status) | translate }}</nz-tag>
+                <nz-tag class="premium-tag" [nzColor]="statusColor(task.status)">{{ statusLabelKey(task.status) | translate }}</nz-tag>
               </div>
             </div>
             <ng-template #emptyCalendarDay>
@@ -247,8 +247,8 @@
           </nz-card>
         </div>
 
-        <div class="kanban-shell" *ngSwitchCase="'KANBAN'">
-          <div class="kanban-column" *ngFor="let column of boardColumns">
+        <div class="kanban-shell" cdkDropListGroup *ngSwitchCase="'KANBAN'">
+          <div class="kanban-column" *ngFor="let column of boardColumns; trackBy: trackByColumn">
             <div class="kanban-column-head">
               <span>{{ statusLabelKey(column.status) | translate }}</span>
               <span class="column-count">{{ column.items.length }}</span>
@@ -257,17 +257,18 @@
             <div
               class="kanban-dropzone"
               cdkDropList
-              [id]="dropListId(column.status)"
               [cdkDropListData]="column.items"
-              [cdkDropListConnectedTo]="boardDropListIds"
               (cdkDropListDropped)="drop($event, column.status)">
               <ng-container *ngIf="column.items.length; else emptyColumn">
                 <div class="kanban-card" *ngFor="let task of column.items; trackBy: trackByTaskId" cdkDrag (click)="selectTask(task)">
                   <div class="kanban-title">{{ task.title }}</div>
                   <div class="kanban-meta">{{ formatDate(task.dueAtRaw) }}</div>
                   <div class="kanban-tags">
-                    <nz-tag [nzColor]="statusColor(task.status)">{{ statusLabelKey(task.status) | translate }}</nz-tag>
-                    <nz-tag>{{ task.assignee || ('momApp.tasks.unassigned' | translate) }}</nz-tag>
+                    <nz-tag class="premium-tag" [nzColor]="statusColor(task.status)">{{ statusLabelKey(task.status) | translate }}</nz-tag>
+                    <nz-tag class="premium-tag assignee-tag">
+                      <span nz-icon nzType="user" nzTheme="outline" style="margin-right: 4px;"></span>
+                      {{ task.assignee || ('momApp.tasks.unassigned' | translate) }}
+                    </nz-tag>
                   </div>
                 </div>
               </ng-container>

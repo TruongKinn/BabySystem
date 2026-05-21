@@ -125,6 +125,12 @@ export class TasksComponent implements OnInit {
     DONE: []
   };
 
+  boardColumns: Array<{ status: TaskStatus; items: TaskItem[] }> = [
+    { status: 'PENDING', items: [] },
+    { status: 'IN_PROGRESS', items: [] },
+    { status: 'DONE', items: [] }
+  ];
+
   selectedTask: TaskItem | null = null;
 
   taskModalVisible = false;
@@ -158,17 +164,6 @@ export class TasksComponent implements OnInit {
         const rightDue = this.toDate(right.dueAtRaw)?.getTime() ?? Number.MAX_SAFE_INTEGER;
         return leftDue - rightDue;
       });
-  }
-
-  get boardColumns(): Array<{ status: TaskStatus; items: TaskItem[] }> {
-    return this.boardOrder.map((status) => ({
-      status,
-      items: this.board[status] ?? []
-    }));
-  }
-
-  get boardDropListIds(): string[] {
-    return this.boardOrder.map((status) => this.dropListId(status));
   }
 
   loadWorkspace(): void {
@@ -528,6 +523,10 @@ export class TasksComponent implements OnInit {
     return task.id;
   }
 
+  trackByColumn(_: number, column: { status: TaskStatus }): string {
+    return column.status;
+  }
+
   private updateTaskStatus(task: TaskItem, status: TaskStatus, successKey: string, failedKey: string): void {
     const taskId = this.parseTaskId(task.id);
     if (taskId === null) {
@@ -555,6 +554,10 @@ export class TasksComponent implements OnInit {
       IN_PROGRESS: this.filteredTasks.filter((task) => task.status === 'IN_PROGRESS'),
       DONE: this.filteredTasks.filter((task) => task.status === 'DONE')
     };
+
+    for (const col of this.boardColumns) {
+      col.items = this.board[col.status] ?? [];
+    }
 
     const selectedTaskId = this.selectedTask?.id ?? null;
     if (!selectedTaskId || !this.filteredTasks.some((task) => task.id === selectedTaskId)) {
