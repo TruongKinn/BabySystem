@@ -1,0 +1,188 @@
+<section class="admin-premium-page admin-theme">
+  <header class="premium-hero">
+    <div class="hero-copy">
+      <span class="hero-kicker">{{ 'momApp.admin.premium.hero.kicker' | translate }}</span>
+      <h1>{{ 'momApp.admin.premium.hero.title' | translate }}</h1>
+      <p>{{ 'momApp.admin.premium.hero.subtitle' | translate }}</p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span>{{ 'momApp.admin.premium.stats.households' | translate }}</span>
+        <strong>{{ families.length }}</strong>
+      </div>
+      <div class="hero-stat">
+        <span>{{ 'momApp.admin.premium.stats.members' | translate }}</span>
+        <strong>{{ selectedFamily?.memberCount ?? 0 }}</strong>
+      </div>
+      <div class="hero-stat">
+        <span>{{ 'momApp.admin.premium.stats.enabledFeatures' | translate }}</span>
+        <strong>{{ enabledFeatureCount }}</strong>
+      </div>
+    </div>
+  </header>
+
+  <nz-card class="premium-card family-card" [nzLoading]="loadingFamilies">
+    <div class="family-toolbar">
+      <nz-select
+        class="family-select"
+        [ngModel]="selectedFamilyId"
+        (ngModelChange)="onSelectedFamilyChange($event)"
+        [nzPlaceHolder]="'momApp.admin.premium.family.selectPlaceholder' | translate"
+        [nzShowSearch]="true"
+      >
+        <nz-option
+          *ngFor="let family of families; trackBy: trackByFamily"
+          [nzValue]="family.id"
+          [nzLabel]="'#' + family.id + ' - ' + family.name"
+        ></nz-option>
+      </nz-select>
+
+      <div class="toolbar-actions">
+        <button nz-button nzType="default" (click)="loadFamilies()">
+          {{ 'commonActions.refresh' | translate }}
+        </button>
+        <button nz-button nzType="primary" [disabled]="!selectedFamilyId" (click)="refreshSelectedFamilyConfig()">
+          {{ 'momApp.admin.premium.actions.refreshConfig' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="family-meta" *ngIf="selectedFamily as family">
+      <span>
+        {{ 'momApp.admin.premium.family.selected' | translate }}:
+        <strong>{{ family.name }}</strong>
+      </span>
+      <span>
+        {{ 'momApp.admin.premium.family.id' | translate }}:
+        <strong>#{{ family.id }}</strong>
+      </span>
+      <span>
+        {{ 'momApp.admin.premium.family.members' | translate }}:
+        <strong>{{ family.memberCount }}</strong>
+      </span>
+    </div>
+  </nz-card>
+
+  <nz-card class="premium-card" *ngIf="selectedFamilyId; else selectFamilyState">
+    <div class="section-head">
+      <h2>{{ 'momApp.admin.premium.entitlements.title' | translate }}</h2>
+      <p>{{ 'momApp.admin.premium.entitlements.subtitle' | translate }}</p>
+    </div>
+
+    <nz-spin [nzSpinning]="premiumLoading || premiumSaving">
+      <div class="premium-grid" *ngIf="premiumEntitlements.length > 0; else emptyEntitlements">
+        <div class="entitlement-card" *ngFor="let item of premiumEntitlements">
+          <div class="entitlement-head">
+            <div>
+              <strong>{{ item.featureName }}</strong>
+              <p>{{ item.featureDescription || ('momApp.common.notAvailable' | translate) }}</p>
+            </div>
+            <nz-tag [nzColor]="effectiveTagColor(item)">
+              {{ item.effectiveEnabled ? ('momApp.admin.premium.effectiveState.enabled' | translate) : ('momApp.admin.premium.effectiveState.disabled' | translate) }}
+              ({{ effectiveReasonLabel(item.effectiveReason) }})
+            </nz-tag>
+          </div>
+
+          <div class="entitlement-form-row">
+            <div class="form-item">
+              <label>{{ 'momApp.admin.premium.entitlements.statusLabel' | translate }}</label>
+              <nz-select [(ngModel)]="item.status" (ngModelChange)="onEntitlementStatusChange(item)">
+                <nz-option
+                  *ngFor="let status of entitlementStatuses"
+                  [nzValue]="status"
+                  [nzLabel]="statusLabel(status)"
+                ></nz-option>
+              </nz-select>
+            </div>
+
+            <div class="form-item">
+              <label>{{ 'momApp.admin.premium.entitlements.expiresAtLabel' | translate }}</label>
+              <input
+                nz-input
+                type="datetime-local"
+                [(ngModel)]="item.expiresAtInput"
+                [disabled]="item.status !== 'ALLOW'"
+              />
+            </div>
+          </div>
+
+          <div class="form-item">
+            <label>{{ 'momApp.admin.premium.entitlements.reasonLabel' | translate }}</label>
+            <input
+              nz-input
+              [(ngModel)]="item.reason"
+              [placeholder]="'momApp.admin.premium.entitlements.reasonPlaceholder' | translate"
+              maxlength="300"
+            />
+          </div>
+        </div>
+      </div>
+
+      <ng-template #emptyEntitlements>
+        <div class="empty-inline">{{ 'momApp.admin.premium.entitlements.empty' | translate }}</div>
+      </ng-template>
+
+      <div class="save-row">
+        <button nz-button nzType="primary" [nzLoading]="premiumSaving" (click)="savePremiumConfig()">
+          {{ 'momApp.admin.premium.actions.save' | translate }}
+        </button>
+      </div>
+    </nz-spin>
+  </nz-card>
+
+  <ng-template #selectFamilyState>
+    <nz-card class="premium-card">
+      <nz-empty [nzNotFoundContent]="'momApp.admin.premium.family.empty' | translate"></nz-empty>
+    </nz-card>
+  </ng-template>
+
+  <nz-card class="premium-card" *ngIf="selectedFamilyId">
+    <div class="section-head">
+      <h2>{{ 'momApp.admin.premium.audit.title' | translate }}</h2>
+      <p>{{ 'momApp.admin.premium.audit.subtitle' | translate }}</p>
+    </div>
+
+    <nz-table
+      #auditTable
+      [nzData]="premiumAudit"
+      [nzFrontPagination]="false"
+      [nzShowPagination]="false"
+      nzSize="small"
+      nzTableLayout="fixed"
+    >
+      <thead>
+        <tr>
+          <th nzWidth="180px">{{ 'momApp.admin.premium.audit.table.feature' | translate }}</th>
+          <th nzWidth="160px">{{ 'momApp.admin.premium.audit.table.statusChange' | translate }}</th>
+          <th nzWidth="170px">{{ 'momApp.admin.premium.audit.table.expires' | translate }}</th>
+          <th nzWidth="220px">{{ 'momApp.admin.premium.audit.table.reason' | translate }}</th>
+          <th nzWidth="110px">{{ 'momApp.admin.premium.audit.table.byUser' | translate }}</th>
+          <th nzWidth="170px">{{ 'momApp.admin.premium.audit.table.changedAt' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of auditTable.data">
+          <td>{{ row.featureKey }}</td>
+          <td>
+            <span>{{ row.oldStatus ? statusLabel(row.oldStatus) : ('momApp.common.notAvailable' | translate) }}</span>
+            <span> -> </span>
+            <strong>{{ statusLabel(row.newStatus) }}</strong>
+          </td>
+          <td>
+            <span>{{ formatDateTime(row.oldExpiresAt) }}</span>
+            <span> -> </span>
+            <span>{{ formatDateTime(row.newExpiresAt) }}</span>
+          </td>
+          <td>{{ row.reason || ('momApp.common.notAvailable' | translate) }}</td>
+          <td>{{ row.changedByUserId || ('momApp.common.notAvailable' | translate) }}</td>
+          <td>{{ formatDateTime(row.changedAt) }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+    <div class="empty-inline" *ngIf="premiumAudit.length === 0">
+      {{ 'momApp.admin.premium.audit.empty' | translate }}
+    </div>
+  </nz-card>
+</section>

@@ -2404,6 +2404,7 @@
         "dashboard": "Dashboard admin",
         "users": "Quản lý người dùng",
         "families": "Quản lý hộ gia đình",
+        "premium": "Cấu hình Premium",
         "finance": "Quản lý tài chính",
         "access": "Kiểm soát truy cập",
         "permissions": "Danh mục quyền"
@@ -2661,6 +2662,73 @@
           "removeMemberSuccess": "Đã xóa thành viên khỏi hộ gia đình.",
           "allFieldsRequired": "Vui lòng nhập đầy đủ thông tin!",
           "inviteMemberSuccess": "Thêm thành viên mới thành công!"
+        }
+      },
+      "premium": {
+        "hero": {
+          "kicker": "Quản trị Premium",
+          "title": "Cấu hình tính năng Premium",
+          "subtitle": "Phân quyền tính năng Premium theo từng gia đình và theo dõi lịch sử thay đổi."
+        },
+        "stats": {
+          "households": "Số gia đình",
+          "members": "Thành viên gia đình",
+          "enabledFeatures": "Tính năng đang bật"
+        },
+        "family": {
+          "selectPlaceholder": "Chọn gia đình cần cấu hình...",
+          "selected": "Gia đình đã chọn",
+          "id": "Mã gia đình",
+          "members": "Thành viên",
+          "empty": "Vui lòng chọn một gia đình để cấu hình quyền Premium."
+        },
+        "actions": {
+          "refreshConfig": "Tải lại cấu hình",
+          "save": "Lưu cấu hình Premium"
+        },
+        "entitlements": {
+          "title": "Cấu hình entitlement",
+          "subtitle": "Ghi đè trạng thái mặc định của từng tính năng cho gia đình này.",
+          "statusLabel": "Trạng thái",
+          "expiresAtLabel": "Thời gian hết hạn (tùy chọn)",
+          "reasonLabel": "Lý do",
+          "reasonPlaceholder": "Nhập lý do thay đổi entitlement.",
+          "empty": "Không có dữ liệu entitlement Premium cho gia đình này."
+        },
+        "status": {
+          "INHERIT": "Kế thừa",
+          "ALLOW": "Cho phép",
+          "DENY": "Từ chối"
+        },
+        "effectiveState": {
+          "enabled": "Bật",
+          "disabled": "Tắt"
+        },
+        "effectiveReason": {
+          "ALLOW": "Được bật bởi rule",
+          "DENY": "Bị chặn bởi rule",
+          "INHERIT": "Kế thừa mặc định",
+          "EXPIRED": "Đã hết hạn",
+          "DEFAULT": "Chính sách mặc định"
+        },
+        "audit": {
+          "title": "Lịch sử thay đổi Premium",
+          "subtitle": "20 lần cập nhật entitlement gần nhất của gia đình.",
+          "empty": "Chưa có lịch sử thay đổi.",
+          "table": {
+            "feature": "Tính năng",
+            "statusChange": "Thay đổi trạng thái",
+            "expires": "Thay đổi hạn",
+            "reason": "Lý do",
+            "byUser": "Người thay đổi",
+            "changedAt": "Thời điểm"
+          }
+        },
+        "messages": {
+          "loadFamiliesFailed": "Không thể tải danh sách gia đình.",
+          "loadConfigFailed": "Không thể tải cấu hình Premium của gia đình này.",
+          "saveSuccess": "Cập nhật cấu hình Premium thành công.",
+          "saveFailed": "Không thể lưu cấu hình Premium."
         }
       },
       "access": {
@@ -3426,7 +3494,8 @@
         "vaccinationCreateSuccess": "Đã tạo lịch tiêm.",
         "vaccinationCreateFailed": "Không thể tạo lịch tiêm.",
         "growthLoadFailed": "Không thể tải dữ liệu tăng trưởng.",
-        "vaccinationLoadFailed": "Không thể tải dữ liệu tiêm chủng."
+        "vaccinationLoadFailed": "Không thể tải dữ liệu tiêm chủng.",
+        "premiumGrowthRequired": "Tính năng theo dõi tăng trưởng nâng cao chỉ dành cho gói Premium."
       },
       "gallery": {
         "title": "Thư viện ảnh em bé",

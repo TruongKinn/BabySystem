@@ -21,6 +21,7 @@ import com.mom.baby.domain.GrowthRecordEntity;
 import com.mom.baby.domain.VaccinationEntity;
 import com.mom.baby.event.BabyEventPublisher;
 import com.mom.baby.event.BabyLogCreatedPayload;
+import com.mom.baby.premium.PremiumFeatures;
 import com.mom.baby.repository.BabyLogRepository;
 import com.mom.baby.repository.BabyRepository;
 import com.mom.baby.repository.GrowthRecordRepository;
@@ -59,6 +60,7 @@ public class BabyService {
     private final VaccinationRepository vaccinationRepository;
     private final GrowthRecordRepository growthRecordRepository;
     private final BabyEventPublisher babyEventPublisher;
+    private final PremiumAccessService premiumAccessService;
 
     @Transactional
     public BabyResponse createBaby(CreateBabyRequest request) {
@@ -165,7 +167,9 @@ public class BabyService {
 
     @Transactional
     public GrowthRecordResponse createGrowthRecord(Long babyId, CreateGrowthRecordRequest request) {
-        getBabyEntity(babyId);
+        BabyEntity baby = getBabyEntity(babyId);
+        premiumAccessService.requireFeature(baby.getFamilyId(), PremiumFeatures.ADVANCED_GROWTH_TRACKING);
+
         GrowthRecordEntity record = new GrowthRecordEntity();
         record.setBabyId(babyId);
         record.setMeasuredAt(request.measuredAt());
@@ -177,7 +181,9 @@ public class BabyService {
     }
 
     public List<GrowthRecordResponse> getGrowthRecords(Long babyId) {
-        getBabyEntity(babyId);
+        BabyEntity baby = getBabyEntity(babyId);
+        premiumAccessService.requireFeature(baby.getFamilyId(), PremiumFeatures.ADVANCED_GROWTH_TRACKING);
+
         return growthRecordRepository.findByBabyIdOrderByMeasuredAtDesc(babyId).stream()
                 .map(this::toGrowthRecordResponse)
                 .toList();
@@ -198,6 +204,10 @@ public class BabyService {
     ) {
         BabyEntity baby = getBabyEntity(babyId);
         LocalDate targetDate = date != null ? date : LocalDate.now(ZoneOffset.UTC);
+        boolean growthFeatureEnabled = premiumAccessService.isFeatureEnabled(
+                baby.getFamilyId(),
+                PremiumFeatures.ADVANCED_GROWTH_TRACKING
+        );
 
         int normalizedTrendDays = clamp(trendDays, MIN_TREND_DAYS, MAX_TREND_DAYS);
         int normalizedRecentLogLimit = clamp(recentLogLimit, MIN_RECENT_LOG_LIMIT, MAX_RECENT_LOG_LIMIT);
@@ -218,7 +228,7 @@ public class BabyService {
                 buildDailySummary(babyId, targetDate),
                 buildDailyTrend(babyId, targetDate, normalizedTrendDays),
                 recentLogs,
-                buildGrowthInsight(babyId),
+                growthFeatureEnabled ? buildGrowthInsight(babyId) : null,
                 buildVaccinationInsight(babyId, targetDate, normalizedVaccinationLimit)
         );
     }

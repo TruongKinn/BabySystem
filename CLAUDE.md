@@ -89,3 +89,16 @@ Sai: `cd /Users/bonn/Desktop/claude_demo_part2/claude_book && ls` (khi đã ở 
 ---
 
 **These guidelines are working if:** fewer unnecessary changes in diffs, fewer rewrites due to overcomplication, and clarifying questions come before implementation rather than after mistakes.
+
+## 7. API Permission Gate (Bắt buộc)
+
+**Mỗi API mới phải có cấu hình permission tương ứng, không có ngoại lệ.**
+
+- Khi thêm endpoint mới trong `backend/*-service/src/main/java/**/**Controller.java`, bắt buộc thêm migration permission ở:
+  - `codebase/backend/authentication-service/src/main/resources/db/migration/*.sql`
+- Migration phải cập nhật cả:
+  - `tbl_permission` (khai báo API permission)
+  - `tbl_role_has_permission` (gán permission cho role phù hợp)
+- CI sẽ fail nếu phát hiện API mapping mới mà thiếu migration permission.
+- Script policy check:
+  - `codebase/scripts/enforce-api-permission-rule.sh`

@@ -2404,6 +2404,7 @@
         "dashboard": "Admin dashboard",
         "users": "User management",
         "families": "Family management",
+        "premium": "Premium config",
         "finance": "Financial management",
         "access": "Access control",
         "permissions": "Permission catalog"
@@ -2661,6 +2662,73 @@
           "removeMemberSuccess": "Member removed from household successfully.",
           "allFieldsRequired": "Please enter all fields!",
           "inviteMemberSuccess": "New member added successfully!"
+        }
+      },
+      "premium": {
+        "hero": {
+          "kicker": "Premium governance",
+          "title": "Premium feature configuration",
+          "subtitle": "Control which households can use premium features and track each entitlement change."
+        },
+        "stats": {
+          "households": "Households",
+          "members": "Members in household",
+          "enabledFeatures": "Enabled features"
+        },
+        "family": {
+          "selectPlaceholder": "Select household to configure...",
+          "selected": "Selected household",
+          "id": "Family ID",
+          "members": "Members",
+          "empty": "Please select a household to configure premium access."
+        },
+        "actions": {
+          "refreshConfig": "Refresh premium data",
+          "save": "Save premium config"
+        },
+        "entitlements": {
+          "title": "Feature entitlements",
+          "subtitle": "Override default feature access for this household.",
+          "statusLabel": "Status",
+          "expiresAtLabel": "Expires at (optional)",
+          "reasonLabel": "Reason",
+          "reasonPlaceholder": "Explain why this entitlement is changed.",
+          "empty": "No premium entitlement data found for this household."
+        },
+        "status": {
+          "INHERIT": "Inherit",
+          "ALLOW": "Allow",
+          "DENY": "Deny"
+        },
+        "effectiveState": {
+          "enabled": "Enabled",
+          "disabled": "Disabled"
+        },
+        "effectiveReason": {
+          "ALLOW": "Allowed by rule",
+          "DENY": "Denied by rule",
+          "INHERIT": "Inherited",
+          "EXPIRED": "Expired",
+          "DEFAULT": "Default policy"
+        },
+        "audit": {
+          "title": "Premium change audit",
+          "subtitle": "Latest 20 entitlement changes for this household.",
+          "empty": "No audit entries yet.",
+          "table": {
+            "feature": "Feature",
+            "statusChange": "Status change",
+            "expires": "Expiry change",
+            "reason": "Reason",
+            "byUser": "Changed by",
+            "changedAt": "Changed at"
+          }
+        },
+        "messages": {
+          "loadFamiliesFailed": "Unable to load household list.",
+          "loadConfigFailed": "Unable to load premium configuration for this household.",
+          "saveSuccess": "Premium configuration updated successfully.",
+          "saveFailed": "Unable to save premium configuration."
         }
       },
       "access": {
@@ -3426,7 +3494,8 @@
         "vaccinationCreateSuccess": "Vaccination item created.",
         "vaccinationCreateFailed": "Unable to create vaccination item.",
         "growthLoadFailed": "Unable to load growth records.",
-        "vaccinationLoadFailed": "Unable to load vaccinations."
+        "vaccinationLoadFailed": "Unable to load vaccinations.",
+        "premiumGrowthRequired": "Advanced growth tracking is available for Premium households only."
       },
       "gallery": {
         "title": "Baby photo gallery",

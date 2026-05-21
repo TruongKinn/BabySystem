@@ -89,6 +89,7 @@ export class App implements OnInit, OnDestroy {
         { labelKey: 'momApp.admin.menu.dashboard', icon: 'home', route: '/admin/dashboard' },
         { labelKey: 'momApp.admin.menu.users', icon: 'users', route: '/admin/users' },
         { labelKey: 'momApp.admin.menu.families', icon: 'users', route: '/admin/families' },
+        { labelKey: 'momApp.admin.menu.premium', icon: 'star', route: '/admin/premium' },
         { labelKey: 'momApp.admin.menu.finance', icon: 'wallet', route: '/admin/finance' },
         { labelKey: 'momApp.admin.menu.access', icon: 'check-square', route: '/admin/access' },
         { labelKey: 'momApp.admin.menu.permissions', icon: 'settings', route: '/admin/permissions' }

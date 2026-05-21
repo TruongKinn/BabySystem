@@ -1,5 +1,6 @@
 package com.mom.baby.controller;
 
+import com.mom.baby.exception.PremiumFeatureRequiredException;
 import com.mom.common.dto.ApiResponse;
 import com.mom.common.exception.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,12 @@ public class RestExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiResponse<Object>> handleNotFound(ResourceNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ApiResponse<>(false, ex.getMessage(), null));
+    }
+
+    @ExceptionHandler(PremiumFeatureRequiredException.class)
+    public ResponseEntity<ApiResponse<Object>> handlePremiumRequired(PremiumFeatureRequiredException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(new ApiResponse<>(false, ex.getMessage(), null));
     }
 

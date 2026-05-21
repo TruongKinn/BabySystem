@@ -114,6 +114,13 @@ export interface BabyDashboard {
   vaccinationInsight: BabyVaccinationInsight;
 }
 
+export interface ResolvedPremiumFeature {
+  featureKey: string;
+  enabled: boolean;
+  sourceStatus: string;
+  expiresAt: string | null;
+}
+
 interface UserApi {
   id: number;
   username: string;
@@ -351,6 +358,30 @@ export class SuperAppCommandService {
         })
       ),
       catchError(() => of([]))
+    );
+  }
+
+  getResolvedFamilyFeatures(familyId?: number): Observable<ResolvedPremiumFeature[]> {
+    if (familyId) {
+      return this.get<ResolvedPremiumFeature[]>(`/account/families/${familyId}/features/resolved`).pipe(
+        map((items) => items ?? []),
+        catchError(() => of([]))
+      );
+    }
+
+    return this.resolveCurrentAccountUser().pipe(
+      switchMap((user) => {
+        if (!user) {
+          return of(this.getFamilyId());
+        }
+        return this.resolveFamilyIdForUser(user.id);
+      }),
+      switchMap((resolvedFamilyId) =>
+        this.get<ResolvedPremiumFeature[]>(`/account/families/${resolvedFamilyId}/features/resolved`).pipe(
+          map((items) => items ?? []),
+          catchError(() => of([]))
+        )
+      )
     );
   }
 

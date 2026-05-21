@@ -373,6 +373,22 @@
   gap: 12px;
 }
 
+.premium-lock-panel {
+  border: 1px dashed #f59e0b;
+  background: #fffbeb;
+  color: #92400e;
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.premium-lock-panel p {
+  margin: 0;
+  font-size: 13px;
+}
+
 .growth-date {
   margin: 0;
   font-size: 12px;

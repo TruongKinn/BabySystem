@@ -20,7 +20,7 @@
         <span nz-icon nzType="user-add"></span>
         {{ 'momApp.baby.actions.addProfile' | translate }}
       </button>
-      <button nz-button nzType="default" (click)="openCreateGrowthModal()" class="btn-user-outline">
+      <button nz-button nzType="default" [disabled]="growthPremiumLocked" (click)="openCreateGrowthModal()" class="btn-user-outline">
         <span nz-icon nzType="line-chart"></span>
         {{ 'momApp.baby.actions.addGrowth' | translate }}
       </button>
@@ -229,7 +229,12 @@
         <nz-spin nzSimple></nz-spin>
       </div>
 
-      <div *ngIf="!isLoadingGrowthRecords" class="growth-panel">
+      <div *ngIf="!isLoadingGrowthRecords && growthPremiumLocked" class="premium-lock-panel">
+        <span nz-icon nzType="lock"></span>
+        <p>{{ growthLoadError }}</p>
+      </div>
+
+      <div *ngIf="!isLoadingGrowthRecords && !growthPremiumLocked" class="growth-panel">
         <div class="growth-latest">
           <p class="growth-date">{{ 'momApp.baby.growth.latestLabel' | translate }}: {{ formatDate(dashboard?.growthInsight?.latest?.measuredAt ?? null) }}</p>
           <div class="growth-kpi-grid">

@@ -54,6 +54,16 @@ pipeline {
             }
         }
 
+        stage('🧭 Policy Check: API Permission Rule') {
+            steps {
+                script {
+                    withEnv(["PATH+DOCKER=${DOCKER_PATH}"]) {
+                        sh "bash codebase/scripts/enforce-api-permission-rule.sh"
+                    }
+                }
+            }
+        }
+
         stage('🔨 Build Artifact') {
             steps {
                 dir("codebase/${APP_NAME}") {

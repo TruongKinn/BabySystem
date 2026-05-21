@@ -25,6 +25,7 @@ import {
   BabyLogEntry,
   BabyLogType,
   BabyProfile,
+  ResolvedPremiumFeature,
   BabyVaccination,
   FileMetadata,
   SuperAppCommandService
@@ -61,6 +62,7 @@ interface GalleryFileView extends FileMetadata {
 export class BabyComponent {
   private readonly babyGalleryBucket = 'baby-gallery';
   private readonly maxUploadImageSizeBytes = 30 * 1024 * 1024;
+  private readonly advancedGrowthFeatureKey = 'advanced_growth_tracking';
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   private readonly command = inject(SuperAppCommandService);
@@ -116,6 +118,7 @@ export class BabyComponent {
   growthLoadError: string | null = null;
   vaccinationLoadError: string | null = null;
   galleryLoadError: string | null = null;
+  growthPremiumLocked = false;
 
   selectedBabyId: number | null = null;
   dashboard: BabyDashboard | null = null;
@@ -245,6 +248,10 @@ export class BabyComponent {
       this.notifySelectBabyFirst();
       return;
     }
+    if (this.growthPremiumLocked) {
+      this.notification.warning(this.i18n.translate('common.errorTitle'), this.growthPremiumLockMessage());
+      return;
+    }
     this.isCreateGrowthModalVisible = true;
   }
 
@@ -368,6 +375,10 @@ export class BabyComponent {
       this.notifySelectBabyFirst();
       return;
     }
+    if (this.growthPremiumLocked) {
+      this.notification.warning(this.i18n.translate('common.errorTitle'), this.growthPremiumLockMessage());
+      return;
+    }
 
     const measuredAt = this.createGrowthForm.controls.measuredAt.value;
     if (!measuredAt) {
@@ -409,9 +420,14 @@ export class BabyComponent {
         },
         error: (err) => {
           this.isSubmittingGrowth = false;
+          if (this.isPremiumRequired(err, this.advancedGrowthFeatureKey)) {
+            this.growthPremiumLocked = true;
+          }
           this.notification.error(
             this.i18n.translate('common.errorTitle'),
-            err?.message || this.i18n.translate('momApp.baby.messages.growthCreateFailed')
+            this.isPremiumRequired(err, this.advancedGrowthFeatureKey)
+              ? this.growthPremiumLockMessage()
+              : (err?.message || this.i18n.translate('momApp.baby.messages.growthCreateFailed'))
           );
         }
       });
@@ -734,6 +750,7 @@ export class BabyComponent {
 
   private selectBaby(babyId: number): void {
     this.selectedBabyId = babyId;
+    this.loadPremiumFeatures();
     this.loadBabyCareOverview();
     this.loadMedicalData();
     this.loadGalleryFiles();
@@ -814,10 +831,31 @@ export class BabyComponent {
     this.growthLoadError = null;
     this.vaccinationLoadError = null;
 
+    if (this.growthPremiumLocked) {
+      this.isLoadingGrowthRecords = false;
+      this.growthRecords = [];
+      this.growthLoadError = this.growthPremiumLockMessage();
+      this.command.getVaccinations(babyId).pipe(
+        catchError((err) => {
+          this.vaccinationLoadError = err?.message || this.i18n.translate('momApp.baby.messages.vaccinationLoadFailed');
+          return of([] as BabyVaccination[]);
+        })
+      ).subscribe((vaccinations) => {
+        this.isLoadingVaccinations = false;
+        this.vaccinations = vaccinations;
+      });
+      return;
+    }
+
     forkJoin({
       growthRecords: this.command.getGrowthRecords(babyId).pipe(
         catchError((err) => {
-          this.growthLoadError = err?.message || this.i18n.translate('momApp.baby.messages.growthLoadFailed');
+          if (this.isPremiumRequired(err, this.advancedGrowthFeatureKey)) {
+            this.growthPremiumLocked = true;
+            this.growthLoadError = this.growthPremiumLockMessage();
+          } else {
+            this.growthLoadError = err?.message || this.i18n.translate('momApp.baby.messages.growthLoadFailed');
+          }
           return of([] as BabyGrowthRecord[]);
         })
       ),
@@ -832,6 +870,17 @@ export class BabyComponent {
       this.isLoadingVaccinations = false;
       this.growthRecords = growthRecords;
       this.vaccinations = vaccinations;
+    });
+  }
+
+  private loadPremiumFeatures(): void {
+    this.command.getResolvedFamilyFeatures().subscribe((features) => {
+      this.growthPremiumLocked = !this.hasFeatureEnabled(features, this.advancedGrowthFeatureKey);
+      if (this.growthPremiumLocked) {
+        this.growthLoadError = this.growthPremiumLockMessage();
+      } else if (this.growthLoadError === this.growthPremiumLockMessage()) {
+        this.growthLoadError = null;
+      }
     });
   }
 
@@ -896,6 +945,20 @@ export class BabyComponent {
     this.vaccinations = [];
     this.galleryFiles = [];
     this.selectedBabyAvatarUrl = null;
+    this.growthPremiumLocked = false;
+  }
+
+  private hasFeatureEnabled(features: ResolvedPremiumFeature[], featureKey: string): boolean {
+    return features.some((item) => item.featureKey === featureKey && item.enabled);
+  }
+
+  private isPremiumRequired(err: any, featureKey: string): boolean {
+    const message = String(err?.message ?? '');
+    return message.includes(`PREMIUM_REQUIRED:${featureKey}`);
+  }
+
+  private growthPremiumLockMessage(): string {
+    return this.i18n.translate('momApp.baby.messages.premiumGrowthRequired');
   }
 
   private notifySelectBabyFirst(): void {
@@ -966,4 +1029,5 @@ export class BabyComponent {
     return `${year}-${month}-${day}`;
   }
 }
+
 

@@ -3,28 +3,25 @@ package com.mom.account.controller;
 import com.mom.account.controller.dto.AddFamilyMemberRequest;
 import com.mom.account.controller.dto.CreateFamilyRequest;
 import com.mom.account.controller.dto.CreateUserRequest;
+import com.mom.account.controller.dto.FamilyFeatureAuditLogResponse;
+import com.mom.account.controller.dto.FamilyFeatureEntitlementResponse;
 import com.mom.account.controller.dto.FamilyResponse;
 import com.mom.account.controller.dto.InviteFamilyMemberRequest;
+import com.mom.account.controller.dto.PremiumFeatureResponse;
+import com.mom.account.controller.dto.ResolvedFeatureAccessResponse;
+import com.mom.account.controller.dto.UpdateFamilyEntitlementsRequest;
 import com.mom.account.controller.dto.UpcomingBirthdayResponse;
 import com.mom.account.controller.dto.UpdateFamilyRequest;
 import com.mom.account.controller.dto.UpdatePreferencesRequest;
 import com.mom.account.controller.dto.UserResponse;
+import com.mom.account.domain.FamilyRole;
 import com.mom.account.service.AccountService;
+import com.mom.account.service.PremiumEntitlementService;
 import com.mom.common.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import com.mom.account.service.AccountService;
-import com.mom.common.dto.ApiResponse;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -32,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import com.mom.account.domain.FamilyRole;
+
 import java.util.List;
 
 @RestController
@@ -42,6 +39,7 @@ import java.util.List;
 public class AccountController {
 
     private final AccountService accountService;
+    private final PremiumEntitlementService premiumEntitlementService;
 
     @PostMapping("/users")
     public ApiResponse<UserResponse> createUser(@Valid @RequestBody CreateUserRequest request) {
@@ -79,6 +77,11 @@ public class AccountController {
         return ApiResponse.ok("Success", accountService.getFamily(familyId));
     }
 
+    @GetMapping("/families/{id}/features/resolved")
+    public ApiResponse<List<ResolvedFeatureAccessResponse>> resolveFamilyFeatures(@PathVariable("id") Long familyId) {
+        return ApiResponse.ok("Success", premiumEntitlementService.resolveFamilyFeatures(familyId));
+    }
+
     @GetMapping("/admin/families")
     public ApiResponse<List<FamilyResponse>> getAllFamiliesForAdmin() {
         return ApiResponse.ok("Success", accountService.getAllFamiliesForAdmin());
@@ -107,6 +110,33 @@ public class AccountController {
     public ApiResponse<Void> deleteFamilyForAdmin(@PathVariable("id") Long familyId) {
         accountService.deleteFamilyForAdmin(familyId);
         return ApiResponse.ok("Family deleted", null);
+    }
+
+    @GetMapping("/admin/premium/features")
+    public ApiResponse<List<PremiumFeatureResponse>> getPremiumFeaturesForAdmin() {
+        return ApiResponse.ok("Success", premiumEntitlementService.getPremiumFeaturesForAdmin());
+    }
+
+    @GetMapping("/admin/families/{id}/entitlements")
+    public ApiResponse<List<FamilyFeatureEntitlementResponse>> getFamilyEntitlementsForAdmin(
+            @PathVariable("id") Long familyId
+    ) {
+        return ApiResponse.ok("Success", premiumEntitlementService.getFamilyEntitlementsForAdmin(familyId));
+    }
+
+    @PutMapping("/admin/families/{id}/entitlements")
+    public ApiResponse<List<FamilyFeatureEntitlementResponse>> updateFamilyEntitlementsForAdmin(
+            @PathVariable("id") Long familyId,
+            @Valid @RequestBody UpdateFamilyEntitlementsRequest request
+    ) {
+        return ApiResponse.ok("Entitlements updated", premiumEntitlementService.updateFamilyEntitlementsForAdmin(familyId, request));
+    }
+
+    @GetMapping("/admin/families/{id}/entitlements/audit")
+    public ApiResponse<List<FamilyFeatureAuditLogResponse>> getFamilyEntitlementAuditForAdmin(
+            @PathVariable("id") Long familyId
+    ) {
+        return ApiResponse.ok("Success", premiumEntitlementService.getFamilyEntitlementAuditForAdmin(familyId));
     }
 
     @PostMapping("/families/{id}/members")
