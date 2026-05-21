@@ -8,6 +8,7 @@ import com.mom.account.controller.dto.FamilyResponse;
 import com.mom.account.controller.dto.InviteFamilyMemberRequest;
 import com.mom.account.controller.dto.UpcomingBirthdayResponse;
 import com.mom.account.controller.dto.UpdateFamilyRequest;
+import com.mom.account.controller.dto.UpdatePreferencesRequest;
 import com.mom.account.controller.dto.UserResponse;
 import com.mom.account.domain.FamilyEntity;
 import com.mom.account.domain.FamilyMemberEntity;
@@ -97,6 +98,18 @@ public class AccountService {
         }
 
         validateUserAccessIfContextPresent(user.getId());
+        return toUserResponse(user);
+    }
+
+    @Transactional
+    public UserResponse updatePreferences(Long userId, UpdatePreferencesRequest request) {
+        validateUserAccessIfContextPresent(userId);
+
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        user.setPreferences(request.preferences());
+        userRepository.save(user);
+
         return toUserResponse(user);
     }
 
@@ -365,7 +378,7 @@ public class AccountService {
     }
 
     private UserResponse toUserResponse(UserEntity user) {
-        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getDisplayName(), user.getDateOfBirth());
+        return new UserResponse(user.getId(), user.getUsername(), user.getEmail(), user.getDisplayName(), user.getDateOfBirth(), user.getPreferences());
     }
 
     private FamilyResponse buildFamilyResponse(FamilyEntity family) {

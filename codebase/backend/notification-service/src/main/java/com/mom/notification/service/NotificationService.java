@@ -13,6 +13,7 @@ import com.mom.notification.repository.NotificationRepository;
 import com.mom.common.security.DataIsolationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +27,7 @@ import java.util.List;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
     @Transactional
     public NotificationResponse create(CreateNotificationRequest request) {
@@ -111,6 +113,14 @@ public class NotificationService {
         dueNotifications.forEach(notification -> {
             notification.setStatus(NotificationStatus.SENT);
             notification.setSentAt(now);
+            
+            // Push via WebSocket
+            try {
+                String destination = "/topic/notifications/user/" + notification.getUserId();
+                messagingTemplate.convertAndSend(destination, toResponse(notification));
+            } catch (Exception e) {
+                log.error("Failed to push notification via WebSocket: {}", e.getMessage());
+            }
         });
         notificationRepository.saveAll(dueNotifications);
         log.info("Dispatched {} notifications", dueNotifications.size());

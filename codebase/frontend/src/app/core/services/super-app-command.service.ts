@@ -800,6 +800,10 @@ export class SuperAppCommandService {
     }).pipe(map(() => undefined));
   }
 
+  saveUserPreferences(userId: number, prefs: { theme?: string, language?: string, currency?: string, startOfWeek?: string, notificationEnabled?: boolean, reminderTime?: string }): Observable<void> {
+    return this.put(`/account/users/${userId}/preferences`, { preferences: prefs }).pipe(map(() => undefined));
+  }
+
   uploadFile(file: File, bucket: string, tag?: string): Observable<FileMetadata> {
     const familyId = this.getFamilyId();
     const userId = this.getUserId();

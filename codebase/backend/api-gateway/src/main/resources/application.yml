@@ -293,7 +293,7 @@ spring:
 
         # Route cho notification WebSocket/SockJS endpoint
         - id: notification-service-ws
-          uri: ${NOTIFICATION_SERVICE_WS_URI:ws://localhost:8098}
+          uri: ${NOTIFICATION_SERVICE_WS_URI:http://localhost:8098}
           predicates:
             - Path=/notification/ws/**
             

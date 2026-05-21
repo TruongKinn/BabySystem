@@ -11,6 +11,9 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+import com.mom.account.controller.dto.UserPreferences;
 
 @Getter
 @Setter
@@ -36,4 +39,8 @@ public class UserEntity {
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
+
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
+    private UserPreferences preferences;
 }

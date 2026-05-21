@@ -7,6 +7,7 @@ public record UserResponse(
         String username,
         String email,
         String displayName,
-        LocalDate dateOfBirth
+        LocalDate dateOfBirth,
+        UserPreferences preferences
 ) {
 }

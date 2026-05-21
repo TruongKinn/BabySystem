@@ -139,3 +139,18 @@
     <router-outlet></router-outlet>
   </div>
 </ng-template>
+
+<!-- Custom Real-time Notification Template -->
+<ng-template #customNotificationTemplate let-notification="data">
+  <div class="custom-ws-notification">
+    <div class="notification-icon-wrapper">
+      <div class="icon-ring"></div>
+      <span nz-icon nzType="bell" nzTheme="fill"></span>
+    </div>
+    <div class="notification-content">
+      <h4 class="notification-title">{{ notification.title || 'Thông báo mới' }}</h4>
+      <p class="notification-desc">{{ notification.message }}</p>
+    </div>
+    <div class="notification-bg-glow"></div>
+  </div>
+</ng-template>

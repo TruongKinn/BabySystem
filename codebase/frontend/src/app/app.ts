@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, Inject, OnInit, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, OnInit, OnDestroy, PLATFORM_ID, ViewChild, TemplateRef } from '@angular/core';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/operators';
 import { TranslateModule } from '@ngx-translate/core';
@@ -12,6 +12,9 @@ import { SUPPORTED_LANGUAGES } from './i18n/i18n.constants';
 import { I18nService } from './i18n/i18n.service';
 import { LanguageCode } from './i18n/language.model';
 import { MenuItem, SidebarComponent } from './shared/sidebar/sidebar.component';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
+import { NotificationWebsocketService } from './core/services/notification-websocket.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +34,7 @@ import { MenuItem, SidebarComponent } from './shared/sidebar/sidebar.component';
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
-export class App implements OnInit {
+export class App implements OnInit, OnDestroy {
   isBrowser: boolean;
   avatarUrl?: string;
   showLayout = true;
@@ -40,6 +43,10 @@ export class App implements OnInit {
   sidebarMenuItems: MenuItem[] = [];
   readonly languageOptions = SUPPORTED_LANGUAGES;
   currentLanguage: LanguageCode = 'vi';
+  private notificationSub?: Subscription;
+
+  @ViewChild('customNotificationTemplate', { static: true }) customNotificationTemplate!: TemplateRef<{ $implicit: any, data: any }>;
+
   readonly userMenuItems: MenuItem[] = [
     {
       labelKey: 'momApp.layout.menu.overview',
@@ -93,6 +100,8 @@ export class App implements OnInit {
     private readonly authService: AuthService,
     private readonly i18nService: I18nService,
     private readonly router: Router,
+    private readonly nzNotification: NzNotificationService,
+    private readonly notificationWs: NotificationWebsocketService,
     @Inject(PLATFORM_ID) private readonly platformId: object
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
@@ -125,10 +134,24 @@ export class App implements OnInit {
         if (this.router.url.includes('/login')) {
           this.router.navigateByUrl(this.authService.getDefaultRouteByRole(), { replaceUrl: true });
         }
+        this.notificationWs.connect();
       } else if (event === 'logout') {
         this.avatarUrl = undefined;
         this.showLayout = false;
+        this.notificationWs.disconnect();
       }
+    });
+
+    if (this.authService.isAuthenticated()) {
+      this.notificationWs.connect();
+    }
+
+    this.notificationSub = this.notificationWs.notifications$.subscribe(notification => {
+      this.nzNotification.template(this.customNotificationTemplate, {
+        nzData: notification,
+        nzDuration: 8000,
+        nzClass: 'premium-notification-wrapper'
+      });
     });
 
     this.currentLanguage = this.i18nService.getCurrentLanguage();
@@ -193,5 +216,11 @@ export class App implements OnInit {
 
     this.homeRoute = '/app/dashboard';
     this.sidebarMenuItems = this.userMenuItems;
+  }
+
+  ngOnDestroy(): void {
+    if (this.notificationSub) {
+      this.notificationSub.unsubscribe();
+    }
   }
 }

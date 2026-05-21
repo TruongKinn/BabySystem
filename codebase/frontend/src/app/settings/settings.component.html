@@ -46,52 +46,143 @@
   </section>
 
   <div class="settings-grid">
-    <nz-card class="table-card settings-card animate-slide-up">
-      <div class="settings-card__head">
-        <h3>{{ 'momApp.settings.title' | translate }}</h3>
-        <span class="pill-chip">
-          <span nz-icon nzType="clock-circle"></span>
-          {{ reminderHourDisplay }}
-        </span>
-      </div>
+    <div class="settings-list animate-slide-up">
+      <!-- Appearance -->
+      <nz-card class="table-card settings-card" nzBorderless>
+        <div class="settings-card__head">
+          <h3>Giao diện & Hệ thống</h3>
+        </div>
 
-      <div class="setting-row">
-        <div class="setting-main">
-          <div class="setting-icon setting-icon--bell">
-            <span nz-icon nzType="bell" nzTheme="fill"></span>
+        <div class="setting-row">
+          <div class="setting-main">
+            <div class="setting-icon setting-icon--blue">
+              <span nz-icon nzType="global" nzTheme="outline"></span>
+            </div>
+            <div>
+              <p class="setting-title">Ngôn ngữ (Language)</p>
+              <span class="setting-description">Chọn ngôn ngữ hiển thị cho ứng dụng</span>
+            </div>
           </div>
-          <div>
-            <p class="setting-title">{{ 'momApp.settings.dailyReminder.title' | translate }}</p>
-            <span class="setting-description">{{ 'momApp.settings.dailyReminder.desc' | translate }}</span>
+          <div class="setting-control">
+            <nz-select [(ngModel)]="selectedLanguage" class="settings-select">
+              <nz-option nzValue="vi" nzLabel="Tiếng Việt"></nz-option>
+              <nz-option nzValue="en" nzLabel="English"></nz-option>
+            </nz-select>
           </div>
         </div>
-        <nz-switch [(ngModel)]="notificationEnabled"></nz-switch>
-      </div>
 
-      <div class="setting-row" [class.setting-row--disabled]="!notificationEnabled">
-        <div class="setting-main">
-          <div class="setting-icon setting-icon--time">
-            <span nz-icon nzType="clock-circle" nzTheme="fill"></span>
+        <div class="setting-row">
+          <div class="setting-main">
+            <div class="setting-icon setting-icon--purple">
+              <span nz-icon nzType="bg-colors" nzTheme="outline"></span>
+            </div>
+            <div>
+              <p class="setting-title">Chế độ nền (Theme)</p>
+              <span class="setting-description">Tùy chỉnh giao diện Sáng hoặc Tối</span>
+            </div>
           </div>
-          <div>
-            <p class="setting-title">{{ 'momApp.settings.reminderTime.title' | translate }}</p>
-            <span class="setting-description">{{ 'momApp.settings.reminderTime.desc' | translate }}</span>
+          <div class="setting-control">
+            <nz-radio-group [(ngModel)]="selectedTheme" nzButtonStyle="solid" class="theme-radio">
+              <label nz-radio-button nzValue="light"><span nz-icon nzType="sun"></span> Sáng</label>
+              <label nz-radio-button nzValue="dark"><span nz-icon nzType="moon"></span> Tối</label>
+            </nz-radio-group>
           </div>
         </div>
-        <div class="time-input-wrap">
-          <input
-            nz-input
-            type="time"
-            step="60"
-            [(ngModel)]="reminderHour"
-            [disabled]="!notificationEnabled"
-            [class.time-input--invalid]="!isReminderHourValid"
-          />
-          <small class="input-format">HH:mm</small>
-        </div>
-      </div>
-    </nz-card>
+      </nz-card>
 
+      <!-- Notifications -->
+      <nz-card class="table-card settings-card" nzBorderless>
+        <div class="settings-card__head">
+          <h3>{{ 'momApp.settings.title' | translate }}</h3>
+          <span class="pill-chip">
+            <span nz-icon nzType="clock-circle"></span>
+            {{ reminderHourDisplay }}
+          </span>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-main">
+            <div class="setting-icon setting-icon--bell">
+              <span nz-icon nzType="bell" nzTheme="fill"></span>
+            </div>
+            <div>
+              <p class="setting-title">{{ 'momApp.settings.dailyReminder.title' | translate }}</p>
+              <span class="setting-description">{{ 'momApp.settings.dailyReminder.desc' | translate }}</span>
+            </div>
+          </div>
+          <nz-switch [(ngModel)]="notificationEnabled"></nz-switch>
+        </div>
+
+        <div class="setting-row" [class.setting-row--disabled]="!notificationEnabled">
+          <div class="setting-main">
+            <div class="setting-icon setting-icon--time">
+              <span nz-icon nzType="clock-circle" nzTheme="fill"></span>
+            </div>
+            <div>
+              <p class="setting-title">{{ 'momApp.settings.reminderTime.title' | translate }}</p>
+              <span class="setting-description">{{ 'momApp.settings.reminderTime.desc' | translate }}</span>
+            </div>
+          </div>
+          <div class="time-input-wrap">
+            <input
+              nz-input
+              type="time"
+              step="60"
+              [(ngModel)]="reminderHour"
+              [disabled]="!notificationEnabled"
+              [class.time-input--invalid]="!isReminderHourValid"
+            />
+            <small class="input-format">HH:mm</small>
+          </div>
+        </div>
+      </nz-card>
+
+      <!-- Preferences -->
+      <nz-card class="table-card settings-card" nzBorderless>
+        <div class="settings-card__head">
+          <h3>Tùy chọn chung</h3>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-main">
+            <div class="setting-icon setting-icon--green">
+              <span nz-icon nzType="dollar" nzTheme="outline"></span>
+            </div>
+            <div>
+              <p class="setting-title">Tiền tệ hiển thị</p>
+              <span class="setting-description">Đơn vị tiền tệ mặc định cho chi tiêu gia đình</span>
+            </div>
+          </div>
+          <div class="setting-control">
+            <nz-select [(ngModel)]="currency" class="settings-select">
+              <nz-option nzValue="VND" nzLabel="VND (₫)"></nz-option>
+              <nz-option nzValue="USD" nzLabel="USD ($)"></nz-option>
+              <nz-option nzValue="EUR" nzLabel="EUR (€)"></nz-option>
+            </nz-select>
+          </div>
+        </div>
+
+        <div class="setting-row">
+          <div class="setting-main">
+            <div class="setting-icon setting-icon--yellow">
+              <span nz-icon nzType="calendar" nzTheme="outline"></span>
+            </div>
+            <div>
+              <p class="setting-title">Ngày bắt đầu tuần</p>
+              <span class="setting-description">Chọn ngày đầu tiên trong tuần trên lịch trình</span>
+            </div>
+          </div>
+          <div class="setting-control">
+            <nz-select [(ngModel)]="startOfWeek" class="settings-select">
+              <nz-option nzValue="MONDAY" nzLabel="Thứ Hai"></nz-option>
+              <nz-option nzValue="SUNDAY" nzLabel="Chủ Nhật"></nz-option>
+            </nz-select>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+
+    <!-- Right Column Summary -->
     <nz-card class="table-card settings-summary-card animate-fade-in">
       <div class="summary-top">
         <h3>{{ 'momApp.settings.modal.title' | translate }}</h3>
@@ -117,6 +208,7 @@
   </div>
 </section>
 
+<!-- Save Modal -->
 <nz-modal
   [(nzVisible)]="isSaveModalVisible"
   [nzTitle]="settingsModalTitleTpl"
@@ -133,14 +225,22 @@
       <span nz-icon nzType="setting"></span>
     </span>
     <span class="modal-title-text">
-      <span class="modal-title-main">{{ 'momApp.settings.modal.title' | translate }}</span>
-      <span class="modal-title-sub">Xác nhận thay đổi cài đặt nhắc nhở</span>
+      <span class="modal-title-main">Xác nhận thay đổi cài đặt</span>
+      <span class="modal-title-sub">Bạn có chắc chắn muốn lưu lại các thay đổi không?</span>
     </span>
   </div>
 </ng-template>
   <ng-container *nzModalContent>
-    <p>{{ 'momApp.settings.modal.description' | translate : { hour: reminderHourDisplay } }}</p>
+    <p>Hệ thống sẽ cập nhật và áp dụng ngay các cài đặt mới của bạn.</p>
     <div class="modal-summary">
+      <div class="modal-summary__item">
+        <span>Giao diện (Theme)</span>
+        <strong>{{ selectedTheme === 'dark' ? 'Tối' : 'Sáng' }}</strong>
+      </div>
+      <div class="modal-summary__item">
+        <span>Ngôn ngữ (Language)</span>
+        <strong>{{ selectedLanguage === 'vi' ? 'Tiếng Việt' : 'English' }}</strong>
+      </div>
       <div class="modal-summary__item">
         <span>{{ 'momApp.settings.dailyReminder.title' | translate }}</span>
         <strong>{{ notificationEnabled ? ('commonValues.yes' | translate) : ('commonValues.no' | translate) }}</strong>
@@ -148,6 +248,10 @@
       <div class="modal-summary__item">
         <span>{{ 'momApp.settings.reminderTime.title' | translate }}</span>
         <strong>{{ reminderHourDisplay }}</strong>
+      </div>
+      <div class="modal-summary__item">
+        <span>Tiền tệ (Currency)</span>
+        <strong>{{ currency }}</strong>
       </div>
     </div>
   </ng-container>

@@ -7,7 +7,18 @@ import com.mom.account.controller.dto.FamilyResponse;
 import com.mom.account.controller.dto.InviteFamilyMemberRequest;
 import com.mom.account.controller.dto.UpcomingBirthdayResponse;
 import com.mom.account.controller.dto.UpdateFamilyRequest;
+import com.mom.account.controller.dto.UpdatePreferencesRequest;
 import com.mom.account.controller.dto.UserResponse;
+import com.mom.account.service.AccountService;
+import com.mom.common.dto.ApiResponse;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import com.mom.account.service.AccountService;
 import com.mom.common.dto.ApiResponse;
 import jakarta.validation.Valid;
@@ -48,6 +59,14 @@ public class AccountController {
             @RequestParam(value = "email", required = false) String email
     ) {
         return ApiResponse.ok("Success", accountService.getUserByIdentity(username, email));
+    }
+
+    @PutMapping("/users/{id}/preferences")
+    public ApiResponse<UserResponse> updatePreferences(
+            @PathVariable("id") Long userId,
+            @Valid @RequestBody UpdatePreferencesRequest request
+    ) {
+        return ApiResponse.ok("Preferences updated", accountService.updatePreferences(userId, request));
     }
 
     @PostMapping("/families")
