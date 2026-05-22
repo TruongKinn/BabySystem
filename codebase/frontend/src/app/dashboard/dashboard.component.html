@@ -13,6 +13,10 @@
           <span nz-icon nzType="wallet"></span>
           {{ vm.budgetPercent }}% {{ 'momApp.expenses.budgetUsed' | translate }}
         </span>
+        <span class="hero-chip">
+          <span nz-icon nzType="star"></span>
+          {{ 'momApp.dashboard.quest.totalPoints' | translate:{ points: vm.quest.totalPoints } }}
+        </span>
       </div>
     </div>
 
@@ -163,6 +167,128 @@
           <span nz-icon nzType="calendar"></span>
           <span>{{ 'momApp.baby.nextVaccine' | translate }}:</span>
           <strong>{{ vm.snapshot.baby.nextVaccination }}</strong>
+        </div>
+      </nz-card>
+
+      <nz-card class="table-card panel-card quest-card">
+        <div class="card-head quest-head">
+          <h3>{{ 'momApp.dashboard.quest.title' | translate }}</h3>
+          <span class="quest-tier-pill">{{ vm.quest.currentTierLabel }}</span>
+        </div>
+
+        <p class="quest-subtitle">{{ 'momApp.dashboard.quest.subtitle' | translate }}</p>
+
+        <div class="quest-stats-row">
+          <span class="quest-stat-chip">
+            <span nz-icon nzType="fire"></span>
+            {{ 'momApp.dashboard.quest.streak' | translate:{ days: vm.quest.streakDays } }}
+          </span>
+          <span class="quest-stat-chip">
+            <span nz-icon nzType="star"></span>
+            {{ 'momApp.dashboard.quest.totalPoints' | translate:{ points: vm.quest.totalPoints } }}
+          </span>
+        </div>
+
+        <div class="quest-progress-head">
+          <strong>{{ vm.quest.completedMissions }}/{{ vm.quest.missions.length }}</strong>
+          <span>{{ vm.quest.completionPercent }}%</span>
+        </div>
+        <div class="user-progress-bar">
+          <div class="user-progress-fill quest-progress-fill" [style.width.%]="vm.quest.completionPercent"></div>
+        </div>
+
+        <div class="quest-mission-list">
+          <div class="quest-mission-item" *ngFor="let mission of vm.quest.missions" [class.quest-mission-item--done]="mission.done">
+            <span class="quest-mission-icon"><span nz-icon [nzType]="mission.icon"></span></span>
+            <div class="quest-mission-content">
+              <p>{{ mission.title }}</p>
+              <small>{{ mission.detail }}</small>
+            </div>
+            <span class="quest-mission-points">+{{ mission.points }}</span>
+          </div>
+        </div>
+
+        <div class="quest-tier-progress">
+          <small *ngIf="vm.quest.nextTierLabel">
+            {{ 'momApp.dashboard.quest.nextTier' | translate:{ tier: vm.quest.nextTierLabel, points: vm.quest.pointsToNextTier } }}
+          </small>
+          <small *ngIf="!vm.quest.nextTierLabel">
+            {{ 'momApp.dashboard.quest.maxTier' | translate }}
+          </small>
+          <div class="user-progress-bar quest-tier-bar">
+            <div class="user-progress-fill quest-tier-fill" [style.width.%]="vm.quest.tierProgressPercent"></div>
+          </div>
+        </div>
+
+        <button
+          nz-button
+          nzType="primary"
+          class="quest-claim-btn"
+          [disabled]="!vm.quest.canClaim || vm.claimInProgress"
+          (click)="claimQuestReward(vm.quest)"
+        >
+          <ng-container *ngIf="vm.quest.claimedToday">
+            {{ 'momApp.dashboard.quest.claimedToday' | translate }}
+          </ng-container>
+          <ng-container *ngIf="!vm.quest.claimedToday && vm.quest.canClaim">
+            {{ 'momApp.dashboard.quest.claimReward' | translate:{ points: vm.quest.rewardPoints } }}
+          </ng-container>
+          <ng-container *ngIf="!vm.quest.claimedToday && !vm.quest.canClaim">
+            {{ 'momApp.dashboard.quest.completeAll' | translate }}
+          </ng-container>
+        </button>
+      </nz-card>
+
+      <nz-card class="table-card panel-card quest-reward-card">
+        <div class="card-head">
+          <h3>{{ 'momApp.dashboard.quest.rewardsTitle' | translate }}</h3>
+        </div>
+        <p class="quest-subtitle">{{ 'momApp.dashboard.quest.rewardsSubtitle' | translate }}</p>
+
+        <div class="quest-reward-empty" *ngIf="vm.questRewards.length === 0">
+          {{ 'momApp.dashboard.quest.rewardsEmpty' | translate }}
+        </div>
+
+        <div class="quest-reward-list" *ngIf="vm.questRewards.length > 0">
+          <div class="quest-reward-item" *ngFor="let reward of vm.questRewards">
+            <div class="quest-reward-main">
+              <p class="quest-reward-name">{{ reward.name }}</p>
+              <p class="quest-reward-desc">{{ reward.description }}</p>
+              <small class="quest-reward-cost">
+                {{ 'momApp.dashboard.quest.redeemCost' | translate:{ points: reward.costPoints } }}
+              </small>
+            </div>
+            <button
+              nz-button
+              nzType="default"
+              class="quest-redeem-btn"
+              [disabled]="!reward.canRedeem || vm.redeemInProgressKey === reward.rewardKey"
+              (click)="redeemQuestReward(reward)"
+            >
+              <ng-container *ngIf="vm.redeemInProgressKey === reward.rewardKey">
+                {{ 'momApp.dashboard.quest.redeeming' | translate }}
+              </ng-container>
+              <ng-container *ngIf="vm.redeemInProgressKey !== reward.rewardKey">
+                {{ 'momApp.dashboard.quest.redeemAction' | translate }}
+              </ng-container>
+            </button>
+          </div>
+        </div>
+
+        <div class="quest-redemption-history">
+          <p class="quest-redemption-title">{{ 'momApp.dashboard.quest.redeemHistoryTitle' | translate }}</p>
+
+          <div class="quest-reward-empty" *ngIf="vm.questRedemptions.length === 0">
+            {{ 'momApp.dashboard.quest.redeemHistoryEmpty' | translate }}
+          </div>
+
+          <div class="quest-redemption-item" *ngFor="let item of vm.questRedemptions">
+            <div>
+              <p>{{ item.rewardName }}</p>
+              <small>{{ item.redeemedAtLabel }}</small>
+            </div>
+            <strong>-{{ item.costPoints }} XP</strong>
+          </div>
         </div>
       </nz-card>
 

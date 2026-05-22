@@ -4,6 +4,7 @@ import com.mom.common.exception.ResourceNotFoundException;
 import com.mom.file.controller.dto.FileDownloadUrlResponse;
 import com.mom.file.controller.dto.FileMetadataResponse;
 import com.mom.file.domain.FileMetadataEntity;
+import com.mom.file.premium.PremiumFeatures;
 import com.mom.file.repository.FileMetadataRepository;
 import com.mom.common.security.DataIsolationUtil;
 import io.minio.BucketExistsArgs;
@@ -28,8 +29,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FileService {
 
+    private static final long DEFAULT_NON_PREMIUM_FILE_LIMIT = 200;
+
     private final FileMetadataRepository fileMetadataRepository;
     private final MinioClient minioClient;
+    private final PremiumAccessService premiumAccessService;
 
     @Transactional
     public FileMetadataResponse upload(MultipartFile file, Long familyId, Long userId, String bucket, String tag) {
@@ -40,6 +44,7 @@ public class FileService {
             throw new IllegalArgumentException("familyId is required");
         }
         DataIsolationUtil.validateFamilyAccess(familyId);
+        enforceStorageLimitForFamily(familyId);
 
         String bucketName = normalizeBucket(bucket);
         String objectKey = buildObjectKey(file.getOriginalFilename());
@@ -217,5 +222,12 @@ public class FileService {
         }
         String trimmed = value.trim();
         return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    private void enforceStorageLimitForFamily(Long familyId) {
+        long existingFiles = fileMetadataRepository.countByFamilyIdAndDeletedFalse(familyId);
+        if (existingFiles >= DEFAULT_NON_PREMIUM_FILE_LIMIT) {
+            premiumAccessService.requireFeature(familyId, PremiumFeatures.UNLIMITED_MEMORY);
+        }
     }
 }

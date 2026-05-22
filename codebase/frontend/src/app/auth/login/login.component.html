@@ -1,4 +1,4 @@
-﻿<div class="login-page">
+<div class="login-page">
   <div class="login-shell">
     <section class="intro-panel">
       <span class="eyebrow">{{ 'auth.login.card.eyebrow' | translate }}</span>
@@ -184,6 +184,7 @@
           <nz-form-label [nzNoColon]="true">{{ 'auth.login.forceChangeModal.newPasswordLabel' | translate }}</nz-form-label>
           <nz-form-control [nzErrorTip]="'auth.login.forceChangeModal.newPasswordError' | translate">
             <input nz-input type="password" formControlName="newPassword" [placeholder]="'auth.login.forceChangeModal.newPasswordPlaceholder' | translate" />
+            <app-password-strength [password]="forceChangeForm.get('newPassword')?.value"></app-password-strength>
           </nz-form-control>
         </nz-form-item>
 

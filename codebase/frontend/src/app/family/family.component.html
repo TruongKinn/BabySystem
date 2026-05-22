@@ -9,11 +9,22 @@
         <span nz-icon nzType="team"></span>
         {{ members.length }} {{ 'momApp.family.totalLabel' | translate }}
       </span>
-      <button nz-button nzType="primary" (click)="openCreateMemberModal()" class="btn-user-primary">
+      <button
+        nz-button
+        nzType="primary"
+        (click)="openCreateMemberModal()"
+        class="btn-user-primary"
+        [disabled]="familyCollaborationLocked"
+      >
         <span nz-icon nzType="user-add"></span>
         {{ 'momApp.family.actions.create' | translate }}
       </button>
     </div>
+  </div>
+
+  <div *ngIf="familyCollaborationLocked" class="premium-lock-notice">
+    <span nz-icon nzType="lock"></span>
+    {{ 'momApp.family.messages.collaborationPremiumRequired' | translate }}
   </div>
 
   <div class="birthday-alerts" *ngIf="upcomingBirthdays$ | async as upcomingBirthdays">
@@ -101,7 +112,15 @@
       </div>
 
       <div class="card-actions" style="display: flex; gap: 8px;">
-        <button nz-button nzType="default" nzSize="small" (click)="openEditMemberModal(member, members)" class="btn-user-outline" style="flex: 1;">
+        <button
+          nz-button
+          nzType="default"
+          nzSize="small"
+          (click)="openEditMemberModal(member, members)"
+          class="btn-user-outline"
+          style="flex: 1;"
+          [disabled]="familyCollaborationLocked"
+        >
           <span nz-icon nzType="edit"></span>
           {{ 'commonActions.edit' | translate }}
         </button>
@@ -111,6 +130,7 @@
           nzDanger
           nzSize="small"
           nz-popconfirm
+          [disabled]="familyCollaborationLocked"
           [nzPopconfirmTitle]="'momApp.family.actions.deleteConfirm' | translate"
           (nzOnConfirm)="deleteMember(member.userId)"
         >
@@ -127,6 +147,7 @@
   nzClassName="user-role-modal family-modal"
   [nzWidth]="680"
   [nzOkLoading]="isSubmitting"
+  [nzOkDisabled]="familyCollaborationLocked"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeCreateMemberModal()"
@@ -224,6 +245,7 @@
   nzClassName="user-role-modal family-modal"
   [nzWidth]="560"
   [nzOkLoading]="isSubmitting"
+  [nzOkDisabled]="familyCollaborationLocked"
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeEditMemberModal()"

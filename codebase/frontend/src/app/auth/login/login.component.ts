@@ -16,6 +16,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { I18nService } from '../../i18n/i18n.service';
 import { authConfig } from '../auth.config';
 import { AuthService } from '../auth.service';
+import { PasswordStrengthComponent } from '../../shared/components/password-strength/password-strength.component';
 
 type AuthMode = 'bearer' | 'keycloak';
 type PortalMode = 'user' | 'admin';
@@ -35,7 +36,8 @@ type PortalMode = 'user' | 'admin';
     NzAlertModule,
     NzIconModule,
     NzModalModule,
-    NzToolTipModule
+    NzToolTipModule,
+    PasswordStrengthComponent
   ],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
@@ -81,7 +83,7 @@ export class LoginComponent implements OnInit {
 
     this.forceChangeForm = this.fb.group(
       {
-        newPassword: ['', [Validators.required, Validators.minLength(6)]],
+        newPassword: ['', [Validators.required, Validators.pattern(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[\]{}:;',?/*~$^+=<>]).{8,20}$/)]],
         confirmPassword: ['', [Validators.required]]
       },
       { validators: this.passwordMatchValidator() }

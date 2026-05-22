@@ -181,7 +181,14 @@
         "confirmPasswordError": "Please confirm new password",
         "confirmPasswordMismatch": "Password confirmation does not match",
         "confirmPasswordPlaceholder": "Re-enter new password",
-        "confirm": "Update password"
+        "confirm": "Update password",
+        "strengthWeak": "Weak",
+        "strengthMedium": "Medium",
+        "strengthStrong": "Strong",
+        "reqLength": "8-20 characters",
+        "reqUpperLower": "1 uppercase & 1 lowercase",
+        "reqNumber": "1 number",
+        "reqSpecial": "1 special character"
       },
       "messages": {
         "captchaLoadFailed": "Unable to load CAPTCHA: {{message}}",
@@ -2686,6 +2693,12 @@
           "refreshConfig": "Refresh premium data",
           "save": "Save premium config"
         },
+        "bulk": {
+          "title": "Apply configuration to multiple households",
+          "subtitle": "Use the current entitlement setup as a template for selected households.",
+          "selectPlaceholder": "Select target households...",
+          "apply": "Apply to selected households"
+        },
         "entitlements": {
           "title": "Feature entitlements",
           "subtitle": "Override default feature access for this household.",
@@ -2694,6 +2707,31 @@
           "reasonLabel": "Reason",
           "reasonPlaceholder": "Explain why this entitlement is changed.",
           "empty": "No premium entitlement data found for this household."
+        },
+        "questPoints": {
+          "title": "Family Quest points",
+          "subtitle": "Grant quest points to this household and track point grant history.",
+          "currentPoints": "Current points",
+          "currentStreak": "Current streak",
+          "lastClaimDate": "Last claim",
+          "pointsLabel": "Points to grant",
+          "reasonLabel": "Grant reason",
+          "reasonPlaceholder": "e.g., Campaign bonus, support adjustment...",
+          "grantAction": "Grant points",
+          "historyTitle": "Point grant history",
+          "historySubtitle": "Latest 30 point grants for this household.",
+          "historyEmpty": "No point grant entries yet.",
+          "table": {
+            "points": "Points",
+            "reason": "Reason",
+            "byUser": "Granted by",
+            "grantedAt": "Granted at"
+          },
+          "messages": {
+            "invalidPoints": "Please enter a valid point value greater than 0.",
+            "grantSuccess": "Granted {{points}} points successfully.",
+            "grantFailed": "Unable to grant points."
+          }
         },
         "status": {
           "INHERIT": "Inherit",
@@ -2728,7 +2766,11 @@
           "loadFamiliesFailed": "Unable to load household list.",
           "loadConfigFailed": "Unable to load premium configuration for this household.",
           "saveSuccess": "Premium configuration updated successfully.",
-          "saveFailed": "Unable to save premium configuration."
+          "saveFailed": "Unable to save premium configuration.",
+          "bulkTargetRequired": "Please select at least one target household.",
+          "bulkApplySuccess": "Applied premium configuration to {{count}} household(s).",
+          "bulkApplyPartial": "Applied to {{success}} household(s). Failed on: {{failed}}.",
+          "bulkApplyFailed": "Unable to apply premium configuration to selected households."
         }
       },
       "access": {
@@ -3014,6 +3056,89 @@
         "shoppingPending": "{{count}} item(s) to buy",
         "budgetUsed": "{{percent}}% budget used",
         "sleepToday": "{{hours}}h sleep today"
+      },
+      "quest": {
+        "title": "Family Quest",
+        "subtitle": "Complete all missions today to unlock daily reward.",
+        "streak": "{{days}}-day streak",
+        "totalPoints": "{{points}} XP",
+        "claimReward": "Claim +{{points}} XP reward",
+        "claimedToday": "Reward claimed today",
+        "completeAll": "Complete all missions to claim",
+        "claimSuccess": "Great run! +{{points}} XP and streak {{streak}} day(s).",
+        "claimFailed": "Unable to claim reward right now. Please try again.",
+        "rewardsTitle": "Quest Reward Shop",
+        "rewardsSubtitle": "Spend XP for household boosts and collectibles.",
+        "rewardsEmpty": "No rewards available yet.",
+        "redeemCost": "Cost: {{points}} XP",
+        "redeemAction": "Redeem",
+        "redeeming": "Redeeming...",
+        "redeemSuccess": "Redeemed {{reward}} for {{points}} XP.",
+        "redeemFailed": "Unable to redeem this reward right now.",
+        "redeemHistoryTitle": "Recent redemption history",
+        "redeemHistoryEmpty": "No reward has been redeemed yet.",
+        "nextTier": "{{points}} XP to reach {{tier}}",
+        "maxTier": "Max tier reached",
+        "tiers": {
+          "seed": "Seed",
+          "bloom": "Bloom",
+          "star": "Star",
+          "legend": "Legend"
+        },
+        "missions": {
+          "sleep10": {
+            "title": "Sleep Champion",
+            "detail": "Baby sleep today: {{hours}}h (target: 10h+)"
+          },
+          "sleep11": {
+            "title": "Deep Sleep Master",
+            "detail": "Baby sleep today: {{hours}}h (target: 11h+)"
+          },
+          "meal1": {
+            "title": "Meal Planner",
+            "detail": "Meals planned today: {{count}} (target: at least 1)"
+          },
+          "meal2": {
+            "title": "Meal Momentum",
+            "detail": "Meals planned today: {{count}} (target: at least 2)"
+          },
+          "tasks2": {
+            "title": "Task Tamer",
+            "detail": "Pending tasks: {{count}} (target: 2 or less)"
+          },
+          "tasks1": {
+            "title": "Task Finisher",
+            "detail": "Pending tasks: {{count}} (target: 1 or less)"
+          },
+          "budget80": {
+            "title": "Budget Guardian",
+            "detail": "Budget usage: {{percent}}% (target: 80% or less)"
+          },
+          "budget70": {
+            "title": "Budget Hero",
+            "detail": "Budget usage: {{percent}}% (target: 70% or less)"
+          },
+          "mood70": {
+            "title": "Calm Home",
+            "detail": "Mood score: {{score}}/100 (target: 70+)"
+          },
+          "mood80": {
+            "title": "Joyful Home",
+            "detail": "Mood score: {{score}}/100 (target: 80+)"
+          },
+          "shopping0": {
+            "title": "Clear Shopping Board",
+            "detail": "Remaining shopping reminders: {{count}} (target: 0)"
+          },
+          "feedings5": {
+            "title": "Feeding Rhythm",
+            "detail": "Feedings today: {{count}} (target: 5+)"
+          },
+          "diapers3": {
+            "title": "Care Consistency",
+            "detail": "Diaper changes today: {{count}} (target: 3+)"
+          }
+        }
       }
     },
     "tasks": {
@@ -3289,6 +3414,7 @@
         "createFailed": "Unable to create expense.",
         "uploadReceiptSuccess": "Receipt uploaded successfully.",
         "uploadReceiptFailed": "Unable to upload receipt.",
+        "unlimitedMemoryRequired": "This action requires Unlimited Memory in your Premium plan.",
         "downloadReceiptFailed": "Unable to download receipt.",
         "deleteReceiptSuccess": "Receipt deleted successfully.",
         "deleteReceiptFailed": "Unable to delete receipt.",
@@ -3512,6 +3638,7 @@
           "selectBabyFirst": "Please select a baby before uploading.",
           "uploadSuccess": "Photo uploaded successfully.",
           "uploadFailed": "Unable to upload photo.",
+          "unlimitedMemoryRequired": "Photo upload limit reached. Upgrade to Unlimited Memory to continue.",
           "downloadFailed": "Unable to download photo.",
           "deleteSuccess": "Photo deleted successfully.",
           "deleteFailed": "Unable to delete photo."
@@ -3566,7 +3693,8 @@
         "updateSuccess": "Role updated successfully.",
         "updateFailed": "Unable to update role.",
         "deleteSuccess": "Family member deleted.",
-        "deleteFailed": "Unable to delete family member."
+        "deleteFailed": "Unable to delete family member.",
+        "collaborationPremiumRequired": "This action requires Family Collaboration Plus in your Premium plan."
       },
       "relation": {
         "ONG_NOI": "Grandfather (paternal)",
@@ -3608,7 +3736,11 @@
       "subtitle": "Quick indicators for sleep, budget and workload",
       "sleepScore": "Baby sleep score",
       "budgetScore": "Budget safety score",
-      "workloadScore": "Workload balance"
+      "workloadScore": "Workload balance",
+      "messages": {
+        "premiumReportsRequired": "Premium Reports is required to view monthly insights.",
+        "aiCareAssistantRequired": "AI recommendations are available with AI Care Assistant."
+      }
     },
     "profile": {
       "title": "Profile",
@@ -3647,6 +3779,10 @@
           "memberCount": "Member count",
           "memberUnit": "people"
         },
+        "premium": {
+          "title": "Premium access",
+          "subtitle": "Features currently available for this household"
+        },
         "security": {
           "title": "Security & settings",
           "subtitle": "Account security configuration",
@@ -3665,6 +3801,21 @@
             "subtitle": "Receive important alerts",
             "status": "On"
           }
+        }
+      },
+      "premium": {
+        "enabled": "Enabled",
+        "disabled": "Disabled",
+        "empty": "Premium configuration is not available right now.",
+        "expiresAt": "Expires on",
+        "featureLabels": {
+          "advanced_growth_tracking": "Advanced Growth Tracking",
+          "smart_reminders": "Smart Reminders",
+          "ai_care_assistant": "AI Care Assistant",
+          "premium_reports": "Premium Reports",
+          "family_collaboration_plus": "Family Collaboration Plus",
+          "medical_vault_export": "Medical Vault Export",
+          "unlimited_memory": "Unlimited Memory"
         }
       },
       "familyTree": {
@@ -3693,7 +3844,8 @@
       },
       "messages": {
         "saveSuccess": "Settings saved successfully.",
-        "saveFailed": "Unable to save settings."
+        "saveFailed": "Unable to save settings.",
+        "smartReminderPremiumRequired": "Smart Reminders is not enabled for this family. Contact admin to grant access."
       }
     },
     "forbidden": {

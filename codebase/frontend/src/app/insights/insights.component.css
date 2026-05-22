@@ -46,6 +46,19 @@
   background: var(--surface-bg);
 }
 
+.premium-lock-panel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-weight: 600;
+  font-size: 13px;
+}
+
 .insight-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
@@ -136,6 +149,19 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
+}
+
+.ai-lock-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px dashed #fdba74;
+  border-radius: 10px;
+  background: #fff7ed;
+  color: #b45309;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
 }
 
 .recommendation-item {

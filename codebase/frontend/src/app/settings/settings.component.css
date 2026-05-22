@@ -11,6 +11,19 @@
   flex-wrap: wrap;
 }
 
+.premium-lock-notice {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 /* Hero Section */
 .settings-hero {
   position: relative;

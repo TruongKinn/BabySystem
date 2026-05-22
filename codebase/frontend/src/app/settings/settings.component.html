@@ -16,6 +16,11 @@
     </div>
   </div>
 
+  <div *ngIf="smartRemindersLocked" class="premium-lock-notice">
+    <span nz-icon nzType="lock"></span>
+    {{ 'momApp.settings.messages.smartReminderPremiumRequired' | translate }}
+  </div>
+
   <section class="settings-hero animate-slide-up">
     <div class="settings-hero__orb orb-1"></div>
     <div class="settings-hero__orb orb-2"></div>
@@ -28,7 +33,7 @@
     </div>
 
     <div class="settings-hero__status">
-      <div class="status-tile" [class.status-tile--off]="!notificationEnabled">
+      <div class="status-tile" [class.status-tile--off]="!notificationEnabled || smartRemindersLocked">
         <span nz-icon nzType="notification" nzTheme="outline"></span>
         <div>
           <p class="status-label">{{ 'momApp.settings.dailyReminder.title' | translate }}</p>
@@ -110,10 +115,10 @@
               <span class="setting-description">{{ 'momApp.settings.dailyReminder.desc' | translate }}</span>
             </div>
           </div>
-          <nz-switch [(ngModel)]="notificationEnabled"></nz-switch>
+          <nz-switch [(ngModel)]="notificationEnabled" [nzDisabled]="smartRemindersLocked"></nz-switch>
         </div>
 
-        <div class="setting-row" [class.setting-row--disabled]="!notificationEnabled">
+        <div class="setting-row" [class.setting-row--disabled]="!notificationEnabled || smartRemindersLocked">
           <div class="setting-main">
             <div class="setting-icon setting-icon--time">
               <span nz-icon nzType="clock-circle" nzTheme="fill"></span>
@@ -129,7 +134,7 @@
               type="time"
               step="60"
               [(ngModel)]="reminderHour"
-              [disabled]="!notificationEnabled"
+              [disabled]="!notificationEnabled || smartRemindersLocked"
               [class.time-input--invalid]="!isReminderHourValid"
             />
             <small class="input-format">HH:mm</small>

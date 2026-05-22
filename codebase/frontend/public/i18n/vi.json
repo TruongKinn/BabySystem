@@ -201,7 +201,14 @@
         "confirmPasswordError": "Vui lòng xác nhận mật khẩu mới",
         "confirmPasswordMismatch": "Mật khẩu xác nhận không khớp",
         "confirmPasswordPlaceholder": "Nhập lại mật khẩu mới",
-        "confirm": "Cập nhật mật khẩu"
+        "confirm": "Cập nhật mật khẩu",
+        "strengthWeak": "Yếu",
+        "strengthMedium": "Trung bình",
+        "strengthStrong": "Mạnh",
+        "reqLength": "8-20 ký tự",
+        "reqUpperLower": "1 chữ hoa & 1 chữ thường",
+        "reqNumber": "1 chữ số",
+        "reqSpecial": "1 ký tự đặc biệt"
       },
       "portal": {
         "adminHint": "Admin Portal - quản lý tài khoản người dùng và vận hành hệ thống",
@@ -2686,6 +2693,12 @@
           "refreshConfig": "Tải lại cấu hình",
           "save": "Lưu cấu hình Premium"
         },
+        "bulk": {
+          "title": "Cấu hình đồng loạt cho nhiều gia đình",
+          "subtitle": "Dùng cấu hình entitlement hiện tại làm mẫu cho các gia đình đã chọn.",
+          "selectPlaceholder": "Chọn các gia đình mục tiêu...",
+          "apply": "Áp dụng cho các gia đình đã chọn"
+        },
         "entitlements": {
           "title": "Cấu hình entitlement",
           "subtitle": "Ghi đè trạng thái mặc định của từng tính năng cho gia đình này.",
@@ -2694,6 +2707,31 @@
           "reasonLabel": "Lý do",
           "reasonPlaceholder": "Nhập lý do thay đổi entitlement.",
           "empty": "Không có dữ liệu entitlement Premium cho gia đình này."
+        },
+        "questPoints": {
+          "title": "Điểm Family Quest",
+          "subtitle": "Tặng điểm Quest cho gia đình và theo dõi lịch sử tặng điểm.",
+          "currentPoints": "Điểm hiện tại",
+          "currentStreak": "Chuỗi hiện tại",
+          "lastClaimDate": "Lần nhận gần nhất",
+          "pointsLabel": "Số điểm tặng",
+          "reasonLabel": "Lý do tặng điểm",
+          "reasonPlaceholder": "Ví dụ: thưởng chiến dịch, điều chỉnh hỗ trợ...",
+          "grantAction": "Tặng điểm",
+          "historyTitle": "Lịch sử tặng điểm",
+          "historySubtitle": "30 lần tặng điểm gần nhất của gia đình này.",
+          "historyEmpty": "Chưa có bản ghi tặng điểm nào.",
+          "table": {
+            "points": "Điểm",
+            "reason": "Lý do",
+            "byUser": "Người tặng",
+            "grantedAt": "Thời điểm tặng"
+          },
+          "messages": {
+            "invalidPoints": "Vui lòng nhập số điểm hợp lệ lớn hơn 0.",
+            "grantSuccess": "Đã tặng thành công {{points}} điểm.",
+            "grantFailed": "Không thể tặng điểm."
+          }
         },
         "status": {
           "INHERIT": "Kế thừa",
@@ -2728,7 +2766,11 @@
           "loadFamiliesFailed": "Không thể tải danh sách gia đình.",
           "loadConfigFailed": "Không thể tải cấu hình Premium của gia đình này.",
           "saveSuccess": "Cập nhật cấu hình Premium thành công.",
-          "saveFailed": "Không thể lưu cấu hình Premium."
+          "saveFailed": "Không thể lưu cấu hình Premium.",
+          "bulkTargetRequired": "Vui lòng chọn ít nhất một gia đình mục tiêu.",
+          "bulkApplySuccess": "Đã áp dụng cấu hình Premium cho {{count}} gia đình.",
+          "bulkApplyPartial": "Đã áp dụng cho {{success}} gia đình. Thất bại ở: {{failed}}.",
+          "bulkApplyFailed": "Không thể áp dụng cấu hình Premium cho danh sách đã chọn."
         }
       },
       "access": {
@@ -3014,6 +3056,89 @@
         "shoppingPending": "{{count}} món cần mua",
         "budgetUsed": "Đã dùng {{percent}}% ngân sách",
         "sleepToday": "{{hours}}h ngủ hôm nay"
+      },
+      "quest": {
+        "title": "Family Quest",
+        "subtitle": "Hoàn thành toàn bộ nhiệm vụ hôm nay để mở thưởng ngày.",
+        "streak": "Chuỗi {{days}} ngày",
+        "totalPoints": "{{points}} XP",
+        "claimReward": "Nhận thưởng +{{points}} XP",
+        "claimedToday": "Đã nhận thưởng hôm nay",
+        "completeAll": "Hoàn thành toàn bộ nhiệm vụ để nhận thưởng",
+        "claimSuccess": "Xuất sắc! +{{points}} XP và chuỗi {{streak}} ngày.",
+        "claimFailed": "Không thể nhận thưởng lúc này. Vui lòng thử lại.",
+        "rewardsTitle": "Cửa hàng đổi điểm Quest",
+        "rewardsSubtitle": "Dùng XP để đổi quà và quyền lợi cho gia đình.",
+        "rewardsEmpty": "Hiện chưa có phần thưởng khả dụng.",
+        "redeemCost": "Chi phí: {{points}} XP",
+        "redeemAction": "Đổi ngay",
+        "redeeming": "Đang đổi...",
+        "redeemSuccess": "Đổi {{reward}} thành công với {{points}} XP.",
+        "redeemFailed": "Không thể đổi phần thưởng lúc này.",
+        "redeemHistoryTitle": "Lịch sử đổi điểm gần đây",
+        "redeemHistoryEmpty": "Chưa có lượt đổi điểm nào.",
+        "nextTier": "Cần thêm {{points}} XP để đạt hạng {{tier}}",
+        "maxTier": "Bạn đã đạt hạng cao nhất",
+        "tiers": {
+          "seed": "Mầm",
+          "bloom": "Nở hoa",
+          "star": "Ngôi sao",
+          "legend": "Huyền thoại"
+        },
+        "missions": {
+          "sleep10": {
+            "title": "Chiến binh giấc ngủ",
+            "detail": "Giấc ngủ của bé hôm nay: {{hours}}h (mục tiêu: từ 10h)"
+          },
+          "sleep11": {
+            "title": "Bậc thầy ngủ sâu",
+            "detail": "Giấc ngủ của bé hôm nay: {{hours}}h (mục tiêu: từ 11h)"
+          },
+          "meal1": {
+            "title": "Lên thực đơn",
+            "detail": "Bữa ăn đã lên kế hoạch hôm nay: {{count}} (mục tiêu: ít nhất 1)"
+          },
+          "meal2": {
+            "title": "Đà bữa ăn",
+            "detail": "Bữa ăn đã lên kế hoạch hôm nay: {{count}} (mục tiêu: ít nhất 2)"
+          },
+          "tasks2": {
+            "title": "Dọn gọn công việc",
+            "detail": "Việc đang chờ: {{count}} (mục tiêu: không quá 2)"
+          },
+          "tasks1": {
+            "title": "Chốt việc gọn",
+            "detail": "Việc đang chờ: {{count}} (mục tiêu: không quá 1)"
+          },
+          "budget80": {
+            "title": "Người gác ngân sách",
+            "detail": "Tỷ lệ dùng ngân sách: {{percent}}% (mục tiêu: không quá 80%)"
+          },
+          "budget70": {
+            "title": "Siêu giữ ngân sách",
+            "detail": "Tỷ lệ dùng ngân sách: {{percent}}% (mục tiêu: không quá 70%)"
+          },
+          "mood70": {
+            "title": "Nhịp nhà êm ấm",
+            "detail": "Điểm tinh thần: {{score}}/100 (mục tiêu: từ 70)"
+          },
+          "mood80": {
+            "title": "Năng lượng tích cực",
+            "detail": "Điểm tinh thần: {{score}}/100 (mục tiêu: từ 80)"
+          },
+          "shopping0": {
+            "title": "Xóa nhắc mua sắm",
+            "detail": "Nhắc mua sắm còn lại: {{count}} (mục tiêu: 0)"
+          },
+          "feedings5": {
+            "title": "Nhịp ăn đều",
+            "detail": "Số lần ăn hôm nay: {{count}} (mục tiêu: từ 5)"
+          },
+          "diapers3": {
+            "title": "Chăm bé đều tay",
+            "detail": "Số lần thay tã hôm nay: {{count}} (mục tiêu: từ 3)"
+          }
+        }
       }
     },
     "tasks": {
@@ -3289,6 +3414,7 @@
         "createFailed": "Không thể tạo khoản chi.",
         "uploadReceiptSuccess": "Tải hóa đơn lên thành công.",
         "uploadReceiptFailed": "Không thể tải hóa đơn lên.",
+        "unlimitedMemoryRequired": "Thao tác này yêu cầu quyền Unlimited Memory trong gói Premium.",
         "downloadReceiptFailed": "Không thể tải hóa đơn xuống.",
         "deleteReceiptSuccess": "Xóa hóa đơn thành công.",
         "deleteReceiptFailed": "Không thể xóa hóa đơn.",
@@ -3512,6 +3638,7 @@
           "selectBabyFirst": "Vui lòng chọn em bé trước khi tải ảnh.",
           "uploadSuccess": "Tải ảnh lên thành công.",
           "uploadFailed": "Không thể tải ảnh lên.",
+          "unlimitedMemoryRequired": "Đã đạt giới hạn lưu ảnh. Hãy nâng cấp Unlimited Memory để tiếp tục.",
           "downloadFailed": "Không thể tải ảnh xuống.",
           "deleteSuccess": "Xóa ảnh thành công.",
           "deleteFailed": "Không thể xóa ảnh."
@@ -3595,7 +3722,8 @@
         "updateSuccess": "Cập nhật thông tin thành viên thành công.",
         "updateFailed": "Không thể cập nhật thông tin thành viên.",
         "deleteSuccess": "Đã xóa thành viên khỏi gia đình.",
-        "deleteFailed": "Xóa thành viên thất bại."
+        "deleteFailed": "Xóa thành viên thất bại.",
+        "collaborationPremiumRequired": "Tính năng này yêu cầu Family Collaboration Plus trong gói Premium."
       },
       "validation": {
         "displayNameRequired": "Vui lòng nhập tên hiển thị",
@@ -3608,7 +3736,11 @@
       "subtitle": "Chỉ số nhanh cho giấc ngủ, ngân sách và khối lượng công việc",
       "sleepScore": "Điểm giấc ngủ của bé",
       "budgetScore": "Điểm an toàn ngân sách",
-      "workloadScore": "Điểm cân bằng công việc"
+      "workloadScore": "Điểm cân bằng công việc",
+      "messages": {
+        "premiumReportsRequired": "Bạn cần Premium Reports để xem báo cáo phân tích theo tháng.",
+        "aiCareAssistantRequired": "Gợi ý AI chỉ khả dụng khi bật AI Care Assistant."
+      }
     },
     "profile": {
       "title": "Hồ Sơ",
@@ -3647,6 +3779,10 @@
           "memberCount": "Số thành viên",
           "memberUnit": "người"
         },
+        "premium": {
+          "title": "Quyền Premium",
+          "subtitle": "Các tính năng đang áp dụng cho gia đình này"
+        },
         "security": {
           "title": "Bảo mật & Cài đặt",
           "subtitle": "Thiết lập bảo mật tài khoản",
@@ -3665,6 +3801,21 @@
             "subtitle": "Nhận thông báo quan trọng",
             "status": "Bật"
           }
+        }
+      },
+      "premium": {
+        "enabled": "Đã bật",
+        "disabled": "Đang tắt",
+        "empty": "Hiện chưa lấy được cấu hình Premium.",
+        "expiresAt": "Hết hạn",
+        "featureLabels": {
+          "advanced_growth_tracking": "Theo dõi tăng trưởng nâng cao",
+          "smart_reminders": "Nhắc việc thông minh",
+          "ai_care_assistant": "Trợ lý chăm sóc AI",
+          "premium_reports": "Báo cáo Premium",
+          "family_collaboration_plus": "Cộng tác gia đình Plus",
+          "medical_vault_export": "Xuất hồ sơ y tế",
+          "unlimited_memory": "Bộ nhớ không giới hạn"
         }
       },
       "familyTree": {
@@ -3693,7 +3844,8 @@
       },
       "messages": {
         "saveSuccess": "Lưu cài đặt thành công.",
-        "saveFailed": "Không thể lưu cài đặt."
+        "saveFailed": "Không thể lưu cài đặt.",
+        "smartReminderPremiumRequired": "Gia đình này chưa được bật Smart Reminders. Vui lòng liên hệ admin để cấp quyền."
       }
     },
     "forbidden": {

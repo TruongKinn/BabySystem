@@ -1,5 +1,5 @@
 ﻿import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, switchMap } from 'rxjs';
@@ -16,10 +16,12 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
+import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
 import {
   FamilyMemberProfile,
   FamilyRelation,
   FamilyRole,
+  ResolvedPremiumFeature,
   UpcomingBirthdayNotification,
   SuperAppCommandService
 } from '../core/services/super-app-command.service';
@@ -48,11 +50,12 @@ import { I18nService } from '../i18n/i18n.service';
   templateUrl: './family.component.html',
   styleUrl: './family.component.css'
 })
-export class FamilyComponent {
+export class FamilyComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly command = inject(SuperAppCommandService);
   private readonly notification = inject(NzNotificationService);
   private readonly i18n = inject(I18nService);
+  private readonly familyCollaborationFeatureKey = PREMIUM_FEATURE_KEYS.familyCollaborationPlus;
 
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
 
@@ -90,6 +93,7 @@ export class FamilyComponent {
   isSubmitting = false;
   selectedMember: FamilyMemberProfile | null = null;
   allMembers: FamilyMemberProfile[] = [];
+  familyCollaborationLocked = false;
 
   readonly editMemberForm = this.fb.group({
     displayName: ['', [Validators.required, Validators.maxLength(120)]],
@@ -111,7 +115,15 @@ export class FamilyComponent {
     parentUserId: [null as number | null]
   });
 
+  ngOnInit(): void {
+    this.loadPremiumFeatures();
+  }
+
   openCreateMemberModal(): void {
+    if (this.familyCollaborationLocked) {
+      this.notifyCollaborationPremiumRequired();
+      return;
+    }
     this.isCreateMemberModalVisible = true;
   }
 
@@ -129,6 +141,11 @@ export class FamilyComponent {
   }
 
   submitCreateMember(): void {
+    if (this.familyCollaborationLocked) {
+      this.notifyCollaborationPremiumRequired();
+      return;
+    }
+
     if (this.createMemberForm.invalid) {
       this.createMemberForm.markAllAsTouched();
       return;
@@ -159,6 +176,10 @@ export class FamilyComponent {
         },
         error: (err) => {
           this.isSubmitting = false;
+          if (this.isPremiumRequired(err)) {
+            this.notifyCollaborationPremiumRequired();
+            return;
+          }
           this.notification.error(
             this.i18n.translate('common.errorTitle'),
             err.message || this.i18n.translate('momApp.family.messages.createFailed')
@@ -198,6 +219,11 @@ export class FamilyComponent {
   }
 
   openEditMemberModal(member: FamilyMemberProfile, members: FamilyMemberProfile[]): void {
+    if (this.familyCollaborationLocked) {
+      this.notifyCollaborationPremiumRequired();
+      return;
+    }
+
     this.selectedMember = member;
     this.allMembers = members;
     this.editMemberForm.patchValue({
@@ -219,6 +245,11 @@ export class FamilyComponent {
   }
 
   submitUpdateMember(): void {
+    if (this.familyCollaborationLocked) {
+      this.notifyCollaborationPremiumRequired();
+      return;
+    }
+
     if (this.editMemberForm.invalid || !this.selectedMember) {
       this.editMemberForm.markAllAsTouched();
       return;
@@ -246,6 +277,12 @@ export class FamilyComponent {
           );
         },
         error: (err) => {
+          if (this.isPremiumRequired(err)) {
+            this.isSubmitting = false;
+            this.notifyCollaborationPremiumRequired();
+            return;
+          }
+
           const role = this.editMemberForm.controls.role.value!;
           this.command.updateFamilyMemberRole(Number(this.selectedMember!.userId), role).subscribe({
             next: () => {
@@ -259,6 +296,10 @@ export class FamilyComponent {
             },
             error: (err2) => {
               this.isSubmitting = false;
+              if (this.isPremiumRequired(err2)) {
+                this.notifyCollaborationPremiumRequired();
+                return;
+              }
               this.notification.error(
                 this.i18n.translate('common.errorTitle'),
                 err2.message || err.message || this.i18n.translate('momApp.family.messages.updateFailed')
@@ -270,6 +311,11 @@ export class FamilyComponent {
   }
 
   deleteMember(userId: number): void {
+    if (this.familyCollaborationLocked) {
+      this.notifyCollaborationPremiumRequired();
+      return;
+    }
+
     this.isSubmitting = true;
     this.command.removeFamilyMember(userId).subscribe({
       next: () => {
@@ -282,6 +328,10 @@ export class FamilyComponent {
       },
       error: (err) => {
         this.isSubmitting = false;
+        if (this.isPremiumRequired(err)) {
+          this.notifyCollaborationPremiumRequired();
+          return;
+        }
         this.notification.error(
           this.i18n.translate('common.errorTitle'),
           err?.error?.message || this.i18n.translate('momApp.family.messages.deleteFailed')
@@ -341,5 +391,28 @@ export class FamilyComponent {
       return 'BAO_MAU';
     }
     return 'THANH_VIEN_KHAC';
+  }
+
+  private loadPremiumFeatures(): void {
+    this.command.getResolvedFamilyFeatures().subscribe((features) => {
+      this.familyCollaborationLocked = !this.hasFeatureEnabled(features, this.familyCollaborationFeatureKey);
+    });
+  }
+
+  private hasFeatureEnabled(features: ResolvedPremiumFeature[], featureKey: string): boolean {
+    const matched = features.find((item) => item.featureKey === featureKey);
+    return matched ? matched.enabled : true;
+  }
+
+  private isPremiumRequired(err: any): boolean {
+    const message = String(err?.message ?? '');
+    return message.includes(`PREMIUM_REQUIRED:${this.familyCollaborationFeatureKey}`);
+  }
+
+  private notifyCollaborationPremiumRequired(): void {
+    this.notification.warning(
+      this.i18n.translate('common.errorTitle'),
+      this.i18n.translate('momApp.family.messages.collaborationPremiumRequired')
+    );
   }
 }

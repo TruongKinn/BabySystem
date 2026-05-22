@@ -1,4 +1,4 @@
-﻿import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -11,12 +11,19 @@ import { NzMessageService } from 'ng-zorro-antd/message';
 import { NzPopoverModule } from 'ng-zorro-antd/popover';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzFormModule } from 'ng-zorro-antd/form';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import { PasswordStrengthComponent } from '../shared/components/password-strength/password-strength.component';
 import { AuthService } from '../auth/auth.service';
+import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
 import {
   FamilyMemberProfile,
   FamilyRelation,
   FamilyRole,
   ProfileInfo,
+  ResolvedPremiumFeature,
   SuperAppCommandService
 } from '../core/services/super-app-command.service';
 import { I18nService } from '../i18n/i18n.service';
@@ -56,6 +63,15 @@ interface ProfileViewModel extends ProfileInfo {
   roleLabel: string;
   familyMembers: FamilyTreeMember[];
   familyTree: FamilyTreeNode[];
+  premiumFeatures: ProfilePremiumFeature[];
+}
+
+interface ProfilePremiumFeature {
+  key: string;
+  label: string;
+  enabled: boolean;
+  sourceStatus: string;
+  expiresAt: string | null;
 }
 
 @Component({
@@ -70,7 +86,12 @@ interface ProfileViewModel extends ProfileInfo {
     NzTagModule,
     NzIconModule,
     NzPopoverModule,
-    NzToolTipModule
+    NzToolTipModule,
+    NzModalModule,
+    NzFormModule,
+    NzInputModule,
+    ReactiveFormsModule,
+    PasswordStrengthComponent
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
@@ -81,11 +102,85 @@ export class ProfileComponent {
   private readonly command = inject(SuperAppCommandService);
   private readonly i18n = inject(I18nService);
   private readonly message = inject(NzMessageService);
+  private readonly fb = inject(FormBuilder);
   private readonly profileReload$ = new BehaviorSubject<void>(undefined);
+  private readonly premiumFeatureOrder = [
+    PREMIUM_FEATURE_KEYS.advancedGrowthTracking,
+    PREMIUM_FEATURE_KEYS.smartReminders,
+    PREMIUM_FEATURE_KEYS.aiCareAssistant,
+    PREMIUM_FEATURE_KEYS.premiumReports,
+    PREMIUM_FEATURE_KEYS.familyCollaborationPlus,
+    PREMIUM_FEATURE_KEYS.medicalVaultExport,
+    PREMIUM_FEATURE_KEYS.unlimitedMemory
+  ];
 
   isUploadingAvatar = false;
   treeNodes: FamilyTreeNode[] = [];
   private allNodesFlat: FamilyTreeNode[] = [];
+
+  isChangePasswordVisible = false;
+  isChangingPassword = false;
+  changePasswordForm: FormGroup;
+
+  constructor() {
+    this.changePasswordForm = this.fb.group(
+      {
+        oldPassword: ['', [Validators.required]],
+        newPassword: [
+          '',
+          [
+            Validators.required,
+            Validators.pattern(/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–\[{}\]:;',?\/*~$^+=<>]).{8,20}$/)
+          ]
+        ],
+        confirmPassword: ['', [Validators.required]]
+      },
+      { validators: this.passwordMatchValidator }
+    );
+  }
+
+  passwordMatchValidator(control: AbstractControl): { [key: string]: boolean } | null {
+    const newPassword = control.get('newPassword');
+    const confirmPassword = control.get('confirmPassword');
+    if (!newPassword || !confirmPassword) return null;
+    return newPassword.value === confirmPassword.value ? null : { mismatch: true };
+  }
+
+  openChangePassword(): void {
+    this.changePasswordForm.reset();
+    this.isChangePasswordVisible = true;
+  }
+
+  handleCancelChangePassword(): void {
+    this.isChangePasswordVisible = false;
+  }
+
+  submitChangePassword(): void {
+    if (this.changePasswordForm.invalid) {
+      Object.values(this.changePasswordForm.controls).forEach((control) => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+      return;
+    }
+
+    this.isChangingPassword = true;
+    const { oldPassword, newPassword } = this.changePasswordForm.value;
+    this.command
+      .changePassword(oldPassword, newPassword)
+      .pipe(finalize(() => (this.isChangingPassword = false)))
+      .subscribe({
+        next: () => {
+          this.message.success(this.i18n.translate('auth.passwordCenter.change.successTitle'));
+          this.isChangePasswordVisible = false;
+        },
+        error: (err) => {
+          this.message.error(this.resolveUploadErrorMessage(err) || this.i18n.translate('auth.passwordCenter.change.changeErrorFallback'));
+        }
+      });
+  }
 
   findNodeByRel(rel: string): FamilyTreeNode | undefined {
     return this.allNodesFlat.find((node) => node.relationKey === rel);
@@ -170,13 +265,16 @@ export class ProfileComponent {
       combineLatest({
         profile: this.command.getProfile(),
         familyMembers: this.command.getFamilyMembersDetailed(),
+        premiumFeatures: this.command.getResolvedFamilyFeatures().pipe(
+          catchError(() => of([] as ResolvedPremiumFeature[]))
+        ),
         babies: this.command.getBabies().pipe(
           map((items) => items as BabyProfile[]),
           catchError(() => of([] as BabyProfile[]))
         )
       })
     ),
-    map(({ profile, familyMembers, babies }): ProfileViewModel => {
+    map(({ profile, familyMembers, premiumFeatures, babies }): ProfileViewModel => {
       const currentMember = this.resolveCurrentFamilyMember(profile.userId, familyMembers);
       const enrichedMembers = familyMembers.map((member) => ({
         ...member,
@@ -207,7 +305,8 @@ export class ProfileComponent {
         role: selectedRole,
         roleLabel: this.roleLabel(selectedRole),
         familyMembers: enrichedMembers,
-        familyTree: tree
+        familyTree: tree,
+        premiumFeatures: this.buildPremiumFeatures(premiumFeatures)
       };
     })
   );
@@ -250,6 +349,24 @@ export class ProfileComponent {
   initialFor(name: string): string {
     const normalized = name?.trim();
     return normalized ? normalized.charAt(0).toUpperCase() : 'U';
+  }
+
+  formatPremiumExpiry(raw: string | null): string {
+    if (!raw?.trim()) {
+      return this.i18n.translate('momApp.common.notAvailable');
+    }
+
+    const parsed = new Date(raw);
+    if (Number.isNaN(parsed.getTime())) {
+      return raw;
+    }
+
+    const locale = this.i18n.getCurrentLanguage() === 'en' ? 'en-US' : 'vi-VN';
+    return parsed.toLocaleDateString(locale, {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
   }
 
   private resolveCurrentFamilyMember(
@@ -502,6 +619,36 @@ export class ProfileComponent {
       return this.i18n.translate('momApp.profile.familyTree.babyGirl');
     }
     return this.i18n.translate('momApp.profile.familyTree.babyChild');
+  }
+
+  private buildPremiumFeatures(features: ResolvedPremiumFeature[]): ProfilePremiumFeature[] {
+    if (features.length === 0) {
+      return [];
+    }
+
+    const orderByKey = new Map<string, number>(
+      this.premiumFeatureOrder.map((featureKey, index) => [featureKey, index])
+    );
+
+    return [...features]
+      .sort((left, right) => {
+        const leftOrder = orderByKey.get(left.featureKey) ?? Number.MAX_SAFE_INTEGER;
+        const rightOrder = orderByKey.get(right.featureKey) ?? Number.MAX_SAFE_INTEGER;
+        return leftOrder - rightOrder;
+      })
+      .map((feature) => ({
+        key: feature.featureKey,
+        label: this.premiumFeatureLabel(feature.featureKey),
+        enabled: feature.enabled,
+        sourceStatus: feature.sourceStatus,
+        expiresAt: feature.expiresAt
+      }));
+  }
+
+  private premiumFeatureLabel(featureKey: string): string {
+    const key = `momApp.profile.premium.featureLabels.${featureKey}`;
+    const translated = this.i18n.translate(key);
+    return translated === key ? featureKey : translated;
   }
 
   private resolveUploadErrorMessage(error: unknown): string {

@@ -13,6 +13,6 @@ public class ChangePasswordRequest {
     @NotBlank
     private String oldPassword;
 
-    @NotBlank
+    @vn.agent.validation.StrongPassword
     private String newPassword;
 }

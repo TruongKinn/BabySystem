@@ -121,6 +121,35 @@ export interface ResolvedPremiumFeature {
   expiresAt: string | null;
 }
 
+export interface FamilyQuestState {
+  familyId: number;
+  lastClaimDate: string | null;
+  streakDays: number;
+  totalPoints: number;
+  claimedToday: boolean;
+}
+
+export interface FamilyQuestRewardCatalogItem {
+  rewardKey: string;
+  name: string;
+  description: string;
+  costPoints: number;
+}
+
+export interface FamilyQuestRewardRedemption {
+  id: number;
+  rewardKey: string;
+  rewardName: string;
+  costPoints: number;
+  redeemedByUserId: number | null;
+  redeemedAt: string;
+}
+
+export interface FamilyQuestRedeemResponse {
+  questState: FamilyQuestState;
+  redemption: FamilyQuestRewardRedemption;
+}
+
 interface UserApi {
   id: number;
   username: string;
@@ -362,26 +391,109 @@ export class SuperAppCommandService {
   }
 
   getResolvedFamilyFeatures(familyId?: number): Observable<ResolvedPremiumFeature[]> {
-    if (familyId) {
-      return this.get<ResolvedPremiumFeature[]>(`/account/families/${familyId}/features/resolved`).pipe(
-        map((items) => items ?? []),
-        catchError(() => of([]))
-      );
-    }
+    const targetFamilyId = familyId ?? this.getFamilyId();
+    return this.get<ResolvedPremiumFeature[]>(`/account/families/${targetFamilyId}/features/resolved`).pipe(
+      map((items) => items ?? []),
+      catchError(() => of([]))
+    );
+  }
 
-    return this.resolveCurrentAccountUser().pipe(
-      switchMap((user) => {
-        if (!user) {
-          return of(this.getFamilyId());
-        }
-        return this.resolveFamilyIdForUser(user.id);
-      }),
-      switchMap((resolvedFamilyId) =>
-        this.get<ResolvedPremiumFeature[]>(`/account/families/${resolvedFamilyId}/features/resolved`).pipe(
-          map((items) => items ?? []),
-          catchError(() => of([]))
-        )
+  getFamilyQuestState(familyId?: number): Observable<FamilyQuestState> {
+    const targetFamilyId = familyId ?? this.getFamilyId();
+    return this.get<FamilyQuestState>(`/account/families/${targetFamilyId}/quest-state`).pipe(
+      map((state) => ({
+        familyId: targetFamilyId,
+        lastClaimDate: state?.lastClaimDate ?? null,
+        streakDays: Math.max(0, Math.trunc(Number(state?.streakDays ?? 0))),
+        totalPoints: Math.max(0, Math.trunc(Number(state?.totalPoints ?? 0))),
+        claimedToday: !!state?.claimedToday
+      })),
+      catchError(() =>
+        of({
+          familyId: targetFamilyId,
+          lastClaimDate: null,
+          streakDays: 0,
+          totalPoints: 0,
+          claimedToday: false
+        })
       )
+    );
+  }
+
+  claimFamilyQuestReward(rewardPoints: number, familyId?: number): Observable<FamilyQuestState> {
+    const targetFamilyId = familyId ?? this.getFamilyId();
+    const normalizedReward = Math.max(1, Math.min(500, Math.trunc(Number(rewardPoints) || 0)));
+    return this.post<FamilyQuestState>(`/account/families/${targetFamilyId}/quest-state/claim`, {
+      rewardPoints: normalizedReward
+    }).pipe(
+      map((state) => ({
+        familyId: targetFamilyId,
+        lastClaimDate: state?.lastClaimDate ?? null,
+        streakDays: Math.max(0, Math.trunc(Number(state?.streakDays ?? 0))),
+        totalPoints: Math.max(0, Math.trunc(Number(state?.totalPoints ?? 0))),
+        claimedToday: !!state?.claimedToday
+      }))
+    );
+  }
+
+  getFamilyQuestRewardCatalog(familyId?: number): Observable<FamilyQuestRewardCatalogItem[]> {
+    const targetFamilyId = familyId ?? this.getFamilyId();
+    return this.get<FamilyQuestRewardCatalogItem[]>(`/account/families/${targetFamilyId}/quest-rewards/catalog`).pipe(
+      map((items) =>
+        (items ?? []).map((item) => ({
+          rewardKey: (item.rewardKey ?? '').trim(),
+          name: (item.name ?? '').trim(),
+          description: (item.description ?? '').trim(),
+          costPoints: Math.max(1, Math.trunc(Number(item.costPoints ?? 0)))
+        }))
+      ),
+      catchError(() => of([]))
+    );
+  }
+
+  getFamilyQuestRedemptions(familyId?: number): Observable<FamilyQuestRewardRedemption[]> {
+    const targetFamilyId = familyId ?? this.getFamilyId();
+    return this.get<FamilyQuestRewardRedemption[]>(`/account/families/${targetFamilyId}/quest-rewards/redemptions`).pipe(
+      map((items) =>
+        (items ?? []).map((item) => ({
+          id: Math.max(0, Math.trunc(Number(item.id ?? 0))),
+          rewardKey: (item.rewardKey ?? '').trim(),
+          rewardName: (item.rewardName ?? '').trim(),
+          costPoints: Math.max(0, Math.trunc(Number(item.costPoints ?? 0))),
+          redeemedByUserId: Number.isFinite(Number(item.redeemedByUserId))
+            ? Math.trunc(Number(item.redeemedByUserId))
+            : null,
+          redeemedAt: item.redeemedAt ?? ''
+        }))
+      ),
+      catchError(() => of([]))
+    );
+  }
+
+  redeemFamilyQuestReward(rewardKey: string, familyId?: number): Observable<FamilyQuestRedeemResponse> {
+    const targetFamilyId = familyId ?? this.getFamilyId();
+    return this.post<FamilyQuestRedeemResponse>(`/account/families/${targetFamilyId}/quest-rewards/redeem`, {
+      rewardKey: (rewardKey ?? '').trim()
+    }).pipe(
+      map((response) => ({
+        questState: {
+          familyId: targetFamilyId,
+          lastClaimDate: response?.questState?.lastClaimDate ?? null,
+          streakDays: Math.max(0, Math.trunc(Number(response?.questState?.streakDays ?? 0))),
+          totalPoints: Math.max(0, Math.trunc(Number(response?.questState?.totalPoints ?? 0))),
+          claimedToday: !!response?.questState?.claimedToday
+        },
+        redemption: {
+          id: Math.max(0, Math.trunc(Number(response?.redemption?.id ?? 0))),
+          rewardKey: (response?.redemption?.rewardKey ?? '').trim(),
+          rewardName: (response?.redemption?.rewardName ?? '').trim(),
+          costPoints: Math.max(0, Math.trunc(Number(response?.redemption?.costPoints ?? 0))),
+          redeemedByUserId: Number.isFinite(Number(response?.redemption?.redeemedByUserId))
+            ? Math.trunc(Number(response?.redemption?.redeemedByUserId))
+            : null,
+          redeemedAt: response?.redemption?.redeemedAt ?? ''
+        }
+      }))
     );
   }
 
@@ -405,6 +517,16 @@ export class SuperAppCommandService {
           return `${resolvedUrl}${resolvedUrl.includes('?') ? '&' : '?'}v=${Date.now()}`;
         })
       );
+  }
+
+  changePassword(oldPassword: string, newPassword: string): Observable<void> {
+    const userId = this.getUserId();
+    return this.http
+      .patch<void>(`${this.apiBase}/auth/account/user/change-pwd`, {
+        id: userId,
+        oldPassword,
+        newPassword
+      });
   }
 
   uploadUserAvatar(userId: number, file: File): Observable<string> {

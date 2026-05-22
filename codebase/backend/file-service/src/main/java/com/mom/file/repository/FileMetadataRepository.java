@@ -21,4 +21,6 @@ public interface FileMetadataRepository extends JpaRepository<FileMetadataEntity
             String bucketName,
             String fileTag
     );
+
+    long countByFamilyIdAndDeletedFalse(Long familyId);
 }

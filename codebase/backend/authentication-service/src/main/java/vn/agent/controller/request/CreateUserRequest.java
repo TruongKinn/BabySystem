@@ -34,7 +34,7 @@ public class CreateUserRequest {
     @NotBlank
     private String username;
 
-    @NotBlank
+    @vn.agent.validation.StrongPassword
     private String password;
 
     @NotNull

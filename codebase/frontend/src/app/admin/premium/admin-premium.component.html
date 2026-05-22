@@ -62,6 +62,118 @@
         <strong>{{ family.memberCount }}</strong>
       </span>
     </div>
+
+    <div class="bulk-toolbar" *ngIf="selectedFamilyId">
+      <div class="bulk-copy">
+        <strong>{{ 'momApp.admin.premium.bulk.title' | translate }}</strong>
+        <p>{{ 'momApp.admin.premium.bulk.subtitle' | translate }}</p>
+      </div>
+      <nz-select
+        class="bulk-select"
+        [ngModel]="bulkTargetFamilyIds"
+        (ngModelChange)="bulkTargetFamilyIds = $event ?? []"
+        [nzMode]="'multiple'"
+        [nzPlaceHolder]="'momApp.admin.premium.bulk.selectPlaceholder' | translate"
+        [nzShowSearch]="true"
+        [nzMaxTagCount]="3"
+      >
+        <nz-option
+          *ngFor="let family of bulkFamilyOptions; trackBy: trackByFamily"
+          [nzValue]="family.id"
+          [nzLabel]="'#' + family.id + ' - ' + family.name"
+        ></nz-option>
+      </nz-select>
+      <button nz-button nzType="primary" [nzLoading]="bulkApplying" [disabled]="!canApplyBulkConfig" (click)="applyBulkPremiumConfig()">
+        {{ 'momApp.admin.premium.bulk.apply' | translate }}
+      </button>
+    </div>
+  </nz-card>
+
+  <nz-card class="premium-card" *ngIf="selectedFamilyId">
+    <div class="section-head">
+      <h2>{{ 'momApp.admin.premium.questPoints.title' | translate }}</h2>
+      <p>{{ 'momApp.admin.premium.questPoints.subtitle' | translate }}</p>
+    </div>
+
+    <div class="quest-points-head">
+      <div class="quest-points-pill">
+        <span>{{ 'momApp.admin.premium.questPoints.currentPoints' | translate }}</span>
+        <strong>{{ totalQuestPoints | number }}</strong>
+      </div>
+      <div class="quest-points-pill">
+        <span>{{ 'momApp.admin.premium.questPoints.currentStreak' | translate }}</span>
+        <strong>{{ questState?.streakDays ?? 0 }}</strong>
+      </div>
+      <div class="quest-points-pill">
+        <span>{{ 'momApp.admin.premium.questPoints.lastClaimDate' | translate }}</span>
+        <strong>{{ formatDateTime(questState?.lastClaimDate) }}</strong>
+      </div>
+    </div>
+
+    <div class="quest-points-form">
+      <div class="form-item">
+        <label>{{ 'momApp.admin.premium.questPoints.pointsLabel' | translate }}</label>
+        <input nz-input type="number" min="1" max="5000000" [(ngModel)]="questGrantPointsInput" />
+      </div>
+      <div class="form-item">
+        <label>{{ 'momApp.admin.premium.questPoints.reasonLabel' | translate }}</label>
+        <input
+          nz-input
+          maxlength="300"
+          [(ngModel)]="questGrantReasonInput"
+          [placeholder]="'momApp.admin.premium.questPoints.reasonPlaceholder' | translate"
+        />
+      </div>
+      <div class="quest-points-action">
+        <button
+          nz-button
+          nzType="primary"
+          [nzLoading]="questPointsGranting"
+          [disabled]="!canGrantQuestPoints"
+          (click)="grantQuestPoints()"
+        >
+          {{ 'momApp.admin.premium.questPoints.grantAction' | translate }}
+        </button>
+      </div>
+    </div>
+
+    <div class="section-head quest-points-history-head">
+      <h2>{{ 'momApp.admin.premium.questPoints.historyTitle' | translate }}</h2>
+      <p>{{ 'momApp.admin.premium.questPoints.historySubtitle' | translate }}</p>
+    </div>
+
+    <nz-table
+      #grantTable
+      [nzData]="questPointGrants"
+      [nzFrontPagination]="false"
+      [nzShowPagination]="false"
+      nzSize="small"
+      nzTableLayout="fixed"
+    >
+      <thead>
+        <tr>
+          <th nzWidth="120px">{{ 'momApp.admin.premium.questPoints.table.points' | translate }}</th>
+          <th nzWidth="260px">{{ 'momApp.admin.premium.questPoints.table.reason' | translate }}</th>
+          <th nzWidth="240px">{{ 'momApp.admin.premium.questPoints.table.byUser' | translate }}</th>
+          <th nzWidth="170px">{{ 'momApp.admin.premium.questPoints.table.grantedAt' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of grantTable.data">
+          <td><strong>+{{ row.points | number }}</strong></td>
+          <td>{{ row.reason || ('momApp.common.notAvailable' | translate) }}</td>
+          <td>
+            <div class="audit-actor-primary">{{ questGrantByDisplay(row) }}</div>
+            <div class="audit-actor-meta" *ngIf="questGrantByMeta(row)">{{ questGrantByMeta(row) }}</div>
+          </td>
+          <td>{{ formatDateTime(row.grantedAt) }}</td>
+        </tr>
+      </tbody>
+    </nz-table>
+
+    <div class="empty-inline" *ngIf="questPointGrants.length === 0">
+      {{ 'momApp.admin.premium.questPoints.historyEmpty' | translate }}
+    </div>
   </nz-card>
 
   <nz-card class="premium-card" *ngIf="selectedFamilyId; else selectFamilyState">
@@ -157,7 +269,7 @@
           <th nzWidth="160px">{{ 'momApp.admin.premium.audit.table.statusChange' | translate }}</th>
           <th nzWidth="170px">{{ 'momApp.admin.premium.audit.table.expires' | translate }}</th>
           <th nzWidth="220px">{{ 'momApp.admin.premium.audit.table.reason' | translate }}</th>
-          <th nzWidth="110px">{{ 'momApp.admin.premium.audit.table.byUser' | translate }}</th>
+          <th nzWidth="250px">{{ 'momApp.admin.premium.audit.table.byUser' | translate }}</th>
           <th nzWidth="170px">{{ 'momApp.admin.premium.audit.table.changedAt' | translate }}</th>
         </tr>
       </thead>
@@ -175,7 +287,10 @@
             <span>{{ formatDateTime(row.newExpiresAt) }}</span>
           </td>
           <td>{{ row.reason || ('momApp.common.notAvailable' | translate) }}</td>
-          <td>{{ row.changedByUserId || ('momApp.common.notAvailable' | translate) }}</td>
+          <td>
+            <div class="audit-actor-primary">{{ changedByDisplay(row) }}</div>
+            <div class="audit-actor-meta" *ngIf="changedByMeta(row)">{{ changedByMeta(row) }}</div>
+          </td>
           <td>{{ formatDateTime(row.changedAt) }}</td>
         </tr>
       </tbody>

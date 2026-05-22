@@ -179,6 +179,26 @@ public class PremiumEntitlementService {
                 .toList();
     }
 
+    public boolean isFeatureEnabled(Long familyId, String featureKey) {
+        String normalizedKey = normalizeFeatureKey(featureKey);
+        if (normalizedKey.isEmpty()) {
+            return false;
+        }
+
+        return resolveFamilyFeatures(familyId).stream()
+                .anyMatch(item -> normalizedKey.equals(item.featureKey()) && item.enabled());
+    }
+
+    public void requireFeature(Long familyId, String featureKey) {
+        if (Boolean.TRUE.equals(UserContext.isAdmin())) {
+            return;
+        }
+        String normalizedKey = normalizeFeatureKey(featureKey);
+        if (normalizedKey.isEmpty() || !isFeatureEnabled(familyId, normalizedKey)) {
+            throw new AccessDeniedException("PREMIUM_REQUIRED:" + normalizedKey);
+        }
+    }
+
     private List<FamilyFeatureEntitlementResponse> buildFamilyEntitlementResponses(Long familyId) {
         List<PremiumFeatureEntity> features = premiumFeatureRepository.findAllByOrderByKeyAsc();
         Map<String, FamilyFeatureEntitlementEntity> entitlementByKey = new HashMap<>();

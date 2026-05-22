@@ -30,6 +30,7 @@ import {
   FileMetadata,
   SuperAppCommandService
 } from '../core/services/super-app-command.service';
+import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
 import { I18nService } from '../i18n/i18n.service';
 
 interface GalleryFileView extends FileMetadata {
@@ -62,7 +63,8 @@ interface GalleryFileView extends FileMetadata {
 export class BabyComponent {
   private readonly babyGalleryBucket = 'baby-gallery';
   private readonly maxUploadImageSizeBytes = 30 * 1024 * 1024;
-  private readonly advancedGrowthFeatureKey = 'advanced_growth_tracking';
+  private readonly advancedGrowthFeatureKey = PREMIUM_FEATURE_KEYS.advancedGrowthTracking;
+  private readonly unlimitedMemoryFeatureKey = PREMIUM_FEATURE_KEYS.unlimitedMemory;
   private readonly destroyRef = inject(DestroyRef);
   private readonly fb = inject(FormBuilder);
   private readonly command = inject(SuperAppCommandService);
@@ -696,7 +698,9 @@ export class BabyComponent {
         this.isUploadingGallery = false;
         this.notification.error(
           this.i18n.translate('common.errorTitle'),
-          err?.message || this.i18n.translate('momApp.baby.gallery.messages.uploadFailed')
+          this.isPremiumRequired(err, this.unlimitedMemoryFeatureKey)
+            ? this.i18n.translate('momApp.baby.gallery.messages.unlimitedMemoryRequired')
+            : (err?.message || this.i18n.translate('momApp.baby.gallery.messages.uploadFailed'))
         );
       }
     });
@@ -949,7 +953,8 @@ export class BabyComponent {
   }
 
   private hasFeatureEnabled(features: ResolvedPremiumFeature[], featureKey: string): boolean {
-    return features.some((item) => item.featureKey === featureKey && item.enabled);
+    const matched = features.find((item) => item.featureKey === featureKey);
+    return matched ? matched.enabled : true;
   }
 
   private isPremiumRequired(err: any, featureKey: string): boolean {

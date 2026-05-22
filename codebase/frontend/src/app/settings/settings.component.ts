@@ -11,7 +11,8 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzSwitchModule } from 'ng-zorro-antd/switch';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSelectModule } from 'ng-zorro-antd/select';
-import { SuperAppCommandService } from '../core/services/super-app-command.service';
+import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
+import { ResolvedPremiumFeature, SuperAppCommandService } from '../core/services/super-app-command.service';
 import { I18nService } from '../i18n/i18n.service';
 import { LanguageCode } from '../i18n/language.model';
 
@@ -47,10 +48,12 @@ export class SettingsComponent implements OnInit {
   
   private readonly defaultReminderHour = '20:30';
   private readonly reminderHourPattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
+  private readonly smartRemindersFeatureKey = PREMIUM_FEATURE_KEYS.smartReminders;
 
   // Notifications
   notificationEnabled = true;
   reminderHour = this.defaultReminderHour;
+  smartRemindersLocked = false;
 
   // Appearance
   selectedTheme: 'light' | 'dark' = 'light';
@@ -73,6 +76,8 @@ export class SettingsComponent implements OnInit {
   isSaving = false;
 
   ngOnInit(): void {
+    this.loadPremiumFeatures();
+
     // 1. Fetch user preferences from DB via command service
     const userId = this.command.getUserId();
     if (userId) {
@@ -100,6 +105,7 @@ export class SettingsComponent implements OnInit {
           this.currency = data.currency || 'VND';
           this.startOfWeek = data.startOfWeek || 'MONDAY';
 
+          this.applyReminderPremiumLock();
           this.updateInitialSettings();
         },
         error: (err) => {
@@ -126,6 +132,7 @@ export class SettingsComponent implements OnInit {
     this.currency = prefs.currency;
     this.startOfWeek = prefs.startOfWeek;
 
+    this.applyReminderPremiumLock();
     this.updateInitialSettings();
   }
 
@@ -192,9 +199,10 @@ export class SettingsComponent implements OnInit {
 
     this.isSaving = true;
     const reminderHour = this.reminderHour.trim();
+    const effectiveNotificationEnabled = this.smartRemindersLocked ? false : this.notificationEnabled;
 
     // 1. Save Notification settings via API (Scheduled one-time push)
-    this.command.saveNotificationSettings(this.notificationEnabled, reminderHour).subscribe({
+    this.command.saveNotificationSettings(effectiveNotificationEnabled, reminderHour).subscribe({
       next: () => {
         // 2. Save Local Preferences & Appearance
         this.savePreferences({ currency: this.currency, startOfWeek: this.startOfWeek });
@@ -206,7 +214,7 @@ export class SettingsComponent implements OnInit {
             language: this.selectedLanguage,
             currency: this.currency,
             startOfWeek: this.startOfWeek,
-            notificationEnabled: this.notificationEnabled,
+            notificationEnabled: effectiveNotificationEnabled,
             reminderTime: reminderHour
           }).subscribe({
             error: e => console.error('Failed to save preferences to DB', e)
@@ -229,6 +237,7 @@ export class SettingsComponent implements OnInit {
         this.isSaving = false;
         this.isSaveModalVisible = false;
         this.reminderHour = reminderHour;
+        this.notificationEnabled = effectiveNotificationEnabled;
         this.updateInitialSettings();
         
         this.notification.success(
@@ -243,6 +252,14 @@ export class SettingsComponent implements OnInit {
           err?.error?.message || err?.message || this.i18n.translate('momApp.settings.messages.saveFailed') || 'Lưu thất bại'
         );
       }
+    });
+  }
+
+  private loadPremiumFeatures(): void {
+    this.command.getResolvedFamilyFeatures().subscribe((features) => {
+      this.smartRemindersLocked = !this.hasFeatureEnabled(features, this.smartRemindersFeatureKey);
+      this.applyReminderPremiumLock();
+      this.updateInitialSettings();
     });
   }
 
@@ -271,5 +288,15 @@ export class SettingsComponent implements OnInit {
       localStorage.setItem('mom_preferences', JSON.stringify(prefs));
     }
   }
-}
 
+  private hasFeatureEnabled(features: ResolvedPremiumFeature[], featureKey: string): boolean {
+    const matched = features.find((item) => item.featureKey === featureKey);
+    return matched ? matched.enabled : true;
+  }
+
+  private applyReminderPremiumLock(): void {
+    if (this.smartRemindersLocked) {
+      this.notificationEnabled = false;
+    }
+  }
+}

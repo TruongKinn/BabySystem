@@ -1,6 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable, catchError, forkJoin, map, of, switchMap } from 'rxjs';
+import { Observable, catchError, forkJoin, map, of, switchMap, throwError } from 'rxjs';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 import {
   DashboardSnapshot,
@@ -299,7 +299,13 @@ export class MockSuperAppService {
           }))
           .sort((left, right) => left.date.localeCompare(right.date))
       })),
-      catchError(() => of(this.emptyInsightMonthlyReport(familyId, monthKey)))
+      catchError((err) => {
+        const message = String(err?.message ?? '');
+        if (message.includes('PREMIUM_REQUIRED:')) {
+            return throwError(() => err);
+        }
+        return of(this.emptyInsightMonthlyReport(familyId, monthKey));
+      })
     );
   }
 

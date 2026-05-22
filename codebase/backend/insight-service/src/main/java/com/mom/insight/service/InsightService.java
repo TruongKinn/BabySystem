@@ -4,6 +4,7 @@ import com.mom.insight.controller.dto.InsightDailyResponse;
 import com.mom.insight.controller.dto.InsightDashboardResponse;
 import com.mom.insight.controller.dto.InsightMonthlyResponse;
 import com.mom.insight.domain.InsightDailyStatEntity;
+import com.mom.insight.premium.PremiumFeatures;
 import com.mom.insight.repository.InsightDailyStatRepository;
 import com.mom.common.security.DataIsolationUtil;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import java.util.List;
 public class InsightService {
 
     private final InsightDailyStatRepository insightDailyStatRepository;
+    private final PremiumAccessService premiumAccessService;
 
     @Transactional
     public void recordExpenseCreated(Long familyId, LocalDate date, BigDecimal amount) {
@@ -100,6 +102,7 @@ public class InsightService {
 
     public InsightMonthlyResponse getMonthly(Long familyId, YearMonth month) {
         DataIsolationUtil.validateFamilyAccess(familyId);
+        premiumAccessService.requireFeature(familyId, PremiumFeatures.PREMIUM_REPORTS);
 
         YearMonth yearMonth = month != null ? month : YearMonth.now(ZoneOffset.UTC);
         LocalDate from = yearMonth.atDay(1);

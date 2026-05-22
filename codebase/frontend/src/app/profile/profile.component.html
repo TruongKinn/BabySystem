@@ -1,4 +1,4 @@
-﻿<section class="profile-page" *ngIf="profile$ | async as profile">
+<section class="profile-page" *ngIf="profile$ | async as profile">
   <div class="profile-hero">
     <div class="profile-hero__bg">
       <div class="hero-blob hero-blob--1"></div>
@@ -179,6 +179,41 @@
       </div>
     </div>
 
+    <div class="detail-card detail-card--premium">
+      <div class="detail-card__header">
+        <div class="detail-card__icon" style="background: linear-gradient(135deg,#0ea5e9,#0284c7)">
+          <span nz-icon nzType="crown" nzTheme="fill"></span>
+        </div>
+        <div>
+          <h2 class="detail-card__title">{{ 'momApp.profile.cards.premium.title' | translate }}</h2>
+          <p class="detail-card__sub">{{ 'momApp.profile.cards.premium.subtitle' | translate }}</p>
+        </div>
+      </div>
+      <div class="detail-card__body">
+        <div class="premium-empty" *ngIf="profile.premiumFeatures.length === 0">
+          {{ 'momApp.profile.premium.empty' | translate }}
+        </div>
+
+        <div class="premium-feature-list" *ngIf="profile.premiumFeatures.length > 0">
+          <div class="premium-feature-row" *ngFor="let feature of profile.premiumFeatures">
+            <div class="premium-feature-main">
+              <p class="premium-feature-name">{{ feature.label }}</p>
+              <p class="premium-feature-meta" *ngIf="feature.expiresAt">
+                {{ 'momApp.profile.premium.expiresAt' | translate }}: {{ formatPremiumExpiry(feature.expiresAt) }}
+              </p>
+            </div>
+            <span class="feature-chip" [class.feature-chip--enabled]="feature.enabled" [class.feature-chip--disabled]="!feature.enabled">
+              {{
+                feature.enabled
+                  ? ('momApp.profile.premium.enabled' | translate)
+                  : ('momApp.profile.premium.disabled' | translate)
+              }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <div class="detail-card detail-card--security">
       <div class="detail-card__header">
         <div class="detail-card__icon" style="background: linear-gradient(135deg,#8b5cf6,#a78bfa)">
@@ -198,11 +233,14 @@
               <p class="security-item__sub">{{ 'momApp.profile.cards.security.password.subtitle' | translate }}</p>
             </div>
           </div>
-          <span class="security-badge security-badge--ok">{{ 'momApp.profile.cards.security.password.status' | translate }}</span>
+          <div class="security-item__actions" style="display: flex; gap: 12px; align-items: center;">
+            <span class="security-badge security-badge--ok">{{ 'momApp.profile.cards.security.password.status' | translate }}</span>
+            <button nz-button nzType="default" nzSize="small" class="btn-user-outline" (click)="openChangePassword()">{{ 'auth.passwordCenter.tabs.change' | translate }}</button>
+          </div>
         </div>
         <div class="security-item">
           <div class="security-item__info">
-            <span nz-icon nzType="shield" nzTheme="outline" class="security-item__icon"></span>
+            <span nz-icon nzType="desktop" nzTheme="outline" class="security-item__icon"></span>
             <div>
               <p class="security-item__title">{{ 'momApp.profile.cards.security.session.title' | translate }}</p>
               <p class="security-item__sub">{{ 'momApp.profile.cards.security.session.subtitle' | translate }}</p>
@@ -385,4 +423,71 @@
       <div class="fg-empty">{{ 'momApp.profile.familyTree.empty' | translate }}</div>
     </ng-template>
   </nz-card>
+
+  <nz-modal
+    [(nzVisible)]="isChangePasswordVisible"
+    [nzTitle]="changePasswordTitleTpl"
+    nzClassName="user-role-modal"
+    (nzOnCancel)="handleCancelChangePassword()"
+    [nzFooter]="changePasswordFooterTpl"
+  >
+    <ng-template #changePasswordTitleTpl>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="modal-title-icon-wrap" style="background: linear-gradient(135deg,#8b5cf6,#a78bfa)">
+          <span nz-icon nzType="lock"></span>
+        </span>
+        <span class="modal-title-text">
+          <span class="modal-title-main">{{ 'auth.passwordCenter.tabs.change' | translate }}</span>
+          <span class="modal-title-sub">{{ 'momApp.profile.cards.security.password.subtitle' | translate }}</span>
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-container *nzModalContent>
+      <form nz-form [formGroup]="changePasswordForm" nzLayout="vertical" class="user-modal-form-grid">
+        <nz-form-item class="modal-field-full">
+          <nz-form-label nzRequired>{{ 'auth.passwordCenter.change.oldPasswordLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'auth.passwordCenter.change.oldPasswordError' | translate">
+            <nz-input-group [nzPrefix]="prefixLock" class="premium-text-input">
+              <input nz-input type="password" formControlName="oldPassword" [placeholder]="'auth.passwordCenter.change.oldPasswordPlaceholder' | translate" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <nz-form-item class="modal-field-full" style="margin-bottom: 0;">
+          <nz-form-label nzRequired>{{ 'auth.passwordCenter.change.newPasswordLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'auth.passwordCenter.change.newPasswordError' | translate">
+            <nz-input-group [nzPrefix]="prefixLock" class="premium-text-input">
+              <input nz-input type="password" formControlName="newPassword" [placeholder]="'auth.passwordCenter.change.newPasswordPlaceholder' | translate" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <div class="modal-field-full">
+          <app-password-strength [password]="changePasswordForm.get('newPassword')?.value"></app-password-strength>
+        </div>
+
+        <nz-form-item class="modal-field-full" style="margin-top: 16px; margin-bottom: 0;">
+          <nz-form-label nzRequired>{{ 'auth.passwordCenter.change.confirmPasswordLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="confirmErrorTpl">
+            <nz-input-group [nzPrefix]="prefixLock" class="premium-text-input">
+              <input nz-input type="password" formControlName="confirmPassword" [placeholder]="'auth.passwordCenter.change.confirmPasswordPlaceholder' | translate" />
+            </nz-input-group>
+            <ng-template #confirmErrorTpl let-control>
+              <ng-container *ngIf="control.hasError('required')">{{ 'auth.passwordCenter.change.confirmRequired' | translate }}</ng-container>
+              <ng-container *ngIf="control.hasError('mismatch')">{{ 'auth.passwordCenter.change.confirmMismatch' | translate }}</ng-container>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </ng-container>
+    
+    <ng-template #changePasswordFooterTpl>
+      <button nz-button nzType="default" class="btn-user-outline" (click)="handleCancelChangePassword()">{{ 'commonActions.cancel' | translate }}</button>
+      <button nz-button nzType="primary" class="btn-user-primary" (click)="submitChangePassword()" [nzLoading]="isChangingPassword">{{ 'auth.passwordCenter.change.submit' | translate }}</button>
+    </ng-template>
+  </nz-modal>
+
+  <ng-template #prefixLock><span nz-icon nzType="lock"></span></ng-template>
+
 </section>

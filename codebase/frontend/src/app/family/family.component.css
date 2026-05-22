@@ -8,6 +8,20 @@
   flex-wrap: wrap;
 }
 
+.premium-lock-notice {
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #fdba74;
+  background: #fff7ed;
+  color: #9a3412;
+  font-size: 13px;
+  font-weight: 600;
+}
+
 .birthday-alerts {
   margin-top: 18px;
   border: 1px solid var(--border-color);

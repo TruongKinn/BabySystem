@@ -13,6 +13,7 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
+import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
 import { ExpenseApi, ExpenseBudgetApi, ExpenseCategoryApi, ExpenseCategoryReportApi, ExpenseCategoryReportItemApi, ExpenseDailySummaryApi, ExpenseSummaryApi, FileMetadata, SuperAppCommandService } from '../core/services/super-app-command.service';
 import { I18nService } from '../i18n/i18n.service';
 
@@ -66,6 +67,7 @@ type ExpenseSortMode = 'NEWEST' | 'OLDEST' | 'HIGHEST' | 'LOWEST' | 'CATEGORY';
 })
 export class ExpensesComponent implements OnInit {
   private readonly expenseReceiptBucket = 'expense-receipts';
+  private readonly unlimitedMemoryFeatureKey = PREMIUM_FEATURE_KEYS.unlimitedMemory;
   private readonly fb = inject(FormBuilder);
   private readonly command = inject(SuperAppCommandService);
   private readonly notification = inject(NzNotificationService);
@@ -481,7 +483,9 @@ export class ExpensesComponent implements OnInit {
         this.isUploadingReceipt = false;
         this.notification.error(
           this.i18n.translate('common.errorTitle'),
-          err?.error?.message || this.i18n.translate('momApp.expenses.messages.uploadReceiptFailed')
+          this.isPremiumRequired(err, this.unlimitedMemoryFeatureKey)
+            ? this.i18n.translate('momApp.expenses.messages.unlimitedMemoryRequired')
+            : (err?.error?.message || this.i18n.translate('momApp.expenses.messages.uploadReceiptFailed'))
         );
       }
     });
@@ -769,5 +773,10 @@ export class ExpensesComponent implements OnInit {
         this.receiptFiles = [];
       }
     });
+  }
+
+  private isPremiumRequired(err: any, featureKey: string): boolean {
+    const message = String(err?.message ?? '');
+    return message.includes(`PREMIUM_REQUIRED:${featureKey}`);
   }
 }

@@ -16,6 +16,7 @@ import com.mom.task.domain.TaskEntity;
 import com.mom.task.domain.TaskStatus;
 import com.mom.task.event.TaskChangedPayload;
 import com.mom.task.event.TaskEventPublisher;
+import com.mom.task.premium.PremiumFeatures;
 import com.mom.task.repository.RecurringTaskRepository;
 import com.mom.task.repository.TaskCategoryRepository;
 import com.mom.task.repository.TaskRepository;
@@ -43,6 +44,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final RecurringTaskRepository recurringTaskRepository;
     private final TaskEventPublisher taskEventPublisher;
+    private final PremiumAccessService premiumAccessService;
     private static final Set<TaskStatus> ACTIVE_TASK_STATUSES = EnumSet.of(TaskStatus.PENDING, TaskStatus.IN_PROGRESS);
 
     @Transactional
@@ -226,6 +228,7 @@ public class TaskService {
     @Transactional
     public RecurringTaskResponse createRecurringTask(CreateRecurringTaskRequest request) {
         DataIsolationUtil.validateFamilyAccess(request.familyId());
+        premiumAccessService.requireFeature(request.familyId(), PremiumFeatures.SMART_REMINDERS);
 
         if (request.categoryId() != null) {
             validateCategoryBelongsToFamily(request.categoryId(), request.familyId());
@@ -246,6 +249,7 @@ public class TaskService {
 
     public List<RecurringTaskResponse> getRecurringTasks(Long familyId) {
         DataIsolationUtil.validateFamilyAccess(familyId);
+        premiumAccessService.requireFeature(familyId, PremiumFeatures.SMART_REMINDERS);
 
         List<RecurringTaskEntity> recurringTasks = recurringTaskRepository.findByFamilyIdOrderByCreatedAtDesc(familyId);
         Map<Long, String> categoryNames = loadCategoryNames(recurringTasks.stream()

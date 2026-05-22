@@ -21,13 +21,25 @@
         {{ 'commonActions.refresh' | translate }}
       </button>
 
-      <button nz-button nzType="primary" class="btn-user-primary" (click)="exportCsv()" [disabled]="dailyRows.length === 0">
+      <button
+        nz-button
+        nzType="primary"
+        class="btn-user-primary"
+        (click)="exportCsv()"
+        [disabled]="dailyRows.length === 0 || premiumReportsLocked"
+      >
         <span nz-icon nzType="download"></span>
         Export CSV
       </button>
     </div>
   </div>
 
+  <div *ngIf="premiumReportsLocked" class="premium-lock-panel">
+    <span nz-icon nzType="lock"></span>
+    <p>{{ 'momApp.insights.messages.premiumReportsRequired' | translate }}</p>
+  </div>
+
+  <ng-container *ngIf="!premiumReportsLocked">
   <div class="loading-state" *ngIf="loading">Loading insight report...</div>
 
   <ng-container *ngIf="!loading">
@@ -117,7 +129,12 @@
       </nz-card>
 
       <nz-card nzTitle="Recommended actions" class="table-card insight-card">
-        <div class="recommendation-list">
+        <div *ngIf="aiCareAssistantLocked" class="ai-lock-note">
+          <span nz-icon nzType="lock"></span>
+          {{ 'momApp.insights.messages.aiCareAssistantRequired' | translate }}
+        </div>
+
+        <div class="recommendation-list" *ngIf="!aiCareAssistantLocked">
           <div class="recommendation-item" *ngFor="let item of recommendations" [ngClass]="'tone-' + item.tone">
             <p class="recommendation-title">{{ item.title }}</p>
             <p class="recommendation-detail">{{ item.detail }}</p>
@@ -165,5 +182,6 @@
         </table>
       </div>
     </nz-card>
+  </ng-container>
   </ng-container>
 </section>

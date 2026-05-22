@@ -9,6 +9,7 @@ import com.mom.notification.domain.NotificationEntity;
 import com.mom.notification.domain.NotificationStatus;
 import com.mom.notification.domain.NotificationType;
 import com.mom.notification.event.NotificationRequestedPayload;
+import com.mom.notification.premium.PremiumFeatures;
 import com.mom.notification.repository.NotificationRepository;
 import com.mom.common.security.DataIsolationUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,16 +29,21 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final SimpMessagingTemplate messagingTemplate;
+    private final PremiumAccessService premiumAccessService;
 
     @Transactional
     public NotificationResponse create(CreateNotificationRequest request) {
         DataIsolationUtil.validateFamilyAccess(request.familyId());
+        NotificationType resolvedType = request.type() != null ? request.type() : NotificationType.REMINDER;
+        if (resolvedType == NotificationType.REMINDER) {
+            premiumAccessService.requireFeature(request.familyId(), PremiumFeatures.SMART_REMINDERS);
+        }
 
         NotificationEntity entity = new NotificationEntity();
         entity.setFamilyId(request.familyId());
         entity.setUserId(request.userId());
         entity.setChannel(request.channel() != null ? request.channel() : NotificationChannel.PUSH);
-        entity.setType(request.type() != null ? request.type() : NotificationType.REMINDER);
+        entity.setType(resolvedType);
         entity.setTitle(request.title().trim());
         entity.setMessage(request.message().trim());
         entity.setMetadataJson(trimToNull(request.metadataJson()));

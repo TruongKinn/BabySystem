@@ -18,6 +18,7 @@ import com.mom.account.domain.UserEntity;
 import com.mom.account.event.AccountEventPublisher;
 import com.mom.account.event.FamilyCreatedPayload;
 import com.mom.account.event.UserCreatedPayload;
+import com.mom.account.premium.PremiumFeatures;
 import com.mom.account.repository.FamilyMemberRepository;
 import com.mom.account.repository.FamilyRepository;
 import com.mom.account.repository.UserRepository;
@@ -49,6 +50,7 @@ public class AccountService {
     private final FamilyRepository familyRepository;
     private final FamilyMemberRepository familyMemberRepository;
     private final AccountEventPublisher accountEventPublisher;
+    private final PremiumEntitlementService premiumEntitlementService;
     private final RestClient.Builder restClientBuilder;
 
     @Value("${AUTH_SERVICE_URI:http://localhost:8081}")
@@ -142,6 +144,7 @@ public class AccountService {
     public FamilyResponse addMember(Long familyId, AddFamilyMemberRequest request) {
         validateFamilyRole(request.role());
         validateFamilyAccessIfContextPresent(familyId);
+        premiumEntitlementService.requireFeature(familyId, PremiumFeatures.FAMILY_COLLABORATION_PLUS);
 
         familyRepository.findById(familyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Family not found"));
@@ -174,6 +177,7 @@ public class AccountService {
     public FamilyResponse inviteMemberWithAccount(Long familyId, InviteFamilyMemberRequest request) {
         validateFamilyAccessIfContextPresent(familyId);
         validateFamilyRole(request.role());
+        premiumEntitlementService.requireFeature(familyId, PremiumFeatures.FAMILY_COLLABORATION_PLUS);
         familyRepository.findById(familyId)
                 .orElseThrow(() -> new ResourceNotFoundException("Family not found"));
 
@@ -317,6 +321,7 @@ public class AccountService {
     public FamilyResponse updateMemberRole(Long familyId, Long userId, FamilyRole newRole) {
         validateFamilyRole(newRole);
         validateFamilyAccessIfContextPresent(familyId);
+        premiumEntitlementService.requireFeature(familyId, PremiumFeatures.FAMILY_COLLABORATION_PLUS);
 
         FamilyMemberEntity member = familyMemberRepository.findByFamilyId(familyId).stream()
                 .filter(m -> m.getUserId().equals(userId))
@@ -330,6 +335,7 @@ public class AccountService {
     @Transactional
     public void removeMember(Long familyId, Long userId) {
         validateFamilyAccessIfContextPresent(familyId);
+        premiumEntitlementService.requireFeature(familyId, PremiumFeatures.FAMILY_COLLABORATION_PLUS);
 
         FamilyMemberEntity member = familyMemberRepository.findByFamilyId(familyId).stream()
                 .filter(m -> m.getUserId().equals(userId))
@@ -343,6 +349,7 @@ public class AccountService {
     public FamilyResponse updateMember(Long familyId, Long userId, com.mom.account.controller.dto.UpdateFamilyMemberRequest request) {
         validateFamilyRole(request.role());
         validateFamilyAccessIfContextPresent(familyId);
+        premiumEntitlementService.requireFeature(familyId, PremiumFeatures.FAMILY_COLLABORATION_PLUS);
 
         FamilyMemberEntity member = familyMemberRepository.findByFamilyId(familyId).stream()
                 .filter(m -> m.getUserId().equals(userId))

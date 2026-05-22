@@ -5,12 +5,14 @@ import { finalize, forkJoin } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
 import { DashboardSnapshot } from '../core/models/super-app.model';
 import {
   InsightDailyBreakdownItem,
   InsightMonthlyReport,
   MockSuperAppService
 } from '../core/services/mock-super-app.service';
+import { ResolvedPremiumFeature, SuperAppCommandService } from '../core/services/super-app-command.service';
 import { I18nService } from '../i18n/i18n.service';
 
 type InsightRiskLevel = 'GOOD' | 'WARNING' | 'CRITICAL';
@@ -34,10 +36,15 @@ interface InsightRecommendation {
 })
 export class InsightsComponent implements OnInit {
   private readonly data = inject(MockSuperAppService);
+  private readonly command = inject(SuperAppCommandService);
   private readonly i18n = inject(I18nService);
+  private readonly premiumReportsFeatureKey = PREMIUM_FEATURE_KEYS.premiumReports;
+  private readonly aiCareAssistantFeatureKey = PREMIUM_FEATURE_KEYS.aiCareAssistant;
 
   loading = false;
   monthKey = this.currentMonthKey();
+  premiumReportsLocked = false;
+  aiCareAssistantLocked = false;
 
   familyName = '';
   moodScore = 0;
@@ -60,7 +67,7 @@ export class InsightsComponent implements OnInit {
   recommendations: InsightRecommendation[] = [];
 
   ngOnInit(): void {
-    this.loadInsights();
+    this.loadPremiumFeatures();
   }
 
   onMonthChange(rawMonth: string): void {
@@ -73,6 +80,13 @@ export class InsightsComponent implements OnInit {
   }
 
   loadInsights(): void {
+    if (this.premiumReportsLocked) {
+      this.loading = false;
+      this.dailyRows = [];
+      this.recommendations = [];
+      return;
+    }
+
     const month = this.normalizeMonthKey(this.monthKey);
     this.monthKey = month;
     this.loading = true;
@@ -87,6 +101,13 @@ export class InsightsComponent implements OnInit {
       .subscribe({
         next: ({ snapshot, monthly }) => {
           this.applyInsightData(snapshot, monthly);
+        },
+        error: (err) => {
+          if (this.isPremiumRequired(err, this.premiumReportsFeatureKey)) {
+            this.premiumReportsLocked = true;
+            this.dailyRows = [];
+            this.recommendations = [];
+          }
         }
       });
   }
@@ -198,7 +219,7 @@ export class InsightsComponent implements OnInit {
       riskLevel: this.resolveRiskLevel(item, averageExpense)
     }));
 
-    this.recommendations = this.buildRecommendations(snapshot.baby.sleepHours);
+    this.recommendations = this.aiCareAssistantLocked ? [] : this.buildRecommendations(snapshot.baby.sleepHours);
   }
 
   private buildRecommendations(todaySleepHours: number): InsightRecommendation[] {
@@ -286,5 +307,23 @@ export class InsightsComponent implements OnInit {
 
   private clamp(value: number, min: number, max: number): number {
     return Math.min(max, Math.max(min, value));
+  }
+
+  private loadPremiumFeatures(): void {
+    this.command.getResolvedFamilyFeatures().subscribe((features) => {
+      this.premiumReportsLocked = !this.hasFeatureEnabled(features, this.premiumReportsFeatureKey);
+      this.aiCareAssistantLocked = !this.hasFeatureEnabled(features, this.aiCareAssistantFeatureKey);
+      this.loadInsights();
+    });
+  }
+
+  private hasFeatureEnabled(features: ResolvedPremiumFeature[], featureKey: string): boolean {
+    const matched = features.find((item) => item.featureKey === featureKey);
+    return matched ? matched.enabled : true;
+  }
+
+  private isPremiumRequired(err: any, featureKey: string): boolean {
+    const message = String(err?.message ?? '');
+    return message.includes(`PREMIUM_REQUIRED:${featureKey}`);
   }
 }

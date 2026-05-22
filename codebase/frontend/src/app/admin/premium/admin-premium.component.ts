@@ -1,4 +1,4 @@
-import { CommonModule } from '@angular/common';
+﻿import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -12,7 +12,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
-import { forkJoin } from 'rxjs';
+import { catchError, forkJoin, map, of } from 'rxjs';
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 
@@ -67,6 +67,34 @@ interface PremiumEntitlementAuditApi {
   changedAt: string;
 }
 
+interface AccountUserApi {
+  id: number;
+  username: string;
+  email: string;
+  displayName: string;
+}
+
+interface FamilyQuestStateApi {
+  familyId: number;
+  lastClaimDate: string | null;
+  streakDays: number;
+  totalPoints: number;
+  claimedToday: boolean;
+}
+
+interface FamilyQuestPointGrantLogApi {
+  id: number;
+  points: number;
+  reason: string | null;
+  grantedByUserId: number | null;
+  grantedAt: string;
+}
+
+interface GrantFamilyQuestPointsResponseApi {
+  questState: FamilyQuestStateApi;
+  grant: FamilyQuestPointGrantLogApi;
+}
+
 @Component({
   selector: 'app-admin-premium',
   standalone: true,
@@ -94,12 +122,20 @@ export class AdminPremiumComponent implements OnInit {
   loadingFamilies = false;
   premiumLoading = false;
   premiumSaving = false;
+  bulkApplying = false;
 
   families: FamilyOption[] = [];
   selectedFamilyId: number | null = null;
+  bulkTargetFamilyIds: number[] = [];
 
   premiumEntitlements: PremiumEntitlementView[] = [];
   premiumAudit: PremiumEntitlementAuditApi[] = [];
+  auditUsersById: Record<number, AccountUserApi> = {};
+  questState: FamilyQuestStateApi | null = null;
+  questPointGrants: FamilyQuestPointGrantLogApi[] = [];
+  questPointsGranting = false;
+  questGrantPointsInput = 100;
+  questGrantReasonInput = '';
 
   readonly entitlementStatuses: PremiumEntitlementStatus[] = ['INHERIT', 'ALLOW', 'DENY'];
 
@@ -116,6 +152,23 @@ export class AdminPremiumComponent implements OnInit {
 
   get enabledFeatureCount(): number {
     return this.premiumEntitlements.filter((item) => item.effectiveEnabled).length;
+  }
+
+  get bulkFamilyOptions(): FamilyOption[] {
+    return this.families.filter((family) => family.id !== this.selectedFamilyId);
+  }
+
+  get canApplyBulkConfig(): boolean {
+    return this.bulkTargetFamilyIds.length > 0 && this.premiumEntitlements.length > 0 && !this.bulkApplying;
+  }
+
+  get totalQuestPoints(): number {
+    return Math.max(0, Math.trunc(Number(this.questState?.totalPoints ?? 0)));
+  }
+
+  get canGrantQuestPoints(): boolean {
+    const points = Math.trunc(Number(this.questGrantPointsInput));
+    return !!this.selectedFamilyId && points > 0 && !this.questPointsGranting;
   }
 
   trackByFamily(_: number, family: FamilyOption): number {
@@ -135,12 +188,18 @@ export class AdminPremiumComponent implements OnInit {
           }))
           .sort((left, right) => left.name.localeCompare(right.name));
 
+        this.bulkTargetFamilyIds = this.bulkTargetFamilyIds.filter((familyId) =>
+          this.families.some((family) => family.id === familyId)
+        );
+
         if (this.selectedFamilyId && this.families.some((family) => family.id === this.selectedFamilyId)) {
+          this.bulkTargetFamilyIds = this.bulkTargetFamilyIds.filter((familyId) => familyId !== this.selectedFamilyId);
           this.loadPremiumConfig(this.selectedFamilyId);
           return;
         }
 
         this.selectedFamilyId = this.families[0]?.id ?? null;
+        this.bulkTargetFamilyIds = this.bulkTargetFamilyIds.filter((familyId) => familyId !== this.selectedFamilyId);
         if (this.selectedFamilyId) {
           this.loadPremiumConfig(this.selectedFamilyId);
         } else {
@@ -159,6 +218,7 @@ export class AdminPremiumComponent implements OnInit {
 
   onSelectedFamilyChange(familyId: number | null): void {
     this.selectedFamilyId = familyId;
+    this.bulkTargetFamilyIds = this.bulkTargetFamilyIds.filter((id) => id !== familyId);
     if (!familyId) {
       this.clearPremiumData();
       return;
@@ -173,19 +233,47 @@ export class AdminPremiumComponent implements OnInit {
     this.loadPremiumConfig(this.selectedFamilyId);
   }
 
+  grantQuestPoints(): void {
+    if (!this.selectedFamilyId) {
+      return;
+    }
+
+    const points = Math.trunc(Number(this.questGrantPointsInput));
+    if (!Number.isFinite(points) || points <= 0) {
+      this.message.warning(this.i18n.translate('momApp.admin.premium.questPoints.messages.invalidPoints'));
+      return;
+    }
+
+    this.questPointsGranting = true;
+    this.http
+      .post<ApiEnvelope<GrantFamilyQuestPointsResponseApi>>(
+        `${API_CONFIG.GATEWAY_URL}/account/admin/families/${this.selectedFamilyId}/quest-points/grant`,
+        {
+          points,
+          reason: (this.questGrantReasonInput ?? '').trim() || null
+        }
+      )
+      .subscribe({
+        next: () => {
+          this.questPointsGranting = false;
+          this.questGrantReasonInput = '';
+          this.message.success(this.i18n.translate('momApp.admin.premium.questPoints.messages.grantSuccess', { points }));
+          this.loadPremiumConfig(this.selectedFamilyId!);
+        },
+        error: (err) => {
+          this.questPointsGranting = false;
+          const fallback = this.i18n.translate('momApp.admin.premium.questPoints.messages.grantFailed');
+          this.message.error(err?.error?.message || fallback);
+        }
+      });
+  }
+
   savePremiumConfig(): void {
     if (!this.selectedFamilyId || this.premiumEntitlements.length === 0) {
       return;
     }
 
-    const payload = {
-      entitlements: this.premiumEntitlements.map((item) => ({
-        featureKey: item.featureKey,
-        status: item.status,
-        expiresAt: item.status === 'ALLOW' ? this.toIsoOffset(item.expiresAtInput) : null,
-        reason: (item.reason ?? '').trim() || null
-      }))
-    };
+    const payload = this.buildEntitlementPayload();
 
     this.premiumSaving = true;
     this.http
@@ -205,6 +293,74 @@ export class AdminPremiumComponent implements OnInit {
           this.message.error(err?.error?.message || fallback);
         }
       });
+  }
+
+  applyBulkPremiumConfig(): void {
+    if (!this.canApplyBulkConfig) {
+      return;
+    }
+
+    const payload = this.buildEntitlementPayload();
+    const targetFamilyIds = [...new Set(this.bulkTargetFamilyIds)]
+      .filter((familyId) => familyId !== this.selectedFamilyId)
+      .sort((left, right) => left - right);
+
+    if (targetFamilyIds.length === 0) {
+      this.message.warning(this.i18n.translate('momApp.admin.premium.messages.bulkTargetRequired'));
+      return;
+    }
+
+    this.bulkApplying = true;
+    forkJoin(
+      targetFamilyIds.map((familyId) =>
+        this.http
+          .put<ApiEnvelope<PremiumEntitlementApi[]>>(
+            `${API_CONFIG.GATEWAY_URL}/account/admin/families/${familyId}/entitlements`,
+            payload
+          )
+          .pipe(
+            map(() => ({ familyId, success: true as const })),
+            catchError((err) =>
+              of({
+                familyId,
+                success: false as const,
+                message: err?.error?.message || err?.message || ''
+              })
+            )
+          )
+      )
+    ).subscribe({
+      next: (results) => {
+        this.bulkApplying = false;
+        const successCount = results.filter((result) => result.success).length;
+        const failed = results.filter((result) => !result.success);
+
+        if (failed.length === 0) {
+          this.message.success(
+            this.i18n.translate('momApp.admin.premium.messages.bulkApplySuccess', { count: successCount })
+          );
+          return;
+        }
+
+        if (successCount > 0) {
+          const failedIds = failed.map((result) => `#${result.familyId}`).join(', ');
+          this.message.warning(
+            this.i18n.translate('momApp.admin.premium.messages.bulkApplyPartial', {
+              success: successCount,
+              failed: failedIds
+            })
+          );
+          return;
+        }
+
+        const firstError = failed[0]?.message || this.i18n.translate('momApp.admin.premium.messages.bulkApplyFailed');
+        this.message.error(firstError);
+      },
+      error: () => {
+        this.bulkApplying = false;
+        this.message.error(this.i18n.translate('momApp.admin.premium.messages.bulkApplyFailed'));
+      }
+    });
   }
 
   onEntitlementStatusChange(item: PremiumEntitlementView): void {
@@ -256,6 +412,70 @@ export class AdminPremiumComponent implements OnInit {
     });
   }
 
+  changedByDisplay(row: PremiumEntitlementAuditApi): string {
+    if (!row.changedByUserId) {
+      return this.i18n.translate('momApp.common.notAvailable');
+    }
+
+    const actor = this.auditUsersById[row.changedByUserId];
+    if (!actor) {
+      return `#${row.changedByUserId}`;
+    }
+
+    const displayName = actor.displayName?.trim();
+    const username = actor.username?.trim();
+    if (displayName && username) {
+      return `${displayName} (@${username})`;
+    }
+    return displayName || username || `#${row.changedByUserId}`;
+  }
+
+  changedByMeta(row: PremiumEntitlementAuditApi): string {
+    if (!row.changedByUserId) {
+      return '';
+    }
+
+    const actor = this.auditUsersById[row.changedByUserId];
+    if (!actor) {
+      return `ID #${row.changedByUserId}`;
+    }
+
+    const email = actor.email?.trim();
+    return email ? `${email} · ID #${row.changedByUserId}` : `ID #${row.changedByUserId}`;
+  }
+
+  questGrantByDisplay(row: FamilyQuestPointGrantLogApi): string {
+    if (!row.grantedByUserId) {
+      return this.i18n.translate('momApp.common.notAvailable');
+    }
+
+    const actor = this.auditUsersById[row.grantedByUserId];
+    if (!actor) {
+      return `#${row.grantedByUserId}`;
+    }
+
+    const displayName = actor.displayName?.trim();
+    const username = actor.username?.trim();
+    if (displayName && username) {
+      return `${displayName} (@${username})`;
+    }
+    return displayName || username || `#${row.grantedByUserId}`;
+  }
+
+  questGrantByMeta(row: FamilyQuestPointGrantLogApi): string {
+    if (!row.grantedByUserId) {
+      return '';
+    }
+
+    const actor = this.auditUsersById[row.grantedByUserId];
+    if (!actor) {
+      return `ID #${row.grantedByUserId}`;
+    }
+
+    const email = actor.email?.trim();
+    return email ? `${email} · ID #${row.grantedByUserId}` : `ID #${row.grantedByUserId}`;
+  }
+
   private loadPremiumConfig(familyId: number): void {
     this.premiumLoading = true;
 
@@ -265,15 +485,30 @@ export class AdminPremiumComponent implements OnInit {
       ),
       audit: this.http.get<ApiEnvelope<PremiumEntitlementAuditApi[]>>(
         `${API_CONFIG.GATEWAY_URL}/account/admin/families/${familyId}/entitlements/audit`
+      ),
+      questState: this.http.get<ApiEnvelope<FamilyQuestStateApi>>(
+        `${API_CONFIG.GATEWAY_URL}/account/admin/families/${familyId}/quest-state`
+      ),
+      questPointGrants: this.http.get<ApiEnvelope<FamilyQuestPointGrantLogApi[]>>(
+        `${API_CONFIG.GATEWAY_URL}/account/admin/families/${familyId}/quest-points/grants`
       )
     }).subscribe({
-      next: ({ entitlements, audit }) => {
+      next: ({ entitlements, audit, questState, questPointGrants }) => {
         this.premiumLoading = false;
         this.premiumEntitlements = (entitlements.data ?? []).map((item) => ({
           ...item,
           expiresAtInput: this.toDateTimeLocalInput(item.expiresAt)
         }));
         this.premiumAudit = (audit.data ?? []).slice(0, 20);
+        this.questState = questState.data ?? null;
+        this.questPointGrants = (questPointGrants.data ?? []).slice(0, 30);
+        const actorIds = [
+          ...new Set([
+            ...this.premiumAudit.map((row) => row.changedByUserId),
+            ...this.questPointGrants.map((row) => row.grantedByUserId)
+          ])
+        ].filter((id): id is number => !!id && id > 0);
+        this.loadActorUsers(actorIds);
       },
       error: () => {
         this.premiumLoading = false;
@@ -286,6 +521,53 @@ export class AdminPremiumComponent implements OnInit {
   private clearPremiumData(): void {
     this.premiumEntitlements = [];
     this.premiumAudit = [];
+    this.questState = null;
+    this.questPointGrants = [];
+    this.questGrantPointsInput = 100;
+    this.questGrantReasonInput = '';
+    this.auditUsersById = {};
+  }
+
+  private loadActorUsers(actorIds: number[]): void {
+    if (actorIds.length === 0) {
+      this.auditUsersById = {};
+      return;
+    }
+
+    forkJoin(
+      actorIds.map((userId) =>
+        this.http
+          .get<ApiEnvelope<AccountUserApi>>(`${API_CONFIG.GATEWAY_URL}/account/users/${userId}`)
+          .pipe(
+            map((response) => response.data),
+            catchError(() => of(null))
+          )
+      )
+    ).subscribe((users) => {
+      const mapped: Record<number, AccountUserApi> = {};
+      for (const user of users) {
+        if (user?.id) {
+          mapped[user.id] = user;
+        }
+      }
+      this.auditUsersById = mapped;
+    });
+  }
+
+  private buildEntitlementPayload(): { entitlements: Array<{
+    featureKey: string;
+    status: PremiumEntitlementStatus;
+    expiresAt: string | null;
+    reason: string | null;
+  }> } {
+    return {
+      entitlements: this.premiumEntitlements.map((item) => ({
+        featureKey: item.featureKey,
+        status: item.status,
+        expiresAt: item.status === 'ALLOW' ? this.toIsoOffset(item.expiresAtInput) : null,
+        reason: (item.reason ?? '').trim() || null
+      }))
+    };
   }
 
   private toDateTimeLocalInput(value: string | null | undefined): string {
@@ -317,3 +599,4 @@ export class AdminPremiumComponent implements OnInit {
     return parsed.toISOString();
   }
 }
+

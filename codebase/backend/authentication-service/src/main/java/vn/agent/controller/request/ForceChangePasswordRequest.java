@@ -12,6 +12,6 @@ public class ForceChangePasswordRequest {
     @NotBlank
     private String temporaryPassword;
 
-    @NotBlank
+    @vn.agent.validation.StrongPassword
     private String newPassword;
 }
