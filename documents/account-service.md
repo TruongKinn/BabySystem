@@ -96,4 +96,51 @@ Trong component Standalone `AdminFamiliesComponent`, chúng ta đã import các 
 - **Tiếng Anh**: [en.json](file:///d:/AI-AGENT/BabySystem/codebase/frontend/public/i18n/en.json) dưới khóa `momApp.admin.families`
 
 ---
-*Tài liệu được biên soạn bởi Antigravity AI Code Assistant, tháng 5/2026.*
+## 5. Tính năng Chỉnh sửa Profile & Xem báo cáo PDF (Profile Edit & PDF Export)
+
+Để nâng cao trải nghiệm cá nhân hóa của người dùng (User Role), hệ thống đã bổ sung bộ đôi tính năng **Chỉnh sửa Profile cá nhân** và **Xem báo cáo PDF trực quan** tích hợp trực tiếp trên trang Profile.
+
+### 5.1 Kiến trúc & API Backend (`account-service`)
+Backend cung cấp các API xử lý thông tin cá nhân và tạo báo cáo PDF:
+
+1. **Cập nhật Thông tin cá nhân**:
+   - **Method & Path**: `PUT /api/users/{id}` (Ánh xạ Gateway: `/account/users/{id}`)
+   - **Payload** (`UpdateProfileRequest`):
+     ```json
+     {
+       "displayName": "Tên hiển thị mới",
+       "email": "user_email@gmail.com",
+       "dateOfBirth": "1995-12-25"
+     }
+     ```
+
+2. **Xuất báo cáo PDF trực tiếp (Inline View)**:
+   - **Method & Path**: `GET /api/users/{id}/pdf` (Ánh xạ Gateway: `/account/users/{id}/pdf`)
+   - **Mô tả**: Sử dụng thư viện `OpenPDF` để tạo văn bản PDF chứa báo cáo chi tiết thông tin cá nhân người dùng, thông tin Hộ gia đình và danh sách tất cả các thành viên trong gia đình theo định dạng bảng biểu thanh lịch.
+   - **Thiết kế Bento/Fintech Premium mới (Nâng cấp)**: Báo cáo PDF đã được tái thiết kế toàn diện theo phong cách Fintech chuyên nghiệp:
+     - **Dải Accent Cam thương hiệu**: Nằm ở đỉnh trang (`#f97316`) để đồng bộ với theme ấm áp toàn hệ thống.
+     - **Header thương hiệu sang trọng**: Phân chia 2 cột rõ rệt giữa Tên nền tảng ("MOM SUPER APP PLATFORM") và Trạng thái xác thực tài liệu ("STATUS: ACTIVE VERIFIED").
+     - **Bento Personal Data Card**: Trình bày thông tin cá nhân trong bảng có border màu xám mờ mượt mà, padding rộng rãi, phối hợp Zebra striping màu xám nhẹ, tạo cảm giác thoáng đãng, dễ đọc.
+     - **Family & Membership Card & Table**: Nhóm thông tin gia đình vào một Bento-like box, các thành viên được liệt kê trong bảng có Header màu cam nhạt (`#fff7ed`) và Zebra striping tinh tế.
+     - **Khối kiểm soát bảo mật (Document Control & Integrity)**: Bổ sung disclaimer pháp lý và tính toàn vẹn dữ liệu được bọc trong viền xám hiện đại.
+     - **Chân trang bảo mật (Security Footer)**: Đi kèm dấu xác nhận tài liệu an toàn ("Verified Secure Document") và số trang.
+   - **Định dạng hiển thị**: Toàn bộ nội dung PDF sử dụng Tiếng Anh không dấu chuẩn hóa giúp hiển thị hoàn hảo trên mọi nền tảng di động và máy tính mà không bị lỗi font Unicode của hệ thống microservices.
+   - **Headers phản hồi**: Trả về dữ liệu dạng `byte[]` kèm header `Content-Disposition: inline` để trình duyệt ưu tiên xem trực tiếp thay vì tự động tải xuống.
+
+### 5.2 Giải pháp Frontend Premium (Angular & Ng-Zorro)
+
+#### 5.2.1 Tải & Xem PDF Inline bảo mật thông qua Object URL
+Thông thường, khi nhúng PDF vào `iframe` qua thẻ `src`, trình duyệt sẽ gửi một request GET độc lập không kèm JWT token dẫn đến lỗi `401 Unauthorized` hoặc `403 Forbidden` từ API Gateway. Để khắc phục điều này:
+- **Frontend Service**: Sử dụng `HttpClient` gọi API xuất PDF với cấu hình `responseType: 'blob'` (Request này sẽ tự động được `AuthInterceptor` chèn JWT token vào header bảo mật).
+- **Component Logic**: 
+  1. Khi nhận được dữ liệu `Blob` từ Backend, Component sử dụng `URL.createObjectURL(blob)` để tạo ra một đường dẫn nội bộ (Object URL) duy nhất có dạng `blob:http://localhost/...`.
+  2. Sử dụng `DomSanitizer.bypassSecurityTrustResourceUrl(blobUrl)` của Angular để bypass kiểm tra bảo mật XSS, giúp `iframe` có thể hiển thị nội dung trực tiếp.
+  3. Khi đóng Modal hoặc tải báo cáo mới, gọi `URL.revokeObjectURL(this.pdfUrlString)` để giải phóng tài nguyên bộ nhớ trình duyệt, ngăn chặn lỗi rò rỉ bộ nhớ (memory leaks).
+
+#### 5.2.2 Thiết kế UI/UX Premium (Warm Theme)
+- **Nút hành động trong Card Account**: Nút "Chỉnh sửa Profile" (class `.btn-user-outline`) và nút "Xuất PDF" (class `.btn-user-primary`) được đặt gọn gàng ở góc dưới bên phải của Account Detail Card, có hiệu ứng hover mượt mà và nhô nhẹ `translateY(-1px)`.
+- **Modal Chỉnh sửa Profile**: Áp dụng class `.user-role-modal` toàn cục với backdrop blur và bo góc tròn 20px. Form sử dụng lưới `.user-modal-form-grid` kết hợp với `nz-date-picker` (class `.premium-date-picker`) để chọn ngày sinh trực quan.
+- **Modal Xem PDF trực tiếp**: Kích thước rộng lớn (`[nzWidth]="1000"`) không có footer, chứa vùng xem tài liệu `75vh` nền xám trung tính tinh tế. Hiển thị Spinner loading mượt mà (`nzType="loading"`) khi đang chờ backend sinh file PDF.
+
+---
+*Tài liệu được cập nhật và hoàn thiện bởi Antigravity AI Code Assistant, tháng 5/2026.*

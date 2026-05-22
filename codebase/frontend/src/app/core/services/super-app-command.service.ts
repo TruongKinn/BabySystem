@@ -224,6 +224,21 @@ export interface ExpenseBudgetApi {
   limitAmount: number;
 }
 
+export interface ExchangeRateApi {
+  currency: string;
+  buyRate: number | null;
+  sellRate: number | null;
+  updatedAt: string;
+}
+
+export interface ConvertCurrencyResponseApi {
+  fromCurrency: string;
+  originalAmount: number;
+  amountVnd: number;
+  sellRate: number;
+  rateUpdatedAt: string;
+}
+
 interface NotificationSettings {
   notificationEnabled: boolean;
   reminderHour: string;
@@ -631,6 +646,18 @@ export class SuperAppCommandService {
       );
   }
 
+  getExchangeRates(familyId?: number): Observable<ExchangeRateApi[]> {
+    const params = new HttpParams().set('familyId', String(familyId ?? this.getFamilyId()));
+    return this.get<ExchangeRateApi[]>('/expense/exchange-rates', params);
+  }
+
+  convertCurrencyToVnd(input: { fromCurrency: string; amount: number; familyId?: number }): Observable<ConvertCurrencyResponseApi> {
+    return this.post<ConvertCurrencyResponseApi>('/expense/exchange-rates/convert', {
+      familyId: input.familyId ?? this.getFamilyId(),
+      fromCurrency: input.fromCurrency,
+      amount: input.amount
+    });
+  }
 
   createTask(input: {
     title: string;
@@ -959,6 +986,14 @@ export class SuperAppCommandService {
 
   getUserPreferences(userId: number): Observable<any> {
     return this.get<any>(`/account/users/${userId}/preferences`);
+  }
+
+  updateProfile(userId: number, input: { displayName: string; email: string; dateOfBirth: string | null }): Observable<any> {
+    return this.put(`/account/users/${userId}`, input);
+  }
+
+  getProfilePdfBlob(userId: number): Observable<Blob> {
+    return this.http.get(`${this.apiBase}/account/users/${userId}/pdf`, { responseType: 'blob' });
   }
 
   uploadFile(file: File, bucket: string, tag?: string): Observable<FileMetadata> {

@@ -6,14 +6,22 @@
     </div>
 
     <div class="header-buttons">
-      <label class="month-picker-wrap" [attr.aria-label]="'momApp.expenses.filters.selectMonth' | translate">
-        <span nz-icon nzType="calendar"></span>
-        <input type="month" class="month-picker" [value]="monthKey"
-          (change)="onMonthChange($any($event.target).value)" />
-      </label>
+      <nz-date-picker
+        nzMode="month"
+        [ngModel]="monthDateValue"
+        (ngModelChange)="onMonthDateChange($event)"
+        [nzAllowClear]="false"
+        class="user-month-picker"
+        style="width: 150px;">
+      </nz-date-picker>
+
+      <button nz-button nzType="default" class="btn-user-outline" (click)="openExchangeRateModal()" *ngIf="hasExchangeRatePremium" nz-tooltip nzTooltipTitle="Xem tỷ giá Vietcombank & Chuyển đổi">
+        <span nz-icon nzType="global"></span>
+        Tỷ giá
+      </button>
 
       <button nz-button nzType="default" class="btn-user-outline" (click)="loadExpenseWorkspace()">
-        <span nz-icon nzType="reload"></span>
+        <span nz-icon nzType="sync"></span>
         {{ 'commonActions.refresh' | translate }}
       </button>
 
@@ -29,7 +37,7 @@
       <div class="stat-line">
         <span class="stat-icon stat-icon-orange"><span nz-icon nzType="wallet"></span></span>
         <div class="stat-info">
-          <div class="stat-value">{{ monthlySpent | currency : 'VND' : 'symbol' : '1.0-0' }}</div>
+          <div class="stat-value">{{ monthlySpent | currency : userCurrency : 'symbol' : '1.0-0' }}</div>
           <div class="stat-label">{{ 'momApp.expenses.spentLabel' | translate }}</div>
         </div>
       </div>
@@ -40,7 +48,7 @@
         <span class="stat-icon stat-icon-violet"><span nz-icon nzType="fund"></span></span>
         <div class="stat-info" style="display: flex; align-items: center; justify-content: space-between; flex: 1;">
           <div>
-            <div class="stat-value">{{ monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}</div>
+            <div class="stat-value">{{ monthlyBudget | currency : userCurrency : 'symbol' : '1.0-0' }}</div>
             <div class="stat-label">{{ 'momApp.expenses.budgetLabel' | translate }}</div>
           </div>
           <button nz-button nzType="text" (click)="openBudgetModal()" nz-tooltip [nzTooltipTitle]="'momApp.expenses.budgetConfig.title' | translate" style="border-radius: 8px; padding: 4px; display: flex; align-items: center; justify-content: center; height: 32px; width: 32px;">
@@ -59,7 +67,7 @@
         </span>
         <div class="stat-info">
           <div class="stat-value" [class.value-danger]="remainingBudget < 0">
-            {{ remainingBudget | currency : 'VND' : 'symbol' : '1.0-0' }}
+            {{ remainingBudget | currency : userCurrency : 'symbol' : '1.0-0' }}
           </div>
           <div class="stat-label">{{ 'momApp.expenses.remainingBudget' | translate }}</div>
         </div>
@@ -70,7 +78,7 @@
       <div class="stat-line">
         <span class="stat-icon stat-icon-teal"><span nz-icon nzType="clock-circle"></span></span>
         <div class="stat-info">
-          <div class="stat-value">{{ todaySpent | currency : 'VND' : 'symbol' : '1.0-0' }}</div>
+          <div class="stat-value">{{ todaySpent | currency : userCurrency : 'symbol' : '1.0-0' }}</div>
           <div class="stat-label">{{ 'momApp.expenses.spentToday' | translate }}</div>
         </div>
       </div>
@@ -90,7 +98,7 @@
       <div class="stat-line">
         <span class="stat-icon stat-icon-violet"><span nz-icon nzType="calculator"></span></span>
         <div class="stat-info">
-          <div class="stat-value">{{ averageExpense | currency : 'VND' : 'symbol' : '1.0-0' }}</div>
+          <div class="stat-value">{{ averageExpense | currency : userCurrency : 'symbol' : '1.0-0' }}</div>
           <div class="stat-label">{{ 'momApp.expenses.averagePerExpense' | translate }}</div>
         </div>
       </div>
@@ -101,24 +109,37 @@
     <div class="filter-row">
       <div class="filter-field filter-field-category">
         <label>{{ 'momApp.expenses.filters.category' | translate }}</label>
-        <select class="filter-select" [value]="selectedCategoryId === null ? '' : selectedCategoryId"
-          (change)="onCategoryFilterChange($any($event.target).value)">
-          <option value="">{{ 'momApp.expenses.filters.allCategories' | translate }}</option>
-          <option *ngFor="let option of categoryFilters" [value]="option.id">{{ option.name }}</option>
-        </select>
+        <nz-select 
+          [ngModel]="selectedCategoryId" 
+          (ngModelChange)="onCategoryFilterChange($event !== null ? $event : '')" 
+          nzShowSearch 
+          nzAllowClear
+          [nzPlaceHolder]="'momApp.expenses.filters.allCategories' | translate"
+          class="user-filter-select">
+          <nz-option [nzValue]="null" [nzLabel]="'momApp.expenses.filters.allCategories' | translate"></nz-option>
+          <nz-option *ngFor="let option of categoryFilters" [nzValue]="option.id" [nzLabel]="option.name"></nz-option>
+        </nz-select>
       </div>
 
       <div class="filter-field filter-field-search">
         <label>{{ 'momApp.expenses.filters.search' | translate }}</label>
-        <input nz-input [value]="searchKeyword" (input)="onSearchKeywordChange($any($event.target).value)"
-          [placeholder]="'momApp.expenses.filters.searchPlaceholder' | translate" />
+        <nz-input-group [nzPrefix]="prefixIconSearch" class="user-search-input-group">
+          <input nz-input [value]="searchKeyword" (input)="onSearchKeywordChange($any($event.target).value)"
+            [placeholder]="'momApp.expenses.filters.searchPlaceholder' | translate" />
+        </nz-input-group>
+        <ng-template #prefixIconSearch>
+          <span nz-icon nzType="search" style="color: var(--user-primary);"></span>
+        </ng-template>
       </div>
 
       <div class="filter-field filter-field-sort">
         <label>{{ 'momApp.expenses.filters.sortLabel' | translate }}</label>
-        <select class="filter-select" [value]="sortMode" (change)="onSortModeChange($any($event.target).value)">
-          <option *ngFor="let option of sortOptions" [value]="option.value">{{ option.labelKey | translate }}</option>
-        </select>
+        <nz-select 
+          [ngModel]="sortMode" 
+          (ngModelChange)="onSortModeChange($event)" 
+          class="user-filter-select">
+          <nz-option *ngFor="let option of sortOptions" [nzValue]="option.value" [nzLabel]="option.labelKey | translate"></nz-option>
+        </nz-select>
       </div>
 
       <div class="filter-actions">
@@ -154,14 +175,14 @@
         </div>
         <div class="balance-sub">
           <span class="budget-meta">
-            {{ 'momApp.expenses.budgetLabel' | translate }}: {{ monthlyBudget | currency : 'VND' : 'symbol' : '1.0-0' }}
+            {{ 'momApp.expenses.budgetLabel' | translate }}: {{ monthlyBudget | currency : userCurrency : 'symbol' : '1.0-0' }}
             <button nz-button nzType="text" (click)="openBudgetModal()" nz-tooltip [nzTooltipTitle]="'momApp.expenses.budgetConfig.title' | translate" style="padding: 0 4px; height: auto; min-width: auto; line-height: 1; color: inherit;">
               <span nz-icon nzType="edit" style="font-size: 12px; vertical-align: middle;"></span>
             </button>
           </span>
           <span class="budget-divider">•</span>
           <span class="budget-meta" [class.text-danger]="remainingBudget < 0">
-            {{ 'momApp.expenses.remainingLabel' | translate }}: {{ remainingBudget | currency : 'VND' : 'symbol' : '1.0-0' }}
+            {{ 'momApp.expenses.remainingLabel' | translate }}: {{ remainingBudget | currency : userCurrency : 'symbol' : '1.0-0' }}
           </span>
         </div>
 
@@ -188,11 +209,11 @@
       <div class="mini-stat-row">
         <div class="mini-stat-item">
           <span class="mini-stat-label"><span nz-icon nzType="shop"></span> {{ 'momApp.expenses.spentToday' | translate }}</span>
-          <span class="mini-stat-val text-teal">{{ todaySpent | currency : 'VND' : 'symbol' : '1.0-0' }}</span>
+          <span class="mini-stat-val text-teal">{{ todaySpent | currency : userCurrency : 'symbol' : '1.0-0' }}</span>
         </div>
         <div class="mini-stat-item">
           <span class="mini-stat-label"><span nz-icon nzType="calculator"></span> {{ 'momApp.expenses.averagePerExpense' | translate }}</span>
-          <span class="mini-stat-val text-violet">{{ averageExpense | currency : 'VND' : 'symbol' : '1.0-0' }}</span>
+          <span class="mini-stat-val text-violet">{{ averageExpense | currency : userCurrency : 'symbol' : '1.0-0' }}</span>
         </div>
         <div class="mini-stat-item">
           <span class="mini-stat-label"><span nz-icon nzType="profile"></span> {{ 'momApp.expenses.expenseRecords' | translate }}</span>
@@ -215,7 +236,7 @@
             </div>
 
             <div class="category-value-wrap">
-              <strong>{{ item.totalAmount | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+              <strong>{{ item.totalAmount | currency : userCurrency : 'symbol' : '1.0-0' }}</strong>
               <span>{{ item.percentage | number : '1.0-1' }}%</span>
             </div>
           </div>
@@ -233,6 +254,8 @@
     </nz-card>
   </div>
 
+  <!-- Tỷ giá ngoại tệ đã được chuyển đổi sang Dialog riêng để tối ưu diện tích hiển thị -->
+
   <nz-card class="table-card expense-history-card" [nzTitle]="'momApp.expenses.receipts.title' | translate">
     <div class="table-summary-row">
       <span class="table-summary-item">
@@ -245,7 +268,7 @@
       </span>
       <span class="table-summary-item">
         {{ 'momApp.expenses.table.visibleTotal' | translate }}:
-        <strong>{{ visibleSpentTotal | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+        <strong>{{ visibleSpentTotal | currency : userCurrency : 'symbol' : '1.0-0' }}</strong>
       </span>
     </div>
 
@@ -510,4 +533,138 @@
       </nz-form-item>
     </form>
   </ng-container>
+</nz-modal>
+
+<!-- Exchange Rate Modal (Premium: currency_exchange) -->
+<nz-modal [(nzVisible)]="isExchangeRateModalVisible" [nzTitle]="exchangeRateTitleTpl" nzClassName="user-role-modal"
+  [nzWidth]="800" [nzFooter]="exchangeRateFooterTpl" (nzOnCancel)="closeExchangeRateModal()">
+  
+  <ng-template #exchangeRateTitleTpl>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="modal-title-icon-wrap modal-title-icon-wrap--teal">
+        <span nz-icon nzType="global"></span>
+      </span>
+      <span class="modal-title-text">
+        <span class="modal-title-main">Tỷ giá ngoại tệ Vietcombank</span>
+        <span class="modal-title-sub" *ngIf="rateUpdatedAt">Cập nhật: {{ rateUpdatedAt }}</span>
+        <span class="modal-title-sub" *ngIf="!rateUpdatedAt">Tính năng chuyển đổi ngoại tệ tự động</span>
+      </span>
+    </div>
+  </ng-template>
+
+  <ng-container *nzModalContent>
+    <!-- PREMIUM: Nội dung chỉ hiện khi có premium -->
+    <ng-container *ngIf="hasExchangeRatePremium; else exchangeRateModalUpsell">
+      
+      <!-- Quick Convert Form -->
+      <div class="quick-convert-wrapper">
+        <div class="quick-convert-form">
+          <div class="quick-convert-field" style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Số tiền</label>
+            <input nz-input type="number" [(ngModel)]="convertAmount" placeholder="100" min="0.01" style="height: 38px; border-radius: 8px;" />
+          </div>
+          
+          <div class="quick-convert-field" style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Tiền tệ</label>
+            <nz-select [(ngModel)]="convertFromCurrency" style="width: 100%;" class="user-filter-select">
+              <nz-option *ngFor="let rate of exchangeRates" [nzValue]="rate.currency" [nzLabel]="rate.currency"></nz-option>
+            </nz-select>
+          </div>
+          
+          <div class="quick-convert-field" style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase;">Kết quả</label>
+            <input nz-input [value]="convertResultVnd !== null ? (convertResultVnd | number:'1.0-0') + ' ₫' : '—'" readonly style="background: var(--surface-bg); font-weight: 750; color: var(--user-primary); height: 38px; border-radius: 8px;" />
+          </div>
+
+          <div class="quick-convert-field" style="display: flex; flex-direction: column; gap: 6px;">
+            <label style="font-size: 11px; font-weight: 700; color: transparent; text-transform: uppercase; user-select: none; pointer-events: none;">Hành động</label>
+            <button nz-button nzType="primary" class="btn-user-primary" style="height: 38px; border-radius: 8px; font-weight: 600; width: 100%;" (click)="doConvert()" [nzLoading]="isConverting">
+              <span nz-icon nzType="swap"></span>
+              Đổi
+            </button>
+          </div>
+        </div>
+
+        <!-- Result detail -->
+        <div class="quick-convert-result" *ngIf="convertResultVnd !== null && lastConvertRate !== null" style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed rgba(249, 115, 22, 0.15); display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div class="convert-result-label" style="font-size: 14px; font-weight: 700; color: var(--text-main);">{{ convertAmount | number:'1.0-2' }} {{ convertFromCurrency }}</div>
+            <div class="convert-result-rate" style="font-size: 12px; color: var(--text-secondary);">Tỷ giá bán: {{ lastConvertRate | number:'1.0-0' }} VND/{{ convertFromCurrency }}</div>
+          </div>
+          <div class="convert-result-amount" style="font-size: 20px; font-weight: 850; color: var(--user-primary);">{{ convertResultVnd | number:'1.0-0' }} ₫</div>
+        </div>
+      </div>
+
+      <!-- Header actions inside modal -->
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <span style="font-weight: 700; font-size: 13px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Bảng tỷ giá chi tiết</span>
+        <button nz-button nzType="default" class="btn-user-secondary" (click)="loadExchangeRates()" [nzLoading]="isLoadingRates" style="height: 32px; padding: 0 14px; font-size: 12px; border-radius: 8px;">
+          <span nz-icon nzType="sync"></span>
+          Làm mới
+        </button>
+      </div>
+
+      <!-- Rate Table -->
+      <div class="exchange-rate-table-wrap" style="max-height: 280px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 12px;">
+        <!-- Skeleton loading -->
+        <div *ngIf="isLoadingRates" style="padding: 16px;">
+          <div class="rate-skeleton-row" *ngFor="let i of [1,2,3,4]">
+            <div class="rate-skeleton-cell" style="max-width:80px"></div>
+            <div class="rate-skeleton-cell"></div>
+            <div class="rate-skeleton-cell"></div>
+          </div>
+        </div>
+
+        <table class="exchange-rate-table" *ngIf="!isLoadingRates && exchangeRates.length > 0">
+          <thead style="position: sticky; top: 0; background: var(--surface-bg); z-index: 10;">
+            <tr>
+              <th>Tiền tệ</th>
+              <th>Giá mua</th>
+              <th>Giá bán</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let rate of exchangeRates; trackBy: trackByCurrency">
+              <td>
+                <div class="rate-currency-cell">
+                  <span class="rate-currency-code" style="font-weight: 700; color: var(--text-main);">{{ rate.currency }}</span>
+                </div>
+              </td>
+              <td>
+                <span *ngIf="rate.buyRate !== null" class="rate-buy" style="font-weight: 600; color: #10b981;">{{ rate.buyRate | number:'1.0-0' }} ₫</span>
+                <span *ngIf="rate.buyRate === null" class="rate-na" style="color: var(--text-muted);">—</span>
+              </td>
+              <td>
+                <span *ngIf="rate.sellRate !== null" class="rate-sell" style="font-weight: 600; color: var(--user-primary);">{{ rate.sellRate | number:'1.0-0' }} ₫</span>
+                <span *ngIf="rate.sellRate === null" class="rate-na" style="color: var(--text-muted);">—</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="empty-state" *ngIf="!isLoadingRates && exchangeRates.length === 0" style="padding: 32px 0;">
+          Không thể tải tỷ giá. Vui lòng làm mới lại.
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- UPSELL: Hiện khi không có premium -->
+    <ng-template #exchangeRateModalUpsell>
+      <div class="exchange-rate-upsell" style="text-align: center; padding: 40px 20px;">
+        <span nz-icon nzType="crown" class="upsell-icon" style="font-size: 48px; color: #f59e0b; margin-bottom: 16px; display: inline-block;"></span>
+        <p class="upsell-title" style="font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 8px;">Tỷ giá thời gian thực – Tính năng Premium</p>
+        <p class="upsell-sub" style="font-size: 13px; color: var(--text-secondary); max-width: 80%; margin: 0 auto 20px;">Xem tỷ giá Vietcombank cập nhật tự động và chuyển đổi chi phí ngoại tệ sang VND ngay trong ứng dụng.</p>
+        <span class="upsell-badge" style="display: inline-flex; align-items: center; gap: 6px; background: rgba(245, 158, 11, 0.1); color: #b45309; padding: 6px 16px; border-radius: 999px; font-weight: 700; font-size: 12px;">
+          <span nz-icon nzType="star"></span>
+          Nâng cấp Premium để mở khóa
+        </span>
+      </div>
+    </ng-template>
+  </ng-container>
+
+  <ng-template #exchangeRateFooterTpl>
+    <button nz-button nzType="default" class="btn-user-outline" (click)="closeExchangeRateModal()" style="height: 38px; border-radius: 8px;">
+      Đóng
+    </button>
+  </ng-template>
 </nz-modal>

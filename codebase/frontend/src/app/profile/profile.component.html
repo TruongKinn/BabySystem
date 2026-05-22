@@ -125,6 +125,17 @@
             </span>
           </span>
         </div>
+
+        <div class="account-actions" style="display: flex; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px dashed rgba(249, 115, 22, 0.15); justify-content: flex-end;">
+          <button nz-button nzType="default" class="btn-user-outline" nzSize="default" (click)="openEditProfile(profile)">
+            <span nz-icon nzType="edit" nzTheme="outline"></span>
+            Chỉnh sửa Profile
+          </button>
+          <button nz-button nzType="primary" class="btn-user-primary" nzSize="default" (click)="viewProfilePdf(profile.userId)">
+            <span nz-icon nzType="file-pdf" nzTheme="outline"></span>
+            Xuất PDF
+          </button>
+        </div>
       </div>
     </div>
 
@@ -489,5 +500,120 @@
   </nz-modal>
 
   <ng-template #prefixLock><span nz-icon nzType="lock"></span></ng-template>
+
+  <!-- Modal Chỉnh sửa Profile -->
+  <nz-modal
+    [(nzVisible)]="isEditProfileVisible"
+    [nzTitle]="editProfileTitleTpl"
+    nzClassName="user-role-modal"
+    (nzOnCancel)="handleCancelEditProfile()"
+    [nzFooter]="editProfileFooterTpl"
+  >
+    <ng-template #editProfileTitleTpl>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="modal-title-icon-wrap" style="background: linear-gradient(135deg,#f97316,#fb923c)">
+          <span nz-icon nzType="edit"></span>
+        </span>
+        <span class="modal-title-text">
+          <span class="modal-title-main">Chỉnh sửa Profile</span>
+          <span class="modal-title-sub">Cập nhật thông tin cá nhân của bạn</span>
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-container *nzModalContent>
+      <form nz-form [formGroup]="profileForm" nzLayout="vertical" class="user-modal-form-grid">
+        <nz-form-item class="modal-field-full">
+          <nz-form-label nzRequired>Tên hiển thị</nz-form-label>
+          <nz-form-control nzErrorTip="Vui lòng nhập tên hiển thị">
+            <nz-input-group [nzPrefix]="prefixUser" class="premium-text-input">
+              <input nz-input formControlName="displayName" placeholder="Nhập tên hiển thị của bạn" />
+            </nz-input-group>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item class="modal-field-full">
+          <nz-form-label nzRequired>Email</nz-form-label>
+          <nz-form-control [nzErrorTip]="emailErrorTpl">
+            <nz-input-group [nzPrefix]="prefixMail" class="premium-text-input">
+              <input nz-input formControlName="email" placeholder="Nhập địa chỉ email" />
+            </nz-input-group>
+            <ng-template #emailErrorTpl let-control>
+              <ng-container *ngIf="control.hasError('required')">Vui lòng nhập địa chỉ email</ng-container>
+              <ng-container *ngIf="control.hasError('email')">Định dạng email không hợp lệ</ng-container>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item class="modal-field-full">
+          <nz-form-label>Ngày sinh</nz-form-label>
+          <nz-form-control>
+            <nz-date-picker
+              formControlName="dateOfBirth"
+              nzFormat="yyyy-MM-dd"
+              [nzPlaceHolder]="'Chọn ngày sinh'"
+              style="width: 100%"
+              class="premium-date-picker"
+            ></nz-date-picker>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </ng-container>
+
+    <ng-template #editProfileFooterTpl>
+      <button nz-button nzType="default" class="btn-user-outline" (click)="handleCancelEditProfile()">
+        {{ 'commonActions.cancel' | translate }}
+      </button>
+      <button nz-button nzType="primary" class="btn-user-primary" (click)="submitEditProfile(profile.userId)" [nzLoading]="isSavingProfile">
+        Lưu thay đổi
+      </button>
+    </ng-template>
+  </nz-modal>
+
+  <!-- Modal Xem PDF Báo cáo Profile -->
+  <nz-modal
+    [(nzVisible)]="isPdfVisible"
+    [nzTitle]="pdfTitleTpl"
+    [nzWidth]="1000"
+    [nzFooter]="null"
+    (nzOnCancel)="closePdfModal()"
+    nzClassName="user-role-modal pdf-viewer-modal"
+  >
+    <ng-template #pdfTitleTpl>
+      <div style="display:flex;align-items:center;justify-content:space-between;width:100%;padding-right:24px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <span class="modal-title-icon-wrap" style="background: linear-gradient(135deg,#ef4444,#f87171)">
+            <span nz-icon nzType="file-pdf"></span>
+          </span>
+          <span class="modal-title-text">
+            <span class="modal-title-main">Báo cáo Profile cá nhân</span>
+            <span class="modal-title-sub">Bản xem trước tài liệu PDF chính thức</span>
+          </span>
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-container *nzModalContent>
+      <div class="pdf-viewer-container" style="position: relative; width: 100%; height: 75vh; background: #f3f4f6; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+        <div *ngIf="isLoadingPdf" style="display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--text-secondary);">
+          <span nz-icon nzType="loading" nzTheme="outline" style="font-size: 32px; color: var(--user-primary);"></span>
+          <p>Đang chuẩn bị báo cáo PDF...</p>
+        </div>
+        <iframe
+          *ngIf="!isLoadingPdf && pdfSafeUrl"
+          [src]="pdfSafeUrl"
+          style="width: 100%; height: 100%; border: none;"
+          title="User Profile Report"
+        ></iframe>
+        <div *ngIf="!isLoadingPdf && !pdfSafeUrl" style="display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--color-error);">
+          <span nz-icon nzType="exclamation-circle" nzTheme="outline" style="font-size: 32px;"></span>
+          <p>Không thể tải hoặc hiển thị file PDF.</p>
+        </div>
+      </div>
+    </ng-container>
+  </nz-modal>
+
+  <ng-template #prefixUser><span nz-icon nzType="user"></span></ng-template>
+  <ng-template #prefixMail><span nz-icon nzType="mail"></span></ng-template>
 
 </section>

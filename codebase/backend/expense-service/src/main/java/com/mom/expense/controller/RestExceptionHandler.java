@@ -2,6 +2,7 @@ package com.mom.expense.controller;
 
 import com.mom.common.dto.ApiResponse;
 import com.mom.common.exception.ResourceNotFoundException;
+import com.mom.expense.exchangerate.ExchangeRateFetchException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -38,5 +39,11 @@ public class RestExceptionHandler {
                 .orElse("Invalid request");
         return ResponseEntity.badRequest()
                 .body(new ApiResponse<>(false, message, null));
+    }
+
+    @ExceptionHandler(ExchangeRateFetchException.class)
+    public ResponseEntity<ApiResponse<Object>> handleExchangeRateFetch(ExchangeRateFetchException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
+                .body(new ApiResponse<>(false, ex.getMessage(), null));
     }
 }

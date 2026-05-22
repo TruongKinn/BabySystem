@@ -1,6 +1,6 @@
-import { CommonModule, CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { catchError, finalize, forkJoin, of } from 'rxjs';
@@ -13,8 +13,11 @@ import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
+import { NzSelectModule } from 'ng-zorro-antd/select';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
-import { ExpenseApi, ExpenseBudgetApi, ExpenseCategoryApi, ExpenseCategoryReportApi, ExpenseCategoryReportItemApi, ExpenseDailySummaryApi, ExpenseSummaryApi, FileMetadata, SuperAppCommandService } from '../core/services/super-app-command.service';
+import { ExchangeRateApi, ExpenseApi, ExpenseBudgetApi, ExpenseCategoryApi, ExpenseCategoryReportApi, ExpenseCategoryReportItemApi, ExpenseDailySummaryApi, ExpenseSummaryApi, FileMetadata, SuperAppCommandService } from '../core/services/super-app-command.service';
+import { UserPreferencesService } from '../core/services/user-preferences.service';
 import { I18nService } from '../i18n/i18n.service';
 
 interface ExpenseRecord {
@@ -51,6 +54,8 @@ type ExpenseSortMode = 'NEWEST' | 'OLDEST' | 'HIGHEST' | 'LOWEST' | 'CATEGORY';
   imports: [
     CommonModule,
     CurrencyPipe,
+    DecimalPipe,
+    FormsModule,
     ReactiveFormsModule,
     TranslateModule,
     NzCardModule,
@@ -60,7 +65,9 @@ type ExpenseSortMode = 'NEWEST' | 'OLDEST' | 'HIGHEST' | 'LOWEST' | 'CATEGORY';
     NzFormModule,
     NzInputModule,
     NzToolTipModule,
-    NzAutocompleteModule
+    NzAutocompleteModule,
+    NzSelectModule,
+    NzDatePickerModule
   ],
   templateUrl: './expenses.component.html',
   styleUrl: './expenses.component.css'
@@ -74,6 +81,10 @@ export class ExpensesComponent implements OnInit {
   private readonly i18n = inject(I18nService);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly modalService = inject(NzModalService);
+  private readonly userPreferences = inject(UserPreferencesService);
+
+  /** Currency hiển thị theo cài đặt của user */
+  userCurrency = this.userPreferences.getCurrency();
 
   readonly sortOptions: Array<{ value: ExpenseSortMode; labelKey: string }> = [
     { value: 'NEWEST', labelKey: 'momApp.expenses.filters.sort.newest' },
@@ -135,9 +146,58 @@ export class ExpensesComponent implements OnInit {
     limitAmount: [null as number | null, [Validators.required, Validators.min(0)]]
   });
 
+  // ---- Exchange Rate (Premium) ----
+  private readonly currencyExchangeFeatureKey = PREMIUM_FEATURE_KEYS.currencyExchange;
+  hasExchangeRatePremium = false;
+  exchangeRates: ExchangeRateApi[] = [];
+  isLoadingRates = false;
+  rateUpdatedAt: string | null = null;
+  isExchangeRateModalVisible = false;
+
+  convertAmount: number | null = null;
+  convertFromCurrency = 'USD';
+  convertResultVnd: number | null = null;
+  lastConvertRate: number | null = null;
+  isConverting = false;
+
+  monthDateValue!: Date;
+
+  updateMonthDateFromKey(): void {
+    if (this.monthKey) {
+      const [year, month] = this.monthKey.split('-').map(Number);
+      this.monthDateValue = new Date(year, month - 1, 1);
+    }
+  }
+
+  onMonthDateChange(date: Date | null): void {
+    if (date) {
+      this.monthDateValue = date;
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      this.onMonthChange(`${year}-${month}`);
+    }
+  }
+
+  openExchangeRateModal(): void {
+    this.isExchangeRateModalVisible = true;
+    if (this.exchangeRates.length === 0) {
+      this.loadExchangeRates();
+    }
+  }
+
+  closeExchangeRateModal(): void {
+    this.isExchangeRateModalVisible = false;
+  }
+
 
   ngOnInit(): void {
+    this.updateMonthDateFromKey();
+    // Cập nhật currency khi user thay đổi trong Settings
+    this.userPreferences.currency$.subscribe((currency) => {
+      this.userCurrency = currency;
+    });
     this.loadExpenseWorkspace();
+    this.checkExchangeRatePremium();
   }
 
   get budgetProgressWidth(): number {
@@ -185,6 +245,7 @@ export class ExpensesComponent implements OnInit {
   loadExpenseWorkspace(): void {
     const month = this.normalizeMonthKey(this.monthKey);
     this.monthKey = month;
+    this.updateMonthDateFromKey();
     this.loading = true;
 
     forkJoin({
@@ -236,6 +297,7 @@ export class ExpensesComponent implements OnInit {
       return;
     }
     this.monthKey = next;
+    this.updateMonthDateFromKey();
     this.loadExpenseWorkspace();
   }
 
@@ -397,7 +459,7 @@ export class ExpensesComponent implements OnInit {
         amount,
         categoryName: this.createExpenseForm.controls.categoryName.value?.trim() ?? '',
         note: this.createExpenseForm.controls.note.value?.trim() ?? '',
-        currency: 'VND'
+        currency: this.userCurrency
       })
       .subscribe({
         next: () => {
@@ -552,8 +614,63 @@ export class ExpensesComponent implements OnInit {
     return item.categoryId;
   }
 
+  trackByCurrency(_: number, item: ExchangeRateApi): string {
+    return item.currency;
+  }
+
+  loadExchangeRates(): void {
+    this.isLoadingRates = true;
+    this.command.getExchangeRates().pipe(
+      catchError(() => of([] as ExchangeRateApi[])),
+      finalize(() => { this.isLoadingRates = false; })
+    ).subscribe((rates) => {
+      this.exchangeRates = rates;
+      if (rates.length > 0) {
+        const locale = this.i18n.getCurrentLanguage() === 'en' ? 'en-US' : 'vi-VN';
+        this.rateUpdatedAt = new Date(rates[0].updatedAt).toLocaleString(locale);
+        if (!this.convertFromCurrency && rates.length > 0) {
+          this.convertFromCurrency = rates[0].currency;
+        }
+      }
+    });
+  }
+
+  doConvert(): void {
+    if (!this.convertAmount || this.convertAmount <= 0 || !this.convertFromCurrency) {
+      return;
+    }
+    this.isConverting = true;
+    this.command.convertCurrencyToVnd({
+      fromCurrency: this.convertFromCurrency,
+      amount: this.convertAmount
+    }).pipe(
+      finalize(() => { this.isConverting = false; })
+    ).subscribe({
+      next: (result) => {
+        this.convertResultVnd = result.amountVnd;
+        this.lastConvertRate = result.sellRate;
+      },
+      error: (err) => {
+        this.notification.error(
+          this.i18n.translate('common.errorTitle'),
+          err?.error?.message || 'Không thể thực hiện chuyển đổi. Vui lòng thử lại.'
+        );
+      }
+    });
+  }
+
   resolveCategoryColor(categoryId: number): string {
     return this.categoryInsights.find((item) => item.categoryId === categoryId)?.colorCode || 'var(--user-primary)';
+  }
+
+  private checkExchangeRatePremium(): void {
+    this.command.getResolvedFamilyFeatures().subscribe((features) => {
+      const feature = features.find((f) => f.featureKey === this.currencyExchangeFeatureKey);
+      this.hasExchangeRatePremium = feature?.enabled === true;
+      if (this.hasExchangeRatePremium) {
+        this.loadExchangeRates();
+      }
+    });
   }
 
   private applyLocalFilters(): void {

@@ -9,7 +9,16 @@ import com.mom.account.controller.dto.InviteFamilyMemberRequest;
 import com.mom.account.controller.dto.UpcomingBirthdayResponse;
 import com.mom.account.controller.dto.UpdateFamilyRequest;
 import com.mom.account.controller.dto.UpdatePreferencesRequest;
+import com.mom.account.controller.dto.UpdateProfileRequest;
 import com.mom.account.controller.dto.UserResponse;
+import com.mom.account.controller.dto.ResolvedFeatureAccessResponse;
+import com.mom.account.domain.FamilyQuestStateEntity;
+import com.mom.account.repository.FamilyQuestStateRepository;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfPCell;
+import java.io.ByteArrayOutputStream;
 import com.mom.account.domain.FamilyEntity;
 import com.mom.account.domain.FamilyMemberEntity;
 import com.mom.account.domain.FamilyRelation;
@@ -49,6 +58,7 @@ public class AccountService {
     private final UserRepository userRepository;
     private final FamilyRepository familyRepository;
     private final FamilyMemberRepository familyMemberRepository;
+    private final FamilyQuestStateRepository familyQuestStateRepository;
     private final AccountEventPublisher accountEventPublisher;
     private final PremiumEntitlementService premiumEntitlementService;
     private final RestClient.Builder restClientBuilder;
@@ -574,6 +584,363 @@ public class AccountService {
         if (!currentUserId.equals(userId)) {
             throw new AccessDeniedException("Access denied for userId: " + userId);
         }
+    }
+
+    @Transactional
+    public UserResponse updateProfile(Long userId, UpdateProfileRequest request) {
+        validateUserAccessIfContextPresent(userId);
+
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        if (!user.getEmail().equalsIgnoreCase(request.email())) {
+            userRepository.findByEmailIgnoreCase(request.email()).ifPresent(existing -> {
+                throw new IllegalArgumentException("Email already exists");
+            });
+        }
+
+        user.setDisplayName(request.displayName().trim());
+        user.setEmail(request.email().trim().toLowerCase());
+        user.setDateOfBirth(request.dateOfBirth());
+        UserEntity saved = userRepository.save(user);
+
+        return toUserResponse(saved);
+    }
+
+    public byte[] generateProfilePdf(Long userId) {
+        validateUserAccessIfContextPresent(userId);
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+
+        List<FamilyMemberEntity> members = familyMemberRepository.findByUserId(userId);
+        FamilyEntity family = null;
+        List<FamilyMemberResponse> familyMembers = List.of();
+        if (!members.isEmpty()) {
+            Long familyId = members.get(0).getFamilyId();
+            family = familyRepository.findById(familyId).orElse(null);
+            if (family != null) {
+                familyMembers = familyMemberRepository.findByFamilyId(familyId).stream()
+                        .map(m -> {
+                            UserEntity u = userRepository.findById(m.getUserId()).orElse(null);
+                            String dName = u != null ? u.getDisplayName() : "Unknown";
+                            return new FamilyMemberResponse(m.getUserId(), dName, m.getRole(), m.getRelation(), m.getParentUserId(), u != null ? u.getDateOfBirth() : null);
+                        })
+                        .toList();
+            }
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        Document document = new Document(PageSize.A4, 36, 36, 36, 36);
+        try {
+            PdfWriter.getInstance(document, out);
+            document.open();
+
+            // Premium Color Palette (Warm Fintech style)
+            java.awt.Color primaryCam = new java.awt.Color(249, 115, 22);     // #f97316
+            java.awt.Color darkGray = new java.awt.Color(31, 41, 55);         // #1f2937
+            java.awt.Color lightGrayText = new java.awt.Color(107, 114, 128); // #6b7280
+            java.awt.Color borderGray = new java.awt.Color(229, 231, 235);    // #e5e7eb
+            java.awt.Color bgLightGray = new java.awt.Color(249, 250, 251);   // #f9fafb
+            java.awt.Color bgOrangeLight = new java.awt.Color(255, 247, 237); // #fff7ed
+
+            // Custom Typography using standard fonts
+            Font brandFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, primaryCam);
+            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 22, darkGray);
+            Font subTitleFont = FontFactory.getFont(FontFactory.HELVETICA, 9, lightGrayText);
+            Font sectionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13, primaryCam);
+            Font labelFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, lightGrayText);
+            Font valueFont = FontFactory.getFont(FontFactory.HELVETICA, 10, darkGray);
+            Font tableHeaderFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, new java.awt.Color(234, 88, 12));
+            Font footerFont = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8, lightGrayText);
+            Font securityBadgeFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8, new java.awt.Color(22, 163, 74));
+
+            // 1. TOP GRADIENT ACCENT STRIP
+            PdfPTable headerAccentTable = new PdfPTable(1);
+            headerAccentTable.setWidthPercentage(100);
+            PdfPCell accentCell = new PdfPCell();
+            accentCell.setFixedHeight(4f);
+            accentCell.setBackgroundColor(primaryCam);
+            accentCell.setBorder(0);
+            headerAccentTable.addCell(accentCell);
+            document.add(headerAccentTable);
+
+            // Spacer
+            Paragraph spacer1 = new Paragraph("\n");
+            spacer1.setLeading(10);
+            document.add(spacer1);
+
+            // 2. BRAND & HEADER SECTION
+            PdfPTable headerTable = new PdfPTable(2);
+            headerTable.setWidthPercentage(100);
+            headerTable.setWidths(new float[]{65f, 35f});
+
+            // Title and metadata left cell
+            PdfPCell leftHeader = new PdfPCell();
+            leftHeader.setBorder(0);
+            Paragraph brandText = new Paragraph("MOM SUPER APP PLATFORM", brandFont);
+            brandText.setLeading(14);
+            leftHeader.addElement(brandText);
+
+            Paragraph docTitle = new Paragraph("USER PROFILE REPORT", titleFont);
+            docTitle.setLeading(26);
+            leftHeader.addElement(docTitle);
+
+            Paragraph subText = new Paragraph("Official secure personal data & family record summary.", subTitleFont);
+            subText.setLeading(14);
+            leftHeader.addElement(subText);
+            headerTable.addCell(leftHeader);
+
+            // Right Cell: Report meta
+            PdfPCell rightHeader = new PdfPCell();
+            rightHeader.setBorder(0);
+            rightHeader.setHorizontalAlignment(Element.ALIGN_RIGHT);
+            
+            Paragraph sysStatus = new Paragraph("STATUS: ACTIVE VERIFIED", securityBadgeFont);
+            sysStatus.setAlignment(Element.ALIGN_RIGHT);
+            rightHeader.addElement(sysStatus);
+
+            Paragraph dateText = new Paragraph("Date: " + LocalDate.now().toString(), subTitleFont);
+            dateText.setAlignment(Element.ALIGN_RIGHT);
+            rightHeader.addElement(dateText);
+
+            Paragraph docIdText = new Paragraph("Ref: MOM-USR-" + String.format("%06d", userId), subTitleFont);
+            docIdText.setAlignment(Element.ALIGN_RIGHT);
+            rightHeader.addElement(docIdText);
+            headerTable.addCell(rightHeader);
+
+            document.add(headerTable);
+
+            // Horizontal Line
+            PdfPTable dividerLine = new PdfPTable(1);
+            dividerLine.setWidthPercentage(100);
+            PdfPCell lineCell = new PdfPCell();
+            lineCell.setFixedHeight(1f);
+            lineCell.setBorder(0);
+            lineCell.setBackgroundColor(borderGray);
+            dividerLine.addCell(lineCell);
+            
+            Paragraph spacerDivider = new Paragraph("\n");
+            spacerDivider.setLeading(15);
+            document.add(spacerDivider);
+            document.add(dividerLine);
+
+            // 3. PERSONAL INFORMATION SECTION
+            Paragraph personalHeader = new Paragraph("1. PERSONAL DATA CARD", sectionFont);
+            personalHeader.setSpacingBefore(15);
+            personalHeader.setSpacingAfter(10);
+            document.add(personalHeader);
+
+            // Personal Info Bento Card
+            PdfPTable personalTable = new PdfPTable(2);
+            personalTable.setWidthPercentage(100);
+            personalTable.setWidths(new float[]{30f, 70f});
+
+            String currency = "Not Specified";
+            String language = "Not Specified";
+            String notifyStatus = "Not Specified";
+            if (user.getPreferences() != null) {
+                if (user.getPreferences().currency() != null) {
+                    currency = user.getPreferences().currency().toUpperCase();
+                }
+                if (user.getPreferences().language() != null) {
+                    language = user.getPreferences().language().toUpperCase();
+                }
+                if (user.getPreferences().notificationEnabled() != null) {
+                    notifyStatus = user.getPreferences().notificationEnabled() ? "ENABLED" : "DISABLED";
+                }
+            }
+            String memberSince = user.getCreatedAt() != null ? user.getCreatedAt().toLocalDate().toString() : "Not Specified";
+
+            addCardField(personalTable, "DISPLAY NAME:", user.getDisplayName(), labelFont, valueFont, bgLightGray, borderGray);
+            addCardField(personalTable, "USERNAME ID:", user.getUsername(), labelFont, valueFont, java.awt.Color.WHITE, borderGray);
+            addCardField(personalTable, "EMAIL ADDRESS:", user.getEmail(), labelFont, valueFont, bgLightGray, borderGray);
+            addCardField(personalTable, "DATE OF BIRTH:", user.getDateOfBirth() != null ? user.getDateOfBirth().toString() : "Not Specified", labelFont, valueFont, java.awt.Color.WHITE, borderGray);
+            addCardField(personalTable, "MEMBER SINCE:", memberSince, labelFont, valueFont, bgLightGray, borderGray);
+            addCardField(personalTable, "PREFERRED CURRENCY:", currency, labelFont, valueFont, java.awt.Color.WHITE, borderGray);
+            addCardField(personalTable, "SYSTEM LANGUAGE:", language, labelFont, valueFont, bgLightGray, borderGray);
+            addCardField(personalTable, "NOTIFICATIONS:", notifyStatus, labelFont, valueFont, java.awt.Color.WHITE, borderGray);
+
+            document.add(personalTable);
+
+            // 4. FAMILY INFORMATION SECTION
+            if (family != null) {
+                Paragraph familyHeader = new Paragraph("2. FAMILY & MEMBERSHIP RECORD", sectionFont);
+                familyHeader.setSpacingBefore(25);
+                familyHeader.setSpacingAfter(10);
+                document.add(familyHeader);
+
+                // Family Name Card
+                PdfPTable familyInfoTable = new PdfPTable(2);
+                familyInfoTable.setWidthPercentage(100);
+                familyInfoTable.setWidths(new float[]{30f, 70f});
+                addCardField(familyInfoTable, "FAMILY GROUP NAME:", family.getName().toUpperCase(), labelFont, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, darkGray), bgOrangeLight, borderGray);
+                document.add(familyInfoTable);
+
+                Paragraph spacerFamTable = new Paragraph("\n");
+                spacerFamTable.setLeading(10);
+                document.add(spacerFamTable);
+
+                // Quest & Points Bento Card
+                FamilyQuestStateEntity questState = familyQuestStateRepository.findById(family.getId()).orElse(null);
+                String streakVal = "0 Days";
+                String pointsVal = "0 PTS";
+                String lastClaimVal = "No Activity";
+                if (questState != null) {
+                    streakVal = questState.getStreakDays() + " Days Streak";
+                    pointsVal = String.format("%,d PTS", questState.getTotalPoints());
+                    if (questState.getLastClaimDate() != null) {
+                        lastClaimVal = questState.getLastClaimDate().toString();
+                    }
+                }
+
+                PdfPTable familyQuestTable = new PdfPTable(2);
+                familyQuestTable.setWidthPercentage(100);
+                familyQuestTable.setWidths(new float[]{30f, 70f});
+                addCardField(familyQuestTable, "ACTIVE QUEST STREAK:", streakVal, labelFont, valueFont, bgLightGray, borderGray);
+                addCardField(familyQuestTable, "TOTAL ACCUMULATION POINTS:", pointsVal, labelFont, valueFont, java.awt.Color.WHITE, borderGray);
+                addCardField(familyQuestTable, "LAST REWARD CLAIM DATE:", lastClaimVal, labelFont, valueFont, bgLightGray, borderGray);
+                document.add(familyQuestTable);
+
+                Paragraph spacerQuestTable = new Paragraph("\n");
+                spacerQuestTable.setLeading(10);
+                document.add(spacerQuestTable);
+
+                // Members Table
+                PdfPTable memberTable = new PdfPTable(4);
+                memberTable.setWidthPercentage(100);
+                memberTable.setWidths(new float[]{35f, 20f, 20f, 25f});
+
+                addTableHeaderCell(memberTable, "MEMBER DISPLAY NAME", tableHeaderFont, bgOrangeLight, borderGray);
+                addTableHeaderCell(memberTable, "ROLE TYPE", tableHeaderFont, bgOrangeLight, borderGray);
+                addTableHeaderCell(memberTable, "FAMILY RELATION", tableHeaderFont, bgOrangeLight, borderGray);
+                addTableHeaderCell(memberTable, "DATE OF BIRTH", tableHeaderFont, bgOrangeLight, borderGray);
+
+                boolean zebra = false;
+                for (var m : familyMembers) {
+                    java.awt.Color rowBg = zebra ? bgLightGray : java.awt.Color.WHITE;
+                    addTableCell(memberTable, m.displayName(), valueFont, rowBg, borderGray);
+                    addTableCell(memberTable, m.role().toString(), valueFont, rowBg, borderGray);
+                    addTableCell(memberTable, m.relation().toString(), valueFont, rowBg, borderGray);
+                    addTableCell(memberTable, m.dateOfBirth() != null ? m.dateOfBirth().toString() : "Not Specified", valueFont, rowBg, borderGray);
+                    zebra = !zebra;
+                }
+                document.add(memberTable);
+
+                // 4.1 PREMIUM SERVICES SECTION
+                Paragraph premiumHeader = new Paragraph("\n3. PREMIUM SERVICE SUBSCRIPTIONS", sectionFont);
+                premiumHeader.setSpacingBefore(20);
+                premiumHeader.setSpacingAfter(10);
+                document.add(premiumHeader);
+
+                List<ResolvedFeatureAccessResponse> features = premiumEntitlementService.resolveFamilyFeatures(family.getId());
+                
+                PdfPTable premiumTable = new PdfPTable(3);
+                premiumTable.setWidthPercentage(100);
+                premiumTable.setWidths(new float[]{35f, 30f, 35f});
+
+                addTableHeaderCell(premiumTable, "FEATURE SERVICE KEY", tableHeaderFont, bgOrangeLight, borderGray);
+                addTableHeaderCell(premiumTable, "SERVICE STATUS", tableHeaderFont, bgOrangeLight, borderGray);
+                addTableHeaderCell(premiumTable, "LICENSE EXPIRATION", tableHeaderFont, bgOrangeLight, borderGray);
+
+                boolean premZebra = false;
+                for (var f : features) {
+                    java.awt.Color rowBg = premZebra ? bgLightGray : java.awt.Color.WHITE;
+                    
+                    String statusStr = f.enabled() ? "ACTIVE (ENABLED)" : "INACTIVE (DISABLED)";
+                    Font statusFont = f.enabled() ? FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, new java.awt.Color(22, 163, 74)) 
+                                                 : FontFactory.getFont(FontFactory.HELVETICA, 10, lightGrayText);
+                    
+                    addTableCell(premiumTable, f.featureKey(), valueFont, rowBg, borderGray);
+                    
+                    PdfPCell statusCell = new PdfPCell(new Paragraph(statusStr, statusFont));
+                    statusCell.setBackgroundColor(rowBg);
+                    statusCell.setBorderColor(borderGray);
+                    statusCell.setBorderWidth(0.5f);
+                    statusCell.setPadding(8);
+                    premiumTable.addCell(statusCell);
+
+                    String expiresStr = f.expiresAt() != null ? f.expiresAt().toLocalDate().toString() : "Lifetime / Unlimited";
+                    addTableCell(premiumTable, expiresStr, valueFont, rowBg, borderGray);
+                    
+                    premZebra = !premZebra;
+                }
+                document.add(premiumTable);
+            }
+
+            // 5. SECURITY & CONFIRMATION BLOCK
+            String secTitle = family != null ? "4. DOCUMENT CONTROL & INTEGRITY" : "2. DOCUMENT CONTROL & INTEGRITY";
+            Paragraph securityHeader = new Paragraph("\n" + secTitle, sectionFont);
+            securityHeader.setSpacingBefore(20);
+            securityHeader.setSpacingAfter(10);
+            document.add(securityHeader);
+
+            PdfPTable securityTable = new PdfPTable(1);
+            securityTable.setWidthPercentage(100);
+            PdfPCell secCell = new PdfPCell();
+            secCell.setPadding(10);
+            secCell.setBackgroundColor(bgLightGray);
+            secCell.setBorderColor(borderGray);
+            secCell.setBorderWidth(1f);
+            
+            Paragraph integrityText = new Paragraph("This profile overview contains verified database records as of " + LocalDate.now().toString() + ". " +
+                    "To prevent identity theft and fraud, do not share this profile certificate with unauthorized parties. " +
+                    "All microservices records are encrypted and protected by the Mom Super App Platform Security Gate.", subTitleFont);
+            integrityText.setLeading(13);
+            secCell.addElement(integrityText);
+            securityTable.addCell(secCell);
+            document.add(securityTable);
+
+            // Spacer before footer
+            Paragraph spacerFooter = new Paragraph("\n\n");
+            spacerFooter.setLeading(20);
+            document.add(spacerFooter);
+
+            // 6. OFFICIAL FOOTER
+            Paragraph footer = new Paragraph("Verified Secure Document • Generated automatically by Mom Super App Platform • Confidential", footerFont);
+            footer.setAlignment(Element.ALIGN_CENTER);
+            document.add(footer);
+
+            document.close();
+        } catch (Exception ex) {
+            log.error("Error occurred while generating Profile PDF: {}", ex.getMessage());
+        }
+
+        return out.toByteArray();
+    }
+
+    private void addCardField(PdfPTable table, String label, String value, Font lFont, Font vFont, java.awt.Color bg, java.awt.Color border) {
+        PdfPCell cellLabel = new PdfPCell(new Paragraph(label, lFont));
+        cellLabel.setBackgroundColor(bg);
+        cellLabel.setBorderColor(border);
+        cellLabel.setBorderWidth(0.5f);
+        cellLabel.setPadding(8);
+        table.addCell(cellLabel);
+
+        PdfPCell cellVal = new PdfPCell(new Paragraph(value, vFont));
+        cellVal.setBackgroundColor(bg);
+        cellVal.setBorderColor(border);
+        cellVal.setBorderWidth(0.5f);
+        cellVal.setPadding(8);
+        table.addCell(cellVal);
+    }
+
+    private void addTableHeaderCell(PdfPTable table, String text, Font font, java.awt.Color bg, java.awt.Color border) {
+        PdfPCell cell = new PdfPCell(new Paragraph(text, font));
+        cell.setBackgroundColor(bg);
+        cell.setBorderColor(border);
+        cell.setBorderWidth(0.5f);
+        cell.setBorderWidthBottom(1.5f);
+        cell.setPadding(8);
+        table.addCell(cell);
+    }
+
+    private void addTableCell(PdfPTable table, String text, Font font, java.awt.Color bg, java.awt.Color border) {
+        PdfPCell cell = new PdfPCell(new Paragraph(text, font));
+        cell.setBackgroundColor(bg);
+        cell.setBorderColor(border);
+        cell.setBorderWidth(0.5f);
+        cell.setPadding(8);
+        table.addCell(cell);
     }
 
     private void ensureRequestAuthenticated() {

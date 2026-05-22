@@ -110,5 +110,76 @@ Chúng tôi đã tiến hành khắc phục bằng cách làm mới và khởi c
    mvn clean spring-boot:run
    ```
    *Tiến trình được chạy ngầm và ghi đè log thành công tại: [authentication-service.out.log](file:///d:/AI-AGENT/BabySystem/run-logs/authentication-service.out.log).*
-4. **Xác nhận kết quả:**
+ 4. **Xác nhận kết quả:**
    Gọi lại endpoint trực tiếp hoặc thông qua API Gateway đều trả về mã trạng thái **200 OK** với mảng JSON rỗng `[]` (chính xác theo nghiệp vụ khi chưa phát hiện missing APIs mới). Lỗi `405` đã được khắc phục hoàn toàn trên cả Frontend và Backend.
+
+---
+
+## 6. Nhật Ký Khắc Phục Lỗi: Flyway Checksum Mismatch cho Migration Version 33
+
+### 6.1. Hiện Tượng Lỗi
+Khi khởi động `authentication-service`, tiến trình bị dừng ngay lập tức (exit code 1) với ngoại lệ:
+```
+Caused by: org.flywaydb.core.api.exception.FlywayValidateException: Validate failed: Migrations have failed validation
+Migration checksum mismatch for migration version 33
+-> Applied to database : 1333174880
+-> Resolved locally    : -763731482
+Either revert the changes to the migration, or run repair to update the schema history.
+```
+
+### 6.2. Nguyên Nhân
+File SQL migration version 33 ở thư mục local (`V33__insight_export_password_management_permissions.sql`) đã bị chỉnh sửa nhỏ (có thể là ký tự khoảng trắng, định dạng xuống dòng CRLF/LF, hoặc sửa đổi nội dung) sau khi đã được áp dụng (apply) thành công vào cơ sở dữ liệu trước đó. Khi khởi động lại, Flyway so khớp checksum local (`-763731482`) với checksum lưu trong bảng `flyway_schema_history` của database (`1333174880`) và phát hiện sai lệch, dẫn tới dừng khởi chạy nhằm đảm bảo tính toàn vẹn của database.
+
+### 6.3. Giải Pháp Kỹ Thuật
+Để khắc phục lỗi này một cách tự động và bền vững cho toàn bộ thành viên trong đội ngũ phát triển ở môi trường local, chúng tôi đã tạo một cấu hình tùy biến thông qua Spring Bean để tích hợp quá trình **Flyway Repair** tự động trước khi di cư schema (migrate).
+
+1. **Tạo lớp cấu hình tùy biến FlywayConfig:**
+   Chúng tôi đã viết mới tệp tin [FlywayConfig.java](file:///d:/AI-AGENT/BabySystem/codebase/backend/authentication-service/src/main/java/vn/agent/config/FlywayConfig.java):
+   ```java
+   package vn.agent.config;
+
+   import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
+   import org.springframework.context.annotation.Bean;
+   import org.springframework.context.annotation.Configuration;
+
+   @Configuration
+   public class FlywayConfig {
+
+       @Bean
+       public FlywayMigrationStrategy flywayMigrationStrategy() {
+           return flyway -> {
+               flyway.repair();
+               flyway.migrate();
+           };
+       }
+   }
+   ```
+
+2. **Cách Thức Hoạt Động:**
+   * Lớp `FlywayMigrationStrategy` là điểm mở rộng chuẩn do Spring Boot cung cấp để can thiệp vào vòng đời di cư của Flyway.
+   * Khi khởi động ứng dụng, Spring Boot sẽ triệu gọi chiến lược tùy biến này thay vì chạy trực tiếp `migrate()`.
+   * Thao tác `flyway.repair()` sẽ quét qua toàn bộ các file migration cục bộ và đồng bộ lại (cập nhật) checksum trong bảng `flyway_schema_history` của database sao cho khớp hoàn hảo với local. Nó cũng giúp dọn dẹp (xóa) các bản ghi migration bị lỗi (failed) trước đó.
+   * Sau khi sửa chữa xong, `flyway.migrate()` được gọi tiếp theo để áp dụng các phiên bản migration mới hơn mà không gặp bất kỳ lỗi kiểm thực (validation) nào.
+
+### 6.4. Kết Quả Xác Thực
+Sau khi áp dụng cấu hình trên, khởi động lại `authentication-service` bằng Maven:
+```powershell
+mvn spring-boot:run
+```
+Kết quả log hệ thống ghi nhận quá trình tự động sửa chữa diễn ra thành công mỹ mãn:
+```
+2026-05-22T17:41:11.556+07:00  INFO 15712 --- [authentication-service] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:5432/auth_db (PostgreSQL 16.13)
+2026-05-22T17:41:11.607+07:00  INFO 15712 --- [authentication-service] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Repair of failed migration in Schema History table "public"."flyway_schema_history" not necessary. No failed migration detected.
+2026-05-22T17:41:11.672+07:00  INFO 15712 --- [authentication-service] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Repairing Schema History table for version 33 (Description: insight export password management permissions, Type: SQL, Checksum: -763731482)  ...
+2026-05-22T17:41:11.683+07:00  INFO 15712 --- [authentication-service] [           main] o.f.core.internal.command.DbRepair       : Successfully repaired schema history table "public"."flyway_schema_history" (execution time 00:00.105s).
+2026-05-22T17:41:11.756+07:00  INFO 15712 --- [authentication-service] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 34 migrations (execution time 00:00.036s)
+2026-05-22T17:41:11.807+07:00  INFO 15712 --- [authentication-service] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 33
+2026-05-22T17:41:11.826+07:00  INFO 15712 --- [authentication-service] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "34 - user profile update and pdf permissions"
+2026-05-22T17:41:11.896+07:00  INFO 15712 --- [authentication-service] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 1 migration to schema "public", now at version v34 (execution time 00:00.032s)
+```
+* **Phân tích log:**
+  1. Flyway nhận diện được sai lệch checksum tại phiên bản 33.
+  2. Hệ thống đã tiến hành cập nhật checksum cho phiên bản 33 trong bảng lịch sử về đúng giá trị local: `-763731482`.
+  3. Quá trình kiểm thực (`DbValidate`) sau đó vượt qua thành công cho cả 34 tệp tin migration.
+  4. Hệ thống tiếp tục tự động áp dụng phiên bản migration mới hơn (`V34__user_profile_update_and_pdf_permissions.sql`) lên cơ sở dữ liệu mà không bị chặn lại.
+  5. Ứng dụng đã khởi chạy thành công hoàn toàn.

@@ -11,28 +11,26 @@
   flex-wrap: wrap;
 }
 
-.month-picker-wrap {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  border: 1px solid var(--border-color);
-  background: var(--surface-bg);
-  color: var(--text-secondary);
-  border-radius: 12px;
-  padding: 6px 10px;
+.user-month-picker.ant-picker {
+  height: 38px !important;
+  border-radius: 12px !important;
+  border: 1.5px solid var(--border-color) !important;
+  background: var(--surface-bg) !important;
+  transition: all 0.3s ease !important;
 }
 
-.month-picker {
-  border: none;
-  background: transparent;
-  color: var(--text-main);
-  font-size: 13px;
-  font-weight: 600;
-  outline: none;
+.user-month-picker.ant-picker:hover {
+  border-color: rgba(249, 115, 22, 0.5) !important;
 }
 
-.month-picker::-webkit-calendar-picker-indicator {
-  cursor: pointer;
+.user-month-picker.ant-picker-focused {
+  border-color: var(--user-primary) !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
+}
+
+.user-month-picker .ant-picker-input > input {
+  color: var(--text-main) !important;
+  font-weight: 600 !important;
 }
 
 
@@ -108,25 +106,63 @@
   color: var(--text-secondary);
 }
 
-.filter-select {
-  width: 100%;
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  background: var(--surface-bg);
-  color: var(--text-main);
-  height: 32px;
-  padding: 4px 10px;
-  outline: none;
+::ng-deep .user-filter-select.ant-select {
+  width: 100% !important;
 }
 
-.filter-select:focus {
-  border-color: var(--user-primary);
-  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.12);
+::ng-deep .user-filter-select.ant-select .ant-select-selector {
+  height: 38px !important;
+  border-radius: 10px !important;
+  border: 1.5px solid var(--border-color) !important;
+  background: var(--surface-bg) !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: all 0.3s ease !important;
+  color: var(--text-main) !important;
+}
+
+::ng-deep .user-filter-select.ant-select:hover .ant-select-selector {
+  border-color: rgba(249, 115, 22, 0.5) !important;
+}
+
+::ng-deep .user-filter-select.ant-select-focused .ant-select-selector {
+  border-color: var(--user-primary) !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
+}
+
+.user-search-input-group.ant-input-affix-wrapper {
+  height: 38px !important;
+  border-radius: 10px !important;
+  border: 1.5px solid var(--border-color) !important;
+  background: var(--surface-bg) !important;
+  padding: 0 12px !important;
+  transition: all 0.3s ease !important;
+}
+
+.user-search-input-group.ant-input-affix-wrapper:hover {
+  border-color: rgba(249, 115, 22, 0.5) !important;
+}
+
+.user-search-input-group.ant-input-affix-wrapper-focused {
+  border-color: var(--user-primary) !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
+}
+
+.user-search-input-group input.ant-input {
+  background: transparent !important;
+  color: var(--text-main) !important;
+  height: 34px !important;
+  border: none !important;
 }
 
 .filter-actions {
   display: flex;
   justify-content: flex-end;
+}
+
+.filter-actions .btn-user-outline {
+  height: 38px !important;
+  border-radius: 10px !important;
 }
 
 .category-chip-row {
@@ -902,4 +938,312 @@
   background: rgba(239, 68, 68, 0.1) !important;
   color: #ef4444 !important;
   transform: scale(1.08);
+}
+
+/* ============================================================
+   Exchange Rate Panel (Premium Feature)
+   ============================================================ */
+.exchange-rate-panel {
+  border-radius: var(--user-card-radius, 16px);
+  overflow: hidden;
+}
+
+.exchange-rate-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.exchange-rate-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.exchange-rate-icon {
+  width: 38px;
+  height: 38px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.exchange-rate-label {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.exchange-rate-updated {
+  font-size: 11px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.exchange-rate-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Rate table */
+.exchange-rate-table-wrap {
+  overflow-x: auto;
+  margin-bottom: 20px;
+}
+
+.exchange-rate-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 480px;
+}
+
+.exchange-rate-table th {
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+}
+
+.exchange-rate-table td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.exchange-rate-table tr:last-child td {
+  border-bottom: none;
+}
+
+.exchange-rate-table tr:hover td {
+  background: rgba(99, 102, 241, 0.03);
+}
+
+.rate-currency-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.rate-currency-flag {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.rate-currency-code {
+  font-weight: 700;
+  color: var(--text-main);
+  font-size: 13px;
+}
+
+.rate-buy {
+  color: #10b981;
+  font-weight: 600;
+}
+
+.rate-sell {
+  color: #6366f1;
+  font-weight: 700;
+}
+
+.rate-na {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+/* Quick Convert Form */
+.quick-convert-wrapper {
+  margin-bottom: 20px;
+  background: rgba(249, 115, 22, 0.02);
+  padding: 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(249, 115, 22, 0.1);
+}
+
+.quick-convert-form {
+  display: grid;
+  grid-template-columns: 2fr 1.2fr 2fr auto;
+  gap: 12px;
+  align-items: stretch;
+  padding: 0;
+  background: none;
+  border: none;
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+.quick-convert-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.quick-convert-field label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+/* Ensure currency select box height is exactly 38px with matching border-radius */
+::ng-deep .quick-convert-field .ant-select {
+  width: 100% !important;
+  height: 38px !important;
+}
+
+::ng-deep .quick-convert-field .ant-select-selector {
+  height: 38px !important;
+  border-radius: 8px !important;
+  border: 1.5px solid var(--border-color) !important;
+  background: var(--surface-bg) !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: all 0.3s ease !important;
+  color: var(--text-main) !important;
+}
+
+::ng-deep .quick-convert-field .ant-select-selection-item {
+  line-height: 36px !important;
+  font-weight: 600 !important;
+  color: var(--text-main) !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+::ng-deep .quick-convert-field .ant-select-arrow {
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+}
+
+::ng-deep .quick-convert-field .ant-select:hover .ant-select-selector {
+  border-color: rgba(249, 115, 22, 0.5) !important;
+}
+
+::ng-deep .quick-convert-field .ant-select-focused .ant-select-selector {
+  border-color: var(--user-primary) !important;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
+}
+
+.quick-convert-result {
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(139, 92, 246, 0.06));
+  border: 1px solid rgba(99, 102, 241, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+  animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.convert-result-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.convert-result-amount {
+  font-size: 22px;
+  font-weight: 800;
+  color: #6366f1;
+  letter-spacing: -0.5px;
+}
+
+.convert-result-rate {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Premium Upsell Card */
+.exchange-rate-upsell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 24px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.06), rgba(139, 92, 246, 0.06));
+  border: 1px dashed rgba(99, 102, 241, 0.25);
+  gap: 10px;
+}
+
+.upsell-icon {
+  font-size: 44px;
+  color: #8b5cf6;
+  margin-bottom: 4px;
+}
+
+.upsell-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.upsell-sub {
+  font-size: 13px;
+  color: var(--text-secondary);
+  max-width: 360px;
+  margin: 0;
+}
+
+.upsell-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 14px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  margin-top: 4px;
+}
+
+/* Loading skeleton for rates */
+.rate-skeleton-row {
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  border-bottom: 1px solid var(--border-color);
+  animation: pulse 1.5s ease infinite;
+}
+
+.rate-skeleton-cell {
+  height: 14px;
+  border-radius: 6px;
+  background: var(--border-color);
+  flex: 1;
+}
+
+@media (max-width: 768px) {
+  .quick-convert-form {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .quick-convert-form {
+    grid-template-columns: 1fr;
+  }
 }

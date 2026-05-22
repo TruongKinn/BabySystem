@@ -25,11 +25,12 @@
         nz-button
         nzType="primary"
         class="btn-user-primary"
-        (click)="exportCsv()"
-        [disabled]="dailyRows.length === 0 || premiumReportsLocked"
+        (click)="openExportPasswordDialog()"
+        [nzLoading]="exporting"
+        [disabled]="dailyRows.length === 0 || premiumReportsLocked || exporting"
       >
         <span nz-icon nzType="download"></span>
-        Export CSV
+        {{ 'momApp.insights.export.action' | translate }}
       </button>
     </div>
   </div>
@@ -98,7 +99,7 @@
           </div>
           <div class="summary-item">
             <p>Monthly expense</p>
-            <strong>{{ monthlyExpenseTotal | currency : 'VND' : 'symbol' : '1.0-0' }}</strong>
+            <strong>{{ monthlyExpenseTotal | currency : userCurrency : 'symbol' : '1.0-0' }}</strong>
           </div>
           <div class="summary-item">
             <p>Expense count</p>
@@ -169,7 +170,7 @@
           <tbody>
             <tr *ngFor="let row of dailyRows; trackBy: trackByReportDate">
               <td>{{ formatReportDate(row.date) }}</td>
-              <td>{{ row.expenseTotal | currency : 'VND' : 'symbol' : '1.0-0' }}</td>
+              <td>{{ row.expenseTotal | currency : userCurrency : 'symbol' : '1.0-0' }}</td>
               <td>{{ row.pendingTasks }}</td>
               <td>{{ row.babySleepHours | number : '1.0-1' }}</td>
               <td>
@@ -184,4 +185,71 @@
     </nz-card>
   </ng-container>
   </ng-container>
+
+  <nz-modal
+    [(nzVisible)]="isExportPasswordModalVisible"
+    [nzTitle]="exportPasswordTitleTpl"
+    [nzOkText]="'momApp.insights.export.confirm' | translate"
+    [nzCancelText]="'momApp.insights.export.cancel' | translate"
+    [nzOkLoading]="exporting"
+    [nzOkDisabled]="exportPasswordForm.invalid || exporting"
+    [nzMaskClosable]="!exporting"
+    [nzClosable]="!exporting"
+    nzClassName="user-role-modal insight-export-modal"
+    (nzOnCancel)="closeExportPasswordDialog()"
+    (nzOnOk)="submitXlsxExport()"
+  >
+    <ng-template #exportPasswordTitleTpl>
+      <div class="export-modal-title">
+        <span nz-icon nzType="file-protect"></span>
+        <span>{{ 'momApp.insights.export.passwordTitle' | translate }}</span>
+      </div>
+    </ng-template>
+
+    <ng-container *nzModalContent>
+      <form class="export-password-form" [formGroup]="exportPasswordForm" (ngSubmit)="submitXlsxExport()">
+        <p class="export-password-subtitle">{{ 'momApp.insights.export.passwordSubtitle' | translate }}</p>
+        <div class="export-file-rule">
+          <span nz-icon nzType="file-excel"></span>
+          <span>{{ 'momApp.insights.export.filenameRule' | translate }}</span>
+        </div>
+
+        <label class="field-label" for="insight-export-password">{{ 'momApp.insights.export.passwordLabel' | translate }}</label>
+        <input
+          nz-input
+          id="insight-export-password"
+          type="password"
+          autocomplete="new-password"
+          formControlName="password"
+          [placeholder]="'momApp.insights.export.passwordPlaceholder' | translate"
+        />
+        <p class="field-error" *ngIf="showPasswordError('password')">
+          {{ 'momApp.insights.export.passwordRequired' | translate }}
+        </p>
+
+        <label class="field-label" for="insight-export-confirm-password">{{ 'momApp.insights.export.confirmPasswordLabel' | translate }}</label>
+        <input
+          nz-input
+          id="insight-export-confirm-password"
+          type="password"
+          autocomplete="new-password"
+          formControlName="confirmPassword"
+          [placeholder]="'momApp.insights.export.confirmPasswordPlaceholder' | translate"
+        />
+        <p class="field-error" *ngIf="showPasswordError('confirmPassword')">
+          {{ 'momApp.insights.export.confirmPasswordRequired' | translate }}
+        </p>
+        <p class="field-error" *ngIf="passwordsDoNotMatch()">
+          {{ 'momApp.insights.export.passwordMismatch' | translate }}
+        </p>
+
+        <div class="export-password-note">
+          <span nz-icon nzType="safety-certificate"></span>
+          <span>{{ 'momApp.insights.export.passwordHelp' | translate }}</span>
+        </div>
+
+        <p class="field-error export-error" *ngIf="exportErrorMessage">{{ exportErrorMessage }}</p>
+      </form>
+    </ng-container>
+  </nz-modal>
 </section>

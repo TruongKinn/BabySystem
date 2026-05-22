@@ -1,10 +1,15 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { HttpResponse } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
+import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { finalize, forkJoin } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
 import { DashboardSnapshot } from '../core/models/super-app.model';
 import {
@@ -13,6 +18,7 @@ import {
   MockSuperAppService
 } from '../core/services/mock-super-app.service';
 import { ResolvedPremiumFeature, SuperAppCommandService } from '../core/services/super-app-command.service';
+import { UserPreferencesService } from '../core/services/user-preferences.service';
 import { I18nService } from '../i18n/i18n.service';
 
 type InsightRiskLevel = 'GOOD' | 'WARNING' | 'CRITICAL';
@@ -30,7 +36,17 @@ interface InsightRecommendation {
 @Component({
   selector: 'app-insights',
   standalone: true,
-  imports: [CommonModule, TranslateModule, NzCardModule, NzButtonModule, NzIconModule],
+  imports: [
+    CommonModule,
+    CurrencyPipe,
+    ReactiveFormsModule,
+    TranslateModule,
+    NzCardModule,
+    NzButtonModule,
+    NzIconModule,
+    NzInputModule,
+    NzModalModule
+  ],
   templateUrl: './insights.component.html',
   styleUrl: './insights.component.css'
 })
@@ -38,13 +54,33 @@ export class InsightsComponent implements OnInit {
   private readonly data = inject(MockSuperAppService);
   private readonly command = inject(SuperAppCommandService);
   private readonly i18n = inject(I18nService);
+  private readonly userPreferences = inject(UserPreferencesService);
+  private readonly fb = inject(FormBuilder);
+  private readonly notification = inject(NzNotificationService);
   private readonly premiumReportsFeatureKey = PREMIUM_FEATURE_KEYS.premiumReports;
   private readonly aiCareAssistantFeatureKey = PREMIUM_FEATURE_KEYS.aiCareAssistant;
+  private readonly passwordMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
+    const password = control.get('password')?.value;
+    const confirmPassword = control.get('confirmPassword')?.value;
+    return password && confirmPassword && password !== confirmPassword ? { passwordMismatch: true } : null;
+  };
 
   loading = false;
+  exporting = false;
   monthKey = this.currentMonthKey();
   premiumReportsLocked = false;
   aiCareAssistantLocked = false;
+  isExportPasswordModalVisible = false;
+  exportErrorMessage = '';
+
+  userCurrency = this.userPreferences.getCurrency();
+  exportPasswordForm = this.fb.nonNullable.group(
+    {
+      password: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(128)]],
+      confirmPassword: ['', [Validators.required]]
+    },
+    { validators: this.passwordMatchValidator }
+  );
 
   familyName = '';
   moodScore = 0;
@@ -67,6 +103,9 @@ export class InsightsComponent implements OnInit {
   recommendations: InsightRecommendation[] = [];
 
   ngOnInit(): void {
+    this.userPreferences.currency$.subscribe((currency) => {
+      this.userCurrency = currency;
+    });
     this.loadPremiumFeatures();
   }
 
@@ -112,43 +151,50 @@ export class InsightsComponent implements OnInit {
       });
   }
 
-  exportCsv(): void {
-    if (this.dailyRows.length === 0 || typeof window === 'undefined') {
+  openExportPasswordDialog(): void {
+    if (this.dailyRows.length === 0 || this.premiumReportsLocked) {
       return;
     }
 
-    const headers = [
-      'Date',
-      'Expense',
-      'Pending tasks',
-      'Sleep hours',
-      'Risk level'
-    ];
+    this.exportErrorMessage = '';
+    this.exportPasswordForm.reset();
+    this.isExportPasswordModalVisible = true;
+  }
 
-    const rows = this.dailyRows.map((row) => [
-      row.date,
-      Math.round(row.expenseTotal),
-      row.pendingTasks,
-      Number(row.babySleepHours.toFixed(1)),
-      this.riskLabel(row.riskLevel)
-    ]);
+  closeExportPasswordDialog(): void {
+    if (this.exporting) {
+      return;
+    }
+    this.isExportPasswordModalVisible = false;
+    this.exportErrorMessage = '';
+  }
 
-    const csvBody = [headers, ...rows]
-      .map((line) =>
-        line
-          .map((cell) => `"${String(cell).replaceAll('"', '""')}"`)
-          .join(',')
-      )
-      .join('\n');
+  submitXlsxExport(): void {
+    if (this.exportPasswordForm.invalid) {
+      this.exportPasswordForm.markAllAsTouched();
+      return;
+    }
 
-    const csvContent = `\uFEFF${csvBody}`;
-    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    const objectUrl = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = objectUrl;
-    link.download = `insights-report-${this.monthKey}.csv`;
-    link.click();
-    URL.revokeObjectURL(objectUrl);
+    this.exporting = true;
+    this.exportErrorMessage = '';
+    this.data.exportInsightMonthlyReportXlsx({
+      month: this.monthKey,
+      password: this.exportPasswordForm.controls.password.value,
+      currency: this.userCurrency,
+      locale: this.i18n.getCurrentLanguage(),
+      familyName: this.familyName
+    })
+      .pipe(finalize(() => {
+        this.exporting = false;
+      }))
+      .subscribe({
+        next: (response) => this.handleExportResponse(response),
+        error: (err) => {
+          const fallback = this.t('momApp.insights.export.failed', 'Unable to export protected XLSX report.');
+          this.exportErrorMessage = err?.error?.message || fallback;
+          this.notification.error(this.t('common.errorTitle', 'Error'), this.exportErrorMessage);
+        }
+      });
   }
 
   formatReportDate(dateText: string): string {
@@ -157,8 +203,7 @@ export class InsightsComponent implements OnInit {
       return dateText;
     }
 
-    const locale = this.i18n.getCurrentLanguage() === 'en' ? 'en-US' : 'vi-VN';
-    return date.toLocaleDateString(locale, {
+    return date.toLocaleDateString(this.currentLocale(), {
       year: 'numeric',
       month: '2-digit',
       day: '2-digit'
@@ -167,16 +212,42 @@ export class InsightsComponent implements OnInit {
 
   riskLabel(level: InsightRiskLevel): string {
     if (level === 'CRITICAL') {
-      return 'Critical';
+      return this.t('momApp.insights.risk.critical', 'Critical');
     }
     if (level === 'WARNING') {
-      return 'Warning';
+      return this.t('momApp.insights.risk.warning', 'Warning');
     }
-    return 'Good';
+    return this.t('momApp.insights.risk.good', 'Good');
+  }
+
+  showPasswordError(controlName: 'password' | 'confirmPassword'): boolean {
+    const control = this.exportPasswordForm.controls[controlName];
+    return control.invalid && (control.dirty || control.touched);
+  }
+
+  passwordsDoNotMatch(): boolean {
+    return !!this.exportPasswordForm.errors?.['passwordMismatch'] &&
+      (this.exportPasswordForm.controls.confirmPassword.dirty || this.exportPasswordForm.controls.confirmPassword.touched);
   }
 
   trackByReportDate(_: number, item: DailyReportRow): string {
     return item.date;
+  }
+
+  private handleExportResponse(response: HttpResponse<Blob>): void {
+    const file = response.body;
+    if (!file) {
+      this.exportErrorMessage = this.t('momApp.insights.export.noFile', 'The export file is empty.');
+      return;
+    }
+
+    this.downloadBlob(file, this.resolveXlsxFileName(response));
+    this.isExportPasswordModalVisible = false;
+    this.exportPasswordForm.reset();
+    this.notification.success(
+      this.t('momApp.common.success', 'Success'),
+      this.t('momApp.insights.export.success', 'Protected XLSX report downloaded.')
+    );
   }
 
   private applyInsightData(snapshot: DashboardSnapshot, monthly: InsightMonthlyReport): void {
@@ -303,6 +374,50 @@ export class InsightsComponent implements OnInit {
   private currentMonthKey(): string {
     const now = new Date();
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+  }
+
+  private currentLocale(): string {
+    return this.i18n.getCurrentLanguage() === 'en' ? 'en-US' : 'vi-VN';
+  }
+
+  private resolveXlsxFileName(response: HttpResponse<Blob>): string {
+    const explicitName = response.headers.get('X-Export-File-Name');
+    if (explicitName) {
+      return explicitName;
+    }
+
+    const disposition = response.headers.get('Content-Disposition') ?? response.headers.get('content-disposition');
+    const encodedMatch = disposition?.match(/filename\*=UTF-8''([^;]+)/i);
+    if (encodedMatch?.[1]) {
+      return decodeURIComponent(encodedMatch[1].replace(/"/g, ''));
+    }
+
+    const filenameMatch = disposition?.match(/filename="?([^";]+)"?/i);
+    if (filenameMatch?.[1]) {
+      return filenameMatch[1];
+    }
+
+    return `MOM_INSIGHTS_${this.monthKey.replace('-', '')}.xlsx`;
+  }
+
+  private downloadBlob(blob: Blob, filename: string): void {
+    if (typeof window === 'undefined' || typeof document === 'undefined') {
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = objectUrl;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(objectUrl);
+  }
+
+  private t(key: string, fallback: string, params?: Record<string, unknown>): string {
+    const translated = this.i18n.translate(key, params);
+    return translated && translated !== key ? translated : fallback;
   }
 
   private clamp(value: number, min: number, max: number): number {

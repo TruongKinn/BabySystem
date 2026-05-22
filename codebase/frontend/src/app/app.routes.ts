@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './auth/auth.guard';
 import { AdminDashboardComponent } from './admin/dashboard/admin-dashboard.component';
 import { AdminAccessComponent } from './admin/access/admin-access.component';
+import { AdminExportPasswordsComponent } from './admin/export-passwords/admin-export-passwords.component';
 import { AdminFamiliesComponent } from './admin/families/admin-families.component';
 import { AdminPermissionsComponent } from './admin/permissions/admin-permissions.component';
 import { AdminUsersComponent } from './admin/users/admin-users.component';
@@ -57,6 +58,7 @@ export const routes: Routes = [
       { path: 'families', component: AdminFamiliesComponent },
       { path: 'premium', component: AdminPremiumComponent },
       { path: 'finance', component: AdminFinanceComponent },
+      { path: 'export-passwords', component: AdminExportPasswordsComponent },
       { path: 'access', component: AdminAccessComponent },
       { path: 'permissions', component: AdminPermissionsComponent }
     ]

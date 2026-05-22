@@ -1,4 +1,4 @@
-﻿<section class="page-container dashboard-user" *ngIf="vm$ | async as vm">
+<section class="page-container dashboard-user" *ngIf="vm$ | async as vm">
   <section class="dashboard-hero animate-slide-up">
     <div class="hero-main">
       <p class="hero-kicker">{{ 'momApp.dashboard.subtitle' | translate }}</p>
@@ -32,7 +32,7 @@
       <div class="kpi-row">
         <span class="stat-icon stat-icon-orange"><span nz-icon nzType="wallet"></span></span>
         <div class="stat-info">
-          <div class="stat-value">{{ vm.snapshot.expense.spentToday | currency:'VND':'symbol':'1.0-0' }}</div>
+          <div class="stat-value">{{ vm.snapshot.expense.spentToday | currency:userCurrency:'symbol':'1.0-0' }}</div>
           <div class="stat-label">{{ 'momApp.dashboard.spentToday' | translate }}</div>
         </div>
       </div>
@@ -110,6 +110,46 @@
           </div>
         </div>
       </nz-card>
+
+      <nz-card class="table-card panel-card">
+        <div class="card-head">
+          <h3>{{ 'momApp.dashboard.quickShortcutsTitle' | translate }}</h3>
+        </div>
+
+        <div class="quick-grid">
+          <a routerLink="/app/tasks" class="quick-item">
+            <span nz-icon nzType="check-square"></span>
+            <div>
+              <p>{{ 'momApp.layout.menu.tasks' | translate }}</p>
+              <small>{{ 'momApp.dashboard.quick.tasksPending' | translate:{ count: vm.snapshot.pendingTasks } }}</small>
+            </div>
+          </a>
+
+          <a routerLink="/app/shopping" class="quick-item">
+            <span nz-icon nzType="shopping-cart"></span>
+            <div>
+              <p>{{ 'momApp.layout.menu.shopping' | translate }}</p>
+              <small>{{ 'momApp.dashboard.quick.shoppingPending' | translate:{ count: vm.snapshot.shoppingReminders } }}</small>
+            </div>
+          </a>
+
+          <a routerLink="/app/expenses" class="quick-item">
+            <span nz-icon nzType="wallet"></span>
+            <div>
+              <p>{{ 'momApp.layout.menu.expenses' | translate }}</p>
+              <small>{{ 'momApp.dashboard.quick.budgetUsed' | translate:{ percent: vm.budgetPercent } }}</small>
+            </div>
+          </a>
+
+          <a routerLink="/app/baby" class="quick-item">
+            <span nz-icon nzType="smile"></span>
+            <div>
+              <p>{{ 'momApp.layout.menu.baby' | translate }}</p>
+              <small>{{ 'momApp.dashboard.quick.sleepToday' | translate:{ hours: vm.snapshot.baby.sleepHours } }}</small>
+            </div>
+          </a>
+        </div>
+      </nz-card>
     </div>
 
     <div class="main-right">
@@ -119,9 +159,9 @@
         </div>
 
         <div class="budget-amounts">
-          <span class="budget-spent">{{ vm.snapshot.expense.monthlySpent | currency:'VND':'symbol':'1.0-0' }}</span>
+          <span class="budget-spent">{{ vm.snapshot.expense.monthlySpent | currency:userCurrency:'symbol':'1.0-0' }}</span>
           <span class="budget-sep">/</span>
-          <span class="budget-total">{{ vm.snapshot.expense.monthlyBudget | currency:'VND':'symbol':'1.0-0' }}</span>
+          <span class="budget-total">{{ vm.snapshot.expense.monthlyBudget | currency:userCurrency:'symbol':'1.0-0' }}</span>
         </div>
 
         <div class="user-progress-bar">
@@ -133,7 +173,7 @@
             {{ vm.budgetPercent }}% {{ 'momApp.expenses.budgetUsed' | translate }}
           </span>
           <span class="budget-left">
-            {{ 'momApp.dashboard.budgetRemaining' | translate }} {{ vm.budgetRemaining | currency:'VND':'symbol':'1.0-0' }}
+            {{ 'momApp.dashboard.budgetRemaining' | translate }} {{ vm.budgetRemaining | currency:userCurrency:'symbol':'1.0-0' }}
           </span>
         </div>
 
@@ -239,7 +279,7 @@
         </button>
       </nz-card>
 
-      <nz-card class="table-card panel-card quest-reward-card">
+      <nz-card class="table-card panel-card">
         <div class="card-head">
           <h3>{{ 'momApp.dashboard.quest.rewardsTitle' | translate }}</h3>
         </div>
@@ -289,46 +329,6 @@
             </div>
             <strong>-{{ item.costPoints }} XP</strong>
           </div>
-        </div>
-      </nz-card>
-
-      <nz-card class="table-card panel-card">
-        <div class="card-head">
-          <h3>{{ 'momApp.dashboard.quickShortcutsTitle' | translate }}</h3>
-        </div>
-
-        <div class="quick-grid">
-          <a routerLink="/app/tasks" class="quick-item">
-            <span nz-icon nzType="check-square"></span>
-            <div>
-              <p>{{ 'momApp.layout.menu.tasks' | translate }}</p>
-              <small>{{ 'momApp.dashboard.quick.tasksPending' | translate:{ count: vm.snapshot.pendingTasks } }}</small>
-            </div>
-          </a>
-
-          <a routerLink="/app/shopping" class="quick-item">
-            <span nz-icon nzType="shopping-cart"></span>
-            <div>
-              <p>{{ 'momApp.layout.menu.shopping' | translate }}</p>
-              <small>{{ 'momApp.dashboard.quick.shoppingPending' | translate:{ count: vm.snapshot.shoppingReminders } }}</small>
-            </div>
-          </a>
-
-          <a routerLink="/app/expenses" class="quick-item">
-            <span nz-icon nzType="wallet"></span>
-            <div>
-              <p>{{ 'momApp.layout.menu.expenses' | translate }}</p>
-              <small>{{ 'momApp.dashboard.quick.budgetUsed' | translate:{ percent: vm.budgetPercent } }}</small>
-            </div>
-          </a>
-
-          <a routerLink="/app/baby" class="quick-item">
-            <span nz-icon nzType="smile"></span>
-            <div>
-              <p>{{ 'momApp.layout.menu.baby' | translate }}</p>
-              <small>{{ 'momApp.dashboard.quick.sleepToday' | translate:{ hours: vm.snapshot.baby.sleepHours } }}</small>
-            </div>
-          </a>
         </div>
       </nz-card>
     </div>

@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, combineLatest, finalize, map, of, switchMap } from 'rxjs';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
@@ -14,6 +15,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
 import { PasswordStrengthComponent } from '../shared/components/password-strength/password-strength.component';
 import { AuthService } from '../auth/auth.service';
@@ -64,6 +66,7 @@ interface ProfileViewModel extends ProfileInfo {
   familyMembers: FamilyTreeMember[];
   familyTree: FamilyTreeNode[];
   premiumFeatures: ProfilePremiumFeature[];
+  dateOfBirth?: string | null;
 }
 
 interface ProfilePremiumFeature {
@@ -90,6 +93,7 @@ interface ProfilePremiumFeature {
     NzModalModule,
     NzFormModule,
     NzInputModule,
+    NzDatePickerModule,
     ReactiveFormsModule,
     PasswordStrengthComponent
   ],
@@ -100,6 +104,7 @@ export class ProfileComponent {
   private readonly maxAvatarSize = 30 * 1024 * 1024;
   private readonly authService = inject(AuthService);
   private readonly command = inject(SuperAppCommandService);
+  private readonly sanitizer = inject(DomSanitizer);
   private readonly i18n = inject(I18nService);
   private readonly message = inject(NzMessageService);
   private readonly fb = inject(FormBuilder);
@@ -122,6 +127,15 @@ export class ProfileComponent {
   isChangingPassword = false;
   changePasswordForm: FormGroup;
 
+  isEditProfileVisible = false;
+  isSavingProfile = false;
+  profileForm: FormGroup;
+
+  isPdfVisible = false;
+  isLoadingPdf = false;
+  pdfSafeUrl: SafeResourceUrl | null = null;
+  pdfUrlString: string | null = null;
+
   constructor() {
     this.changePasswordForm = this.fb.group(
       {
@@ -137,6 +151,12 @@ export class ProfileComponent {
       },
       { validators: this.passwordMatchValidator }
     );
+
+    this.profileForm = this.fb.group({
+      displayName: ['', [Validators.required]],
+      email: ['', [Validators.required, Validators.email]],
+      dateOfBirth: [null]
+    });
   }
 
   passwordMatchValidator(control: AbstractControl): { [key: string]: boolean } | null {
@@ -306,7 +326,8 @@ export class ProfileComponent {
         roleLabel: this.roleLabel(selectedRole),
         familyMembers: enrichedMembers,
         familyTree: tree,
-        premiumFeatures: this.buildPremiumFeatures(premiumFeatures)
+        premiumFeatures: this.buildPremiumFeatures(premiumFeatures),
+        dateOfBirth: currentMember?.dateOfBirth ?? null
       };
     })
   );
@@ -669,5 +690,91 @@ export class ProfileComponent {
     }
 
     return fallback;
+  }
+
+  openEditProfile(profile: ProfileViewModel): void {
+    this.profileForm.patchValue({
+      displayName: profile.displayName,
+      email: profile.email,
+      dateOfBirth: profile.dateOfBirth ? new Date(profile.dateOfBirth) : null
+    });
+    this.isEditProfileVisible = true;
+  }
+
+  handleCancelEditProfile(): void {
+    this.isEditProfileVisible = false;
+  }
+
+  submitEditProfile(userId: number | null): void {
+    if (!userId) return;
+    if (this.profileForm.invalid) {
+      Object.values(this.profileForm.controls).forEach((control) => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+      return;
+    }
+
+    this.isSavingProfile = true;
+    const { displayName, email, dateOfBirth } = this.profileForm.value;
+
+    let formattedDob: string | null = null;
+    if (dateOfBirth) {
+      const dobDate = new Date(dateOfBirth);
+      if (!isNaN(dobDate.getTime())) {
+        const yyyy = dobDate.getFullYear();
+        const mm = String(dobDate.getMonth() + 1).padStart(2, '0');
+        const dd = String(dobDate.getDate()).padStart(2, '0');
+        formattedDob = `${yyyy}-${mm}-${dd}`;
+      }
+    }
+
+    this.command
+      .updateProfile(userId, { displayName, email, dateOfBirth: formattedDob })
+      .pipe(finalize(() => (this.isSavingProfile = false)))
+      .subscribe({
+        next: () => {
+          this.message.success('Cập nhật profile thành công!');
+          this.isEditProfileVisible = false;
+          this.profileReload$.next();
+        },
+        error: (err) => {
+          this.message.error(err.message || 'Cập nhật profile thất bại!');
+        }
+      });
+  }
+
+  viewProfilePdf(userId: number | null): void {
+    if (!userId) return;
+    this.isLoadingPdf = true;
+    this.isPdfVisible = true;
+    this.command
+      .getProfilePdfBlob(userId)
+      .pipe(finalize(() => (this.isLoadingPdf = false)))
+      .subscribe({
+        next: (blob) => {
+          if (this.pdfUrlString) {
+            URL.revokeObjectURL(this.pdfUrlString);
+          }
+          const blobUrl = URL.createObjectURL(blob);
+          this.pdfUrlString = blobUrl;
+          this.pdfSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
+        },
+        error: (err) => {
+          this.message.error(err.message || 'Không thể tải báo cáo PDF!');
+          this.isPdfVisible = false;
+        }
+      });
+  }
+
+  closePdfModal(): void {
+    this.isPdfVisible = false;
+    if (this.pdfUrlString) {
+      URL.revokeObjectURL(this.pdfUrlString);
+      this.pdfUrlString = null;
+    }
+    this.pdfSafeUrl = null;
   }
 }

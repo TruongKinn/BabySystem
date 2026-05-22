@@ -1,4 +1,4 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
+import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable, catchError, forkJoin, map, of, switchMap, throwError } from 'rxjs';
 import { API_CONFIG } from '../../shared/constants/api.constant';
@@ -30,6 +30,14 @@ export interface InsightMonthlyReport {
   babyFeedings: number;
   diaperChanges: number;
   dailyBreakdown: InsightDailyBreakdownItem[];
+}
+
+export interface InsightMonthlyExportRequest {
+  month: string;
+  password: string;
+  currency: string;
+  locale: string;
+  familyName: string;
 }
 
 interface ApiEnvelope<T> {
@@ -306,6 +314,27 @@ export class MockSuperAppService {
         }
         return of(this.emptyInsightMonthlyReport(familyId, monthKey));
       })
+    );
+  }
+
+  exportInsightMonthlyReportXlsx(request: InsightMonthlyExportRequest): Observable<HttpResponse<Blob>> {
+    const familyId = this.getFamilyId();
+    const monthKey = this.normalizeMonthKey(request.month);
+
+    return this.http.post(
+      `${this.apiBase}/insight/insights/monthly/export`,
+      {
+        familyId,
+        month: monthKey,
+        password: request.password,
+        currency: request.currency,
+        locale: request.locale,
+        familyName: request.familyName
+      },
+      {
+        observe: 'response',
+        responseType: 'blob'
+      }
     );
   }
 

@@ -22,8 +22,13 @@ import com.mom.account.controller.dto.UpdateFamilyEntitlementsRequest;
 import com.mom.account.controller.dto.UpcomingBirthdayResponse;
 import com.mom.account.controller.dto.UpdateFamilyRequest;
 import com.mom.account.controller.dto.UpdatePreferencesRequest;
+import com.mom.account.controller.dto.UpdateProfileRequest;
 import com.mom.account.controller.dto.UserResponse;
 import com.mom.account.domain.FamilyRole;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ContentDisposition;
 import com.mom.account.service.AccountService;
 import com.mom.account.service.FamilyQuestService;
 import com.mom.account.service.PremiumEntitlementService;
@@ -76,6 +81,23 @@ public class AccountController {
             @Valid @RequestBody UpdatePreferencesRequest request
     ) {
         return ApiResponse.ok("Preferences updated", accountService.updatePreferences(userId, request));
+    }
+
+    @PutMapping("/users/{id}")
+    public ApiResponse<UserResponse> updateProfile(
+            @PathVariable("id") Long userId,
+            @Valid @RequestBody UpdateProfileRequest request
+    ) {
+        return ApiResponse.ok("Profile updated", accountService.updateProfile(userId, request));
+    }
+
+    @GetMapping(value = "/users/{id}/pdf", produces = org.springframework.http.MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> getProfilePdf(@PathVariable("id") Long userId) {
+        byte[] pdfBytes = accountService.generateProfilePdf(userId);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(org.springframework.http.MediaType.APPLICATION_PDF);
+        headers.setContentDisposition(ContentDisposition.inline().filename("user-profile-" + userId + ".pdf").build());
+        return new ResponseEntity<>(pdfBytes, headers, HttpStatus.OK);
     }
 
     @PostMapping("/families")

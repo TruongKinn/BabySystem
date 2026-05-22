@@ -1,5 +1,5 @@
-﻿import { CommonModule, CurrencyPipe } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { CommonModule, CurrencyPipe } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -15,6 +15,7 @@ import {
   FamilyQuestState,
   SuperAppCommandService
 } from '../core/services/super-app-command.service';
+import { UserPreferencesService } from '../core/services/user-preferences.service';
 import { I18nService } from '../i18n/i18n.service';
 
 interface DashboardPriority {
@@ -93,7 +94,7 @@ interface DashboardQuestRedemptionView {
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
   private readonly questDailyMissionLimit = 4;
   private readonly questTiers: DashboardQuestTier[] = [
     { minPoints: 0, labelKey: 'momApp.dashboard.quest.tiers.seed' },
@@ -105,9 +106,20 @@ export class DashboardComponent {
   private readonly command = inject(SuperAppCommandService);
   private readonly i18n = inject(I18nService);
   private readonly message = inject(NzMessageService);
+  private readonly userPreferences = inject(UserPreferencesService);
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
   private questClaimInProgress = false;
   private questRedeemInProgressKey: string | null = null;
+
+  /** Currency của user, đọc từ UserPreferencesService */
+  userCurrency = this.userPreferences.getCurrency();
+
+  ngOnInit(): void {
+    // Cập nhật currency khi user thay đổi trong Settings
+    this.userPreferences.currency$.subscribe((currency) => {
+      this.userCurrency = currency;
+    });
+  }
 
   readonly vm$ = this.refresh$.pipe(
     switchMap(() =>

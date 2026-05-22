@@ -13,6 +13,7 @@ import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
 import { ResolvedPremiumFeature, SuperAppCommandService } from '../core/services/super-app-command.service';
+import { UserPreferencesService } from '../core/services/user-preferences.service';
 import { I18nService } from '../i18n/i18n.service';
 import { LanguageCode } from '../i18n/language.model';
 
@@ -45,6 +46,7 @@ export class SettingsComponent implements OnInit {
   private readonly notification = inject(NzNotificationService);
   private readonly i18n = inject(I18nService);
   private readonly platformId = inject(PLATFORM_ID);
+  private readonly userPreferences = inject(UserPreferencesService);
   
   private readonly defaultReminderHour = '20:30';
   private readonly reminderHourPattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
@@ -228,6 +230,9 @@ export class SettingsComponent implements OnInit {
           document.body.classList.remove('dark-theme');
           localStorage.setItem('theme', 'light');
         }
+
+        // Notify toàn ứng dụng về currency mới ngay lập tức
+        this.userPreferences.setCurrency(this.currency);
 
         if (this.selectedLanguage !== this.initialSettings.language) {
           void this.i18n.setLanguage(this.selectedLanguage);
