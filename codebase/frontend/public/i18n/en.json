@@ -2402,7 +2402,9 @@
         "account": "Account",
         "family": "Family",
         "profile": "Profile",
-        "settings": "Settings"
+        "settings": "Settings",
+        "themeSettings": "Theme settings",
+        "documents": "Documents"
       }
     },
     "admin": {
@@ -2414,6 +2416,7 @@
         "premium": "Premium config",
         "finance": "Financial management",
         "exportPasswords": "Export passwords",
+        "themeSettings": "Theme settings",
         "access": "Access control",
         "permissions": "Permission catalog"
       },
@@ -2961,7 +2964,9 @@
           "filter": "Filter",
           "reset": "Reset",
           "delete": "Delete record",
-          "deleteConfirm": "Delete this export password metadata record?"
+          "deleteConfirm": "Delete this export password metadata record?",
+          "showPassword": "Show password",
+          "hidePassword": "Hide password"
         },
         "empty": {
           "title": "No export password records",
@@ -3939,7 +3944,88 @@
     },
     "settings": {
       "title": "Settings",
-      "subtitle": "Notification and reminder preferences for family workflow",
+      "subtitle": "Theme, notification, and workspace preferences",
+      "appearance": {
+        "title": "Appearance and system",
+        "languageTitle": "Language",
+        "languageDesc": "Display language for this account",
+        "modeTitle": "Theme mode",
+        "modeDesc": "Light or dark interface mode",
+        "light": "Light",
+        "dark": "Dark"
+      },
+      "themeStudio": {
+        "kicker": "Premium Theme",
+        "title": "Theme Studio",
+        "subtitle": "Personalize the workspace with premium palettes and interface density.",
+        "access": "Theme access",
+        "locked": "Premium locked",
+        "unlocked": "Unlocked",
+        "cardSubtitle": "Accent, density, and radius controls are governed by Premium entitlement.",
+        "previewTitle": "Workspace preview",
+        "previewSubtitle": "Current palette and layout rhythm",
+        "lockedHint": "Ask an admin to enable Theme Customization for this family.",
+        "accent": {
+          "title": "Accent palette",
+          "subtitle": "Shared color language",
+          "orange": "Warm",
+          "orangeDesc": "Orange and pink",
+          "blue": "Focus",
+          "blueDesc": "Blue and cyan",
+          "emerald": "Calm",
+          "emeraldDesc": "Green and teal",
+          "violet": "Creative",
+          "violetDesc": "Violet and magenta",
+          "rose": "Rose",
+          "roseDesc": "Rose and orange",
+          "amber": "Amber",
+          "amberDesc": "Amber and gold",
+          "indigo": "Indigo",
+          "indigoDesc": "Indigo and cyan",
+          "graphite": "Graphite",
+          "graphiteDesc": "Slate and steel",
+          "custom": "Custom",
+          "customDesc": "Your own colors"
+        },
+        "custom": {
+          "title": "Custom colors",
+          "subtitle": "Pick primary and secondary accents",
+          "primary": "Primary color",
+          "secondary": "Secondary color"
+        },
+        "density": {
+          "title": "Density",
+          "comfortable": "Comfortable",
+          "comfortableDesc": "Roomier rows",
+          "compact": "Compact",
+          "compactDesc": "Tighter workspace",
+          "spacious": "Spacious",
+          "spaciousDesc": "Larger touch targets"
+        },
+        "radius": {
+          "title": "Shape",
+          "soft": "Soft",
+          "softDesc": "Rounded controls",
+          "sharp": "Sharp",
+          "sharpDesc": "Crisper edges",
+          "rounded": "Rounded",
+          "roundedDesc": "More expressive surfaces",
+          "pill": "Pill",
+          "pillDesc": "Fully rounded buttons"
+        }
+      },
+      "notifications": {
+        "title": "Notifications"
+      },
+      "preferences": {
+        "title": "General preferences",
+        "currencyTitle": "Display currency",
+        "currencyDesc": "Default currency unit for family expenses",
+        "weekStartTitle": "Week starts on",
+        "weekStartDesc": "First day shown in schedules",
+        "monday": "Monday",
+        "sunday": "Sunday"
+      },
       "dailyReminder": {
         "title": "Daily reminder",
         "desc": "Enable summary reminders for parents"
@@ -3950,18 +4036,28 @@
       },
       "modal": {
         "title": "Save settings",
-        "description": "Apply reminder settings with time {{hour}}?"
+        "description": "Apply reminder settings with time {{hour}}?",
+        "confirmTitle": "Confirm settings changes",
+        "confirmSubtitle": "Apply the selected preferences to this account.",
+        "confirmBody": "The system will update the saved preferences and apply the new theme immediately."
       },
       "messages": {
         "saveSuccess": "Settings saved successfully.",
         "saveFailed": "Unable to save settings.",
-        "smartReminderPremiumRequired": "Smart Reminders is not enabled for this family. Contact admin to grant access."
+        "smartReminderPremiumRequired": "Smart Reminders is not enabled for this family. Contact admin to grant access.",
+        "themeCustomizationPremiumRequired": "Theme Customization is a Premium feature. Admin can grant it in Premium config."
       }
     },
     "forbidden": {
       "message": "You do not have permission to access this page.",
       "goUserPortal": "Go to User Portal",
       "goAdminPortal": "Go to Admin Portal"
+    }
+  },
+  "app": {
+    "settings": {
+      "titleTest": "System Settings Test",
+      "testButton": "Test Button"
     }
   }
 }

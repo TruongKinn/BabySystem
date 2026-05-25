@@ -43,6 +43,9 @@ public class InsightExportFileEntity {
     @Column(name = "password_masked", nullable = false, length = 24)
     private String passwordMasked;
 
+    @Column(name = "password_raw", nullable = false, length = 128)
+    private String passwordRaw;
+
     @Column(name = "file_size_bytes", nullable = false)
     private long fileSizeBytes;
 

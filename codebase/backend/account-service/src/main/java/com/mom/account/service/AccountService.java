@@ -11,15 +11,10 @@ import com.mom.account.controller.dto.UpdateFamilyRequest;
 import com.mom.account.controller.dto.UpdatePreferencesRequest;
 import com.mom.account.controller.dto.UpdateProfileRequest;
 import com.mom.account.controller.dto.UserResponse;
+import com.mom.account.controller.dto.UserPreferences;
 import com.mom.account.controller.dto.ResolvedFeatureAccessResponse;
-import com.mom.account.domain.FamilyQuestStateEntity;
-import com.mom.account.repository.FamilyQuestStateRepository;
-import com.lowagie.text.*;
-import com.lowagie.text.pdf.PdfWriter;
-import com.lowagie.text.pdf.PdfPTable;
-import com.lowagie.text.pdf.PdfPCell;
-import java.io.ByteArrayOutputStream;
 import com.mom.account.domain.FamilyEntity;
+import com.mom.account.domain.FamilyQuestStateEntity;
 import com.mom.account.domain.FamilyMemberEntity;
 import com.mom.account.domain.FamilyRelation;
 import com.mom.account.domain.FamilyRole;
@@ -30,9 +25,15 @@ import com.mom.account.event.UserCreatedPayload;
 import com.mom.account.premium.PremiumFeatures;
 import com.mom.account.repository.FamilyMemberRepository;
 import com.mom.account.repository.FamilyRepository;
+import com.mom.account.repository.FamilyQuestStateRepository;
 import com.mom.account.repository.UserRepository;
 import com.mom.common.context.UserContext;
 import com.mom.common.exception.ResourceNotFoundException;
+import com.lowagie.text.*;
+import com.lowagie.text.pdf.BaseFont;
+import com.lowagie.text.pdf.PdfWriter;
+import com.lowagie.text.pdf.PdfPTable;
+import com.lowagie.text.pdf.PdfPCell;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -43,6 +44,9 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
+import java.io.ByteArrayOutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
@@ -65,6 +69,43 @@ public class AccountService {
 
     @Value("${AUTH_SERVICE_URI:http://localhost:8081}")
     private String authServiceUri;
+
+    private static final BaseFont PROFILE_PDF_REGULAR_FONT = loadProfilePdfBaseFont(
+            "profile.pdf.font.regular",
+            "PROFILE_PDF_FONT_REGULAR",
+            List.of(
+                    "C:\\Windows\\Fonts\\arial.ttf",
+                    "C:\\Windows\\Fonts\\segoeui.ttf",
+                    "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+                    "/usr/share/fonts/truetype/liberation2/LiberationSans-Regular.ttf",
+                    "/usr/share/fonts/truetype/noto/NotoSans-Regular.ttf",
+                    "/Library/Fonts/Arial Unicode.ttf"
+            )
+    );
+    private static final BaseFont PROFILE_PDF_BOLD_FONT = loadProfilePdfBaseFont(
+            "profile.pdf.font.bold",
+            "PROFILE_PDF_FONT_BOLD",
+            List.of(
+                    "C:\\Windows\\Fonts\\arialbd.ttf",
+                    "C:\\Windows\\Fonts\\segoeuib.ttf",
+                    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",
+                    "/usr/share/fonts/truetype/liberation2/LiberationSans-Bold.ttf",
+                    "/usr/share/fonts/truetype/noto/NotoSans-Bold.ttf",
+                    "/Library/Fonts/Arial Unicode.ttf"
+            )
+    );
+    private static final BaseFont PROFILE_PDF_ITALIC_FONT = loadProfilePdfBaseFont(
+            "profile.pdf.font.italic",
+            "PROFILE_PDF_FONT_ITALIC",
+            List.of(
+                    "C:\\Windows\\Fonts\\ariali.ttf",
+                    "C:\\Windows\\Fonts\\segoeuii.ttf",
+                    "/usr/share/fonts/truetype/dejavu/DejaVuSans-Oblique.ttf",
+                    "/usr/share/fonts/truetype/liberation2/LiberationSans-Italic.ttf",
+                    "/usr/share/fonts/truetype/noto/NotoSans-Italic.ttf",
+                    "/Library/Fonts/Arial Unicode.ttf"
+            )
+    );
 
     private static final String PASSWORD_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789@#$%";
     private static final Random RANDOM = new Random();
@@ -111,6 +152,14 @@ public class AccountService {
 
         validateUserAccessIfContextPresent(user.getId());
         return toUserResponse(user);
+    }
+
+    public UserPreferences getPreferences(Long userId) {
+        validateUserAccessIfContextPresent(userId);
+
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return user.getPreferences();
     }
 
     @Transactional
@@ -643,16 +692,16 @@ public class AccountService {
             java.awt.Color bgLightGray = new java.awt.Color(249, 250, 251);   // #f9fafb
             java.awt.Color bgOrangeLight = new java.awt.Color(255, 247, 237); // #fff7ed
 
-            // Custom Typography using standard fonts
-            Font brandFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, primaryCam);
-            Font titleFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 22, darkGray);
-            Font subTitleFont = FontFactory.getFont(FontFactory.HELVETICA, 9, lightGrayText);
-            Font sectionFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 13, primaryCam);
-            Font labelFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, lightGrayText);
-            Font valueFont = FontFactory.getFont(FontFactory.HELVETICA, 10, darkGray);
-            Font tableHeaderFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, new java.awt.Color(234, 88, 12));
-            Font footerFont = FontFactory.getFont(FontFactory.HELVETICA_OBLIQUE, 8, lightGrayText);
-            Font securityBadgeFont = FontFactory.getFont(FontFactory.HELVETICA_BOLD, 8, new java.awt.Color(22, 163, 74));
+            // Use embedded TrueType fonts with Identity-H encoding so Vietnamese text renders correctly.
+            Font brandFont = profilePdfBoldFont(10, primaryCam);
+            Font titleFont = profilePdfBoldFont(22, darkGray);
+            Font subTitleFont = profilePdfRegularFont(9, lightGrayText);
+            Font sectionFont = profilePdfBoldFont(13, primaryCam);
+            Font labelFont = profilePdfBoldFont(10, lightGrayText);
+            Font valueFont = profilePdfRegularFont(10, darkGray);
+            Font tableHeaderFont = profilePdfBoldFont(10, new java.awt.Color(234, 88, 12));
+            Font footerFont = profilePdfItalicFont(8, lightGrayText);
+            Font securityBadgeFont = profilePdfBoldFont(8, new java.awt.Color(22, 163, 74));
 
             // 1. TOP GRADIENT ACCENT STRIP
             PdfPTable headerAccentTable = new PdfPTable(1);
@@ -773,7 +822,7 @@ public class AccountService {
                 PdfPTable familyInfoTable = new PdfPTable(2);
                 familyInfoTable.setWidthPercentage(100);
                 familyInfoTable.setWidths(new float[]{30f, 70f});
-                addCardField(familyInfoTable, "FAMILY GROUP NAME:", family.getName().toUpperCase(), labelFont, FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, darkGray), bgOrangeLight, borderGray);
+                addCardField(familyInfoTable, "FAMILY GROUP NAME:", family.getName().toUpperCase(), labelFont, profilePdfBoldFont(10, darkGray), bgOrangeLight, borderGray);
                 document.add(familyInfoTable);
 
                 Paragraph spacerFamTable = new Paragraph("\n");
@@ -847,8 +896,8 @@ public class AccountService {
                     java.awt.Color rowBg = premZebra ? bgLightGray : java.awt.Color.WHITE;
                     
                     String statusStr = f.enabled() ? "ACTIVE (ENABLED)" : "INACTIVE (DISABLED)";
-                    Font statusFont = f.enabled() ? FontFactory.getFont(FontFactory.HELVETICA_BOLD, 10, new java.awt.Color(22, 163, 74)) 
-                                                 : FontFactory.getFont(FontFactory.HELVETICA, 10, lightGrayText);
+                    Font statusFont = f.enabled() ? profilePdfBoldFont(10, new java.awt.Color(22, 163, 74))
+                                                 : profilePdfRegularFont(10, lightGrayText);
                     
                     addTableCell(premiumTable, f.featureKey(), valueFont, rowBg, borderGray);
                     
@@ -906,6 +955,64 @@ public class AccountService {
         }
 
         return out.toByteArray();
+    }
+
+    private static Font profilePdfRegularFont(float size, java.awt.Color color) {
+        return profilePdfFont(PROFILE_PDF_REGULAR_FONT, FontFactory.HELVETICA, Font.NORMAL, size, color);
+    }
+
+    private static Font profilePdfBoldFont(float size, java.awt.Color color) {
+        return profilePdfFont(PROFILE_PDF_BOLD_FONT, FontFactory.HELVETICA, Font.BOLD, size, color);
+    }
+
+    private static Font profilePdfItalicFont(float size, java.awt.Color color) {
+        return profilePdfFont(PROFILE_PDF_ITALIC_FONT, FontFactory.HELVETICA, Font.ITALIC, size, color);
+    }
+
+    private static Font profilePdfFont(BaseFont baseFont, String fallbackFont, int fallbackStyle, float size, java.awt.Color color) {
+        if (baseFont != null) {
+            return new Font(baseFont, size, Font.NORMAL, color);
+        }
+        return FontFactory.getFont(fallbackFont, size, fallbackStyle, color);
+    }
+
+    private static BaseFont loadProfilePdfBaseFont(String propertyName, String envName, List<String> fallbackPaths) {
+        BaseFont configuredFont = tryLoadProfilePdfBaseFont(System.getProperty(propertyName));
+        if (configuredFont != null) {
+            return configuredFont;
+        }
+
+        BaseFont envFont = tryLoadProfilePdfBaseFont(System.getenv(envName));
+        if (envFont != null) {
+            return envFont;
+        }
+
+        for (String fontPath : fallbackPaths) {
+            BaseFont fallbackFont = tryLoadProfilePdfBaseFont(fontPath);
+            if (fallbackFont != null) {
+                return fallbackFont;
+            }
+        }
+
+        log.warn("No Unicode profile PDF font found for {} / {}; falling back to standard PDF fonts.", propertyName, envName);
+        return null;
+    }
+
+    private static BaseFont tryLoadProfilePdfBaseFont(String rawPath) {
+        if (!StringUtils.hasText(rawPath)) {
+            return null;
+        }
+
+        String fontPath = rawPath.trim();
+        try {
+            if (!Files.isRegularFile(Path.of(fontPath))) {
+                return null;
+            }
+            return BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
+        } catch (Exception ex) {
+            log.warn("Unable to load profile PDF font from {}: {}", fontPath, ex.getMessage());
+            return null;
+        }
     }
 
     private void addCardField(PdfPTable table, String label, String value, Font lFont, Font vFont, java.awt.Color bg, java.awt.Color border) {

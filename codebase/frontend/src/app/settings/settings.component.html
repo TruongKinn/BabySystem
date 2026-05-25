@@ -1,4 +1,4 @@
-<section class="page-container settings-page">
+<section class="page-container settings-page" [class.settings-page--admin]="isAdminPortal">
   <div class="header-actions">
     <div>
       <h1 class="page-title">{{ 'momApp.settings.title' | translate }}</h1>
@@ -21,23 +21,24 @@
     {{ 'momApp.settings.messages.smartReminderPremiumRequired' | translate }}
   </div>
 
-  <section class="settings-hero animate-slide-up">
-    <div class="settings-hero__orb orb-1"></div>
-    <div class="settings-hero__orb orb-2"></div>
-    <div class="settings-hero__orb orb-3"></div>
+  <div *ngIf="isThemeStudioLocked" class="premium-lock-notice premium-lock-notice--theme">
+    <span nz-icon nzType="star"></span>
+    {{ 'momApp.settings.messages.themeCustomizationPremiumRequired' | translate }}
+  </div>
 
+  <section class="settings-hero animate-slide-up">
     <div class="settings-hero__content">
-      <span class="hero-kicker">{{ 'momApp.settings.dailyReminder.title' | translate }}</span>
-      <h2>{{ 'momApp.settings.subtitle' | translate }}</h2>
-      <p>{{ 'momApp.settings.dailyReminder.desc' | translate }}</p>
+      <span class="hero-kicker">{{ 'momApp.settings.themeStudio.kicker' | translate }}</span>
+      <h2>{{ 'momApp.settings.themeStudio.title' | translate }}</h2>
+      <p>{{ 'momApp.settings.themeStudio.subtitle' | translate }}</p>
     </div>
 
     <div class="settings-hero__status">
-      <div class="status-tile" [class.status-tile--off]="!notificationEnabled || smartRemindersLocked">
-        <span nz-icon nzType="notification" nzTheme="outline"></span>
+      <div class="status-tile" [class.status-tile--off]="isThemeStudioLocked">
+        <span nz-icon nzType="bg-colors" nzTheme="outline"></span>
         <div>
-          <p class="status-label">{{ 'momApp.settings.dailyReminder.title' | translate }}</p>
-          <strong>{{ notificationEnabled ? ('commonValues.yes' | translate) : ('commonValues.no' | translate) }}</strong>
+          <p class="status-label">{{ 'momApp.settings.themeStudio.access' | translate }}</p>
+          <strong>{{ themeAccessLabelKey | translate }}</strong>
         </div>
       </div>
       <div class="status-tile">
@@ -52,10 +53,9 @@
 
   <div class="settings-grid">
     <div class="settings-list animate-slide-up">
-      <!-- Appearance -->
-      <nz-card class="table-card settings-card" nzBorderless>
+      <nz-card class="table-card settings-card settings-card--compact" nzBorderless>
         <div class="settings-card__head">
-          <h3>Giao diện & Hệ thống</h3>
+          <h3>{{ 'momApp.settings.appearance.title' | translate }}</h3>
         </div>
 
         <div class="setting-row">
@@ -64,8 +64,8 @@
               <span nz-icon nzType="global" nzTheme="outline"></span>
             </div>
             <div>
-              <p class="setting-title">Ngôn ngữ (Language)</p>
-              <span class="setting-description">Chọn ngôn ngữ hiển thị cho ứng dụng</span>
+              <p class="setting-title">{{ 'momApp.settings.appearance.languageTitle' | translate }}</p>
+              <span class="setting-description">{{ 'momApp.settings.appearance.languageDesc' | translate }}</span>
             </div>
           </div>
           <div class="setting-control">
@@ -79,26 +79,190 @@
         <div class="setting-row">
           <div class="setting-main">
             <div class="setting-icon setting-icon--purple">
-              <span nz-icon nzType="bg-colors" nzTheme="outline"></span>
+              <span nz-icon nzType="bulb" nzTheme="outline"></span>
             </div>
             <div>
-              <p class="setting-title">Chế độ nền (Theme)</p>
-              <span class="setting-description">Tùy chỉnh giao diện Sáng hoặc Tối</span>
+              <p class="setting-title">{{ 'momApp.settings.appearance.modeTitle' | translate }}</p>
+              <span class="setting-description">{{ 'momApp.settings.appearance.modeDesc' | translate }}</span>
             </div>
           </div>
           <div class="setting-control">
-            <nz-radio-group [(ngModel)]="selectedTheme" nzButtonStyle="solid" class="theme-radio">
-              <label nz-radio-button nzValue="light"><span nz-icon nzType="sun"></span> Sáng</label>
-              <label nz-radio-button nzValue="dark"><span nz-icon nzType="moon"></span> Tối</label>
+            <nz-radio-group
+              [(ngModel)]="selectedTheme"
+              (ngModelChange)="onThemeModeChange()"
+              nzButtonStyle="solid"
+              class="theme-radio"
+            >
+              <label nz-radio-button nzValue="light"><span nz-icon nzType="sun"></span> {{ 'momApp.settings.appearance.light' | translate }}</label>
+              <label nz-radio-button nzValue="dark"><span nz-icon nzType="moon"></span> {{ 'momApp.settings.appearance.dark' | translate }}</label>
             </nz-radio-group>
           </div>
         </div>
       </nz-card>
 
-      <!-- Notifications -->
-      <nz-card class="table-card settings-card" nzBorderless>
+      <nz-card
+        class="table-card settings-card premium-theme-card"
+        [class.premium-theme-card--locked]="isThemeStudioLocked"
+        nzBorderless
+      >
         <div class="settings-card__head">
-          <h3>{{ 'momApp.settings.title' | translate }}</h3>
+          <div>
+            <h3>{{ 'momApp.settings.themeStudio.title' | translate }}</h3>
+            <p class="card-subtitle">{{ 'momApp.settings.themeStudio.cardSubtitle' | translate }}</p>
+          </div>
+          <nz-tag [nzColor]="isThemeStudioLocked ? 'gold' : 'green'">
+            {{ themeAccessLabelKey | translate }}
+          </nz-tag>
+        </div>
+
+        <div class="theme-studio-layout">
+          <div
+            class="theme-preview"
+            [ngClass]="themePreviewClass"
+            [style.--preview-start]="previewPrimaryColor"
+            [style.--preview-end]="previewSecondaryColor"
+          >
+            <div class="preview-topbar"></div>
+            <div class="preview-body">
+              <div class="preview-sidebar">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+              <div class="preview-panel">
+                <strong>{{ 'momApp.settings.themeStudio.previewTitle' | translate }}</strong>
+                <p>{{ 'momApp.settings.themeStudio.previewSubtitle' | translate }}</p>
+                <div class="preview-actions">
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="theme-controls">
+            <div class="theme-control-group">
+              <div class="theme-control-head">
+                <strong>{{ 'momApp.settings.themeStudio.accent.title' | translate }}</strong>
+                <span>{{ 'momApp.settings.themeStudio.accent.subtitle' | translate }}</span>
+              </div>
+              <div class="theme-swatch-grid">
+                <button
+                  type="button"
+                  class="theme-swatch"
+                  *ngFor="let option of accentOptions"
+                  [class.active]="themeAccent === option.value"
+                  [disabled]="isThemeStudioLocked"
+                  (click)="selectAccent(option.value)"
+                >
+                  <span class="swatch-dot" [ngClass]="'swatch-dot--' + option.value"></span>
+                  <span>
+                    <strong>{{ option.labelKey | translate }}</strong>
+                    <small>{{ option.descriptionKey | translate }}</small>
+                  </span>
+                </button>
+              </div>
+            </div>
+
+            <div class="custom-color-panel" [class.custom-color-panel--active]="themeAccent === 'custom'">
+              <div class="theme-control-head">
+                <strong>{{ 'momApp.settings.themeStudio.custom.title' | translate }}</strong>
+                <span>{{ 'momApp.settings.themeStudio.custom.subtitle' | translate }}</span>
+              </div>
+              <div class="custom-color-grid">
+                <label class="custom-color-field">
+                  <span>{{ 'momApp.settings.themeStudio.custom.primary' | translate }}</span>
+                  <div class="custom-color-inputs">
+                    <input
+                      type="color"
+                      [value]="themeCustomPrimary"
+                      [disabled]="isThemeStudioLocked"
+                      (input)="updateCustomColor('primary', $any($event.target).value)"
+                    />
+                    <input
+                      nz-input
+                      maxlength="7"
+                      [value]="themeCustomPrimary"
+                      [disabled]="isThemeStudioLocked"
+                      (change)="updateCustomColor('primary', $any($event.target).value)"
+                    />
+                  </div>
+                </label>
+                <label class="custom-color-field">
+                  <span>{{ 'momApp.settings.themeStudio.custom.secondary' | translate }}</span>
+                  <div class="custom-color-inputs">
+                    <input
+                      type="color"
+                      [value]="themeCustomSecondary"
+                      [disabled]="isThemeStudioLocked"
+                      (input)="updateCustomColor('secondary', $any($event.target).value)"
+                    />
+                    <input
+                      nz-input
+                      maxlength="7"
+                      [value]="themeCustomSecondary"
+                      [disabled]="isThemeStudioLocked"
+                      (change)="updateCustomColor('secondary', $any($event.target).value)"
+                    />
+                  </div>
+                </label>
+              </div>
+              <div class="custom-color-value">
+                <span nz-icon nzType="bg-colors"></span>
+                {{ customColorLabel }}
+              </div>
+            </div>
+
+            <div class="theme-control-grid">
+              <div class="theme-control-group">
+                <div class="theme-control-head">
+                  <strong>{{ 'momApp.settings.themeStudio.density.title' | translate }}</strong>
+                </div>
+                <div class="theme-segment">
+                  <button
+                    type="button"
+                    *ngFor="let option of densityOptions"
+                    [class.active]="themeDensity === option.value"
+                    [disabled]="isThemeStudioLocked"
+                    (click)="selectDensity(option.value)"
+                  >
+                    <strong>{{ option.labelKey | translate }}</strong>
+                    <small>{{ option.descriptionKey | translate }}</small>
+                  </button>
+                </div>
+              </div>
+
+              <div class="theme-control-group">
+                <div class="theme-control-head">
+                  <strong>{{ 'momApp.settings.themeStudio.radius.title' | translate }}</strong>
+                </div>
+                <div class="theme-segment">
+                  <button
+                    type="button"
+                    *ngFor="let option of radiusOptions"
+                    [class.active]="themeRadius === option.value"
+                    [disabled]="isThemeStudioLocked"
+                    (click)="selectRadius(option.value)"
+                  >
+                    <strong>{{ option.labelKey | translate }}</strong>
+                    <small>{{ option.descriptionKey | translate }}</small>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="theme-locked-copy" *ngIf="isThemeStudioLocked">
+              <span nz-icon nzType="lock"></span>
+              {{ 'momApp.settings.themeStudio.lockedHint' | translate }}
+            </div>
+          </div>
+        </div>
+      </nz-card>
+
+      <div class="settings-card-pair">
+      <nz-card class="table-card settings-card settings-card--compact" nzBorderless>
+        <div class="settings-card__head">
+          <h3>{{ 'momApp.settings.notifications.title' | translate }}</h3>
           <span class="pill-chip">
             <span nz-icon nzType="clock-circle"></span>
             {{ reminderHourDisplay }}
@@ -142,10 +306,9 @@
         </div>
       </nz-card>
 
-      <!-- Preferences -->
-      <nz-card class="table-card settings-card" nzBorderless>
+      <nz-card class="table-card settings-card settings-card--compact" nzBorderless>
         <div class="settings-card__head">
-          <h3>Tùy chọn chung</h3>
+          <h3>{{ 'momApp.settings.preferences.title' | translate }}</h3>
         </div>
 
         <div class="setting-row">
@@ -154,8 +317,8 @@
               <span nz-icon nzType="dollar" nzTheme="outline"></span>
             </div>
             <div>
-              <p class="setting-title">Tiền tệ hiển thị</p>
-              <span class="setting-description">Đơn vị tiền tệ mặc định cho chi tiêu gia đình</span>
+              <p class="setting-title">{{ 'momApp.settings.preferences.currencyTitle' | translate }}</p>
+              <span class="setting-description">{{ 'momApp.settings.preferences.currencyDesc' | translate }}</span>
             </div>
           </div>
           <div class="setting-control">
@@ -173,21 +336,21 @@
               <span nz-icon nzType="calendar" nzTheme="outline"></span>
             </div>
             <div>
-              <p class="setting-title">Ngày bắt đầu tuần</p>
-              <span class="setting-description">Chọn ngày đầu tiên trong tuần trên lịch trình</span>
+              <p class="setting-title">{{ 'momApp.settings.preferences.weekStartTitle' | translate }}</p>
+              <span class="setting-description">{{ 'momApp.settings.preferences.weekStartDesc' | translate }}</span>
             </div>
           </div>
           <div class="setting-control">
             <nz-select [(ngModel)]="startOfWeek" class="settings-select">
-              <nz-option nzValue="MONDAY" nzLabel="Thứ Hai"></nz-option>
-              <nz-option nzValue="SUNDAY" nzLabel="Chủ Nhật"></nz-option>
+              <nz-option nzValue="MONDAY" [nzLabel]="'momApp.settings.preferences.monday' | translate"></nz-option>
+              <nz-option nzValue="SUNDAY" [nzLabel]="'momApp.settings.preferences.sunday' | translate"></nz-option>
             </nz-select>
           </div>
         </div>
       </nz-card>
+      </div>
     </div>
 
-    <!-- Right Column Summary -->
     <nz-card class="table-card settings-summary-card animate-fade-in">
       <div class="summary-top">
         <h3>{{ 'momApp.settings.modal.title' | translate }}</h3>
@@ -195,6 +358,18 @@
       </div>
 
       <div class="summary-list">
+        <div class="summary-item">
+          <span>{{ 'momApp.settings.appearance.modeTitle' | translate }}</span>
+          <strong>{{ selectedTheme === 'dark' ? ('momApp.settings.appearance.dark' | translate) : ('momApp.settings.appearance.light' | translate) }}</strong>
+        </div>
+        <div class="summary-item">
+          <span>{{ 'momApp.settings.themeStudio.accent.title' | translate }}</span>
+          <strong>{{ isThemeStudioLocked ? ('momApp.settings.themeStudio.locked' | translate) : (('momApp.settings.themeStudio.accent.' + themeAccent) | translate) }}</strong>
+        </div>
+        <div class="summary-item" *ngIf="!isThemeStudioLocked && themeAccent === 'custom'">
+          <span>{{ 'momApp.settings.themeStudio.custom.title' | translate }}</span>
+          <strong>{{ customColorLabel }}</strong>
+        </div>
         <div class="summary-item">
           <span>{{ 'momApp.settings.dailyReminder.title' | translate }}</span>
           <strong>{{ notificationEnabled ? ('commonValues.yes' | translate) : ('commonValues.no' | translate) }}</strong>
@@ -213,7 +388,6 @@
   </div>
 </section>
 
-<!-- Save Modal -->
 <nz-modal
   [(nzVisible)]="isSaveModalVisible"
   [nzTitle]="settingsModalTitleTpl"
@@ -223,27 +397,40 @@
   [nzOkText]="'commonActions.save' | translate"
   [nzCancelText]="'commonActions.cancel' | translate"
   (nzOnCancel)="closeSaveModal()"
-  (nzOnOk)="confirmSaveSettings()">
-<ng-template #settingsModalTitleTpl>
-  <div style="display:flex;align-items:center;gap:12px">
-    <span class="modal-title-icon-wrap modal-title-icon-wrap--yellow">
-      <span nz-icon nzType="setting"></span>
-    </span>
-    <span class="modal-title-text">
-      <span class="modal-title-main">Xác nhận thay đổi cài đặt</span>
-      <span class="modal-title-sub">Bạn có chắc chắn muốn lưu lại các thay đổi không?</span>
-    </span>
-  </div>
-</ng-template>
+  (nzOnOk)="confirmSaveSettings()"
+>
+  <ng-template #settingsModalTitleTpl>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="modal-title-icon-wrap modal-title-icon-wrap--yellow">
+        <span nz-icon nzType="setting"></span>
+      </span>
+      <span class="modal-title-text">
+        <span class="modal-title-main">{{ 'momApp.settings.modal.confirmTitle' | translate }}</span>
+        <span class="modal-title-sub">{{ 'momApp.settings.modal.confirmSubtitle' | translate }}</span>
+      </span>
+    </div>
+  </ng-template>
   <ng-container *nzModalContent>
-    <p>Hệ thống sẽ cập nhật và áp dụng ngay các cài đặt mới của bạn.</p>
+    <p>{{ 'momApp.settings.modal.confirmBody' | translate }}</p>
     <div class="modal-summary">
       <div class="modal-summary__item">
-        <span>Giao diện (Theme)</span>
-        <strong>{{ selectedTheme === 'dark' ? 'Tối' : 'Sáng' }}</strong>
+        <span>{{ 'momApp.settings.appearance.modeTitle' | translate }}</span>
+        <strong>{{ selectedTheme === 'dark' ? ('momApp.settings.appearance.dark' | translate) : ('momApp.settings.appearance.light' | translate) }}</strong>
       </div>
       <div class="modal-summary__item">
-        <span>Ngôn ngữ (Language)</span>
+        <span>{{ 'momApp.settings.themeStudio.title' | translate }}</span>
+        <strong>{{ themeAccessLabelKey | translate }}</strong>
+      </div>
+      <div class="modal-summary__item" *ngIf="!isThemeStudioLocked">
+        <span>{{ 'momApp.settings.themeStudio.accent.title' | translate }}</span>
+        <strong>{{ ('momApp.settings.themeStudio.accent.' + themeAccent) | translate }}</strong>
+      </div>
+      <div class="modal-summary__item" *ngIf="!isThemeStudioLocked && themeAccent === 'custom'">
+        <span>{{ 'momApp.settings.themeStudio.custom.title' | translate }}</span>
+        <strong>{{ customColorLabel }}</strong>
+      </div>
+      <div class="modal-summary__item">
+        <span>{{ 'momApp.settings.appearance.languageTitle' | translate }}</span>
         <strong>{{ selectedLanguage === 'vi' ? 'Tiếng Việt' : 'English' }}</strong>
       </div>
       <div class="modal-summary__item">
@@ -255,7 +442,7 @@
         <strong>{{ reminderHourDisplay }}</strong>
       </div>
       <div class="modal-summary__item">
-        <span>Tiền tệ (Currency)</span>
+        <span>{{ 'momApp.settings.preferences.currencyTitle' | translate }}</span>
         <strong>{{ currency }}</strong>
       </div>
     </div>

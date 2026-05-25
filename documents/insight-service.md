@@ -96,3 +96,33 @@ Hệ thống ghi nhận quá trình tự động sửa chữa diễn ra thành c
   2. Quá trình repair tự động cập nhật checksum của phiên bản 2 trong database về giá trị local `827217941` chỉ trong `0.048s`.
   3. Quá trình kiểm thực (`DbValidate`) vượt qua thành công tốt đẹp.
   4. Ứng dụng `insight-service` đã khởi chạy thành công hoàn toàn và đang lắng nghe sự kiện từ Kafka bình thường.
+
+---
+
+## 4. Nhật Ký Nâng Cấp: Tính năng Xem Mật Khẩu Tệp Tin Báo Cáo (View Plaintext Password)
+
+### 4.1. Bối Cảnh Yêu Cầu
+Để hỗ trợ ban quản trị (Admin) trong việc hỗ trợ người dùng khi họ quên mật khẩu giải nén file báo cáo tháng `.xlsx` đã tải xuống từ hệ thống, hệ thống cần hỗ trợ hiển thị mật khẩu thô của file báo cáo tại trang quản trị `http://localhost:4200/admin/export-passwords` thay vì chỉ hiển thị các ký tự mặt nạ `********`.
+
+### 4.2. Thiết Kế & Giải Pháp Kỹ Thuật
+
+#### 4.2.1. Thay đổi cấu trúc cơ sở dữ liệu (Database Schema Change)
+1. Tạo tệp DB Migration Flyway mới: [`V3__add_password_raw_to_insight_export_files.sql`](file:///d:/AI-AGENT/BabySystem/codebase/backend/insight-service/src/main/resources/db/migration/V3__add_password_raw_to_insight_export_files.sql).
+2. Thêm cột `password_raw VARCHAR(128)` cho phép chứa chuỗi ký tự mật khẩu chưa băm của tệp báo cáo.
+
+#### 4.2.2. Xử lý phía Backend (Insight Service)
+1. Cập nhật [`InsightExportFileEntity.java`](file:///d:/AI-AGENT/BabySystem/codebase/backend/insight-service/src/main/java/com/mom/insight/domain/InsightExportFileEntity.java): bổ sung ánh xạ cho cột mới `@Column(name = "password_raw", length = 128) private String passwordRaw;`.
+2. Cập nhật record DTO [`InsightExportFileResponse.java`](file:///d:/AI-AGENT/BabySystem/codebase/backend/insight-service/src/main/java/com/mom/insight/controller/dto/InsightExportFileResponse.java): bổ sung trường `String passwordRaw` để chuyển đổi qua REST API.
+3. Cập nhật [`InsightExportService.java`](file:///d:/AI-AGENT/BabySystem/codebase/backend/insight-service/src/main/java/com/mom/insight/service/InsightExportService.java):
+   * Khi ghi nhận một bản ghi xuất tệp thành công (`exportMonthly`), lưu trữ mật khẩu rõ vào cột `passwordRaw` bên cạnh các cột băm bảo mật (`passwordHash`, `passwordSalt`).
+   * Trong hàm ánh xạ DTO `toResponse`, truyền trường `entity.getPasswordRaw()` vào `InsightExportFileResponse`.
+
+#### 4.2.3. Cải tiến giao diện người dùng (Premium Frontend UI/UX)
+1. Cập nhật interface `ExportPasswordRecord` trong [`admin-export-passwords.component.ts`](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/app/admin/export-passwords/admin-export-passwords.component.ts) để khai báo trường `passwordRaw?: string` và local state `showPassword?: boolean` để điều khiển trạng thái ẩn/hiện mật khẩu của từng dòng bản ghi độc lập.
+2. Thiết kế giao diện tại [`admin-export-passwords.component.html`](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/app/admin/export-passwords/admin-export-passwords.component.html):
+   * Thay thế cột hiển thị Masked cố định bằng bộ bọc `password-wrapper` trực quan.
+   * Thêm nút hành động Toggle Visibility (hình con mắt `eye`/`eye-invisible`) kèm hiệu ứng tooltip hướng dẫn rõ ràng tùy theo trạng thái ẩn/hiện (`momApp.admin.exportPasswords.actions.showPassword` / `hidePassword`).
+3. Tối ưu CSS tại [`admin-export-passwords.component.css`](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/app/admin/export-passwords/admin-export-passwords.component.css):
+   * Cấu hình chuyển động chuyển đổi `transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)` cho thẻ hiển thị mật khẩu.
+   * Thêm tương tác hover tinh tế cho nút Toggle mắt: đổi màu sắc sang màu xanh biển `#2563eb` và ánh sáng nền nhẹ, tạo trải nghiệm hiện đại.
+

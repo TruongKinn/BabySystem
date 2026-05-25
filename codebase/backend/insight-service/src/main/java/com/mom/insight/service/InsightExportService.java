@@ -96,6 +96,7 @@ public class InsightExportService {
         entity.setPasswordSalt(passwordHash.salt());
         entity.setPasswordAlgorithm(passwordHash.algorithm());
         entity.setPasswordMasked(maskPassword(password));
+        entity.setPasswordRaw(password);
         entity.setFileSizeBytes(encryptedWorkbook.length);
         entity.setExportedByUserId(UserContext.getUserId());
         exportFileRepository.save(entity);
@@ -188,12 +189,16 @@ public class InsightExportService {
     }
 
     private InsightExportFileResponse toResponse(InsightExportFileEntity entity) {
+        String passwordRaw = entity.getPasswordRaw() != null
+                ? entity.getPasswordRaw()
+                : entity.getPasswordMasked();
         return new InsightExportFileResponse(
                 entity.getId(),
                 entity.getFamilyId(),
                 entity.getReportMonth(),
                 entity.getFileName(),
                 entity.getPasswordMasked(),
+                passwordRaw,
                 entity.getPasswordAlgorithm(),
                 entity.getFileSizeBytes(),
                 entity.getExportedByUserId(),

@@ -1,9 +1,9 @@
 import { CommonModule, CurrencyPipe, DecimalPipe } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
-import { catchError, finalize, forkJoin, of } from 'rxjs';
+import { catchError, finalize, forkJoin, of, Subscription } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -128,8 +128,10 @@ export class ExpensesComponent implements OnInit {
 
   isViewerModalVisible = false;
   selectedViewerFile: FileMetadata | null = null;
-  sanitizedViewerUrl: SafeResourceUrl | null = null;
+  sanitizedViewerUrl: SafeResourceUrl | SafeUrl | null = null;
   isLoadingViewer = false;
+  private viewerObjectUrl: string | null = null;
+  private viewerRequest: Subscription | null = null;
 
   readonly createExpenseForm = this.fb.group({
     amount: [null as number | null, [Validators.required, Validators.min(1)]],
@@ -494,27 +496,48 @@ export class ExpensesComponent implements OnInit {
   }
 
   viewReceipt(file: FileMetadata): void {
+    this.viewerRequest?.unsubscribe();
+    this.viewerRequest = null;
+    this.revokeViewerObjectUrl();
     this.selectedViewerFile = file;
     this.isViewerModalVisible = true;
     this.isLoadingViewer = true;
     this.sanitizedViewerUrl = null;
+    const fileName = (file.originalFileName || '').toLowerCase();
 
-    this.command.getFileViewUrl(file.id).subscribe({
-      next: (url) => {
+    this.viewerRequest = this.command.getFileViewBlob(file.id)
+      .pipe(finalize(() => {
         this.isLoadingViewer = false;
-        this.sanitizedViewerUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
-      },
-      error: (err) => {
-        this.isLoadingViewer = false;
-        this.notification.error(
-          this.i18n.translate('common.errorTitle'),
-          err?.error?.message || 'Không thể tải tài liệu để xem trực tiếp.'
-        );
-      }
-    });
+        this.viewerRequest = null;
+      }))
+      .subscribe({
+        next: (blob: Blob) => {
+          if (!this.isViewerModalVisible || this.selectedViewerFile?.id !== file.id || !blob || blob.size === 0) {
+            return;
+          }
+
+          const viewerBlob = blob.type
+            ? blob
+            : blob.slice(0, blob.size, this.getViewerFallbackMimeType(fileName));
+          const viewerUrl = URL.createObjectURL(viewerBlob);
+          this.viewerObjectUrl = viewerUrl;
+          this.sanitizedViewerUrl = fileName.endsWith('.pdf')
+            ? this.sanitizer.bypassSecurityTrustResourceUrl(viewerUrl)
+            : this.sanitizer.bypassSecurityTrustUrl(viewerUrl);
+        },
+        error: (err: any) => {
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            err?.error?.message || 'Không thể tải tài liệu để xem trực tiếp.'
+          );
+        }
+      });
   }
 
   closeViewerModal(): void {
+    this.viewerRequest?.unsubscribe();
+    this.viewerRequest = null;
+    this.revokeViewerObjectUrl();
     this.isViewerModalVisible = false;
     this.selectedViewerFile = null;
     this.sanitizedViewerUrl = null;
@@ -890,6 +913,23 @@ export class ExpensesComponent implements OnInit {
         this.receiptFiles = [];
       }
     });
+  }
+
+  private getViewerFallbackMimeType(fileName: string): string {
+    if (fileName.endsWith('.pdf')) return 'application/pdf';
+    if (fileName.endsWith('.png')) return 'image/png';
+    if (fileName.endsWith('.jpg') || fileName.endsWith('.jpeg')) return 'image/jpeg';
+    if (fileName.endsWith('.gif')) return 'image/gif';
+    if (fileName.endsWith('.svg')) return 'image/svg+xml';
+    if (fileName.endsWith('.webp')) return 'image/webp';
+    return 'application/octet-stream';
+  }
+
+  private revokeViewerObjectUrl(): void {
+    if (this.viewerObjectUrl) {
+      URL.revokeObjectURL(this.viewerObjectUrl);
+      this.viewerObjectUrl = null;
+    }
   }
 
   private isPremiumRequired(err: any, featureKey: string): boolean {

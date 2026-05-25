@@ -6,7 +6,8 @@ export const PREMIUM_FEATURE_KEYS = {
   familyCollaborationPlus: 'family_collaboration_plus',
   medicalVaultExport: 'medical_vault_export',
   unlimitedMemory: 'unlimited_memory',
-  currencyExchange: 'currency_exchange'
+  currencyExchange: 'currency_exchange',
+  themeCustomization: 'theme_customization'
 } as const;
 
 export type PremiumFeatureKey = typeof PREMIUM_FEATURE_KEYS[keyof typeof PREMIUM_FEATURE_KEYS];

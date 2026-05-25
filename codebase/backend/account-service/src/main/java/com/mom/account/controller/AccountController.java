@@ -24,6 +24,7 @@ import com.mom.account.controller.dto.UpdateFamilyRequest;
 import com.mom.account.controller.dto.UpdatePreferencesRequest;
 import com.mom.account.controller.dto.UpdateProfileRequest;
 import com.mom.account.controller.dto.UserResponse;
+import com.mom.account.controller.dto.UserPreferences;
 import com.mom.account.domain.FamilyRole;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpHeaders;
@@ -65,6 +66,11 @@ public class AccountController {
     @GetMapping("/users/{id}")
     public ApiResponse<UserResponse> getUser(@PathVariable("id") Long userId) {
         return ApiResponse.ok("Success", accountService.getUser(userId));
+    }
+
+    @GetMapping("/users/{id}/preferences")
+    public ApiResponse<UserPreferences> getPreferences(@PathVariable("id") Long userId) {
+        return ApiResponse.ok("Success", accountService.getPreferences(userId));
     }
 
     @GetMapping("/users/lookup")

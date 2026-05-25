@@ -8,6 +8,7 @@ public record InsightExportFileResponse(
         String reportMonth,
         String fileName,
         String passwordMasked,
+        String passwordRaw,
         String passwordAlgorithm,
         long fileSizeBytes,
         Long exportedByUserId,

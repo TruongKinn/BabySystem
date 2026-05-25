@@ -49,7 +49,8 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
             "/actuator",
             "/v3/api-docs",
             "/swagger-ui",
-            "/gateway/fallback");
+            "/gateway/fallback",
+            "/file/files/template/excel");
 
     private final WebClient.Builder webClientBuilder;
     private final GatewayErrorResponseFactory errorResponseFactory;
@@ -82,7 +83,7 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
                 ? exchange.getRequest().getMethod().name()
                 : "";
 
-        String token = extractBearerToken(exchange.getRequest().getHeaders());
+        String token = extractBearerToken(exchange);
         if (StringUtils.hasText(token)) {
             return authorizeByBearer(requestMethod, requestPath, token, exchange)
                     .flatMap(tuple -> {
@@ -157,6 +158,16 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
                     ServerWebExchange mutatedExchange = exchange.mutate().request(mutatedRequest).build();
 
                     if (Boolean.TRUE.equals(access.admin())) {
+                        return reactor.util.function.Tuples.of(AuthDecision.allowed("BEARER"), mutatedExchange);
+                    }
+                    // Bổ sung ngoại lệ: Cho phép người dùng có token hợp lệ xem tệp trực tiếp qua endpoint /view
+                    // Hệ thống vẫn tuyệt đối bảo mật vì file-service sẽ kiểm tra Data Isolation theo X-Family-Ids
+                    if (HttpMethod.GET.name().equalsIgnoreCase(requestMethod) && antPathMatcher.match("/file/files/*/view", requestPath)) {
+                        return reactor.util.function.Tuples.of(AuthDecision.allowed("BEARER"), mutatedExchange);
+                    }
+                    // Bổ sung ngoại lệ: Cho phép người dùng có token hợp lệ parse tài liệu và import dữ liệu từ tệp tin Excel/Word/PDF
+                    if (HttpMethod.POST.name().equalsIgnoreCase(requestMethod) && 
+                            (antPathMatcher.match("/file/files/parse/*", requestPath) || antPathMatcher.match("/file/files/import/*", requestPath))) {
                         return reactor.util.function.Tuples.of(AuthDecision.allowed("BEARER"), mutatedExchange);
                     }
                     if (isAllowed(access, requestMethod, requestPath)) {
@@ -280,21 +291,20 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
         if (!StringUtils.hasText(path)) {
             return true;
         }
-        if (path.startsWith("/notification/ws/")) {
+        if (path.startsWith("/notification/ws")) {
             return true;
         }
-        return PUBLIC_PATH_PREFIXES.stream().anyMatch(path::startsWith);
+        return PUBLIC_PATH_PREFIXES.stream().anyMatch(prefix -> path.startsWith(prefix));
     }
 
-    private String extractBearerToken(HttpHeaders headers) {
+    private String extractBearerToken(ServerWebExchange exchange) {
+        HttpHeaders headers = exchange.getRequest().getHeaders();
         String authorization = headers.getFirst(HttpHeaders.AUTHORIZATION);
-        if (!StringUtils.hasText(authorization)) {
-            return null;
+        if (StringUtils.hasText(authorization) && authorization.startsWith("Bearer ")) {
+            return authorization.substring(7).trim();
         }
-        if (!authorization.startsWith("Bearer ")) {
-            return null;
-        }
-        return authorization.substring(7).trim();
+        // Cho phép đọc token từ query parameter cho trường hợp nhúng iframe xem trực tiếp file
+        return exchange.getRequest().getQueryParams().getFirst("token");
     }
 
     private Long extractUserId(String token) {

@@ -11,6 +11,8 @@ import com.mom.baby.controller.dto.CreateVaccinationRequest;
 import com.mom.baby.controller.dto.GrowthRecordResponse;
 import com.mom.baby.controller.dto.UpdateBabyRequest;
 import com.mom.baby.controller.dto.VaccinationResponse;
+import com.mom.baby.controller.dto.BatchImportBabiesRequest;
+import com.mom.baby.controller.dto.BatchImportResponse;
 import com.mom.baby.service.BabyService;
 import com.mom.common.dto.ApiResponse;
 import jakarta.validation.Valid;
@@ -124,5 +126,10 @@ public class BabyController {
             @RequestParam(value = "upcomingVaccineLimit", defaultValue = "5") int upcomingVaccineLimit
     ) {
         return ApiResponse.ok("Success", babyService.getDashboard(babyId, date, trendDays, recentLogLimit, upcomingVaccineLimit));
+    }
+
+    @PostMapping("/babies/batch")
+    public ApiResponse<BatchImportResponse> importBabiesBatch(@Valid @RequestBody BatchImportBabiesRequest request) {
+        return ApiResponse.ok("Babies batch imported", babyService.importBabiesBatch(request));
     }
 }

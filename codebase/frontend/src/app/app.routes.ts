@@ -20,6 +20,7 @@ import { SettingsComponent } from './settings/settings.component';
 import { ShoppingComponent } from './shopping/shopping.component';
 import { ForbiddenComponent } from './shared/forbidden/forbidden.component';
 import { TasksComponent } from './tasks/tasks.component';
+import { DocumentsComponent } from './documents/documents.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'admin/login' },
@@ -42,8 +43,10 @@ export const routes: Routes = [
       { path: 'shopping', component: ShoppingComponent },
       { path: 'insights', component: InsightsComponent },
       { path: 'family', component: FamilyComponent },
+      { path: 'settings/theme', component: SettingsComponent },
       { path: 'settings', component: SettingsComponent },
-      { path: 'profile', component: ProfileComponent }
+      { path: 'profile', component: ProfileComponent },
+      { path: 'documents', component: DocumentsComponent }
     ]
   },
 
@@ -59,6 +62,7 @@ export const routes: Routes = [
       { path: 'premium', component: AdminPremiumComponent },
       { path: 'finance', component: AdminFinanceComponent },
       { path: 'export-passwords', component: AdminExportPasswordsComponent },
+      { path: 'settings/theme', component: SettingsComponent },
       { path: 'access', component: AdminAccessComponent },
       { path: 'permissions', component: AdminPermissionsComponent }
     ]
@@ -74,8 +78,10 @@ export const routes: Routes = [
   { path: 'shopping', redirectTo: 'app/shopping', pathMatch: 'full' },
   { path: 'insights', redirectTo: 'app/insights', pathMatch: 'full' },
   { path: 'family', redirectTo: 'app/family', pathMatch: 'full' },
+  { path: 'settings/theme', redirectTo: 'app/settings/theme', pathMatch: 'full' },
   { path: 'settings', redirectTo: 'app/settings', pathMatch: 'full' },
   { path: 'profile', redirectTo: 'app/profile', pathMatch: 'full' },
+  { path: 'documents', redirectTo: 'app/documents', pathMatch: 'full' },
 
   { path: '**', redirectTo: 'admin/login' }
 ];

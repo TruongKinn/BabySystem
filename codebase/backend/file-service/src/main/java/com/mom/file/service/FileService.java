@@ -9,6 +9,7 @@ import com.mom.file.repository.FileMetadataRepository;
 import com.mom.common.security.DataIsolationUtil;
 import io.minio.BucketExistsArgs;
 import io.minio.GetPresignedObjectUrlArgs;
+import io.minio.GetObjectArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
@@ -228,6 +229,21 @@ public class FileService {
         long existingFiles = fileMetadataRepository.countByFamilyIdAndDeletedFalse(familyId);
         if (existingFiles >= DEFAULT_NON_PREMIUM_FILE_LIMIT) {
             premiumAccessService.requireFeature(familyId, PremiumFeatures.UNLIMITED_MEMORY);
+        }
+    }
+
+    public InputStream getFileStream(Long fileId) {
+        FileMetadataEntity entity = getEntity(fileId);
+        try {
+            return minioClient.getObject(
+                    GetObjectArgs.builder()
+                            .bucket(entity.getBucketName())
+                            .object(entity.getObjectKey())
+                            .build()
+            );
+        } catch (Exception ex) {
+            log.error("Failed to get file stream from object storage for fileId={}", fileId, ex);
+            throw new IllegalStateException("Failed to get file stream from object storage: " + ex.getMessage(), ex);
         }
     }
 }

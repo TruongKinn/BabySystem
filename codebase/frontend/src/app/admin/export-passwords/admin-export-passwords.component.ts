@@ -8,6 +8,7 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -28,10 +29,13 @@ interface ExportPasswordRecord {
   reportMonth: string;
   fileName: string;
   passwordMasked: string;
+  passwordRaw?: string;
   passwordAlgorithm: string;
   fileSizeBytes: number;
   exportedByUserId?: number | null;
   createdAt: string;
+  // UI states
+  showPassword?: boolean;
 }
 
 interface ExportPasswordPageResponse {
@@ -67,6 +71,7 @@ interface UserPageResponse {
     NzCardModule,
     NzIconModule,
     NzInputModule,
+    NzModalModule,
     NzPopconfirmModule,
     NzSelectModule,
     NzTableModule,
@@ -79,6 +84,7 @@ interface UserPageResponse {
 export class AdminExportPasswordsComponent implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly message = inject(NzMessageService);
+  private readonly modal = inject(NzModalService);
   private readonly i18n = inject(I18nService);
 
   readonly apiBase = API_CONFIG.GATEWAY_URL;
@@ -86,6 +92,7 @@ export class AdminExportPasswordsComponent implements OnInit {
   loading = false;
   loadingUsers = false;
   deletingRecordId: number | null = null;
+  sendingNotificationId: number | null = null;
 
   records: ExportPasswordRecord[] = [];
   users: AdminUser[] = [];
@@ -98,6 +105,13 @@ export class AdminExportPasswordsComponent implements OnInit {
   pageIndex = 1;
   pageSize = 12;
   total = 0;
+
+  // Notification send modal state
+  notifyModalVisible = false;
+  notifyRecord: ExportPasswordRecord | null = null;
+  notifyTitle = '';
+  notifyMessage = '';
+  sendingNotify = false;
 
   ngOnInit(): void {
     this.loadUsersLookup();
@@ -227,6 +241,64 @@ export class AdminExportPasswordsComponent implements OnInit {
 
   trackByRecord(_: number, record: ExportPasswordRecord): number {
     return record.id;
+  }
+
+  openNotifyModal(record: ExportPasswordRecord): void {
+    this.notifyRecord = record;
+    const userLabel = this.userLabel(record.exportedByUserId);
+    this.notifyTitle = `Thông tin mật khẩu file báo cáo tháng ${record.reportMonth}`;
+    this.notifyMessage = `Xin chào ${userLabel},\n\nFile báo cáo "${record.fileName}" tháng ${record.reportMonth} đã được xuất.\n\nMật khẩu mở file: ${record.passwordRaw || record.passwordMasked}\n\nVui lòng giữ bí mật thông tin này.`;
+    this.notifyModalVisible = true;
+  }
+
+  closeNotifyModal(): void {
+    this.notifyModalVisible = false;
+    this.notifyRecord = null;
+    this.notifyTitle = '';
+    this.notifyMessage = '';
+  }
+
+  sendPasswordNotification(): void {
+    if (!this.notifyRecord || !this.notifyTitle.trim() || !this.notifyMessage.trim()) {
+      return;
+    }
+
+    const record = this.notifyRecord;
+    const userId = record.exportedByUserId;
+
+    if (!userId) {
+      this.message.warning('Record này không có thông tin user để gửi thông báo.');
+      return;
+    }
+
+    this.sendingNotify = true;
+    this.sendingNotificationId = record.id;
+
+    const body = {
+      familyId: record.familyId,
+      userId: userId,
+      channel: 'PUSH',
+      type: 'INFO',
+      title: this.notifyTitle.trim(),
+      message: this.notifyMessage.trim()
+    };
+
+    this.http
+      .post<ApiEnvelope<unknown>>(`${this.apiBase}/notification/api/notifications`, body)
+      .subscribe({
+        next: () => {
+          this.sendingNotify = false;
+          this.sendingNotificationId = null;
+          this.notifyModalVisible = false;
+          this.notifyRecord = null;
+          this.message.success(`Đã gửi thông báo mật khẩu tới ${this.userLabel(userId)} thành công!`);
+        },
+        error: () => {
+          this.sendingNotify = false;
+          this.sendingNotificationId = null;
+          this.message.error('Gửi thông báo thất bại. Vui lòng thử lại.');
+        }
+      });
   }
 
   private buildQueryParams(): HttpParams {

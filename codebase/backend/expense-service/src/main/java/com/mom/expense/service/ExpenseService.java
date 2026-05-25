@@ -11,6 +11,8 @@ import com.mom.expense.controller.dto.ExpenseResponse;
 import com.mom.expense.controller.dto.ExpenseSummaryResponse;
 import com.mom.expense.controller.dto.UpdateBudgetRequest;
 import com.mom.expense.controller.dto.UpdateExpenseRequest;
+import com.mom.expense.controller.dto.BatchImportExpensesRequest;
+import com.mom.expense.controller.dto.BatchImportResponse;
 import com.mom.expense.domain.BudgetEntity;
 import com.mom.expense.domain.ExpenseCategoryEntity;
 import com.mom.expense.domain.ExpenseEntity;
@@ -420,5 +422,28 @@ public class ExpenseService {
                 expense.getNote(),
                 expense.getSpentAt()
         );
+    }
+
+    @Transactional
+    @CacheEvict(value = "expense-summary", allEntries = true)
+    public BatchImportResponse importExpensesBatch(BatchImportExpensesRequest request) {
+        int success = 0;
+        int failed = 0;
+        List<BatchImportResponse.RowError> errors = new java.util.ArrayList<>();
+
+        if (request.expenses() != null) {
+            for (int i = 0; i < request.expenses().size(); i++) {
+                CreateExpenseRequest req = request.expenses().get(i);
+                try {
+                    createExpense(req);
+                    success++;
+                } catch (Exception e) {
+                    failed++;
+                    errors.add(new BatchImportResponse.RowError(i, e.getMessage()));
+                }
+            }
+        }
+
+        return new BatchImportResponse(success, failed, errors);
     }
 }

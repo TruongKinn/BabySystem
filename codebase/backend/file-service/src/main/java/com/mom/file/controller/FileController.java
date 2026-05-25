@@ -5,8 +5,12 @@ import com.mom.file.controller.dto.FileDownloadUrlResponse;
 import com.mom.file.controller.dto.FileMetadataResponse;
 import com.mom.file.service.FileService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import java.io.InputStream;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,4 +70,51 @@ public class FileController {
         fileService.deleteFile(fileId, deleteObject);
         return ApiResponse.ok("File deleted", null);
     }
+
+    @GetMapping("/files/{id}/view")
+    public ResponseEntity<InputStreamResource> viewFileContent(@PathVariable("id") Long fileId) {
+        FileMetadataResponse metadata = fileService.getFile(fileId);
+        InputStream stream = fileService.getFileStream(fileId);
+        
+        HttpHeaders headers = new HttpHeaders();
+        
+        // Sử dụng Spring ContentDisposition để encode tên file Unicode an toàn, tránh crash HTTP header do tiếng Việt có dấu
+        org.springframework.http.ContentDisposition contentDisposition = org.springframework.http.ContentDisposition.inline()
+                .filename(metadata.originalFileName(), java.nio.charset.StandardCharsets.UTF_8)
+                .build();
+        headers.setContentDisposition(contentDisposition);
+        
+        // Cho phép embed trong iframe từ bất kỳ origin nào (thay thế X-Frame-Options: ALLOWALL không hợp lệ)
+        headers.add("Content-Security-Policy", "frame-ancestors *");
+        
+        // Tự động dò tìm Content-Type chính xác dựa vào đuôi file nếu bị trống hoặc là generic octet-stream
+        String contentType = metadata.contentType();
+        if (contentType == null || contentType.isBlank() || "application/octet-stream".equalsIgnoreCase(contentType)) {
+            String fileName = metadata.originalFileName().toLowerCase();
+            if (fileName.endsWith(".pdf")) {
+                contentType = "application/pdf";
+            } else if (fileName.endsWith(".jpg") || fileName.endsWith(".jpeg")) {
+                contentType = "image/jpeg";
+            } else if (fileName.endsWith(".png")) {
+                contentType = "image/png";
+            } else if (fileName.endsWith(".gif")) {
+                contentType = "image/gif";
+            } else if (fileName.endsWith(".svg")) {
+                contentType = "image/svg+xml";
+            } else if (fileName.endsWith(".webp")) {
+                contentType = "image/webp";
+            } else if (fileName.endsWith(".txt")) {
+                contentType = "text/plain";
+            } else if (fileName.endsWith(".html") || fileName.endsWith(".htm")) {
+                contentType = "text/html";
+            }
+        }
+        
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(metadata.sizeBytes())
+                .contentType(MediaType.parseMediaType(contentType))
+                .body(new InputStreamResource(stream));
+    }
 }
+

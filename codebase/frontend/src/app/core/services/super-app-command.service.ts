@@ -316,6 +316,31 @@ export type FamilyRelation =
   | 'THANH_VIEN_KHAC';
 export type TaskStatus = 'PENDING' | 'IN_PROGRESS' | 'DONE';
 
+export interface ExcelParseRow {
+  rowNumber: number;
+  data: Record<string, any>;
+}
+
+export interface ExcelParseResponse {
+  headers: string[];
+  rows: ExcelParseRow[];
+  totalRows: number;
+}
+
+export interface DocumentParseResponse {
+  filename: string;
+  pageCount: number;
+  sizeKb: number;
+  textPreview: string;
+  author: string;
+}
+
+export interface BatchImportResponse {
+  successCount: number;
+  failedCount: number;
+  errors: { index: number; reason: string }[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -980,7 +1005,7 @@ export class SuperAppCommandService {
     }).pipe(map(() => undefined));
   }
 
-  saveUserPreferences(userId: number, prefs: { theme?: string, language?: string, currency?: string, startOfWeek?: string, notificationEnabled?: boolean, reminderTime?: string }): Observable<void> {
+  saveUserPreferences(userId: number, prefs: { theme?: string, themeAccent?: string, themeDensity?: string, themeRadius?: string, themeCustomPrimary?: string, themeCustomSecondary?: string, language?: string, currency?: string, startOfWeek?: string, notificationEnabled?: boolean, reminderTime?: string }): Observable<void> {
     return this.put(`/account/users/${userId}/preferences`, { preferences: prefs }).pipe(map(() => undefined));
   }
 
@@ -1035,11 +1060,8 @@ export class SuperAppCommandService {
     ).pipe(map((data) => data.downloadUrl));
   }
 
-  getFileViewUrl(fileId: number): Observable<string> {
-    return this.get<{ fileId: number; downloadUrl: string; expirySeconds: number }>(
-      `/file/files/${fileId}/download-url`,
-      new HttpParams().set('expirySeconds', '900').set('disposition', 'inline')
-    ).pipe(map((data) => data.downloadUrl));
+  getFileViewBlob(fileId: number): Observable<Blob> {
+    return this.http.get(`${this.apiBase}/file/files/${fileId}/view`, { responseType: 'blob' });
   }
 
   deleteFile(fileId: number): Observable<void> {
@@ -1381,5 +1403,55 @@ export class SuperAppCommandService {
   private handleError(err: any): Observable<never> {
     const message = err.error?.message || err.message || 'An unexpected error occurred';
     return throwError(() => new Error(message));
+  }
+
+  parseExcelFile(file: File): Observable<ExcelParseResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<ApiEnvelope<ExcelParseResponse>>(`${this.apiBase}/file/files/parse/excel`, formData).pipe(
+      map((response) => {
+        if (!response.success) throw new Error(response.message || 'API error');
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  parseDocxFile(file: File): Observable<DocumentParseResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<ApiEnvelope<DocumentParseResponse>>(`${this.apiBase}/file/files/parse/docx`, formData).pipe(
+      map((response) => {
+        if (!response.success) throw new Error(response.message || 'API error');
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  parsePdfFile(file: File): Observable<DocumentParseResponse> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post<ApiEnvelope<DocumentParseResponse>>(`${this.apiBase}/file/files/parse/pdf`, formData).pipe(
+      map((response) => {
+        if (!response.success) throw new Error(response.message || 'API error');
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  importExpensesBatch(expenses: any[]): Observable<BatchImportResponse> {
+    return this.post<BatchImportResponse>('/file/files/import/expenses', {
+      familyId: this.getFamilyId(),
+      expenses: expenses
+    });
+  }
+
+  importBabiesBatch(babies: any[]): Observable<BatchImportResponse> {
+    return this.post<BatchImportResponse>('/file/files/import/babies', {
+      familyId: this.getFamilyId(),
+      babies: babies
+    });
   }
 }

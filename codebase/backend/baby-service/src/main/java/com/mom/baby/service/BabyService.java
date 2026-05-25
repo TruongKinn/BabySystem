@@ -7,6 +7,8 @@ import com.mom.baby.controller.dto.BabyGrowthInsightResponse;
 import com.mom.baby.controller.dto.BabyLogResponse;
 import com.mom.baby.controller.dto.BabyResponse;
 import com.mom.baby.controller.dto.BabyVaccinationInsightResponse;
+import com.mom.baby.controller.dto.BatchImportBabiesRequest;
+import com.mom.baby.controller.dto.BatchImportResponse;
 import com.mom.baby.controller.dto.CreateBabyLogRequest;
 import com.mom.baby.controller.dto.CreateBabyRequest;
 import com.mom.baby.controller.dto.CreateGrowthRecordRequest;
@@ -456,5 +458,26 @@ public class BabyService {
         private long diaperChanges = 0;
         private long totalLogs = 0;
     }
-}
 
+    @Transactional
+    public BatchImportResponse importBabiesBatch(BatchImportBabiesRequest request) {
+        int success = 0;
+        int failed = 0;
+        List<BatchImportResponse.RowError> errors = new java.util.ArrayList<>();
+
+        if (request.babies() != null) {
+            for (int i = 0; i < request.babies().size(); i++) {
+                CreateBabyRequest req = request.babies().get(i);
+                try {
+                    createBaby(req);
+                    success++;
+                } catch (Exception e) {
+                    failed++;
+                    errors.add(new BatchImportResponse.RowError(i, e.getMessage()));
+                }
+            }
+        }
+
+        return new BatchImportResponse(success, failed, errors);
+    }
+}

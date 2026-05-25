@@ -1,0 +1,127 @@
+<div class="notification-bell-container" [class.open]="isOpen">
+  <!-- Bell button -->
+  <button
+    class="bell-btn"
+    id="notificationBellBtn"
+    (click)="toggleDropdown()"
+    [attr.aria-label]="'Thông báo' + (unreadCount > 0 ? ' - ' + unreadCount + ' chưa đọc' : '')"
+    [attr.aria-expanded]="isOpen"
+    aria-haspopup="true"
+  >
+    <svg
+      class="bell-icon"
+      [class.has-unread]="unreadCount > 0"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      width="20"
+      height="20"
+      aria-hidden="true"
+    >
+      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+    </svg>
+
+    <!-- Badge -->
+    <span
+      class="bell-badge"
+      *ngIf="unreadCount > 0"
+      aria-label="{{ unreadCount }} thông báo chưa đọc"
+    >{{ badgeLabel }}</span>
+
+    <!-- Ripple ring when new notification -->
+    <span class="bell-ring" *ngIf="unreadCount > 0" aria-hidden="true"></span>
+  </button>
+
+  <!-- Dropdown Panel -->
+  <div
+    class="notification-dropdown"
+    id="notificationDropdown"
+    role="dialog"
+    aria-label="Danh sách thông báo"
+    *ngIf="isOpen"
+  >
+    <!-- Header -->
+    <div class="nd-header">
+      <div class="nd-header-left">
+        <h3 class="nd-title">Thông báo</h3>
+        <span class="nd-unread-chip" *ngIf="unreadCount > 0">{{ unreadCount }} mới</span>
+      </div>
+      <button
+        class="nd-mark-all-btn"
+        (click)="markAllAsRead()"
+        [disabled]="unreadCount === 0 || isMarkingAll"
+        [class.loading]="isMarkingAll"
+        aria-label="Đánh dấu tất cả là đã đọc"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="14" height="14" aria-hidden="true">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Đọc tất cả
+      </button>
+    </div>
+
+    <!-- Loading State -->
+    <div class="nd-loading" *ngIf="isLoading" aria-label="Đang tải thông báo">
+      <div class="nd-spinner"></div>
+      <span>Đang tải...</span>
+    </div>
+
+    <!-- Empty State -->
+    <div class="nd-empty" *ngIf="!isLoading && notifications.length === 0">
+      <div class="nd-empty-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" width="40" height="40">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+          <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          <line x1="1" y1="1" x2="23" y2="23"/>
+        </svg>
+      </div>
+      <p class="nd-empty-text">Chưa có thông báo nào</p>
+      <span class="nd-empty-sub">Admin sẽ gửi thông báo tới đây</span>
+    </div>
+
+    <!-- Notification List -->
+    <ul class="nd-list" *ngIf="!isLoading && notifications.length > 0" role="list">
+      <li
+        *ngFor="let n of notifications; trackBy: trackById"
+        class="nd-item"
+        [class.unread]="n.status === 'UNREAD'"
+        (click)="markAsRead(n, $event)"
+        role="listitem"
+        [attr.aria-label]="n.title + ' - ' + (n.status === 'UNREAD' ? 'Chưa đọc' : 'Đã đọc')"
+      >
+        <!-- Icon -->
+        <div class="nd-item-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="16" height="16">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </div>
+
+        <!-- Content -->
+        <div class="nd-item-content">
+          <p class="nd-item-title">{{ n.title }}</p>
+          <p class="nd-item-message">{{ n.message }}</p>
+          <time class="nd-item-time" [dateTime]="n.createdAt">{{ formatTime(n.createdAt) }}</time>
+        </div>
+
+        <!-- Unread dot -->
+        <span class="nd-unread-dot" *ngIf="n.status === 'UNREAD'" aria-hidden="true"></span>
+      </li>
+    </ul>
+
+    <!-- Footer -->
+    <div class="nd-footer" *ngIf="notifications.length > 0">
+      <button class="nd-refresh-btn" (click)="loadNotifications()" aria-label="Tải lại thông báo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="13" height="13" aria-hidden="true">
+          <polyline points="23 4 23 10 17 10"/>
+          <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+        </svg>
+        Làm mới
+      </button>
+    </div>
+  </div>
+</div>

@@ -42,7 +42,7 @@ export class NotificationWebsocketService implements OnDestroy {
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
       debug: (str) => {
-        // console.log(str);
+        console.log('[WebSocket Debug]', str);
       }
     });
 

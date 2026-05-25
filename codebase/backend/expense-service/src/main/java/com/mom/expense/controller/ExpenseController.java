@@ -11,6 +11,8 @@ import com.mom.expense.controller.dto.ExpenseResponse;
 import com.mom.expense.controller.dto.ExpenseSummaryResponse;
 import com.mom.expense.controller.dto.UpdateBudgetRequest;
 import com.mom.expense.controller.dto.UpdateExpenseRequest;
+import com.mom.expense.controller.dto.BatchImportExpensesRequest;
+import com.mom.expense.controller.dto.BatchImportResponse;
 import com.mom.common.dto.ApiResponse;
 import com.mom.expense.service.ExpenseService;
 import jakarta.validation.Valid;
@@ -126,5 +128,10 @@ public class ExpenseController {
     public ApiResponse<Object> deleteExpense(@PathVariable("id") Long expenseId) {
         expenseService.deleteExpense(expenseId);
         return ApiResponse.ok("Expense deleted", null);
+    }
+
+    @PostMapping("/expenses/batch")
+    public ApiResponse<BatchImportResponse> importExpensesBatch(@Valid @RequestBody BatchImportExpensesRequest request) {
+        return ApiResponse.ok("Expenses batch imported", expenseService.importExpensesBatch(request));
     }
 }
