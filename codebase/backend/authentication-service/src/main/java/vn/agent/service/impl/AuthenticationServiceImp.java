@@ -598,20 +598,27 @@ public class AuthenticationServiceImp implements AuthenticationService {
             org.springframework.web.reactive.function.client.WebClient webClient = webClientBuilder.build();
 
             for (User admin : admins) {
-                payload.put("userId", admin.getId());
+                final Long adminId = admin.getId();
+                // Copy map to avoid concurrency issues when building async requests
+                java.util.Map<String, Object> adminPayload = new java.util.HashMap<>(payload);
+                adminPayload.put("userId", adminId);
                 
-                webClient.post()
-                        .uri(notificationServiceUri + "/api/notifications")
-                        .header("X-User-Id", String.valueOf(admin.getId()))
-                        .header("X-Family-Ids", "1")
-                        .header("X-User-Admin", "true") // Bypass isolation
-                        .bodyValue(payload)
-                        .retrieve()
-                        .toBodilessEntity()
-                        .subscribe(
-                                response -> log.info("Successfully sent password reset notification to admin userId={}", admin.getId()),
-                                error -> log.error("Failed to send password reset notification to admin userId={}", admin.getId(), error)
-                        );
+                java.util.concurrent.CompletableFuture.runAsync(() -> {
+                    try {
+                        webClient.post()
+                                .uri(notificationServiceUri + "/api/notifications")
+                                .header("X-User-Id", String.valueOf(adminId))
+                                .header("X-Family-Ids", "1")
+                                .header("X-User-Admin", "true") // Bypass isolation
+                                .bodyValue(adminPayload)
+                                .retrieve()
+                                .toBodilessEntity()
+                                .block(java.time.Duration.ofSeconds(3));
+                        log.info("Successfully sent password reset notification to admin userId={}", adminId);
+                    } catch (Exception error) {
+                        log.error("Failed to send password reset notification to admin userId={} via WebClient", adminId, error);
+                    }
+                });
             }
         } catch (Exception ex) {
             log.error("Error occurred while sending password reset notifications to admins", ex);
