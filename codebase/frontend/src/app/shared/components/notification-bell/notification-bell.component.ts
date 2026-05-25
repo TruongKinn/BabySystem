@@ -47,6 +47,7 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
   unreadCount = 0;
   isLoading = false;
   isMarkingAll = false;
+  selectedNotification: NotificationItem | null = null;
 
   private pollSub?: Subscription;
   private wsSub?: Subscription;
@@ -82,8 +83,8 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
         id: notification.id ?? Date.now(),
         title: notification.title ?? 'Thông báo mới',
         message: notification.message ?? '',
-        status: 'UNREAD',
-        createdAt: notification.createdAt ?? new Date().toISOString(),
+        status: notification.readAt ? 'READ' : 'UNREAD',
+        createdAt: notification.createdAt ?? notification.sentAt ?? new Date().toISOString(),
         type: notification.type,
       };
 
@@ -128,13 +129,20 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
     }
 
     this.http
-      .get<ApiEnvelope<NotificationItem[]>>(
+      .get<ApiEnvelope<any[]>>(
         `${API_CONFIG.GATEWAY_URL}/notification/api/notifications`,
         { params }
       )
-      .pipe(catchError(() => of({ success: false, message: '', data: [] as NotificationItem[] })))
+      .pipe(catchError(() => of({ success: false, message: '', data: [] as any[] })))
       .subscribe((res) => {
-        this.notifications = (res.data ?? []).sort(
+        this.notifications = (res.data ?? []).map((item) => ({
+          id: item.id,
+          title: item.title,
+          message: item.message,
+          status: item.readAt ? 'READ' : 'UNREAD',
+          createdAt: item.createdAt ?? item.sentAt ?? item.scheduledAt ?? new Date().toISOString(),
+          type: item.type
+        }) as NotificationItem).sort(
           (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         this.unreadCount = this.notifications.filter((n) => n.status === 'UNREAD').length;
@@ -169,7 +177,7 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
     if (notification.status === 'READ') return;
 
     this.http
-      .post<ApiEnvelope<NotificationItem>>(
+      .post<ApiEnvelope<any>>(
         `${API_CONFIG.GATEWAY_URL}/notification/api/notifications/${notification.id}/read`,
         {}
       )
@@ -179,6 +187,32 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
         this.unreadCount = Math.max(0, this.unreadCount - 1);
         this.cdr.markForCheck();
       });
+  }
+
+  selectNotification(notification: NotificationItem): void {
+    this.selectedNotification = notification;
+    
+    // Nếu chưa đọc thì đánh dấu đã đọc lên DB và giảm count ở client
+    if (notification.status === 'UNREAD') {
+      this.http
+        .post<ApiEnvelope<any>>(
+          `${API_CONFIG.GATEWAY_URL}/notification/api/notifications/${notification.id}/read`,
+          {}
+        )
+        .pipe(catchError(() => of(null)))
+        .subscribe(() => {
+          notification.status = 'READ';
+          this.unreadCount = Math.max(0, this.unreadCount - 1);
+          this.cdr.markForCheck();
+        });
+    }
+    
+    this.cdr.markForCheck();
+  }
+
+  closeDetail(): void {
+    this.selectedNotification = null;
+    this.cdr.markForCheck();
   }
 
   markAllAsRead(): void {
@@ -191,7 +225,7 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
     let completed = 0;
     unread.forEach((n) => {
       this.http
-        .post<ApiEnvelope<NotificationItem>>(
+        .post<ApiEnvelope<any>>(
           `${API_CONFIG.GATEWAY_URL}/notification/api/notifications/${n.id}/read`,
           {}
         )
@@ -222,6 +256,22 @@ export class NotificationBellComponent implements OnInit, OnDestroy {
     if (diffDay < 7) return `${diffDay} ngày trước`;
 
     return date.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  formatFullTime(dateStr: string): string {
+    const date = new Date(dateStr);
+    if (isNaN(date.getTime())) return '';
+    
+    const pad = (num: number) => String(num).padStart(2, '0');
+    
+    const hours = pad(date.getHours());
+    const minutes = pad(date.getMinutes());
+    const seconds = pad(date.getSeconds());
+    const day = pad(date.getDate());
+    const month = pad(date.getMonth() + 1);
+    const year = date.getFullYear();
+    
+    return `${hours}:${minutes}:${seconds} ngày ${day}/${month}/${year}`;
   }
 
   get badgeLabel(): string {

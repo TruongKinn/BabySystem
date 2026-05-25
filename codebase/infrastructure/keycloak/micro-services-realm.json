@@ -54,6 +54,36 @@
           "temporary": false
         }
       ]
+    },
+    {
+      "username": "truongtv11",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Truong",
+      "lastName": "TV11",
+      "email": "truongtv11@local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ]
+    },
+    {
+      "username": "chinhntt",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Chinh",
+      "lastName": "NTT",
+      "email": "chinhntt@local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "demo123",
+          "temporary": false
+        }
+      ]
     }
   ]
 }

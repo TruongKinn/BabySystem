@@ -153,7 +153,8 @@ public class NotificationService {
                 entity.getSentAt(),
                 entity.getReadAt(),
                 entity.getStatus(),
-                entity.getErrorMessage()
+                entity.getErrorMessage(),
+                entity.getCreatedAt()
         );
     }
 

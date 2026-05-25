@@ -7,6 +7,8 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.agent.controller.request.ForceChangePasswordRequest;
+import vn.agent.controller.request.GithubExchangeRequest;
+import vn.agent.controller.request.GoogleExchangeRequest;
 import vn.agent.controller.request.LoginRequest;
 import vn.agent.controller.response.TokenResponse;
 import vn.agent.service.AuthenticationService;
@@ -37,6 +39,22 @@ public record AuthenticationController(AuthenticationService authenticationServi
     public ResponseEntity<TokenResponse> exchangeKeycloakToken(
             @RequestBody vn.agent.controller.request.KeycloakExchangeRequest request) {
         return new ResponseEntity<>(authenticationService.exchangeKeycloakToken(request), OK);
+    }
+
+    @Operation(summary = "Exchange Google Token", description = "Exchange Google ID token for internal JWT token")
+    @PostMapping("/exchange-google-token")
+    @ResponseStatus(OK)
+    public ResponseEntity<TokenResponse> exchangeGoogleToken(
+            @RequestBody GoogleExchangeRequest request) {
+        return new ResponseEntity<>(authenticationService.exchangeGoogleToken(request), OK);
+    }
+
+    @Operation(summary = "Exchange GitHub Token", description = "Exchange GitHub authorization code for internal JWT token")
+    @PostMapping("/exchange-github-token")
+    @ResponseStatus(OK)
+    public ResponseEntity<TokenResponse> exchangeGithubToken(
+            @RequestBody GithubExchangeRequest request) {
+        return new ResponseEntity<>(authenticationService.exchangeGithubToken(request), OK);
     }
 
     @Operation(summary = "Force Change Password", description = "Change temporary password when login requires password change")

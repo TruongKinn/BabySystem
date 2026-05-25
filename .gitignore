@@ -13,3 +13,6 @@ uploads/
 # Logs
 run-logs/
 *.log
+
+# Sensitive Credentials
+documents/authentication-service-secrets.md

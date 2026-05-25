@@ -41,6 +41,10 @@ import vn.agent.repository.UserRepository;
 import vn.agent.service.AuthenticationService;
 import vn.agent.service.JwtService;
 import vn.agent.client.KeycloakUserInfoClient;
+import vn.agent.client.GoogleAuthClient;
+import vn.agent.client.GithubAuthClient;
+import vn.agent.controller.request.GithubExchangeRequest;
+import vn.agent.controller.request.GoogleExchangeRequest;
 
 @Service
 @RequiredArgsConstructor
@@ -55,6 +59,8 @@ public class AuthenticationServiceImp implements AuthenticationService {
     private final org.springframework.data.redis.core.StringRedisTemplate stringRedisTemplate;
     private final vn.agent.service.CaptchaService captchaService;
     private final KeycloakUserInfoClient keycloakUserInfoClient;
+    private final GoogleAuthClient googleAuthClient;
+    private final GithubAuthClient githubAuthClient;
 
     @org.springframework.beans.factory.annotation.Value("${spring.keycloak.url}")
     private String keycloakUrl;
@@ -260,6 +266,71 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     @Override
     @Transactional
+    public TokenResponse exchangeGoogleToken(GoogleExchangeRequest request) {
+        Map<String, Object> userInfo = googleAuthClient.fetchUserInfo(request.getIdToken());
+
+        String email = stringValue(userInfo.get("email"));
+        if (org.apache.commons.lang3.StringUtils.isBlank(email)) {
+            throw new UnauthorizedException("Cannot extract email from Google token");
+        }
+
+        // Derive a sensible username from the email prefix
+        String username = email.split("@")[0];
+
+        Map<String, Object> mappedUser = new java.util.HashMap<>();
+        mappedUser.put("email", email);
+        mappedUser.put("given_name", userInfo.get("given_name"));
+        mappedUser.put("family_name", userInfo.get("family_name"));
+
+        User user = resolveOrCreateLocalUser(mappedUser, username);
+        assertUserCanAuthenticate(user);
+
+        return generateSystemToken(user,
+                request.getIdToken().substring(0, Math.min(50, request.getIdToken().length())),
+                request.getPlatform(), request.getDeviceToken());
+    }
+
+    @Override
+    @Transactional
+    public TokenResponse exchangeGithubToken(GithubExchangeRequest request) {
+        Map<String, Object> userInfo = githubAuthClient.fetchUserInfo(request.getCode());
+
+        String githubLogin = stringValue(userInfo.get("login"));
+        if (org.apache.commons.lang3.StringUtils.isBlank(githubLogin)) {
+            throw new UnauthorizedException("Cannot extract username from GitHub profile");
+        }
+
+        String email = stringValue(userInfo.get("email"));
+        if (org.apache.commons.lang3.StringUtils.isBlank(email)) {
+            // Fallback: generate a placeholder so we can still create the user
+            email = githubLogin + "@github.local";
+        }
+
+        // Parse full name
+        String name = stringValue(userInfo.get("name"));
+        String firstName = githubLogin;
+        String lastName = "";
+        if (org.apache.commons.lang3.StringUtils.isNotBlank(name)) {
+            String[] parts = name.split(" ", 2);
+            firstName = parts[0];
+            lastName = parts.length > 1 ? parts[1] : "";
+        }
+
+        Map<String, Object> mappedUser = new java.util.HashMap<>();
+        mappedUser.put("email", email);
+        mappedUser.put("given_name", firstName);
+        mappedUser.put("family_name", lastName);
+
+        User user = resolveOrCreateLocalUser(mappedUser, githubLogin);
+        assertUserCanAuthenticate(user);
+
+        return generateSystemToken(user,
+                request.getCode().substring(0, Math.min(50, request.getCode().length())),
+                request.getPlatform(), request.getDeviceToken());
+    }
+
+    @Override
+    @Transactional
     public void forceChangePassword(ForceChangePasswordRequest request) {
         User user = resolveUserForBearerLogin(request.getUsername());
         if (user == null) {
@@ -393,6 +464,35 @@ public class AuthenticationServiceImp implements AuthenticationService {
 
     private String stringValue(Object value) {
         return value == null ? null : value.toString();
+    }
+
+    private TokenResponse generateSystemToken(User user, String tokenRef, String platform, String deviceToken) {
+        String accessToken = jwtService.generateToken(user.getId(), user.getUsername(), user.getFirstName(),
+                user.getLastName(), user.getAuthorities());
+
+        String refreshToken = jwtService.generateRefreshToken(user.getId(), user.getUsername(), user.getFirstName(),
+                user.getLastName(), user.getAuthorities());
+
+        List<String> roleList = user.getRoles().stream().map(role -> role.getRole().getName()).toList();
+
+        tokenRepository.save(vn.agent.model.RedisToken.builder()
+                .id(tokenRef)
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .flatForm(platform != null ? platform : "web")
+                .deviceToken(deviceToken != null ? deviceToken : "web-device")
+                .roles(roleList.toString())
+                .build());
+
+        return TokenResponse.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .userId(user.getId())
+                .username(user.getUsername())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .avatarUrl(resolveAvatarUrl(user))
+                .build();
     }
 
     private void handleLoginFail(String loginFailKey, int currentFails) {

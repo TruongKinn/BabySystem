@@ -31,6 +31,8 @@ const shouldSkipAuth = (url: string): boolean => {
     url.includes('/auth/access-token') ||
     url.includes('/auth/refresh-token') ||
     url.includes('/auth/exchange-keycloak-token') ||
+    url.includes('/auth/exchange-google-token') ||
+    url.includes('/auth/exchange-github-token') ||
     url.includes('/auth/captcha') ||
     url.includes('/realms/')
   );

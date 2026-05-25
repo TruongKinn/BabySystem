@@ -19,6 +19,7 @@ public record NotificationResponse(
         OffsetDateTime sentAt,
         OffsetDateTime readAt,
         NotificationStatus status,
-        String errorMessage
+        String errorMessage,
+        OffsetDateTime createdAt
 ) {
 }

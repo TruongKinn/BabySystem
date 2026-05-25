@@ -27,6 +27,7 @@ springdoc:
     enabled: true
   swagger-ui:
     enabled: true
+
 openapi:
   service:
     api-docs: authentication-service
@@ -39,3 +40,10 @@ jwt:
   expiryDay: 14
   accessKey: c2VjcmV0QGtleS5hcGlfaGFzX2JlZW5fZGVzaWduZWRfYnlfVGF5TFE=
   refreshKey: 9k1jJAWAKQCnCEz1pwcPNegbHoLugf9hgEnn6sz5pFc=
+
+oauth2:
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:}
+  github:
+    client-id: ${GITHUB_CLIENT_ID:}
+    client-secret: ${GITHUB_CLIENT_SECRET:}

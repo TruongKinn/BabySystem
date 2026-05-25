@@ -89,7 +89,7 @@
         *ngFor="let n of notifications; trackBy: trackById"
         class="nd-item"
         [class.unread]="n.status === 'UNREAD'"
-        (click)="markAsRead(n, $event)"
+        (click)="selectNotification(n)"
         role="listitem"
         [attr.aria-label]="n.title + ' - ' + (n.status === 'UNREAD' ? 'Chưa đọc' : 'Đã đọc')"
       >
@@ -122,6 +122,40 @@
         </svg>
         Làm mới
       </button>
+    </div>
+  </div>
+</div>
+
+<!-- Notification Detail Modal -->
+<div class="nd-modal-backdrop" *ngIf="selectedNotification" (click)="closeDetail()">
+  <div class="nd-modal-card" (click)="$event.stopPropagation()">
+    <div class="nd-modal-header">
+      <div class="nd-modal-title-area">
+        <div class="nd-modal-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="20" height="20">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+        </div>
+        <h4 class="nd-modal-title">{{ selectedNotification.title }}</h4>
+      </div>
+      <button class="nd-modal-close-btn" (click)="closeDetail()" aria-label="Đóng">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+    
+    <div class="nd-modal-body">
+      <p class="nd-modal-message">{{ selectedNotification.message }}</p>
+    </div>
+    
+    <div class="nd-modal-footer">
+      <time class="nd-modal-time">
+        {{ formatFullTime(selectedNotification.createdAt) }}
+      </time>
+      <button class="nd-modal-action-btn" (click)="closeDetail()">Đóng</button>
     </div>
   </div>
 </div>

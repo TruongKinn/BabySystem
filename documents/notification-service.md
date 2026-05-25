@@ -1,156 +1,60 @@
-# Tài liệu: Tính năng Thông Báo Cho Người Dùng (Notification Service & Real-time WebSocket)
+# Tài liệu Kỹ thuật: Hệ thống Thông báo (Notification Service)
 
-**Service:** `notification-service`, `api-gateway`, `frontend`  
-**Feature Key:** `notifications`  
-**Loại:** Core Feature
+Tài liệu này giải thích chi tiết các lỗi đã khắc phục và cách hoạt động của hệ thống thông báo sau khi nâng cấp.
 
 ---
 
-## 1. Tổng quan
+## 1. Các lỗi đã khắc phục
 
-Hệ thống thông báo cho phép Admin và các service gửi thông báo đến người dùng theo thời gian thực (real-time) thông qua kết nối **WebSocket (STOMP/SockJS)**, đồng thời hỗ trợ tải lại danh sách thông báo và đếm số thông báo chưa đọc.
+### 1.1. Lỗi đếm số lượng chưa đọc bị reset về 0
+- **Nguyên nhân:**
+  - Ở Backend, các thông báo sau khi được gửi sẽ mang trạng thái `status = 'SENT'`.
+  - Ở Frontend, DTO của mỗi thông báo được định nghĩa có trường `status: 'UNREAD' | 'READ'`.
+  - Khi người dùng click mở danh sách thông báo, Frontend gọi API lấy danh sách và ghi đè `unreadCount` dựa trên logic so khớp:
+    `this.unreadCount = this.notifications.filter((n) => n.status === 'UNREAD').length;`
+  - Vì Backend trả về `status` là `'SENT'`, phép lọc trên luôn cho ra `0` phần tử. Dẫn tới `unreadCount` bị ghi đè thành `0` ngay lập tức, và badge đỏ biến mất một cách bất thường, các thông báo chưa đọc cũng mất trạng thái chưa đọc (mất dấu chấm xanh).
+- **Giải pháp:**
+  - Ánh xạ lại trạng thái đọc ở Frontend dựa trên trường thời gian đọc `readAt` từ Backend:
+    `status: item.readAt ? 'READ' : 'UNREAD'`
+  - Logic này được áp dụng đồng bộ ở cả hàm tải danh sách qua API REST và hàm lắng nghe sự kiện thời gian thực qua WebSocket.
 
----
-
-## 2. API Endpoints
-
-### 2.1. Tạo mới thông báo (REST API)
-
-```http
-POST /notification/api/notifications
-```
-
-**Headers:** 
-- `Authorization: Bearer <token>`
-- `X-User-Id`, `X-Family-Ids`, `X-User-Admin` (forwarded từ API Gateway)
-
-**Request Body:**
-```json
-{
-  "familyId": 9001,
-  "userId": 2,
-  "channel": "PUSH",
-  "type": "INFO",
-  "title": "Thông báo mật khẩu file báo cáo",
-  "message": "Mật khẩu của file báo cáo tháng 05/2026 là: 123456"
-}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "message": "Success",
-  "data": {
-    "id": 12,
-    "familyId": 9001,
-    "userId": 2,
-    "channel": "PUSH",
-    "type": "INFO",
-    "title": "Thông báo mật khẩu file báo cáo",
-    "message": "Mật khẩu của file báo cáo tháng 05/2026 là: 123456",
-    "status": "PENDING",
-    "createdAt": "2026-05-23T09:40:00Z"
-  }
-}
-```
+### 1.2. Lỗi hiển thị ngày tháng `Invalid Date`
+- **Nguyên nhân:**
+  - DTO `NotificationResponse` ở Backend không chứa trường `createdAt` (thời điểm tạo thông báo), trong khi Frontend sử dụng trường này để định dạng và hiển thị thời gian.
+- **Giải pháp:**
+  - Bổ sung trường `createdAt` (kiểu `OffsetDateTime`) vào record `NotificationResponse` ở Backend.
+  - Cập nhật mapper `toResponse` ở `NotificationService.java` để chuyển chính xác giá trị `entity.getCreatedAt()` sang DTO.
+  - Sửa đổi hàm ánh xạ ở Frontend để lấy trường `createdAt` (với fallback là `sentAt` hoặc `scheduledAt`).
 
 ---
 
-### 2.2. Lấy danh sách thông báo của user
+## 2. Tính năng Xem chi tiết thông báo (Premium Detail Modal)
 
-```http
-GET /notification/api/notifications?familyId={familyId}&userId={userId}
-```
-
-**Response:**
-```json
-{
-  "success": true,
-  "message": "Success",
-  "data": [
-    {
-      "id": 12,
-      "title": "Thông báo mật khẩu",
-      "message": "...",
-      "status": "UNREAD",
-      "createdAt": "2026-05-23T09:40:00Z"
-    }
-  ]
-}
-```
+Khi người dùng bấm vào bất kỳ một thông báo nào trong danh sách:
+1. **Lưu trạng thái vào DB:** Hệ thống sẽ tự động kiểm tra nếu thông báo đó ở trạng thái `UNREAD` (chưa đọc), Frontend sẽ lập tức gửi một request HTTP POST `/notification/api/notifications/{id}/read` lên Backend.
+   - Backend sẽ cập nhật trường `readAt` của thông báo đó thành thời gian hiện tại (`OffsetDateTime.now()`) và lưu vào Database.
+   - Frontend cập nhật trạng thái thông báo thành `READ` và giảm số lượng đếm chưa đọc `unreadCount` đi 1 đơn vị.
+2. **Hiển thị Modal xem chi tiết:**
+   - Một Modal tuyệt đẹp sẽ hiện lên hiển thị đầy đủ Tiêu đề, Nội dung chi tiết dài và Thời gian gửi cụ thể của thông báo đó.
+   - Modal được thiết kế theo đúng quy chuẩn **Web Design Backbone Rule** với hiệu ứng kính mờ (glassmorphism), đổ bóng sâu (2xl shadow), hỗ trợ hoàn hảo cả Dark Theme & Light Theme, và responsive tự động co giãn tối ưu trên thiết bị di động.
 
 ---
 
-### 2.3. Đánh dấu đã đọc thông báo
+## 3. Cấu trúc các file thay đổi
 
-```http
-POST /notification/api/notifications/{id}/read
-```
+### 3.1. Backend (`notification-service`)
+- `com.mom.notification.controller.dto.NotificationResponse`:
+  - Thêm trường `OffsetDateTime createdAt`.
+- `com.mom.notification.service.NotificationService`:
+  - Cập nhật hàm `toResponse` để truyền `entity.getCreatedAt()` vào constructor.
 
-**Response:**
-```json
-{
-  "success": true,
-  "message": "Success",
-  "data": {
-    "id": 12,
-    "status": "READ"
-  }
-}
-```
-
----
-
-## 3. Kiến trúc Real-time & WebSocket
-
-### 3.1. Phía Backend (STOMP Broker)
-
-- **Endpoint chính:** `/notification/ws` (hỗ trợ SockJS fallbacks)
-- **Topic Client Subscribe:** `/topic/notifications/user/{userId}`
-- **Luồng xử lý:**
-  1. Khi nhận request REST API tạo thông báo, bản ghi sẽ được lưu ở trạng thái `PENDING` trong DB.
-  2. Bất kỳ khi nào có thông báo chưa gửi, Job Scheduler (`dispatchDueNotifications`) chạy mỗi 30 giây sẽ tự động quét, chuyển trạng thái thành `SENT` và bắn tín hiệu real-time qua WebSocket Broker.
-  3. WebSocket STOMP Broker sẽ đẩy thông báo đó trực tiếp xuống client đã kết nối và subscribe.
-
----
-
-### 3.2. Cấu hình Bypass trên API Gateway
-
-Để đảm bảo kết nối WebSocket (bao gồm handshake SockJS và upgrade protocol) qua Gateway hoạt động ổn định mà không bị chặn bởi bộ lọc phân quyền Bearer Token, chúng ta đã tối ưu bộ lọc bypass trong **`ApiPermissionFilter.java`**:
-
-```java
-// Cho phép bypass phân quyền hoàn toàn đối với mọi endpoint WebSocket của notification-service
-if (path.startsWith("/notification/ws")) {
-    return true;
-}
-```
-
----
-
-### 3.3. Phía Frontend (Angular)
-
-- **`NotificationWebsocketService`**:
-  - Tự động thiết lập kết nối SockJS + STOMP Client đến `${API_CONFIG.GATEWAY_URL}/notification/ws` khi khởi chạy ứng dụng (nếu đã đăng nhập).
-  - Tự động subscribe theo kênh cá nhân `/topic/notifications/user/${userId}`.
-  - Hỗ trợ chế độ in logs debug trực quan `[WebSocket Debug] <logs>` trên DevTools console để kiểm tra luồng tin nhắn real-time.
-
-- **`NotificationBellComponent` (Icon Chuông Thông Báo)**:
-  - **Quản lý trạng thái thông minh:** Lắng nghe kênh WebSocket `notifications$` để prepend (chèn lên đầu) thông báo mới nhận được ngay lập tức, tự động cập nhật số lượng unread count.
-  - **Tự động làm mới (Auto-refresh UX):** Mỗi khi người dùng nhấp mở dropdown hình quả chuông, component sẽ tự động gọi API `loadNotifications()` để đồng bộ danh sách mới nhất từ server, triệt tiêu hoàn toàn độ trễ của mạng hoặc lỗi mất kết nối WebSocket tạm thời.
-  - **Polling dự phòng:** Cập nhật số unread count định kỳ mỗi 60 giây.
-
----
-
-## 4. Các Files Thay Đổi & Sửa Đổi
-
-### 4.1. api-gateway (Bypass WebSocket Handshake)
-| File | Mô tả |
-|------|-------|
-| [`ApiPermissionFilter.java`](file:///d:/AI-AGENT/BabySystem/codebase/backend/api-gateway/src/main/java/vn/logistic/apigateway/config/ApiPermissionFilter.java) | Sửa logic bypass: cho phép tất cả các request có path bắt đầu bằng `/notification/ws` kết nối trực tiếp không bị kiểm tra token, giúp SockJS handshake thành công. |
-
-### 4.2. frontend (Cải thiện UX & Bật Logs)
-| File | Mô tả |
-|------|-------|
-| [`notification-bell.component.ts`](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/app/shared/components/notification-bell/notification-bell.component.ts) | 1. Sửa `toggleDropdown()` để luôn tải lại danh sách thông báo mới nhất từ API mỗi khi mở chuông. <br> 2. Sửa lỗi ánh xạ DTO: Thay đổi `count` thành `unreadCount` để tương thích khớp 100% với DTO trả về từ API backend (`/notifications/unread/count`). |
-| [`notification-websocket.service.ts`](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/app/core/services/notification-websocket.service.ts) | Bật logs debug STOMP client dưới dạng prefix `[WebSocket Debug]` để hiển thị chi tiết trong Console của browser. |
+### 3.2. Frontend
+- `src/app/shared/components/notification-bell/notification-bell.component.ts`:
+  - Thêm biến `selectedNotification` để theo dõi thông báo đang được chọn.
+  - Cập nhật hàm `loadNotifications()` và websocket subscription để map trường `status` dựa theo `readAt`.
+  - Thêm các hàm: `selectNotification(n)`, `closeDetail()`, và `formatFullTime(date)` để định dạng đầy đủ ngày giờ Việt Nam.
+- `src/app/shared/components/notification-bell/notification-bell.component.html`:
+  - Chuyển đổi sự kiện click trên từng item sang `selectNotification(n)`.
+  - Bổ sung cấu trúc HTML của Premium Modal xem chi tiết ở cuối file.
+- `src/app/shared/components/notification-bell/notification-bell.component.css`:
+  - Bổ sung các rule CSS cho Modal (backdrop blur, slide-up animation, dark/light theme, di động responsive).

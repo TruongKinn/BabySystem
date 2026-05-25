@@ -17,6 +17,9 @@ import { I18nService } from '../../i18n/i18n.service';
 import { authConfig } from '../auth.config';
 import { AuthService } from '../auth.service';
 import { PasswordStrengthComponent } from '../../shared/components/password-strength/password-strength.component';
+import { API_CONFIG } from '../../shared/constants/api.constant';
+
+declare var google: any;
 
 type AuthMode = 'bearer' | 'keycloak';
 type PortalMode = 'user' | 'admin';
@@ -117,6 +120,11 @@ export class LoginComponent implements OnInit {
     if (this.isBrowser && this.authService.isAuthenticated()) {
       this.router.navigateByUrl(this.authService.getDefaultRouteByRole(), { replaceUrl: true });
     }
+
+    if (this.isBrowser) {
+      this.initGoogleSignIn();
+      this.checkGithubCallback();
+    }
   }
 
   selectAuthMode(mode: AuthMode): void {
@@ -185,6 +193,135 @@ export class LoginComponent implements OnInit {
     this.isLoading = true;
     this.errorMsg = '';
     this.oauthService.initCodeFlow();
+  }
+
+  initGoogleSignIn(): void {
+    const checkGsi = setInterval(() => {
+      if (typeof google !== 'undefined') {
+        clearInterval(checkGsi);
+        google.accounts.id.initialize({
+          client_id: API_CONFIG.GOOGLE_CLIENT_ID,
+          callback: (response: any) => this.handleGoogleCredential(response)
+        });
+
+        let googleBtnContainer = document.getElementById('googleBtnContainer');
+        if (!googleBtnContainer) {
+          googleBtnContainer = document.createElement('div');
+          googleBtnContainer.id = 'googleBtnContainer';
+          googleBtnContainer.style.display = 'none';
+          document.body.appendChild(googleBtnContainer);
+        }
+
+        google.accounts.id.renderButton(
+          googleBtnContainer,
+          { type: 'standard', theme: 'outline', size: 'large' }
+        );
+      }
+    }, 100);
+  }
+
+  handleGoogleCredential(response: any): void {
+    if (!response || !response.credential) {
+      this.notification.error(
+        this.i18nService.translate('auth.login.messages.loginFailedTitle'),
+        this.i18nService.translate('app.login.messages.googleVerifyFailed')
+      );
+      return;
+    }
+
+    this.isLoading = true;
+    this.authService.exchangeGoogleToken(response.credential).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.resetChallengeState();
+        this.notification.success(
+          this.i18nService.translate('auth.login.messages.loginSuccessTitle'),
+          this.i18nService.translate('auth.login.messages.loginSuccessDesc')
+        );
+        this.router.navigateByUrl(this.resolvePostLoginRoute(), { replaceUrl: true });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        const message = err.error?.message || this.i18nService.translate('app.login.messages.googleVerifyFailed');
+        this.errorMsg = message;
+        this.notification.error(this.i18nService.translate('auth.login.messages.loginFailedTitle'), message);
+      }
+    });
+  }
+
+  loginWithGoogle(): void {
+    if (typeof google === 'undefined') {
+      this.notification.error(
+        this.i18nService.translate('auth.login.messages.loginFailedTitle'),
+        'Google SDK is not loaded yet'
+      );
+      return;
+    }
+
+    const googleBtn = document.getElementById('googleBtnContainer')?.querySelector('[role="button"]') as HTMLElement;
+    if (googleBtn) {
+      googleBtn.click();
+    } else {
+      google.accounts.id.prompt();
+    }
+  }
+
+  loginWithGithub(): void {
+    if (!this.isBrowser) return;
+    this.isLoading = true;
+    const clientId = API_CONFIG.GITHUB_CLIENT_ID;
+    const redirectUri = window.location.origin + '/app/login';
+    const scope = 'user:email';
+    const state = 'github';
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${state}`;
+  }
+
+  checkGithubCallback(): void {
+    this.route.queryParams.subscribe((params) => {
+      const code = params['code'];
+      const state = params['state'];
+      if (code && state === 'github') {
+        this.handleGithubCallback(code);
+      }
+    });
+  }
+
+  handleGithubCallback(code: string): void {
+    this.isLoading = true;
+    this.authService.exchangeGithubToken(code).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.resetChallengeState();
+        this.notification.success(
+          this.i18nService.translate('auth.login.messages.loginSuccessTitle'),
+          this.i18nService.translate('auth.login.messages.loginSuccessDesc')
+        );
+
+        this.router.navigate([], {
+          queryParams: { code: null },
+          queryParamsHandling: 'merge',
+          replaceUrl: true
+        });
+
+        this.router.navigateByUrl(this.resolvePostLoginRoute(), { replaceUrl: true });
+      },
+      error: (err) => {
+        this.isLoading = false;
+        const message = err.error?.message || this.i18nService.translate('app.login.messages.githubVerifyFailed');
+        this.errorMsg = message;
+        this.notification.error(this.i18nService.translate('auth.login.messages.loginFailedTitle'), message);
+
+        this.router.navigate([], {
+          queryParams: { code: null },
+          queryParamsHandling: 'merge',
+          replaceUrl: true
+        });
+      }
+    });
+  }
+
+  loginWithFacebook(): void {
+    // Facebook login is disabled via the HTML button's disabled attribute
   }
 
   openTwoFactorGuide(): void {

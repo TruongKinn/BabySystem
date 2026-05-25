@@ -241,6 +241,38 @@ export class AuthService {
     );
   }
 
+  exchangeGoogleToken(idToken: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/exchange-google-token`, {
+      idToken: idToken,
+      platform: 'web',
+      deviceToken: 'web-device'
+    }).pipe(
+      tap((response: any) => {
+        if (this.isBrowser && response.accessToken) {
+          const remember = this.resolveStorageMode() !== 'session';
+          this.persistAuthState(response, remember);
+          this.authEvents.next('login');
+        }
+      })
+    );
+  }
+
+  exchangeGithubToken(code: string): Observable<any> {
+    return this.http.post(`${this.apiUrl}/exchange-github-token`, {
+      code: code,
+      platform: 'web',
+      deviceToken: 'web-device'
+    }).pipe(
+      tap((response: any) => {
+        if (this.isBrowser && response.accessToken) {
+          const remember = this.resolveStorageMode() !== 'session';
+          this.persistAuthState(response, remember);
+          this.authEvents.next('login');
+        }
+      })
+    );
+  }
+
   forceChangePassword(payload: { username: string; temporaryPassword: string; newPassword: string }): Observable<void> {
     return this.http.post<void>(`${this.apiUrl}/force-change-password`, payload);
   }
