@@ -96,6 +96,31 @@ curl.exe -X POST -H "X-Vault-Token: root" -H "Content-Type: application/json" -d
 > [!IMPORTANT]
 > Sau khi ghi thông tin cấu hình thành công vào Vault, bạn **bắt buộc phải khởi động lại dịch vụ `authentication-service` (cổng 8081)** để nó kết nối Vault và nạp lại cấu hình runtime mới nhất!
 
+### 🖥️ Cấu hình trực quan qua giao diện Web UI (Khuyên dùng)
+
+Nếu không muốn sử dụng các câu lệnh Terminal cồng kềnh, bạn hoàn toàn có thể cấu hình trực tiếp và trực quan trên giao diện Web UI của Vault:
+
+1. Đăng nhập vào trang quản trị Vault tại: **`http://localhost:8200`**
+   - Chọn phương thức đăng nhập (Method) là **Token**.
+   - Nhập Token là **`root`** và bấm **Sign In**.
+2. Đi thẳng tới đường dẫn quản lý danh sách KV Secrets:
+   👉 Link trực tiếp: **[http://localhost:8200/ui/vault/secrets/secret/kv/list](http://localhost:8200/ui/vault/secrets/secret/kv/list)**
+3. Tạo mới hoặc chỉnh sửa các Path cấu hình:
+   - **Tạo cấu hình chung**: Nhấn nút **Create secret**, điền *Path for this secret* là **`authentication-service`**.
+   - **Tạo cấu hình cho profile Dev**: Nhấn nút **Create secret**, điền *Path for this secret* là **`authentication-service,dev`**.
+4. Chuyển đổi công tắc sang chế độ **JSON** (ở phía trên bảng nhập Key/Value) và dán đoạn mã cấu hình hoàn chỉnh dưới đây vào:
+   ```json
+   {
+     "oauth2.google.client-id": "793208159346-4ucpps18skm5kcq7ppp4uke1ci38l85q.apps.googleusercontent.com",
+     "oauth2.github.client-id": "Ov23liwCFxVfCS2HTgbN",
+     "oauth2.github.client-secret": "7559c717069caeb3bae254ef5d174839dcd06071",
+     "GOOGLE_CLIENT_ID": "793208159346-4ucpps18skm5kcq7ppp4uke1ci38l85q.apps.googleusercontent.com",
+     "GITHUB_CLIENT_ID": "Ov23liwCFxVfCS2HTgbN",
+     "GITHUB_CLIENT_SECRET": "7559c717069caeb3bae254ef5d174839dcd06071"
+   }
+   ```
+5. Nhấn **Save** (Lưu) ở dưới cùng để hoàn tất.
+
 ---
 
 ## 5. Cấu hình Frontend động qua Environment Variable (ENV)
