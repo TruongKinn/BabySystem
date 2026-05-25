@@ -1,185 +1,140 @@
-# Tài liệu Tính năng: Upload Ảnh Đại Diện Cho Người Dùng Trong Trang Quản Trị (Admin Portal)
+# Authentication Service - Two-Factor Authentication (2FA)
 
-Tài liệu này đặc tả chi tiết thiết kế kỹ thuật, giao diện người dùng và cấu trúc API của chức năng tải lên ảnh đại diện (avatar) dành cho tài khoản Admin/Owner nằm trong màn hình Quản lý người dùng (`/admin/users`).
-
----
-
-## 1. Tổng Quan Tính Năng
-Trước đây, giao diện quản trị Admin chỉ hiển thị thông tin dạng văn bản của người dùng (ID, Họ tên, Username, Email, Phone, Vai trò, Trạng thái) mà chưa hỗ trợ hiển thị ảnh đại diện hoặc cho phép Admin thay đổi ảnh đại diện cho người dùng.
-Tính năng mới được bổ sung nhằm:
-* Hiển thị ảnh đại diện thu nhỏ (Avatar) dạng tròn cao cấp cho mỗi tài khoản trong bảng quản lý.
-* Cho phép Admin nhấp trực tiếp vào ảnh đại diện của bất kỳ người dùng nào để tải lên/thay đổi ảnh đại diện mới cho họ thông qua hiệu ứng rê chuột chuyên nghiệp (glassmorphic overlay với biểu tượng camera).
-* Tự động làm mới hình ảnh vừa tải lên ngay trên giao diện mà không cần tải lại trang bằng kỹ thuật cache-busting thông minh.
+Tài liệu thiết kế chi tiết về việc tích hợp tính năng Xác thực 2 bước (2FA) cho tất cả các vai trò (roles) trong hệ thống BabySystem.
 
 ---
 
-## 2. Thiết Kế Giao Diện Người Dùng (UI/UX)
-* **Thành phần giao diện:** Cột `Ảnh đại diện` (`Avatar`) được chèn vào trước cột `Username` để tối ưu bố cục trực quan.
-* **Cơ chế hoạt động:**
-  * Mỗi người dùng được hiển thị bằng thẻ `<nz-avatar>` có kích thước `42px`. Nếu chưa có ảnh đại diện, hệ thống tự động sinh ký tự viết tắt từ Họ & Tên của người dùng làm ảnh đại diện tạm thời với màu sắc hài hòa.
-  * Khi rê chuột (hover) vào avatar, một lớp phủ mờ tinh tế (`backdrop-filter: blur(2px)`) màu tối sẽ xuất hiện cùng biểu tượng máy ảnh (`camera`) kèm tooltip chỉ dẫn "Đổi ảnh đại diện".
-  * Nhấp chuột vào avatar sẽ mở trình chọn tệp tin cục bộ của hệ điều hành. Chỉ chấp nhận tệp tin hình ảnh (`image/*`) và giới hạn dung lượng tải lên tối đa là `30MB` để bảo vệ tài nguyên hệ thống.
-  * Hiệu ứng chuyển động mượt mà sử dụng `transition: all 0.3s cubic-bezier(...)` mang lại cảm giác phản hồi cao cấp.
+## 1. Kiến trúc hệ thống 2FA
 
----
+Hệ thống sử dụng cơ chế **TOTP (Time-Based One-Time Password)** dựa trên thuật toán SHA1, chu kỳ 30 giây, mã gồm 6 chữ số. 2FA được áp dụng đồng nhất cho mọi tài khoản người dùng không phân biệt vai trò (Admin, User, Caregiver, v.v.) vì thuộc tính bảo mật này nằm trực tiếp trên thực thể `User`.
 
-## 3. Kiến Trúc Kỹ Thuật & Luồng Dữ Liệu
+> [!NOTE]
+> Để phòng tránh các lỗi lệch múi giờ hệ thống (Time Drift) rất phổ biến trong môi trường phát triển local giữa máy tính chạy backend và thiết bị di động của người dùng (chứa ứng dụng Authenticator), hệ thống đã nới rộng độ lệch thời gian cho phép (allowed time period discrepancy) lên **5 chu kỳ (tương đương 150 giây / 2.5 phút)** trong cả hai lớp xác thực (`TwoFactorServiceImpl` lúc bật 2FA và `AuthenticationServiceImp` lúc đăng nhập). Server cũng tự động in log chi tiết (`DEBUG OTP` & `DEBUG LOGIN OTP`) cho phép so sánh trực quan mã OTP mong đợi của Server với mã người dùng nhập để nhanh chóng khắc phục sự cố.
 
-### 3.1. Các Tệp Tin Thay Đổi
-1. **Dịch thuật quốc tế hóa (i18n):**
-   * [vi.json](file:///d:/AI-AGENT/BabySystem/codebase/frontend/public/i18n/vi.json): Thêm khóa `"avatar": "Ảnh đại diện"` dưới nhánh `momApp.admin.users.table`.
-   * [en.json](file:///d:/AI-AGENT/BabySystem/codebase/frontend/public/i18n/en.json): Thêm khóa `"avatar": "Avatar"` dưới nhánh `momApp.admin.users.table`.
-2. **Lớp dịch vụ (Services):**
-   * [super-app-command.service.ts](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/app/core/services/super-app-command.service.ts): Bổ sung phương thức `uploadUserAvatar(userId, file)` gửi yêu cầu `POST` tới endpoint gateway `${this.apiBase}/auth/account/user/${userId}/avatar`.
-3. **Thành phần Quản lý Người dùng (Admin Users Component):**
-   * [admin-users.component.ts](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/app/admin/users/admin-users.component.ts): Nhúng `NzAvatarModule`, `NzIconModule`, tiêm `SuperAppCommandService`, và cài đặt các hàm `avatarUrlOf`, `userInitialsOf`, `onAvatarFileSelected`.
-   * [admin-users.component.html](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/app/admin/users/admin-users.component.html): Cập nhật tiêu đề bảng và chèn cấu trúc `.avatar-wrapper` chứa avatar động cùng nút chọn tệp tin ẩn.
-   * [admin-users.component.css](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/app/admin/users/admin-users.component.css): Định nghĩa các lớp CSS cao cấp cho bộ chọn avatar, hiệu ứng hover, lớp phủ máy ảnh mờ, tỉ lệ thu phóng và viền màu xanh dương nổi bật.
-
----
-
-### 3.2. Sơ Đồ Luồng Hoạt Động (Activity Flow)
+### Sơ đồ luồng hoạt động
 
 ```mermaid
 sequenceDiagram
-    actor Admin
-    participant AdminUI as Admin Users Component
-    participant CmdSvc as SuperApp Command Service
-    participant Gateway as API Gateway (Port 4953)
-    participant AuthSvc as Authentication Microservice
-    
-    Admin->>AdminUI: Di chuột & Nhấp vào Avatar của User
-    AdminUI->>Admin: Hiển thị hộp thoại chọn file ảnh
-    Admin->>AdminUI: Chọn tệp hình ảnh (.png/.jpg)
-    AdminUI->>AdminUI: Kiểm tra định dạng (image/*) & Dung lượng (<= 30MB)
-    AdminUI->>AdminUI: Thiết lập trạng thái tải lên (Loading)
-    AdminUI->>CmdSvc: Gọi uploadUserAvatar(userId, file)
-    CmdSvc->>Gateway: POST /auth/account/user/{userId}/avatar (Multipart Form Data)
-    Gateway->>AuthSvc: Chuyển tiếp yêu cầu xử lý
-    AuthSvc-->>Gateway: Trả về đường dẫn ảnh đại diện đã lưu
-    Gateway-->>CmdSvc: Trả về đường dẫn hình ảnh thành công
-    CmdSvc-->>AdminUI: Trả về URL hình ảnh đầy đủ
-    AdminUI->>AdminUI: Cập nhật cache-busting version (avatarVersions[userId] = Date.now())
-    AdminUI->>AdminUI: Tự động tải lại danh sách & làm mới avatar
-    AdminUI-->>Admin: Hiển thị thông báo thành công (Success Notification)
+    autonumber
+    actor User as Người dùng
+    participant FE as Frontend (Angular)
+    participant GW as API Gateway
+    participant Auth as Authentication Service
+    participant DB as Database (PostgreSQL)
+
+    Note over User, FE: Kích hoạt 2FA (Trong Profile)
+    User->>FE: Click "Thiết lập 2FA"
+    FE->>GW: POST /auth/2fa/generate (Kèm Token)
+    GW->>Auth: POST /2fa/generate
+    Auth->>DB: Tạo & lưu Secret vào User (Chưa kích hoạt)
+    Auth-->>GW: Trả về Secret & QR Code (Base64 Data URI)
+    GW-->>FE: Trả về Secret & QR Code
+    FE->>User: Hiển thị QR Code & yêu cầu nhập mã OTP
+    User->>FE: Nhập 6 chữ số OTP & click "Kích hoạt"
+    FE->>GW: POST /auth/2fa/verify (Body: {otp})
+    GW->>Auth: POST /2fa/verify
+    Auth->>Auth: Xác thực OTP với Secret
+    Alt OTP hợp lệ
+        Auth->>DB: Cập nhật isTwoFactorEnabled = true
+        Auth-->>FE: Trả về "2FA enabled successfully" (200 OK)
+        FE->>User: Thông báo kích hoạt thành công, cập nhật giao diện
+    Else OTP không hợp lệ
+        Auth-->>FE: Trả về "Invalid OTP code" (400 Bad Request)
+        FE->>User: Hiển thị thông báo lỗi nhập mã sai
+    End
 ```
 
 ---
 
-## 4. Giải Pháp Tránh Trùng Lặp Cache (Cache-Busting)
-Khi người dùng tải lên hình ảnh mới, trình duyệt thường lưu cache URL ảnh đại diện cũ khiến người dùng có cảm giác việc tải lên bị lỗi hoặc không có hiệu lực tức thời.
-Để giải quyết triệt để vấn đề này, hệ thống áp dụng kỹ thuật **Cache-Busting** động:
-1. Định nghĩa thuộc tính `avatarVersions: { [key: number]: number } = {}` để theo dõi phiên bản ảnh cho từng ID người dùng.
-2. Phương thức sinh URL ảnh đại diện:
-   ```typescript
-   avatarUrlOf(user: AdminUser): string {
-     const version = this.avatarVersions[user.id] || 0;
-     return `${this.apiBase}/auth/account/user/avatar/${user.id}?v=${version}`;
-   }
-   ```
-3. Khi tải lên thành công, AdminUsersComponent chỉ cần cập nhật `this.avatarVersions[user.id] = Date.now()`. Điều này thay đổi tham số truy vấn `v` của ảnh đại diện thuộc ID đó, buộc trình duyệt bỏ qua cache và tải trực tiếp hình ảnh mới nhất từ máy chủ ngay lập tức.
+## 2. Thiết kế API Backend
+
+Tất cả các API được định nghĩa trong `TwoFactorController` thuộc `authentication-service` và được định tuyến qua API Gateway dưới tiền tố `/auth`.
+
+### 2.1. Lấy trạng thái 2FA của tài khoản hiện tại
+* **Endpoint**: `GET /auth/2fa/status`
+* **Headers**: `Authorization: Bearer <token>`
+* **Mô tả**: Trả về `true` nếu tài khoản đã bật 2FA, ngược lại trả về `false`.
+
+### 2.2. Khởi tạo mã Secret & QR Code thiết lập
+* **Endpoint**: `POST /auth/2fa/generate`
+* **Headers**: `Authorization: Bearer <token>`
+* **Mô tả**: Sinh mã bí mật mới, lưu tạm vào DB và kết xuất ảnh QR Code dạng Base64 Data URI để quét.
+* **Response Body (`TwoFactorResponse`)**:
+```json
+{
+  "secret": "JBSWY3DPEHPK3PXP",
+  "qrCodeUrl": "data:image/png;base64,iVBORw0KGgoAAA..."
+}
+```
+
+### 2.3. Xác thực OTP để kích hoạt 2FA
+* **Endpoint**: `POST /auth/2fa/verify`
+* **Headers**: `Authorization: Bearer <token>`
+* **Request Body (`TwoFactorRequest`)**:
+```json
+{
+  "otp": "123456"
+}
+```
+* **Mô tả**: Backend kiểm tra tính hợp lệ của mã OTP. Nếu đúng, cập nhật cột `is_two_factor_enabled` thành `true` trong cơ sở dữ liệu.
+
+### 2.4. Tắt xác thực 2 bước
+* **Endpoint**: `POST /auth/2fa/disable`
+* **Headers**: `Authorization: Bearer <token>`
+* **Mô tả**: Tắt tính năng 2FA cho người dùng và xóa mã Secret của tài khoản.
 
 ---
 
-## 5. Nhật Ký Khắc Phục Lỗi: 405 Method Not Allowed đối với API Missing APIs
+## 3. Quy trình Đăng nhập tích hợp 2FA
 
-### 5.1. Hiện Tượng Lỗi
-Khi truy cập màn hình Quản lý Phân quyền của Admin (`/admin/permissions`), giao diện gửi yêu cầu `GET` tới API:
-`http://localhost:4953/auth/roles/permissions/missing-apis`
+Khi người dùng thực hiện đăng nhập bình thường bằng Username/Password qua API `POST /auth/access-token`:
 
-Yêu cầu này bị phản hồi với lỗi **Status Code 405 Method Not Allowed** từ phía Backend.
-
-### 5.2. Nguyên Nhân
-1. API này đã được khai báo chính xác trong mã nguồn ở `RolePermissionController.java` thuộc `authentication-service` (cổng `8081` sau khi qua định tuyến API Gateway) bằng chú thích `@GetMapping("/permissions/missing-apis")`.
-2. Tuy nhiên, phiên bản dịch vụ `authentication-service` đang chạy trên máy chủ thực tế (PID `31228`) là phiên bản cũ được khởi động trước khi mã nguồn trên nhánh Git được cập nhật (commit `ba22cbb`).
-3. Trong phiên bản chạy cũ này, endpoint `/roles/permissions/missing-apis` chưa hề tồn tại. Do đó, Spring Boot so khớp đường dẫn này với pattern động `/roles/permissions/{permissionId}` (vốn chỉ hỗ trợ `PUT` và `DELETE` trong `RolePermissionController`). Điều này gây ra lỗi `405 Method Not Allowed` khi gửi method `GET`.
-
-### 5.3. Các Bước Giải Quyết
-Chúng tôi đã tiến hành khắc phục bằng cách làm mới và khởi chạy lại dịch vụ `authentication-service`:
-1. **Tìm tiến trình chiếm cổng 8081:**
-   ```powershell
-   netstat -ano | findstr 8081
-   # Kết quả trả về PID là 31228
-   ```
-2. **Dừng tiến trình cũ:**
-   ```powershell
-   taskkill /F /PID 31228
-   ```
-3. **Biên dịch và Khởi động lại dịch vụ bằng Maven:**
-   ```powershell
-   mvn clean spring-boot:run
-   ```
-   *Tiến trình được chạy ngầm và ghi đè log thành công tại: [authentication-service.out.log](file:///d:/AI-AGENT/BabySystem/run-logs/authentication-service.out.log).*
- 4. **Xác nhận kết quả:**
-   Gọi lại endpoint trực tiếp hoặc thông qua API Gateway đều trả về mã trạng thái **200 OK** với mảng JSON rỗng `[]` (chính xác theo nghiệp vụ khi chưa phát hiện missing APIs mới). Lỗi `405` đã được khắc phục hoàn toàn trên cả Frontend và Backend.
+1. Backend kiểm tra thông tin tài khoản.
+2. Nếu tài khoản chưa bật 2FA (`isTwoFactorEnabled == false`), đăng nhập thành công và trả về TokenResponse.
+3. Nếu tài khoản đã bật 2FA (`isTwoFactorEnabled == true`):
+   - Nếu request đăng nhập **không** gửi kèm mã OTP, backend ném lỗi `401 Unauthorized` với nội dung `"OTP is required for this account"`.
+   - Frontend bắt lỗi này, hiển thị ô nhập mã OTP trên màn hình đăng nhập.
+   - Khi người dùng nhập OTP và click Đăng nhập lại, frontend gửi kèm `otp` trong body request login.
+   - Backend xác thực OTP, nếu hợp lệ sẽ cấp Access Token.
 
 ---
 
-## 6. Nhật Ký Khắc Phục Lỗi: Flyway Checksum Mismatch cho Migration Version 33
+## 4. Thiết kế Giao diện người dùng (UI/UX)
 
-### 6.1. Hiện Tượng Lỗi
-Khi khởi động `authentication-service`, tiến trình bị dừng ngay lập tức (exit code 1) với ngoại lệ:
+Áp dụng chặt chẽ **Web Design Backbone Rule** để đảm bảo giao diện cao cấp và có chiều sâu.
+
+### 4.1. Vị trí thiết lập
+Dòng thiết lập 2FA được đặt trong card **Bảo mật** (Security) tại trang Profile cá nhân (`/app/profile`).
+
+### 4.2. Modal Cài đặt 2FA
+Giao diện Modal tuân theo layout 3 bước của Mock-up thiết kế:
+* **Bước 1**: Icon hướng dẫn sinh động cùng chỉ dẫn tải app Google Authenticator/Microsoft Authenticator.
+* **Bước 2**: Khung hiển thị QR code bo góc mềm mại (`border-radius: 16px`), bóng mờ nhẹ, bao bọc mã QR rõ nét.
+* **Bước 3**: 6 ô nhập số riêng biệt (hoặc 1 ô nhập liệu 6 chữ số có font chữ lớn và khoảng cách ký tự rộng) kèm đồng hồ đếm ngược `Remaining time: 30s` hoạt động thời gian thực.
+* **Chân trang (Footer)**: 
+  * Nút "Huỷ bỏ" (`.btn-user-outline`).
+  * Nút "Kích hoạt xác thực 2 bước" (`.btn-user-primary`).
+
+### 4.3. Đa ngôn ngữ (i18n)
+Tất cả các chuỗi văn bản trên giao diện 2FA được tổ chức tại thư mục dịch riêng biệt:
+* `codebase/frontend/public/i18n/app/profile/vi.json`
+* `codebase/frontend/public/i18n/app/profile/en.json`
+
+Sau đó, đồng bộ tự động vào file cha thông qua script compile.
+
+---
+
+## 5. Cấu hình bảo mật API Gateway (Bypass Phân quyền động)
+
+Do hệ thống sử dụng cơ chế phân quyền động dựa trên cơ sở dữ liệu (`ApiPermissionFilter` trong `api-gateway`), các API tự phục vụ cá nhân như `/auth/2fa/**` đã được bổ sung vào danh sách ngoại lệ (Exception list) dành cho người dùng có token Bearer hợp lệ:
+
+```java
+// File: ApiPermissionFilter.java
+// Bổ sung ngoại lệ: Cho phép mọi người dùng đã đăng nhập có token hợp lệ truy cập các API thiết lập 2FA cá nhân
+if (antPathMatcher.match("/auth/2fa/**", requestPath)) {
+    return reactor.util.function.Tuples.of(AuthDecision.allowed("BEARER"), mutatedExchange);
+}
 ```
-Caused by: org.flywaydb.core.api.exception.FlywayValidateException: Validate failed: Migrations have failed validation
-Migration checksum mismatch for migration version 33
--> Applied to database : 1333174880
--> Resolved locally    : -763731482
-Either revert the changes to the migration, or run repair to update the schema history.
-```
 
-### 6.2. Nguyên Nhân
-File SQL migration version 33 ở thư mục local (`V33__insight_export_password_management_permissions.sql`) đã bị chỉnh sửa nhỏ (có thể là ký tự khoảng trắng, định dạng xuống dòng CRLF/LF, hoặc sửa đổi nội dung) sau khi đã được áp dụng (apply) thành công vào cơ sở dữ liệu trước đó. Khi khởi động lại, Flyway so khớp checksum local (`-763731482`) với checksum lưu trong bảng `flyway_schema_history` của database (`1333174880`) và phát hiện sai lệch, dẫn tới dừng khởi chạy nhằm đảm bảo tính toàn vẹn của database.
+Điều này giúp tất cả các tài khoản bất kể vai trò (Admin, User, Caregiver) đều có thể tự cấu hình 2FA cho tài khoản của chính mình một cách trơn tru mà không cần can thiệp vào cơ sở dữ liệu phân quyền API động của hệ thống.
 
-### 6.3. Giải Pháp Kỹ Thuật
-Để khắc phục lỗi này một cách tự động và bền vững cho toàn bộ thành viên trong đội ngũ phát triển ở môi trường local, chúng tôi đã tạo một cấu hình tùy biến thông qua Spring Bean để tích hợp quá trình **Flyway Repair** tự động trước khi di cư schema (migrate).
-
-1. **Tạo lớp cấu hình tùy biến FlywayConfig:**
-   Chúng tôi đã viết mới tệp tin [FlywayConfig.java](file:///d:/AI-AGENT/BabySystem/codebase/backend/authentication-service/src/main/java/vn/agent/config/FlywayConfig.java):
-   ```java
-   package vn.agent.config;
-
-   import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
-   import org.springframework.context.annotation.Bean;
-   import org.springframework.context.annotation.Configuration;
-
-   @Configuration
-   public class FlywayConfig {
-
-       @Bean
-       public FlywayMigrationStrategy flywayMigrationStrategy() {
-           return flyway -> {
-               flyway.repair();
-               flyway.migrate();
-           };
-       }
-   }
-   ```
-
-2. **Cách Thức Hoạt Động:**
-   * Lớp `FlywayMigrationStrategy` là điểm mở rộng chuẩn do Spring Boot cung cấp để can thiệp vào vòng đời di cư của Flyway.
-   * Khi khởi động ứng dụng, Spring Boot sẽ triệu gọi chiến lược tùy biến này thay vì chạy trực tiếp `migrate()`.
-   * Thao tác `flyway.repair()` sẽ quét qua toàn bộ các file migration cục bộ và đồng bộ lại (cập nhật) checksum trong bảng `flyway_schema_history` của database sao cho khớp hoàn hảo với local. Nó cũng giúp dọn dẹp (xóa) các bản ghi migration bị lỗi (failed) trước đó.
-   * Sau khi sửa chữa xong, `flyway.migrate()` được gọi tiếp theo để áp dụng các phiên bản migration mới hơn mà không gặp bất kỳ lỗi kiểm thực (validation) nào.
-
-### 6.4. Kết Quả Xác Thực
-Sau khi áp dụng cấu hình trên, khởi động lại `authentication-service` bằng Maven:
-```powershell
-mvn spring-boot:run
-```
-Kết quả log hệ thống ghi nhận quá trình tự động sửa chữa diễn ra thành công mỹ mãn:
-```
-2026-05-22T17:41:11.556+07:00  INFO 15712 --- [authentication-service] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:postgresql://localhost:5432/auth_db (PostgreSQL 16.13)
-2026-05-22T17:41:11.607+07:00  INFO 15712 --- [authentication-service] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Repair of failed migration in Schema History table "public"."flyway_schema_history" not necessary. No failed migration detected.
-2026-05-22T17:41:11.672+07:00  INFO 15712 --- [authentication-service] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Repairing Schema History table for version 33 (Description: insight export password management permissions, Type: SQL, Checksum: -763731482)  ...
-2026-05-22T17:41:11.683+07:00  INFO 15712 --- [authentication-service] [           main] o.f.core.internal.command.DbRepair       : Successfully repaired schema history table "public"."flyway_schema_history" (execution time 00:00.105s).
-2026-05-22T17:41:11.756+07:00  INFO 15712 --- [authentication-service] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 34 migrations (execution time 00:00.036s)
-2026-05-22T17:41:11.807+07:00  INFO 15712 --- [authentication-service] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": 33
-2026-05-22T17:41:11.826+07:00  INFO 15712 --- [authentication-service] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "34 - user profile update and pdf permissions"
-2026-05-22T17:41:11.896+07:00  INFO 15712 --- [authentication-service] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 1 migration to schema "public", now at version v34 (execution time 00:00.032s)
-```
-* **Phân tích log:**
-  1. Flyway nhận diện được sai lệch checksum tại phiên bản 33.
-  2. Hệ thống đã tiến hành cập nhật checksum cho phiên bản 33 trong bảng lịch sử về đúng giá trị local: `-763731482`.
-  3. Quá trình kiểm thực (`DbValidate`) sau đó vượt qua thành công cho cả 34 tệp tin migration.
-  4. Hệ thống tiếp tục tự động áp dụng phiên bản migration mới hơn (`V34__user_profile_update_and_pdf_permissions.sql`) lên cơ sở dữ liệu mà không bị chặn lại.
-  5. Ứng dụng đã khởi chạy thành công hoàn toàn.

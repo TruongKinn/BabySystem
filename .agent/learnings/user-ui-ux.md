@@ -23,6 +23,13 @@
 - **Fix**: Sử dụng bộ chọn phủ định thông minh `.user-role-modal .ant-modal-footer .ant-btn:not(.ant-btn-primary)` để tóm trọn nút Hủy, từ đó gán đúng chiều cao 38px, viền cam `1.5px solid var(--user-primary)`, chữ cam, nền trong suốt và hiệu ứng hover đồng điệu.
 - **Files liên quan**: `codebase/frontend/src/styles.css`
 
+### OTP/2FA Multiple Input Focus Leap Bug
+- **Ngày**: 2026-05-25
+- **Vấn đề**: Khi nhập mã OTP/2FA chia làm nhiều ô input độc lập, focus nhảy không chính xác hoặc ký tự bị nhập đè sang 2 ô liên tiếp (gõ 1 số nhưng điền cả 2 ô liền nhau).
+- **Root cause**: Cả 2 sự kiện `keydown` và `input` cùng xử lý việc chèn giá trị và nhảy focus. Khi người dùng gõ phím số, sự kiện `keydown` chặn mặc định (`preventDefault`) và chuyển focus bằng `setTimeout` sang ô tiếp theo rất nhanh. Do focus đổi trước khi chu kỳ xử lý phím của trình duyệt hoàn tất, trình duyệt sẽ gửi sự kiện chèn ký tự thực tế tiếp theo lên ô mới được focus, dẫn đến rò rỉ ký tự sang ô kế tiếp.
+- **Fix**: Loại bỏ logic xử lý phím số trong sự kiện `keydown` (`onOtpKeyDown`). Sử dụng sự kiện `input` (`onOtpInput`) làm nơi duy nhất lọc giá trị và quản lý di chuyển focus. Đặc biệt, sử dụng `@ViewChildren('otpInput')` và `QueryList<ElementRef<HTMLInputElement>>` để truy cập các phần tử Native DOM một cách đúng chuẩn Angular, kết hợp với `setTimeout` (10ms) để dời việc chuyển focus ra khỏi luồng sự kiện hiện tại của trình duyệt, ngăn chặn triệt để hiện tượng rò rỉ ký tự phím bấm sang ô tiếp theo.
+- **Files liên quan**: `codebase/frontend/src/app/profile/profile.component.ts`, `codebase/frontend/src/app/profile/profile.component.html`
+
 ---
 
 ## How-To

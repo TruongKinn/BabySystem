@@ -170,6 +170,11 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
                             (antPathMatcher.match("/file/files/parse/*", requestPath) || antPathMatcher.match("/file/files/import/*", requestPath))) {
                         return reactor.util.function.Tuples.of(AuthDecision.allowed("BEARER"), mutatedExchange);
                     }
+                    // Bổ sung ngoại lệ: Cho phép mọi người dùng đã đăng nhập có token hợp lệ truy cập các API thiết lập 2FA cá nhân
+                    if (antPathMatcher.match("/auth/2fa/**", requestPath)) {
+                        return reactor.util.function.Tuples.of(AuthDecision.allowed("BEARER"), mutatedExchange);
+                    }
+
                     if (isAllowed(access, requestMethod, requestPath)) {
                         return reactor.util.function.Tuples.of(AuthDecision.allowed("BEARER"), mutatedExchange);
                     }

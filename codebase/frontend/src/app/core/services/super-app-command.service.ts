@@ -569,6 +569,22 @@ export class SuperAppCommandService {
       });
   }
 
+  get2faStatus(): Observable<boolean> {
+    return this.http.get<boolean>(`${this.apiBase}/auth/2fa/status`);
+  }
+
+  generate2faSecret(): Observable<{ secret: string; qrCodeUrl: string }> {
+    return this.http.post<{ secret: string; qrCodeUrl: string }>(`${this.apiBase}/auth/2fa/generate`, {});
+  }
+
+  verifyAndEnable2fa(otp: string): Observable<string> {
+    return this.http.post(`${this.apiBase}/auth/2fa/verify`, { otp }, { responseType: 'text' });
+  }
+
+  disable2fa(): Observable<string> {
+    return this.http.post(`${this.apiBase}/auth/2fa/disable`, {}, { responseType: 'text' });
+  }
+
   uploadUserAvatar(userId: number, file: File): Observable<string> {
     const formData = new FormData();
     formData.append('file', file);

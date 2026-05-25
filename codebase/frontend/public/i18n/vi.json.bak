@@ -2415,7 +2415,7 @@
         "families": "Quản lý hộ gia đình",
         "premium": "Cấu hình Premium",
         "finance": "Quản lý tài chính",
-        "exportPasswords": "Qu\u1ea3n l\u00fd password export",
+        "exportPasswords": "Quản lý password export",
         "themeSettings": "Cài đặt giao diện",
         "access": "Kiểm soát truy cập",
         "permissions": "Danh mục quyền"
@@ -2931,49 +2931,49 @@
       },
       "exportPasswords": {
         "hero": {
-          "kicker": "EXPORT B\u1ea2O M\u1eacT",
-          "title": "Qu\u1ea3n l\u00fd password export",
-          "subtitle": "Theo d\u00f5i file XLSX c\u00f3 password theo user, gia \u0111\u00ecnh v\u00e0 th\u00e1ng b\u00e1o c\u00e1o m\u00e0 kh\u00f4ng hi\u1ec3n th\u1ecb password g\u1ed1c."
+          "kicker": "EXPORT BẢO MẬT",
+          "title": "Quản lý password export",
+          "subtitle": "Theo dõi file XLSX có password theo user, gia đình và tháng báo cáo mà không hiển thị password gốc."
         },
         "stats": {
-          "total": "B\u1ea3n ghi ph\u00f9 h\u1ee3p",
-          "visible": "D\u00f2ng hi\u1ec3n th\u1ecb",
-          "pageSize": "Dung l\u01b0\u1ee3ng trang",
-          "allUsers": "T\u1ea5t c\u1ea3 user"
+          "total": "Bản ghi phù hợp",
+          "visible": "Dòng hiển thị",
+          "pageSize": "Dung lượng trang",
+          "allUsers": "Tất cả user"
         },
         "filters": {
-          "userPlaceholder": "L\u1ecdc theo user",
-          "familyPlaceholder": "M\u00e3 gia \u0111\u00ecnh",
-          "monthLabel": "Th\u00e1ng b\u00e1o c\u00e1o"
+          "userPlaceholder": "Lọc theo user",
+          "familyPlaceholder": "Mã gia đình",
+          "monthLabel": "Tháng báo cáo"
         },
         "security": {
-          "title": "D\u1eef li\u1ec7u password \u0111\u01b0\u1ee3c b\u1ea3o v\u1ec7",
-          "description": "Ph\u1ea1m vi hi\u1ec7n t\u1ea1i: {{user}}. B\u1ea3ng ch\u1ec9 hi\u1ec3n th\u1ecb password \u0111\u00e3 mask v\u00e0 thu\u1eadt to\u00e1n hash; password g\u1ed1c kh\u00f4ng \u0111\u01b0\u1ee3c tr\u1ea3 ra."
+          "title": "Dữ liệu password được bảo vệ",
+          "description": "Phạm vi hiện tại: {{user}}. Bảng chỉ hiển thị password đã mask và thuật toán hash; password gốc không được trả ra."
         },
         "table": {
           "file": "File export",
           "user": "User",
-          "family": "Gia \u0111\u00ecnh",
-          "month": "Th\u00e1ng",
+          "family": "Gia đình",
+          "month": "Tháng",
           "password": "Password",
-          "algorithm": "Thu\u1eadt to\u00e1n hash",
-          "createdAt": "Th\u1eddi gian t\u1ea1o",
-          "actions": "Thao t\u00e1c"
+          "algorithm": "Thuật toán hash",
+          "createdAt": "Thời gian tạo",
+          "actions": "Thao tác"
         },
         "actions": {
-          "filter": "L\u1ecdc",
-          "reset": "X\u00f3a l\u1ecdc",
-          "delete": "X\u00f3a b\u1ea3n ghi",
-          "deleteConfirm": "X\u00f3a b\u1ea3n ghi metadata password export n\u00e0y?"
+          "filter": "Lọc",
+          "reset": "Xóa lọc",
+          "delete": "Xóa bản ghi",
+          "deleteConfirm": "Xóa bản ghi metadata password export này?"
         },
         "empty": {
-          "title": "Ch\u01b0a c\u00f3 b\u1ea3n ghi password export",
-          "subtitle": "H\u00e3y th\u1eed user, gia \u0111\u00ecnh ho\u1eb7c th\u00e1ng b\u00e1o c\u00e1o kh\u00e1c."
+          "title": "Chưa có bản ghi password export",
+          "subtitle": "Hãy thử user, gia đình hoặc tháng báo cáo khác."
         },
         "messages": {
-          "loadFailed": "Kh\u00f4ng th\u1ec3 t\u1ea3i danh s\u00e1ch password export.",
-          "deleteSuccess": "\u0110\u00e3 x\u00f3a metadata password export.",
-          "deleteFailed": "Kh\u00f4ng th\u1ec3 x\u00f3a metadata password export."
+          "loadFailed": "Không thể tải danh sách password export.",
+          "deleteSuccess": "Đã xóa metadata password export.",
+          "deleteFailed": "Không thể xóa metadata password export."
         }
       },
       "permissions": {
@@ -3794,7 +3794,7 @@
         "critical": "Rủi ro cao"
       },
       "export": {
-        "action": "Xu\u1ea5t XLSX b\u1ea3o m\u1eadt",
+        "action": "Xuất XLSX bảo mật",
         "reportTitle": "Báo cáo phân tích gia đình",
         "generatedAt": "Thời điểm xuất",
         "reportMonth": "Tháng báo cáo",
@@ -3825,24 +3825,24 @@
         "pendingTasks": "Việc đang chờ",
         "riskLevel": "Mức rủi ro",
         "riskReason": "Lý do",
-        "noRecommendations": "Kh\u00f4ng c\u00f3 g\u1ee3i \u00fd trong k\u1ef3 n\u00e0y.",
-        "lockedRecommendations": "G\u1ee3i \u00fd AI \u0111ang b\u1ecb kh\u00f3a.",
-        "passwordTitle": "B\u1ea3o v\u1ec7 file XLSX",
-        "passwordSubtitle": "Nh\u1eadp m\u1eadt kh\u1ea9u cho workbook n\u00e0y. Excel s\u1ebd y\u00eau c\u1ea7u m\u1eadt kh\u1ea9u tr\u01b0\u1edbc khi m\u1edf file t\u1ea3i v\u1ec1.",
-        "passwordLabel": "M\u1eadt kh\u1ea9u workbook",
-        "confirmPasswordLabel": "X\u00e1c nh\u1eadn m\u1eadt kh\u1ea9u",
-        "passwordPlaceholder": "T\u1ed1i thi\u1ec3u 8 k\u00fd t\u1ef1",
-        "confirmPasswordPlaceholder": "Nh\u1eadp l\u1ea1i m\u1eadt kh\u1ea9u",
-        "passwordRequired": "M\u1eadt kh\u1ea9u ph\u1ea3i t\u1eeb 8-128 k\u00fd t\u1ef1.",
-        "confirmPasswordRequired": "Vui l\u00f2ng x\u00e1c nh\u1eadn m\u1eadt kh\u1ea9u.",
-        "passwordMismatch": "Hai m\u1eadt kh\u1ea9u kh\u00f4ng kh\u1edbp.",
-        "filenameRule": "T\u00ean file do backend t\u1ef1 sinh: MOM_INSIGHTS_F{familyId}_{yyyymm}_{timestamp}_{code}.xlsx",
-        "passwordHelp": "Workbook \u0111\u01b0\u1ee3c m\u00e3 h\u00f3a. Database l\u01b0u metadata export v\u00e0 password hash \u0111\u1ec3 audit, kh\u00f4ng l\u01b0u plaintext password.",
-        "confirm": "Xu\u1ea5t XLSX",
-        "cancel": "H\u1ee7y",
-        "success": "\u0110\u00e3 t\u1ea3i b\u00e1o c\u00e1o XLSX b\u1ea3o m\u1eadt.",
-        "failed": "Kh\u00f4ng th\u1ec3 xu\u1ea5t b\u00e1o c\u00e1o XLSX b\u1ea3o m\u1eadt.",
-        "noFile": "File export \u0111ang tr\u1ed1ng.",
+        "noRecommendations": "Không có gợi ý trong kỳ này.",
+        "lockedRecommendations": "Gợi ý AI đang bị khóa.",
+        "passwordTitle": "Bảo vệ file XLSX",
+        "passwordSubtitle": "Nhập mật khẩu cho workbook này. Excel sẽ yêu cầu mật khẩu trước khi mở file tải về.",
+        "passwordLabel": "Mật khẩu workbook",
+        "confirmPasswordLabel": "Xác nhận mật khẩu",
+        "passwordPlaceholder": "Tối thiểu 8 ký tự",
+        "confirmPasswordPlaceholder": "Nhập lại mật khẩu",
+        "passwordRequired": "Mật khẩu phải từ 8-128 ký tự.",
+        "confirmPasswordRequired": "Vui lòng xác nhận mật khẩu.",
+        "passwordMismatch": "Hai mật khẩu không khớp.",
+        "filenameRule": "Tên file do backend tự sinh: MOM_INSIGHTS_F{familyId}_{yyyymm}_{timestamp}_{code}.xlsx",
+        "passwordHelp": "Workbook được mã hóa. Database lưu metadata export và password hash để audit, không lưu plaintext password.",
+        "confirm": "Xuất XLSX",
+        "cancel": "Hủy",
+        "success": "Đã tải báo cáo XLSX bảo mật.",
+        "failed": "Không thể xuất báo cáo XLSX bảo mật.",
+        "noFile": "File export đang trống.",
         "reason": {
           "taskPressure": "Có {{count}} việc đang chờ",
           "lowSleep": "Ngủ dưới mục tiêu ({{hours}}h)",
@@ -4050,6 +4050,12 @@
       "message": "Bạn không có quyền truy cập trang này.",
       "goUserPortal": "Về User Portal",
       "goAdminPortal": "Về Admin Portal"
+    }
+  },
+  "app": {
+    "settings": {
+      "titleTest": "Cài đặt hệ thống thử nghiệm",
+      "testButton": "Nút thử nghiệm"
     }
   }
 }

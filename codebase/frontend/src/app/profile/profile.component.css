@@ -551,6 +551,12 @@
   color: #6366f1;
 }
 
+.security-badge--warn {
+  background: rgba(249,115,22,0.12);
+  color: #f97316;
+}
+
+
 /* =============================================
    FAMILY TREE CARD (giữ nguyên)
    ============================================= */
@@ -971,3 +977,234 @@
   border-color: var(--user-primary) !important;
   box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.15) !important;
 }
+
+/* =============================================
+   2FA SETUP MODAL STYLES
+   ============================================= */
+.twofa-setup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 8px 4px;
+}
+
+.setup-step {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.setup-step__badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 4px 12px;
+  border-radius: 12px;
+  background: rgba(249, 115, 22, 0.08);
+  color: var(--user-primary, #f97316);
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid rgba(249, 115, 22, 0.15);
+}
+
+.setup-step__desc {
+  font-size: 13px;
+  color: var(--text-secondary, #6b7280);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.qr-code-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0;
+}
+
+.qr-code-wrapper {
+  width: 220px;
+  height: 220px;
+  border-radius: 16px;
+  background: #fff;
+  border: 1.5px solid rgba(249, 115, 22, 0.15);
+  box-shadow: 0 4px 20px rgba(249, 115, 22, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.qr-code-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.qr-code-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85);
+  z-index: 2;
+}
+
+.manual-key-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.manual-key-label {
+  font-size: 11px;
+  color: var(--text-secondary, #9ca3af);
+  font-weight: 500;
+}
+
+.manual-key-code {
+  font-family: 'JetBrains Mono', Consolas, monospace;
+  font-size: 14px;
+  font-weight: 700;
+  color: #4f46e5;
+  background: #e0e7ff;
+  padding: 4px 12px;
+  border-radius: 8px;
+  letter-spacing: 1px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.otp-inputs-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px 0 8px;
+}
+
+.otp-digit-input {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(0,0,0,0.12);
+  background: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-main, #1f2937);
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.otp-digit-input:focus {
+  outline: none;
+  border-color: var(--user-primary, #f97316);
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15), 0 4px 12px rgba(249, 115, 22, 0.1);
+  transform: translateY(-1px);
+}
+
+.countdown-timer {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: center;
+  margin-top: 8px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  background: rgba(99, 102, 241, 0.08);
+  color: #4f46e5;
+  font-size: 12px;
+  font-weight: 600;
+  animation: timerPulse 2s infinite ease-in-out;
+}
+
+.timer-icon {
+  font-size: 13px;
+}
+
+@keyframes timerPulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.02); opacity: 0.85; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.app-downloads {
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px dashed rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.download-title {
+  font-size: 11px;
+  color: var(--text-secondary, #9ca3af);
+  margin: 0;
+  font-weight: 500;
+}
+
+.download-buttons {
+  display: flex;
+  gap: 12px;
+}
+
+.download-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  text-decoration: none !important;
+}
+
+.download-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.download-btn--appstore {
+  background: #1e1b4b;
+}
+
+.download-btn--appstore:hover {
+  background: #0f172a;
+}
+
+.download-btn--playstore {
+  background: #0f766e;
+}
+
+.download-btn--playstore:hover {
+  background: #115e59;
+}
+
+.download-btn .btn-icon {
+  font-size: 15px;
+}
+
+@media (max-width: 480px) {
+  .otp-inputs-row {
+    gap: 6px;
+  }
+  .otp-digit-input {
+    width: 38px;
+    height: 38px;
+    font-size: 18px;
+    border-radius: 8px;
+  }
+  .download-buttons {
+    flex-direction: column;
+  }
+}
+

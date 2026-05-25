@@ -228,7 +228,7 @@
     <div class="detail-card detail-card--security">
       <div class="detail-card__header">
         <div class="detail-card__icon" style="background: linear-gradient(135deg,#8b5cf6,#a78bfa)">
-          <span nz-icon nzType="safety" nzTheme="fill"></span>
+          <span nz-icon nzType="safety" nzTheme="outline"></span>
         </div>
         <div>
           <h2 class="detail-card__title">{{ 'momApp.profile.cards.security.title' | translate }}</h2>
@@ -269,6 +269,24 @@
           </div>
           <span class="security-badge security-badge--on">{{ 'momApp.profile.cards.security.notifications.status' | translate }}</span>
         </div>
+        <div class="security-item">
+          <div class="security-item__info">
+            <span nz-icon nzType="safety" nzTheme="outline" class="security-item__icon"></span>
+            <div>
+              <p class="security-item__title">{{ 'app.profile.2fa.status.title' | translate }}</p>
+              <p class="security-item__sub">{{ 'app.profile.2fa.status.desc' | translate }}</p>
+            </div>
+          </div>
+          <div class="security-item__actions" style="display: flex; gap: 12px; align-items: center;">
+            <span class="security-badge" [class.security-badge--ok]="is2faEnabled" [class.security-badge--warn]="!is2faEnabled">
+              {{ (is2faEnabled ? 'app.profile.2fa.status.enabled' : 'app.profile.2fa.status.disabled') | translate }}
+            </span>
+            <button nz-button nzType="default" nzSize="small" class="btn-user-outline" (click)="open2faSetup()">
+              {{ (is2faEnabled ? 'app.profile.2fa.status.turnOff' : 'app.profile.2fa.status.setup') | translate }}
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -616,4 +634,158 @@
   <ng-template #prefixUser><span nz-icon nzType="user"></span></ng-template>
   <ng-template #prefixMail><span nz-icon nzType="mail"></span></ng-template>
 
+  <!-- Modal Thiết lập 2FA -->
+  <nz-modal
+    [(nzVisible)]="is2faVisible"
+    [nzTitle]="twoFaTitleTpl"
+    nzClassName="user-role-modal twofa-setup-modal"
+    (nzOnCancel)="close2faModal()"
+    (nzAfterOpen)="focusFirstOtpInput()"
+    [nzFooter]="twoFaFooterTpl"
+    [nzWidth]="520"
+  >
+    <ng-template #twoFaTitleTpl>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="modal-title-icon-wrap" style="background: linear-gradient(135deg,#f97316,#fb923c)">
+          <span nz-icon nzType="safety"></span>
+        </span>
+        <span class="modal-title-text">
+          <span class="modal-title-main">{{ 'app.profile.2fa.title' | translate }}</span>
+          <span class="modal-title-sub">Bảo vệ tài khoản với xác thực 2 bước</span>
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-container *nzModalContent>
+      <div class="twofa-setup-content">
+        <!-- Bước 1 -->
+        <div class="setup-step">
+          <div class="setup-step__badge">{{ 'app.profile.2fa.step1' | translate }}</div>
+          <p class="setup-step__desc">{{ 'app.profile.2fa.step1Desc' | translate }}</p>
+        </div>
+
+        <!-- Bước 2 -->
+        <div class="setup-step">
+          <div class="setup-step__badge">{{ 'app.profile.2fa.step2' | translate }}</div>
+          <p class="setup-step__desc">{{ 'app.profile.2fa.step2Desc' | translate }}</p>
+          
+          <div class="qr-code-section">
+            <div class="qr-code-wrapper">
+              <div *ngIf="isGeneratingSecret" class="qr-code-loading">
+                <span nz-icon nzType="loading" style="font-size: 28px; color: var(--user-primary)"></span>
+              </div>
+              <img *ngIf="!isGeneratingSecret && qrCodeUrl" [src]="qrCodeUrl" alt="2FA QR Code" class="qr-code-img" />
+            </div>
+            
+            <div class="manual-key-wrapper" *ngIf="!isGeneratingSecret && secretKey">
+              <span class="manual-key-label">{{ 'app.profile.2fa.secretLabel' | translate }}</span>
+              <code class="manual-key-code">{{ secretKey }}</code>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bước 3 -->
+        <div class="setup-step" style="margin-bottom: 0">
+          <div class="setup-step__badge">{{ 'app.profile.2fa.step3' | translate }}</div>
+          <p class="setup-step__desc">{{ 'app.profile.2fa.step3Desc' | translate }}</p>
+          
+          <div class="otp-inputs-row" (paste)="onOtpPaste($event)">
+            <input
+              #otpInput
+              *ngFor="let digit of otpDigits; let i = index; trackBy: trackByIndex"
+              [id]="'otp-' + i"
+              type="text"
+              pattern="\d*"
+              class="otp-digit-input"
+              [value]="otpDigits[i]"
+              (input)="onOtpInput($event, i)"
+              (keydown)="onOtpKeyDown($event, i)"
+              autocomplete="one-time-code"
+            />
+          </div>
+
+          <div class="countdown-timer" *ngIf="!isGeneratingSecret">
+            <span nz-icon nzType="clock-circle" nzTheme="outline" class="timer-icon"></span>
+            <span class="timer-text">{{ 'app.profile.2fa.remainingTime' | translate: { time: remainingTime } }}</span>
+          </div>
+        </div>
+
+        <div class="app-downloads">
+          <p class="download-title">Don't have the app? Download Google Authenticator:</p>
+          <div class="download-buttons">
+            <a href="https://apps.apple.com/us/app/google-authenticator/id388497605" target="_blank" class="download-btn download-btn--appstore">
+              <span nz-icon nzType="apple" nzTheme="fill" class="btn-icon"></span>
+              <span class="btn-text">{{ 'app.profile.2fa.appStore' | translate }}</span>
+            </a>
+            <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" class="download-btn download-btn--playstore">
+              <span nz-icon nzType="android" nzTheme="fill" class="btn-icon"></span>
+              <span class="btn-text">{{ 'app.profile.2fa.googlePlay' | translate }}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #twoFaFooterTpl>
+      <button nz-button nzType="default" class="btn-user-outline" (click)="close2faModal()">
+        {{ 'app.profile.2fa.cancel' | translate }}
+      </button>
+      <button
+        nz-button
+        nzType="primary"
+        class="btn-user-primary"
+        (click)="submit2faVerify()"
+        [nzLoading]="isVerifyingOtp"
+        [disabled]="isGeneratingSecret"
+      >
+        {{ 'app.profile.2fa.enable' | translate }}
+      </button>
+    </ng-template>
+  </nz-modal>
+
+  <!-- Modal Xác nhận Tắt 2FA -->
+  <nz-modal
+    [(nzVisible)]="is2faDisableVisible"
+    [nzTitle]="disable2FaTitleTpl"
+    nzClassName="user-role-modal"
+    (nzOnCancel)="closeDisable2faModal()"
+    [nzFooter]="disable2FaFooterTpl"
+    [nzWidth]="420"
+  >
+    <ng-template #disable2FaTitleTpl>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="modal-title-icon-wrap" style="background: linear-gradient(135deg,#ef4444,#f87171)">
+          <span nz-icon nzType="warning"></span>
+        </span>
+        <span class="modal-title-text">
+          <span class="modal-title-main">{{ 'app.profile.2fa.disableTitle' | translate }}</span>
+          <span class="modal-title-sub">Xác nhận huỷ bảo mật 2 lớp</span>
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-container *nzModalContent>
+      <p style="font-size: 14px; color: var(--text-primary); line-height: 1.6; margin: 0">
+        {{ 'app.profile.2fa.disableConfirm' | translate }}
+      </p>
+    </ng-container>
+
+    <ng-template #disable2FaFooterTpl>
+      <button nz-button nzType="default" class="btn-user-outline" (click)="closeDisable2faModal()">
+        {{ 'app.profile.2fa.cancel' | translate }}
+      </button>
+      <button
+        nz-button
+        nzType="primary"
+        class="btn-user-primary"
+        style="background: linear-gradient(135deg, #ef4444, #f87171); border-color: #ef4444;"
+        (click)="submitDisable2fa()"
+        [nzLoading]="isDisabling2fa"
+      >
+        {{ 'app.profile.2fa.disableTitle' | translate }}
+      </button>
+    </ng-template>
+  </nz-modal>
+
 </section>
+

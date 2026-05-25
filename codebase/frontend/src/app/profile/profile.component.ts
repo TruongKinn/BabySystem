@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnDestroy, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, combineLatest, finalize, map, of, switchMap } from 'rxjs';
@@ -16,7 +16,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
-import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, AbstractControl, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { PasswordStrengthComponent } from '../shared/components/password-strength/password-strength.component';
 import { AuthService } from '../auth/auth.service';
 import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
@@ -95,12 +95,13 @@ interface ProfilePremiumFeature {
     NzInputModule,
     NzDatePickerModule,
     ReactiveFormsModule,
+    FormsModule,
     PasswordStrengthComponent
   ],
   templateUrl: './profile.component.html',
   styleUrl: './profile.component.css'
 })
-export class ProfileComponent {
+export class ProfileComponent implements OnDestroy {
   private readonly maxAvatarSize = 30 * 1024 * 1024;
   private readonly authService = inject(AuthService);
   private readonly command = inject(SuperAppCommandService);
@@ -109,6 +110,20 @@ export class ProfileComponent {
   private readonly message = inject(NzMessageService);
   private readonly fb = inject(FormBuilder);
   private readonly profileReload$ = new BehaviorSubject<void>(undefined);
+
+  is2faEnabled = false;
+  is2faVisible = false;
+  is2faDisableVisible = false;
+  isGeneratingSecret = false;
+  isVerifyingOtp = false;
+  isDisabling2fa = false;
+  qrCodeUrl = '';
+  secretKey = '';
+  otpDigits = ['', '', '', '', '', ''];
+  @ViewChildren('otpInput') otpInputs!: QueryList<ElementRef<HTMLInputElement>>;
+  remainingTime = 30;
+  private timerInterval: any = null;
+
   private readonly premiumFeatureOrder = [
     PREMIUM_FEATURE_KEYS.advancedGrowthTracking,
     PREMIUM_FEATURE_KEYS.smartReminders,
@@ -291,10 +306,14 @@ export class ProfileComponent {
         babies: this.command.getBabies().pipe(
           map((items) => items as BabyProfile[]),
           catchError(() => of([] as BabyProfile[]))
+        ),
+        is2faEnabled: this.command.get2faStatus().pipe(
+          catchError(() => of(false))
         )
       })
     ),
-    map(({ profile, familyMembers, premiumFeatures, babies }): ProfileViewModel => {
+    map(({ profile, familyMembers, premiumFeatures, babies, is2faEnabled }): ProfileViewModel => {
+      this.is2faEnabled = is2faEnabled;
       const currentMember = this.resolveCurrentFamilyMember(profile.userId, familyMembers);
       const enrichedMembers = familyMembers.map((member) => ({
         ...member,
@@ -331,6 +350,7 @@ export class ProfileComponent {
       };
     })
   );
+
 
   onAvatarFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
@@ -777,4 +797,273 @@ export class ProfileComponent {
     }
     this.pdfSafeUrl = null;
   }
+
+  ngOnDestroy(): void {
+    this.stopTimer();
+  }
+
+  private startTimer(): void {
+    this.stopTimer();
+    
+    // Tính toán số giây còn lại trong chu kỳ 30s của Unix epoch để đồng bộ hoàn hảo với Google Authenticator
+    const getSecondsRemaining = () => 30 - (Math.floor(Date.now() / 1000) % 30);
+    this.remainingTime = getSecondsRemaining();
+
+    this.timerInterval = setInterval(() => {
+      this.remainingTime--;
+      if (this.remainingTime <= 0) {
+        // Chỉ reset lại bộ đếm giây hiển thị
+        // Tuyệt đối KHÔNG gọi generate2faSecret() để tránh làm thay đổi Secret Key trên Server
+        this.remainingTime = getSecondsRemaining();
+      }
+    }, 1000);
+  }
+
+  private stopTimer(): void {
+    if (this.timerInterval) {
+      clearInterval(this.timerInterval);
+      this.timerInterval = null;
+    }
+  }
+
+  open2faSetup(): void {
+    if (this.is2faEnabled) {
+      this.is2faDisableVisible = true;
+    } else {
+      this.otpDigits = ['', '', '', '', '', ''];
+      this.is2faVisible = true;
+      this.generate2faSecret();
+    }
+  }
+
+  close2faModal(): void {
+    this.is2faVisible = false;
+    this.stopTimer();
+  }
+
+  closeDisable2faModal(): void {
+    this.is2faDisableVisible = false;
+  }
+
+  generate2faSecret(): void {
+    this.isGeneratingSecret = true;
+    this.command.generate2faSecret()
+      .pipe(finalize(() => this.isGeneratingSecret = false))
+      .subscribe({
+        next: (res) => {
+          this.qrCodeUrl = res.qrCodeUrl;
+          this.secretKey = res.secret;
+          this.startTimer();
+        },
+        error: (err) => {
+          this.message.error(err.message || 'Không thể khởi tạo mã QR xác thực 2 bước!');
+          this.close2faModal();
+        }
+      });
+  }
+
+  onOtpInput(event: Event, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const rawVal = input.value;
+    console.log(`[OTP DEBUG] onOtpInput - Index: ${index}`);
+    console.log(`[OTP DEBUG]   Raw Input Value: "${rawVal}"`);
+    console.log(`[OTP DEBUG]   Current otpDigits state before update:`, JSON.stringify(this.otpDigits));
+
+    let val = input.value.trim();
+
+    // Lọc bỏ mọi ký tự không phải số
+    val = val.replace(/\D/g, '');
+    console.log(`[OTP DEBUG]   Value after filtering non-digits: "${val}"`);
+
+    // Nếu có độ dài lớn hơn 0, chỉ lấy ký tự cuối cùng (chế độ đè phím)
+    if (val.length > 0) {
+      val = val.charAt(val.length - 1);
+      console.log(`[OTP DEBUG]   Value after keeping only last char: "${val}"`);
+    }
+
+    input.value = val;
+    this.otpDigits[index] = val;
+    console.log(`[OTP DEBUG]   Updated otpDigits state:`, JSON.stringify(this.otpDigits));
+
+    // Chuyển focus sang ô tiếp theo bất đồng bộ bằng setTimeout để tránh rò rỉ phím sang ô mới
+    if (val && index < 5) {
+      const inputsArray = this.otpInputs.toArray();
+      const nextInput = inputsArray[index + 1]?.nativeElement;
+      if (nextInput) {
+        console.log(`[OTP DEBUG]   Moving focus to index: ${index + 1}`);
+        setTimeout(() => {
+          nextInput.focus();
+          nextInput.select();
+        }, 10);
+      }
+    }
+  }
+
+  onOtpKeyDown(event: KeyboardEvent, index: number): void {
+    const input = event.target as HTMLInputElement;
+    const inputsArray = this.otpInputs.toArray();
+    console.log(`[OTP DEBUG] onOtpKeyDown - Index: ${index}, Key: "${event.key}", Ctrl: ${event.ctrlKey}, Meta: ${event.metaKey}, Current Input Value: "${input.value}"`);
+
+    // 1. Xử lý khi nhấn Backspace
+    if (event.key === 'Backspace') {
+      event.preventDefault(); // Ngăn chặn hành vi mặc định để tự kiểm soát
+      console.log(`[OTP DEBUG]   Backspace detected`);
+
+      if (input.value) {
+        // Nếu ô hiện tại có giá trị, xóa giá trị của nó
+        input.value = '';
+        this.otpDigits[index] = '';
+        console.log(`[OTP DEBUG]   Cleared current index ${index}. State:`, JSON.stringify(this.otpDigits));
+      } else if (index > 0) {
+        // Nếu ô hiện tại trống, xóa giá trị của ô trước đó và quay về ô trước
+        this.otpDigits[index - 1] = '';
+        const prevInput = inputsArray[index - 1]?.nativeElement;
+        if (prevInput) {
+          prevInput.value = '';
+          console.log(`[OTP DEBUG]   Cleared previous index ${index - 1} and moving focus back. State:`, JSON.stringify(this.otpDigits));
+          setTimeout(() => {
+            prevInput.focus();
+            prevInput.select();
+          }, 10);
+        }
+      }
+      return;
+    }
+
+    // 2. Cho phép di chuyển trái/phải bằng phím mũi tên
+    if (event.key === 'ArrowLeft' && index > 0) {
+      event.preventDefault();
+      const prevInput = inputsArray[index - 1]?.nativeElement;
+      if (prevInput) {
+        setTimeout(() => {
+          prevInput.focus();
+          prevInput.select();
+        }, 10);
+      }
+      return;
+    }
+    if (event.key === 'ArrowRight' && index < 5) {
+      event.preventDefault();
+      const nextInput = inputsArray[index + 1]?.nativeElement;
+      if (nextInput) {
+        setTimeout(() => {
+          nextInput.focus();
+          nextInput.select();
+        }, 10);
+      }
+      return;
+    }
+
+    // 3. Cho phép các phím chức năng và phím tắt thông thường
+    const allowedKeys = ['Tab', 'Delete', 'Enter', 'Escape'];
+    
+    // Cho phép paste (Ctrl + V / Cmd + V)
+    if ((event.ctrlKey || event.metaKey) && (event.key === 'v' || event.key === 'V')) {
+      return;
+    }
+    // Cho phép copy (Ctrl + C / Cmd + C)
+    if ((event.ctrlKey || event.metaKey) && (event.key === 'c' || event.key === 'C')) {
+      return;
+    }
+    // Cho phép chọn tất cả (Ctrl + A / Cmd + A)
+    if ((event.ctrlKey || event.metaKey) && (event.key === 'a' || event.key === 'A')) {
+      return;
+    }
+
+    // Chặn tất cả các phím ký tự chữ cái và ký tự đặc biệt khác phím số
+    const isDigit = event.key >= '0' && event.key <= '9';
+    if (!isDigit && allowedKeys.indexOf(event.key) === -1 && !event.ctrlKey && !event.metaKey) {
+      event.preventDefault();
+    }
+  }
+
+  onOtpPaste(event: ClipboardEvent): void {
+    event.preventDefault();
+    const pasteData = event.clipboardData?.getData('text') || '';
+    console.log(`[OTP DEBUG] onOtpPaste - Raw Paste Data: "${pasteData}"`);
+    const digits = pasteData.trim().replace(/\D/g, '').slice(0, 6);
+    console.log(`[OTP DEBUG]   Digits extracted: "${digits}"`);
+    const inputsArray = this.otpInputs.toArray();
+
+    for (let i = 0; i < 6; i++) {
+      if (i < digits.length) {
+        this.otpDigits[i] = digits[i];
+        const inputEl = inputsArray[i]?.nativeElement;
+        if (inputEl) {
+          inputEl.value = digits[i];
+        }
+      }
+    }
+    console.log(`[OTP DEBUG]   otpDigits after paste:`, JSON.stringify(this.otpDigits));
+
+    const focusIndex = Math.min(digits.length, 5);
+    const focusInput = inputsArray[focusIndex]?.nativeElement;
+    if (focusInput) {
+      console.log(`[OTP DEBUG]   Setting focus to index: ${focusIndex}`);
+      setTimeout(() => {
+        focusInput.focus();
+        focusInput.select();
+      }, 10);
+    }
+  }
+
+  trackByIndex(index: number, item: any): number {
+    return index;
+  }
+
+  focusFirstOtpInput(): void {
+    console.log('[OTP DEBUG] focusFirstOtpInput - Modal opened, focusing first input');
+    const inputsArray = this.otpInputs?.toArray() || [];
+    const firstInput = inputsArray[0]?.nativeElement;
+    if (firstInput) {
+      setTimeout(() => {
+        firstInput.focus();
+        firstInput.select();
+        console.log('[OTP DEBUG]   Focused on first input successfully');
+      }, 50);
+    } else {
+      console.warn('[OTP DEBUG]   First input element not found in DOM');
+    }
+  }
+
+  submit2faVerify(): void {
+    const otp = this.otpDigits.join('');
+    if (otp.length < 6) {
+      this.message.warning('Vui lòng nhập đầy đủ mã xác thực 6 chữ số!');
+      return;
+    }
+
+    this.isVerifyingOtp = true;
+    this.command.verifyAndEnable2fa(otp)
+      .pipe(finalize(() => this.isVerifyingOtp = false))
+      .subscribe({
+        next: () => {
+          this.message.success(this.i18n.translate('app.profile.2fa.enableSuccess') || 'Kích hoạt xác thực 2 bước thành công!');
+          this.is2faEnabled = true;
+          this.close2faModal();
+          this.profileReload$.next();
+        },
+        error: (err) => {
+          this.message.error(err.message || 'Mã xác thực OTP không hợp lệ hoặc đã hết hạn!');
+        }
+      });
+  }
+
+  submitDisable2fa(): void {
+    this.isDisabling2fa = true;
+    this.command.disable2fa()
+      .pipe(finalize(() => this.isDisabling2fa = false))
+      .subscribe({
+        next: () => {
+          this.message.success(this.i18n.translate('app.profile.2fa.disableSuccess') || 'Đã tắt xác thực 2 bước thành công!');
+          this.is2faEnabled = false;
+          this.closeDisable2faModal();
+          this.profileReload$.next();
+        },
+        error: (err) => {
+          this.message.error(err.message || 'Tắt xác thực 2 bước thất bại!');
+        }
+      });
+  }
 }
+

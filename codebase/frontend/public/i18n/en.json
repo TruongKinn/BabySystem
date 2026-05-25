@@ -4058,6 +4058,35 @@
     "settings": {
       "titleTest": "System Settings Test",
       "testButton": "Test Button"
+    },
+    "profile": {
+      "2fa": {
+        "title": "Set Up 2FA",
+        "step1": "Step 1: Install Authenticator App",
+        "step1Desc": "Download Google Authenticator or Microsoft Authenticator on your phone.",
+        "step2": "Step 2: Scan QR Code",
+        "step2Desc": "Open your authenticator app and scan the QR code below.",
+        "step3": "Step 3: Enter Verification Code",
+        "step3Desc": "Enter the 6-digit code from your authenticator app",
+        "secretLabel": "Manual setup key:",
+        "remainingTime": "New code in: {time}s",
+        "cancel": "Cancel",
+        "enable": "Enable Two-Factor Authentication",
+        "disableTitle": "Disable Two-Factor Authentication",
+        "disableConfirm": "Are you sure you want to disable two-factor authentication (2FA)? Your account security will be reduced.",
+        "disableSuccess": "Two-factor authentication disabled successfully!",
+        "enableSuccess": "Two-factor authentication enabled successfully!",
+        "appStore": "App Store",
+        "googlePlay": "Google Play",
+        "status": {
+          "title": "Two-Factor Auth (2FA)",
+          "desc": "Enhance account security using OTP codes",
+          "enabled": "Enabled",
+          "disabled": "Disabled",
+          "setup": "Set Up",
+          "turnOff": "Turn Off 2FA"
+        }
+      }
     }
   }
 }

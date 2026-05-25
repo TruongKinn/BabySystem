@@ -4056,6 +4056,35 @@
     "settings": {
       "titleTest": "Cài đặt hệ thống thử nghiệm",
       "testButton": "Nút thử nghiệm"
+    },
+    "profile": {
+      "2fa": {
+        "title": "Thiết lập 2FA",
+        "step1": "Bước 1: Cài ứng dụng xác thực",
+        "step1Desc": "Tải Google Authenticator hoặc Microsoft Authenticator trên điện thoại.",
+        "step2": "Bước 2: Quét mã QR",
+        "step2Desc": "Mở ứng dụng xác thực và quét mã QR bên dưới.",
+        "step3": "Bước 3: Nhập mã xác thực",
+        "step3Desc": "Nhập mã 6 số từ ứng dụng xác thực của bạn",
+        "secretLabel": "Mã thiết lập thủ công:",
+        "remainingTime": "Mã mới sau: {time}s",
+        "cancel": "Huỷ bỏ",
+        "enable": "Kích hoạt xác thực 2 bước",
+        "disableTitle": "Tắt xác thực 2 bước",
+        "disableConfirm": "Bạn có chắc chắn muốn tắt tính năng xác thực 2 bước (2FA)? Tài khoản của bạn sẽ giảm mức độ bảo mật.",
+        "disableSuccess": "Đã tắt xác thực 2 bước thành công!",
+        "enableSuccess": "Kích hoạt xác thực 2 bước thành công!",
+        "appStore": "App Store",
+        "googlePlay": "Google Play",
+        "status": {
+          "title": "Xác thực 2 bước (2FA)",
+          "desc": "Tăng cường bảo mật cho tài khoản bằng mã OTP",
+          "enabled": "Đã bật",
+          "disabled": "Chưa bật",
+          "setup": "Thiết lập",
+          "turnOff": "Tắt 2FA"
+        }
+      }
     }
   }
 }
