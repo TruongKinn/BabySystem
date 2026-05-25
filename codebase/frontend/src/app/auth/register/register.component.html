@@ -1,0 +1,224 @@
+<div class="login-page">
+  <!-- ===== Language Selector Dropdown ===== -->
+  <div class="lang-selector-container" (click)="$event.stopPropagation()">
+    <button type="button" class="language-trigger" (click)="toggleLangDropdown($event)" [class.active]="isLangDropdownOpen" id="btnLanguageTrigger">
+      <span class="language-trigger__icon" nz-icon nzType="global" nzTheme="outline"></span>
+      <span class="language-trigger__code">{{ currentLanguageOption.shortLabel }}</span>
+      <span class="language-trigger__name">{{ currentLanguageOption.nativeLabel }}</span>
+      <span class="language-trigger__chevron" nz-icon nzType="down" [class.rotated]="isLangDropdownOpen"></span>
+    </button>
+    
+    <div class="lang-dropdown-menu" [class.show]="isLangDropdownOpen">
+      <div class="language-menu">
+        <button
+          type="button"
+          class="language-option"
+          *ngFor="let lang of supportedLanguages"
+          [class.language-option--active]="currentLanguageOption.code === lang.code"
+          (click)="selectLanguage(lang.code)"
+          [attr.id]="'btnLang_' + lang.code"
+        >
+          <span class="language-option__code">{{ lang.shortLabel }}</span>
+          <span class="language-option__copy">
+            <strong>{{ lang.nativeLabel }}</strong>
+            <small>{{ lang.label }}</small>
+          </span>
+          <span *ngIf="currentLanguageOption.code === lang.code" class="language-option__check" nz-icon nzType="check"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="login-shell">
+
+    <!-- ===== LEFT: Intro Panel ===== -->
+    <section class="intro-panel">
+      <div class="intro-brand">
+        <div class="brand-logo">
+          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+            <rect width="32" height="32" rx="8" fill="url(#brandGrad)"/>
+            <path d="M16 6C10.477 6 6 10.477 6 16s4.477 10 10 10 10-4.477 10-10S21.523 6 16 6zm0 3a7 7 0 110 14A7 7 0 0116 9zm0 2a5 5 0 100 10A5 5 0 0016 11z" fill="white" fill-opacity="0.9"/>
+            <defs>
+              <linearGradient id="brandGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#7C3AED"/>
+                <stop offset="1" stop-color="#4F46E5"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="brand-name">Authentication</span>
+        </div>
+      </div>
+
+      <div class="intro-content">
+        <h1>{{ 'app.register.hero.title' | translate }}</h1>
+        <p [innerHTML]="'app.register.hero.subtitle' | translate"></p>
+      </div>
+
+      <div class="hero-points">
+        <div class="hero-point">
+          <div class="hero-point-icon">
+            <span nz-icon nzType="wallet"></span>
+          </div>
+          <div class="hero-point-text">{{ 'app.register.hero.point1' | translate }}</div>
+        </div>
+        <div class="hero-point">
+          <div class="hero-point-icon">
+            <span nz-icon nzType="heart"></span>
+          </div>
+          <div class="hero-point-text">{{ 'app.register.hero.point2' | translate }}</div>
+        </div>
+        <div class="hero-point">
+          <div class="hero-point-icon">
+            <span nz-icon nzType="safety"></span>
+          </div>
+          <div class="hero-point-text">{{ 'app.register.hero.point3' | translate }}</div>
+        </div>
+      </div>
+
+      <div class="intro-decoration">
+        <div class="deco-card deco-card-1">
+          <div class="deco-dot green"></div>
+          <div class="deco-lines">
+            <div class="deco-line w-60"></div>
+            <div class="deco-line w-40"></div>
+          </div>
+        </div>
+        <div class="deco-card deco-card-2">
+          <div class="deco-dot purple"></div>
+          <div class="deco-lines">
+            <div class="deco-line w-70"></div>
+            <div class="deco-line w-50"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== RIGHT: Register Form ===== -->
+    <section class="login-card">
+      <div class="card-inner">
+
+        <div class="card-header">
+          <h2>{{ 'app.register.card.title' | translate }}</h2>
+          <p>{{ 'app.register.card.subtitle' | translate }}</p>
+        </div>
+
+        <nz-alert *ngIf="errorMsg" nzType="error" [nzMessage]="errorMsg" nzShowIcon class="error-banner"></nz-alert>
+
+        <form
+          nz-form
+          nzLayout="vertical"
+          [formGroup]="registerForm"
+          (ngSubmit)="submitForm()"
+          class="login-form"
+        >
+          <!-- Row: Họ và Tên -->
+          <div class="form-row-2col">
+            <nz-form-item>
+              <nz-form-label [nzNoColon]="true">{{ 'app.register.form.lastNameLabel' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="'app.register.form.lastNameError' | translate">
+                <input nz-input formControlName="lastName" [placeholder]="'app.register.form.lastNamePlaceholder' | translate" id="inputLastName" />
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label [nzNoColon]="true">{{ 'app.register.form.firstNameLabel' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="'app.register.form.firstNameError' | translate">
+                <input nz-input formControlName="firstName" [placeholder]="'app.register.form.firstNamePlaceholder' | translate" id="inputFirstName" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <!-- Tên đăng nhập -->
+          <nz-form-item>
+            <nz-form-label [nzNoColon]="true">{{ 'app.register.form.usernameLabel' | translate }}</nz-form-label>
+            <nz-form-control [nzErrorTip]="'app.register.form.usernameError' | translate">
+              <input nz-input formControlName="username" [placeholder]="'app.register.form.usernamePlaceholder' | translate" id="inputRegUsername" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <!-- Email -->
+          <nz-form-item>
+            <nz-form-label [nzNoColon]="true">{{ 'app.register.form.emailLabel' | translate }}</nz-form-label>
+            <nz-form-control [nzErrorTip]="'app.register.form.emailError' | translate">
+              <input nz-input type="email" formControlName="email" [placeholder]="'app.register.form.emailPlaceholder' | translate" id="inputRegEmail" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <!-- Điện thoại (Tùy chọn) -->
+          <nz-form-item>
+            <nz-form-label [nzNoColon]="true">{{ 'app.register.form.phoneLabel' | translate }}</nz-form-label>
+            <nz-form-control [nzErrorTip]="'app.register.form.phoneError' | translate">
+              <input nz-input formControlName="phone" [placeholder]="'app.register.form.phonePlaceholder' | translate" id="inputRegPhone" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <!-- Mật khẩu -->
+          <nz-form-item>
+            <nz-form-label [nzNoColon]="true">{{ 'app.register.form.passwordLabel' | translate }}</nz-form-label>
+            <nz-form-control [nzErrorTip]="'app.register.form.passwordError' | translate">
+              <nz-input-group [nzSuffix]="pwdToggle">
+                <input
+                  [type]="passwordVisible ? 'text' : 'password'"
+                  nz-input
+                  formControlName="password"
+                  [placeholder]="'app.register.form.passwordPlaceholder' | translate"
+                  id="inputRegPassword"
+                />
+              </nz-input-group>
+              <ng-template #pwdToggle>
+                <span
+                  nz-icon
+                  [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                  class="password-toggle"
+                  (click)="passwordVisible = !passwordVisible"
+                ></span>
+              </ng-template>
+              <app-password-strength [password]="registerForm.get('password')?.value"></app-password-strength>
+            </nz-form-control>
+          </nz-form-item>
+
+          <!-- Xác nhận mật khẩu -->
+          <nz-form-item>
+            <nz-form-label [nzNoColon]="true">{{ 'app.register.form.confirmPasswordLabel' | translate }}</nz-form-label>
+            <nz-form-control [nzErrorTip]="confirmPwdTip">
+              <nz-input-group [nzSuffix]="confirmPwdToggle">
+                <input
+                  [type]="confirmPasswordVisible ? 'text' : 'password'"
+                  nz-input
+                  formControlName="confirmPassword"
+                  [placeholder]="'app.register.form.confirmPasswordPlaceholder' | translate"
+                  id="inputRegConfirmPassword"
+                />
+              </nz-input-group>
+              <ng-template #confirmPwdToggle>
+                <span
+                  nz-icon
+                  [nzType]="confirmPasswordVisible ? 'eye-invisible' : 'eye'"
+                  class="password-toggle"
+                  (click)="confirmPasswordVisible = !confirmPasswordVisible"
+                ></span>
+              </ng-template>
+              <ng-template #confirmPwdTip>
+                <span *ngIf="registerForm.errors?.['mismatch']; else requiredConfirm">
+                  {{ 'app.register.form.confirmPasswordMismatch' | translate }}
+                </span>
+                <ng-template #requiredConfirm>
+                  {{ 'app.register.form.confirmPasswordError' | translate }}
+                </ng-template>
+              </ng-template>
+            </nz-form-control>
+          </nz-form-item>
+
+          <button nz-button nzType="primary" nzBlock class="submit-btn" [nzLoading]="isLoading" [disabled]="!registerForm.valid" id="btnSubmitRegister">
+            {{ 'app.register.form.submit' | translate }}
+          </button>
+        </form>
+
+        <div class="register-link">
+          <a routerLink="/app/login" id="linkBackToLogin">{{ 'app.register.form.loginLink' | translate }}</a>
+        </div>
+
+      </div>
+    </section>
+  </div>
+</div>

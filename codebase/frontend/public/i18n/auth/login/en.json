@@ -95,7 +95,19 @@
     "captchaRequiredSimple": "Please complete CAPTCHA verification.",
     "twoFactorRequiredTitle": "Two-factor authentication required",
     "twoFactorRequiredDesc": "This account has 2FA enabled. Please enter OTP from your Authenticator app.",
-    "loginFailedFallback": "Login failed. Please verify your account credentials."
+    "loginFailedFallback": "Login failed. Please verify your account credentials.",
+    "forgotPasswordSuccessTitle": "Request successful",
+    "forgotPasswordSuccessDesc": "A temporary password has been sent to your email. Please check your inbox.",
+    "forgotPasswordFailedTitle": "Request failed",
+    "forgotPasswordFailedDesc": "Unable to send password reset request. Please try again."
+  },
+  "forgotPasswordModal": {
+    "title": "Forgot Password",
+    "description": "Enter your registered username or email address. The system will generate a temporary password and send it to your email address.",
+    "usernameOrEmailLabel": "Username or Email",
+    "usernameOrEmailPlaceholder": "Enter your username or email",
+    "usernameOrEmailError": "Please enter username or email",
+    "confirm": "Submit request"
   },
   "portal": {
     "adminHint": "Admin Portal - manage user accounts and system operations",

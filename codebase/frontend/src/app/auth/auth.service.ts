@@ -277,6 +277,14 @@ export class AuthService {
     return this.http.post<void>(`${this.apiUrl}/force-change-password`, payload);
   }
 
+  forgotPassword(usernameOrEmail: string): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/forgot-password`, { usernameOrEmail });
+  }
+
+  register(payload: any): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/register`, payload);
+  }
+
   isAuthenticated(): boolean {
     const token = this.getToken();
     const result = !!token;

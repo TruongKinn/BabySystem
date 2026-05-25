@@ -7,9 +7,11 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import vn.agent.controller.request.ForceChangePasswordRequest;
+import vn.agent.controller.request.ForgotPasswordRequest;
 import vn.agent.controller.request.GithubExchangeRequest;
 import vn.agent.controller.request.GoogleExchangeRequest;
 import vn.agent.controller.request.LoginRequest;
+import vn.agent.controller.request.RegisterRequest;
 import vn.agent.controller.response.TokenResponse;
 import vn.agent.service.AuthenticationService;
 
@@ -62,6 +64,22 @@ public record AuthenticationController(AuthenticationService authenticationServi
     @ResponseStatus(OK)
     public ResponseEntity<Void> forceChangePassword(@Valid @RequestBody ForceChangePasswordRequest request) {
         authenticationService.forceChangePassword(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Forgot Password", description = "Reset password to temporary password and send email")
+    @PostMapping("/forgot-password")
+    @ResponseStatus(OK)
+    public ResponseEntity<Void> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        authenticationService.forgotPassword(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "Register", description = "Register a new user")
+    @PostMapping("/register")
+    @ResponseStatus(OK)
+    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request) {
+        authenticationService.register(request);
         return ResponseEntity.ok().build();
     }
 

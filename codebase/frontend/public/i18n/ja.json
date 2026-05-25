@@ -1750,6 +1750,51 @@
         "githubVerifyFailed": "GitHubアカウントをシステムで検証できませんでした。もう一度お試しください。",
         "socialSuccess": "ソーシャルアカウントとの連携およびログインに成功しました！"
       }
+    },
+    "register": {
+      "hero": {
+        "title": "家族と一緒に旅を始めましょう",
+        "subtitle": "社内アカウントを登録し、支出、食事、活動、赤ちゃんの成長記録をデジタル化するためのプラットフォームを活用してください。",
+        "point1": "便利な家族支出管理",
+        "point2": "食事のスケジュール調整＆赤ちゃんの健康管理",
+        "point3": "2FAによる絶対的なデータセキュリティ"
+      },
+      "card": {
+        "title": "アカウント登録",
+        "subtitle": "新しいアカウントを作成するために、以下の情報を入力してください。"
+      },
+      "form": {
+        "usernameLabel": "ユーザー名",
+        "usernamePlaceholder": "ユーザー名を入力してください (スペースなし、小文字)",
+        "usernameError": "ユーザー名は3文字以上である必要があります",
+        "emailLabel": "メールアドレス",
+        "emailPlaceholder": "email@example.com",
+        "emailError": "有効なメールアドレスを入力してください",
+        "passwordLabel": "パスワード",
+        "passwordPlaceholder": "••••••••",
+        "passwordError": "パスワードは6文字以上にする必要があります",
+        "confirmPasswordLabel": "パスワードの確認",
+        "confirmPasswordPlaceholder": "パスワードを再入力",
+        "confirmPasswordError": "パスワードを再度入力してください",
+        "confirmPasswordMismatch": "確認用パスワードが一致しません",
+        "firstNameLabel": "名",
+        "firstNamePlaceholder": "名前を入力 (例: 太郎)",
+        "firstNameError": "名前を入力してください",
+        "lastNameLabel": "姓",
+        "lastNamePlaceholder": "苗字を入力",
+        "lastNameError": "苗字を入力してください",
+        "phoneLabel": "電話番号",
+        "phonePlaceholder": "09xxxxxxxx",
+        "phoneError": "有効な電話番号を入力してください",
+        "submit": "アカウントを登録",
+        "loginLink": "すでにアカウントをお持ちですか？ ログイン"
+      },
+      "messages": {
+        "registerSuccessTitle": "登録成功",
+        "registerSuccessDesc": "アカウントが作成されました！ログイン画面にリダイレクトしています...",
+        "registerFailedTitle": "登録失敗",
+        "registerFailedDesc": "アカウントを作成できませんでした。入力内容を確認してください。"
+      }
     }
   },
   "auth": {
@@ -1860,7 +1905,15 @@
         "forceChangeRequiredTitle": "パスワードの更新が必要です",
         "forceChangeRequiredDesc": "続行する前に一時パスワードを変更する必要があります。"
       },
-      "themeToggleAria": "テーマ切り替え"
+      "themeToggleAria": "テーマ切り替え",
+      "forgotPasswordModal": {
+        "title": "パスワードをお忘れですか？",
+        "description": "ユーザー名またはメールアドレスを入力してください。システムは自動的に一時パスワードを生成し、登録されたメールアドレスに送信します。",
+        "usernameOrEmailLabel": "ユーザー名またはメールアドレス",
+        "usernameOrEmailPlaceholder": "ユーザー名またはメールアドレスを入力",
+        "usernameOrEmailError": "ユーザー名またはメールアドレスを入力してください",
+        "confirm": "リクエスト送信"
+      }
     }
   }
 }

@@ -76,7 +76,19 @@
     "forceChangeSuccessTitle": "Đổi mật khẩu thành công",
     "forceChangeRequiredDesc": "Bạn phải đổi mật khẩu tạm trước khi tiếp tục.",
     "forceChangeSuccessDesc": "Mật khẩu đã được cập nhật. Đang đăng nhập lại...",
-    "forceChangeMissingContext": "Thiếu username hoặc mật khẩu tạm. Vui lòng đăng nhập lại."
+    "forceChangeMissingContext": "Thiếu username hoặc mật khẩu tạm. Vui lòng đăng nhập lại.",
+    "forgotPasswordSuccessTitle": "Yêu cầu thành công",
+    "forgotPasswordSuccessDesc": "Mật khẩu tạm thời đã được gửi về email của bạn. Vui lòng kiểm tra hộp thư.",
+    "forgotPasswordFailedTitle": "Yêu cầu thất bại",
+    "forgotPasswordFailedDesc": "Không thể gửi yêu cầu lấy lại mật khẩu. Vui lòng thử lại."
+  },
+  "forgotPasswordModal": {
+    "title": "Quên mật khẩu",
+    "description": "Nhập tên đăng nhập hoặc địa chỉ email đã đăng ký. Hệ thống sẽ tạo mật khẩu tạm thời và gửi về địa chỉ email của bạn.",
+    "usernameOrEmailLabel": "Tên đăng nhập hoặc Email",
+    "usernameOrEmailPlaceholder": "Nhập username hoặc email của bạn",
+    "usernameOrEmailError": "Vui lòng nhập tên đăng nhập hoặc email",
+    "confirm": "Gửi yêu cầu"
   },
   "forceChangeModal": {
     "title": "Đổi mật khẩu tạm",

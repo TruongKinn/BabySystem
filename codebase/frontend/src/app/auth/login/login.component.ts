@@ -1,5 +1,5 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { Component, ElementRef, Inject, OnInit, PLATFORM_ID, ViewChild } from '@angular/core';
+import { Component, ElementRef, Inject, OnInit, PLATFORM_ID, ViewChild, HostListener } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { OAuthService } from 'angular-oauth2-oidc';
@@ -14,6 +14,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { I18nService } from '../../i18n/i18n.service';
+import { SUPPORTED_LANGUAGES, LanguageOption } from '../../i18n/i18n.constants';
+import { LanguageCode } from '../../i18n/language.model';
 import { authConfig } from '../auth.config';
 import { AuthService } from '../auth.service';
 import { PasswordStrengthComponent } from '../../shared/components/password-strength/password-strength.component';
@@ -64,6 +66,43 @@ export class LoginComponent implements OnInit {
   isForceChangeLoading = false;
   portalMode: PortalMode = 'user';
   forceChangeForm: FormGroup;
+  isVisibleForgotPassword = false;
+  forgotPasswordForm: FormGroup;
+  newPwdVisible = false;
+  confirmPwdVisible = false;
+
+  supportedLanguages = SUPPORTED_LANGUAGES;
+  isLangDropdownOpen = false;
+
+  get currentLanguageOption(): LanguageOption {
+    const code = this.i18nService.getCurrentLanguage();
+    return this.supportedLanguages.find(lang => lang.code === code) || this.supportedLanguages[0];
+  }
+
+  toggleLangDropdown(event: MouseEvent): void {
+    event.stopPropagation();
+    this.isLangDropdownOpen = !this.isLangDropdownOpen;
+  }
+
+  selectLanguage(code: LanguageCode): void {
+    this.i18nService.setLanguage(code);
+    this.isLangDropdownOpen = false;
+  }
+
+  getFlagEmoji(code: LanguageCode): string {
+    switch (code) {
+      case 'vi': return '🇻🇳';
+      case 'en': return '🇬🇧';
+      case 'ja': return '🇯🇵';
+      case 'zh': return '🇨🇳';
+      default: return '🌐';
+    }
+  }
+
+  @HostListener('document:click')
+  onDocumentClick(): void {
+    this.isLangDropdownOpen = false;
+  }
 
   constructor(
     private readonly fb: FormBuilder,
@@ -91,6 +130,10 @@ export class LoginComponent implements OnInit {
       },
       { validators: this.passwordMatchValidator() }
     );
+
+    this.forgotPasswordForm = this.fb.group({
+      usernameOrEmail: ['', [Validators.required]]
+    });
 
     if (this.isBrowser) {
       const savedTheme = localStorage.getItem('theme');
@@ -122,6 +165,13 @@ export class LoginComponent implements OnInit {
     }
 
     if (this.isBrowser) {
+      const savedUsername = localStorage.getItem('remembered_username');
+      if (savedUsername) {
+        this.loginForm.patchValue({
+          username: savedUsername,
+          remember: true
+        });
+      }
       this.initGoogleSignIn();
       this.checkGithubCallback();
     }
@@ -337,6 +387,47 @@ export class LoginComponent implements OnInit {
     this.forceChangeForm.reset();
   }
 
+  openForgotPasswordModal(): void {
+    this.isVisibleForgotPassword = true;
+    this.forgotPasswordForm.reset();
+  }
+
+  closeForgotPasswordModal(): void {
+    this.isVisibleForgotPassword = false;
+    this.forgotPasswordForm.reset();
+  }
+
+  submitForgotPassword(): void {
+    if (this.forgotPasswordForm.invalid) {
+      Object.values(this.forgotPasswordForm.controls).forEach((control) => {
+        control.markAsDirty();
+        control.updateValueAndValidity({ onlySelf: true });
+      });
+      return;
+    }
+
+    this.isLoading = true;
+    const usernameOrEmail = this.forgotPasswordForm.value.usernameOrEmail;
+    this.authService.forgotPassword(usernameOrEmail).subscribe({
+      next: () => {
+        this.isLoading = false;
+        this.isVisibleForgotPassword = false;
+        this.notification.success(
+          this.i18nService.translate('auth.login.messages.forgotPasswordSuccessTitle'),
+          this.i18nService.translate('auth.login.messages.forgotPasswordSuccessDesc')
+        );
+      },
+      error: (err) => {
+        this.isLoading = false;
+        const msg = err.error?.message || this.i18nService.translate('auth.login.messages.forgotPasswordFailedDesc');
+        this.notification.error(
+          this.i18nService.translate('auth.login.messages.forgotPasswordFailedTitle'),
+          msg
+        );
+      }
+    });
+  }
+
   openTwoFactorSetup(): void {
     if (this.authService.isAuthenticated()) {
       this.router.navigate(['/2fa-setup']);
@@ -454,6 +545,15 @@ export class LoginComponent implements OnInit {
 
         if (res.accessToken) {
           this.resetChallengeState();
+          
+          if (this.isBrowser) {
+            if (this.loginForm.value.remember) {
+              localStorage.setItem('remembered_username', this.loginForm.value.username);
+            } else {
+              localStorage.removeItem('remembered_username');
+            }
+          }
+
           this.notification.success(
             this.i18nService.translate('auth.login.messages.loginSuccessTitle'),
             this.i18nService.translate('auth.login.messages.loginSuccessDesc')

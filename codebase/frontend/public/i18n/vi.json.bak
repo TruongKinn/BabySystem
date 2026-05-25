@@ -1748,101 +1748,173 @@
         "githubVerifyFailed": "Không thể xác thực tài khoản GitHub với hệ thống. Vui lòng thử lại.",
         "socialSuccess": "Liên kết và đăng nhập tài khoản mạng xã hội thành công!"
       }
+    },
+    "register": {
+      "hero": {
+        "title": "Bắt đầu hành trình cùng gia đình của bạn",
+        "subtitle": "Đăng ký tài khoản nội bộ và tận hưởng nền tảng số hóa quản lý chi tiêu, thực đơn, hoạt động và nhật ký phát triển của bé yêu.",
+        "point1": "Quản lý chi tiêu gia đình tiện lợi",
+        "point2": "Lên lịch bữa ăn & theo dõi sức khỏe bé",
+        "point3": "Bảo mật dữ liệu tuyệt đối với 2FA"
+      },
+      "card": {
+        "title": "Đăng ký tài khoản",
+        "subtitle": "Vui lòng nhập đầy đủ các thông tin bên dưới để tạo tài khoản mới."
+      },
+      "form": {
+        "usernameLabel": "Tên đăng nhập",
+        "usernamePlaceholder": "Nhập tên đăng nhập (viết liền, không dấu)",
+        "usernameError": "Tên đăng nhập tối thiểu 3 ký tự",
+        "emailLabel": "Địa chỉ Email",
+        "emailPlaceholder": "nhapemail@gmail.com",
+        "emailError": "Vui lòng nhập địa chỉ email hợp lệ",
+        "passwordLabel": "Mật khẩu",
+        "passwordPlaceholder": "••••••••",
+        "passwordError": "Mật khẩu tối thiểu 6 ký tự",
+        "confirmPasswordLabel": "Xác nhận mật khẩu",
+        "confirmPasswordPlaceholder": "Nhập lại mật khẩu",
+        "confirmPasswordError": "Vui lòng xác nhận mật khẩu của bạn",
+        "confirmPasswordMismatch": "Xác nhận mật khẩu không khớp",
+        "firstNameLabel": "Tên",
+        "firstNamePlaceholder": "Nhập tên (ví dụ: Anh)",
+        "firstNameError": "Vui lòng nhập tên của bạn",
+        "lastNameLabel": "Họ",
+        "lastNamePlaceholder": "Nhập họ & tên đệm",
+        "lastNameError": "Vui lòng nhập họ & tên đệm",
+        "phoneLabel": "Số điện thoại",
+        "phonePlaceholder": "09xxxxxxxx",
+        "phoneError": "Vui lòng nhập số điện thoại hợp lệ",
+        "submit": "Đăng ký tài khoản",
+        "loginLink": "Đã có tài khoản? Đăng nhập ngay"
+      },
+      "messages": {
+        "registerSuccessTitle": "Đăng ký thành công",
+        "registerSuccessDesc": "Tài khoản của bạn đã được tạo! Đang chuyển hướng về trang đăng nhập...",
+        "registerFailedTitle": "Đăng ký thất bại",
+        "registerFailedDesc": "Không thể tạo tài khoản. Vui lòng kiểm tra lại thông tin."
+      }
     }
   },
   "auth": {
     "login": {
       "card": {
-        "eyebrow": "BabySystem Admin",
+        "eyebrow": "Authentication",
         "title": "Đăng nhập",
-        "subtitle": "Chào mừng trở lại! Vui lòng chọn hình thức đăng nhập"
+        "subtitle": "Chọn một trong hai cách đăng nhập bên dưới."
       },
       "hero": {
-        "title": "Hệ thống quản lý em bé",
-        "subtitle": "Giải pháp chăm sóc trẻ nhỏ thông minh và hiện đại",
-        "point1": "Bảo mật thông tin",
-        "point2": "Chứng nhận an toàn",
-        "point3": "Đồng bộ đám mây"
+        "title": "Đăng nhập một nơi, dùng hai phương thức",
+        "subtitle": "Chọn <strong>Bearer token</strong> để đăng nhập bằng tài khoản hệ thống, hoặc chuyển sang <strong>Keycloak</strong> nếu bạn dùng SSO tập trung.",
+        "point1": "Tài khoản nội bộ + 2FA",
+        "point2": "SSO qua Keycloak",
+        "point3": "Token được lưu đồng nhất",
+        "badge": "Nền tảng Logistics"
       },
       "portal": {
-        "adminHint": "Cổng thông tin dành cho Quản trị viên",
-        "userHint": "Cổng thông tin dành cho Thành viên gia đình",
-        "switchToAdmin": "Chuyển sang Cổng Quản trị",
-        "switchToUser": "Chuyển sang Cổng Gia đình"
+        "adminHint": "Admin Portal - quản lý tài khoản người dùng và vận hành hệ thống",
+        "userHint": "User Portal - dành cho thành viên gia đình sử dụng ứng dụng",
+        "switchToAdmin": "Đăng nhập vào Admin Portal",
+        "switchToUser": "Đăng nhập vào User Portal"
       },
       "switch": {
-        "bearer": "Đăng nhập Email",
-        "keycloak": "Đăng nhập Hệ thống (Keycloak)"
+        "bearer": "Bearer token",
+        "keycloak": "Keycloak"
       },
       "form": {
-        "usernameLabel": "Tên đăng nhập / Email",
+        "usernameLabel": "Tên đăng nhập",
         "usernameError": "Vui lòng nhập tên đăng nhập",
-        "usernamePlaceholder": "Nhập tài khoản hoặc email",
+        "usernamePlaceholder": "Nhập username",
         "passwordLabel": "Mật khẩu",
-        "passwordError": "Mật khẩu phải từ 6 ký tự trở lên",
-        "passwordPlaceholder": "Nhập mật khẩu",
-        "otpLabel": "Mã xác thực OTP (2FA)",
-        "otpError": "Mã OTP phải gồm 6 chữ số",
-        "otpPlaceholder": "Nhập mã OTP 6 số",
-        "captchaLabel": "Mã xác minh",
-        "captchaError": "Vui lòng nhập mã xác minh gồm 4 ký tự",
-        "captchaPlaceholder": "Nhập mã Captcha",
-        "captchaRefresh": "Nhấp vào ảnh để đổi mã Captcha",
-        "remember": "Ghi nhớ đăng nhập",
+        "passwordError": "Vui lòng nhập mật khẩu",
+        "passwordPlaceholder": "••••••••",
+        "otpLabel": "Mã OTP (2FA)",
+        "otpError": "Vui lòng nhập mã OTP 6 số",
+        "otpPlaceholder": "000000",
+        "captchaLabel": "Mã CAPTCHA",
+        "captchaError": "Vui lòng nhập mã CAPTCHA",
+        "captchaPlaceholder": "Mã xác nhận",
+        "captchaRefresh": "Nhấn để đổi mã khác",
+        "remember": "Ghi nhớ",
         "forgotPassword": "Quên mật khẩu?",
-        "submitBearer": "Đăng nhập",
-        "twoFactorHelp": "Bạn gặp khó khăn với mã OTP (2FA)?"
+        "submitBearer": "Đăng nhập bằng Bearer token",
+        "twoFactorHelp": "Mã 2FA lấy ở đâu?",
+        "register": "Đăng ký tài khoản",
+        "note": "Hệ thống sẽ tự bật OTP hoặc CAPTCHA khi cần.",
+        "setupTwoFactor": "Thiết lập 2FA",
+        "setupHint": "Nếu đã đăng nhập, nút này mở trang quét QR ngay."
       },
       "keycloak": {
-        "description": "Keycloak là hệ thống xác thực tập trung giúp đăng nhập an toàn một lần (Single Sign-On).",
-        "bullet1": "Sử dụng tài khoản nội bộ công ty để đăng nhập",
-        "bullet2": "Mã hóa bảo mật chuẩn doanh nghiệp",
-        "bullet3": "Tự động phân quyền dựa trên vai trò hệ thống",
-        "submit": "Đăng nhập bằng Keycloak"
+        "description": "Dùng SSO để chuyển sang Keycloak, sau đó hệ thống đổi token thành session nội bộ cho gateway và các service phía sau.",
+        "bullet1": "Phù hợp khi đã có tài khoản tập trung.",
+        "bullet2": "Không cần nhập lại mật khẩu nội bộ.",
+        "bullet3": "Token cuối cùng vẫn được hệ thống lưu đồng nhất.",
+        "submit": "Đăng nhập với Keycloak",
+        "title": "Đăng nhập bằng Keycloak"
       },
       "twoFactorModal": {
-        "title": "Hướng dẫn xác thực hai bước (2FA)",
-        "description": "Xác thực 2 bước (2FA) giúp bảo vệ tài khoản của bạn khỏi việc truy cập trái phép bằng cách yêu cầu mã xác nhận tạm thời từ điện thoại của bạn.",
-        "step1": "1. Cài đặt một ứng dụng xác thực (như Google Authenticator hoặc Microsoft Authenticator) trên điện thoại của bạn.",
-        "step2": "2. Trong màn hình <b>Cài đặt tài khoản > 2FA</b>, quét mã QR hiển thị để thiết lập.",
-        "step3": "3. Ứng dụng sẽ tự động tạo một mã 6 chữ số thay đổi mỗi 30 giây.",
-        "step4": "4. Khi đăng nhập, sau khi nhập mật khẩu, hệ thống sẽ yêu cầu bạn điền mã này.",
-        "step5": "5. Nhập mã hiển thị trên điện thoại vào ô OTP để hoàn tất đăng nhập.",
-        "info": "Lưu ý: Nếu bạn chưa kích hoạt 2FA trong tài khoản, hãy đăng nhập bình thường (không cần OTP) rồi vào Cài đặt để bật."
+        "title": "Hướng dẫn lấy mã 2FA",
+        "description": "Mã 2FA không phải do hệ thống tự sinh ở màn login. Bạn phải bật 2FA trước trong trang <strong>Thiết lập 2FA</strong> sau khi đã đăng nhập.",
+        "step1": "Đăng nhập vào hệ thống.",
+        "step2": "Mở menu <strong>Thiết lập 2FA</strong> hoặc vào route <code>/2fa-setup</code>.",
+        "step3": "Quét QR bằng Google Authenticator hoặc ứng dụng OTP tương tự.",
+        "step4": "Ứng dụng sẽ sinh mã 6 số thay đổi mỗi 30 giây.",
+        "step5": "Khi lần sau hệ thống yêu cầu OTP, nhập đúng mã 6 số vào ô đăng nhập.",
+        "info": "Nếu tài khoản chưa bật 2FA, bạn không cần nhập OTP."
       },
       "forceChangeModal": {
-        "title": "Yêu cầu thay đổi mật khẩu",
-        "confirm": "Đổi mật khẩu",
-        "description": "Tài khoản của bạn đang sử dụng mật khẩu tạm thời hoặc mật khẩu đã hết hạn. Vui lòng thiết lập mật khẩu mới có tính bảo mật cao để tiếp tục.",
+        "title": "Đổi mật khẩu tạm",
+        "confirm": "Cập nhật mật khẩu",
+        "description": "Tài khoản đang dùng mật khẩu tạm. Vui lòng đặt mật khẩu mới để tiếp tục.",
         "newPasswordLabel": "Mật khẩu mới",
-        "newPasswordError": "Mật khẩu mới phải từ 8-20 ký tự, bao gồm ít nhất một chữ hoa, một chữ thường, một số và một ký tự đặc biệt.",
+        "newPasswordError": "Mật khẩu mới tối thiểu 6 ký tự",
         "newPasswordPlaceholder": "Nhập mật khẩu mới",
         "confirmPasswordLabel": "Xác nhận mật khẩu mới",
-        "confirmPasswordError": "Vui lòng nhập lại mật khẩu mới",
-        "confirmPasswordMismatch": "Mật khẩu xác nhận không khớp"
+        "confirmPasswordError": "Vui lòng xác nhận mật khẩu mới",
+        "confirmPasswordMismatch": "Mật khẩu xác nhận không khớp",
+        "confirmPasswordPlaceholder": "Nhập lại mật khẩu mới",
+        "strengthWeak": "Yếu",
+        "strengthMedium": "Trung bình",
+        "strengthStrong": "Mạnh",
+        "reqLength": "8-20 ký tự",
+        "reqUpperLower": "1 chữ hoa & 1 chữ thường",
+        "reqNumber": "1 chữ số",
+        "reqSpecial": "1 ký tự đặc biệt"
       },
       "messages": {
         "googleVerifyFailed": "Không thể xác thực tài khoản Google với hệ thống. Vui lòng thử lại.",
         "githubVerifyFailed": "Không thể xác thực tài khoản GitHub với hệ thống. Vui lòng thử lại.",
         "socialSuccess": "Liên kết và đăng nhập tài khoản mạng xã hội thành công!",
-        "captchaLoadFailed": "Không thể tải mã Captcha. Vui lòng thử lại.",
+        "captchaLoadFailed": "Không thể tải CAPTCHA: {{message}}",
         "loginFailedTitle": "Đăng nhập thất bại",
         "loginSuccessTitle": "Đăng nhập thành công",
-        "loginSuccessDesc": "Chào mừng bạn trở lại hệ thống!",
-        "keycloakVerifyFailed": "Không thể xác thực với hệ thống Keycloak. Vui lòng thử lại.",
-        "captchaRequiredTitle": "Yêu cầu mã Captcha",
-        "captchaRequiredDesc": "Hệ thống phát hiện hoạt động đáng ngờ. Vui lòng nhập mã Captcha để tiếp tục.",
-        "captchaRequiredSimple": "Vui lòng nhập mã Captcha",
-        "captchaInvalid": "Mã Captcha không đúng hoặc đã hết hạn",
-        "twoFactorRequiredTitle": "Yêu cầu mã OTP (2FA)",
-        "twoFactorRequiredDesc": "Tài khoản của bạn đã kích hoạt bảo mật hai lớp. Vui lòng nhập mã xác thực OTP từ ứng dụng.",
-        "loginFailedFallback": "Tên đăng nhập hoặc mật khẩu không chính xác.",
-        "forceChangeMissingContext": "Không tìm thấy thông tin tài khoản tạm thời để thay đổi mật khẩu.",
-        "forceChangeSuccessTitle": "Thay đổi mật khẩu thành công",
-        "forceChangeSuccessDesc": "Mật khẩu mới đã được cập nhật. Hệ thống đang tự động đăng nhập lại...",
-        "forceChangeFailed": "Không thể thay đổi mật khẩu. Vui lòng thử lại.",
-        "forceChangeRequiredTitle": "Yêu cầu đổi mật khẩu",
-        "forceChangeRequiredDesc": "Mật khẩu của bạn đã hết hạn hoặc cần được cập nhật vì lý do an toàn."
+        "loginSuccessDesc": "Chào mừng bạn quay trở lại!",
+        "keycloakVerifyFailed": "Không thể xác thực với Keycloak",
+        "captchaRequiredTitle": "Yêu cầu xác nhận CAPTCHA",
+        "captchaRequiredDesc": "Mật khẩu sai nhiều lần. Vui lòng nhập CAPTCHA để tiếp tục.",
+        "captchaRequiredSimple": "Vui lòng xác nhận CAPTCHA.",
+        "captchaInvalid": "Mã CAPTCHA không hợp lệ. Vui lòng nhập lại.",
+        "twoFactorRequiredTitle": "Yêu cầu xác thực 2 bước",
+        "twoFactorRequiredDesc": "Tài khoản này đã bật 2FA. Vui lòng nhập mã OTP từ ứng dụng Authenticator.",
+        "loginFailedFallback": "Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản.",
+        "forceChangeMissingContext": "Thiếu username hoặc mật khẩu tạm. Vui lòng đăng nhập lại.",
+        "forceChangeSuccessTitle": "Đổi mật khẩu thành công",
+        "forceChangeSuccessDesc": "Mật khẩu đã được cập nhật. Đang đăng nhập lại...",
+        "forceChangeFailed": "Không thể đổi mật khẩu. Vui lòng kiểm tra lại thông tin.",
+        "forceChangeRequiredTitle": "Yêu cầu cập nhật mật khẩu",
+        "forceChangeRequiredDesc": "Bạn phải đổi mật khẩu tạm trước khi tiếp tục.",
+        "forgotPasswordSuccessTitle": "Yêu cầu thành công",
+        "forgotPasswordSuccessDesc": "Mật khẩu tạm thời đã được gửi về email của bạn. Vui lòng kiểm tra hộp thư.",
+        "forgotPasswordFailedTitle": "Yêu cầu thất bại",
+        "forgotPasswordFailedDesc": "Không thể gửi yêu cầu lấy lại mật khẩu. Vui lòng thử lại."
+      },
+      "themeToggleAria": "Chuyển giao diện",
+      "forgotPasswordModal": {
+        "title": "Quên mật khẩu",
+        "description": "Nhập tên đăng nhập hoặc địa chỉ email đã đăng ký. Hệ thống sẽ tạo mật khẩu tạm thời và gửi về địa chỉ email của bạn.",
+        "usernameOrEmailLabel": "Tên đăng nhập hoặc Email",
+        "usernameOrEmailPlaceholder": "Nhập username hoặc email của bạn",
+        "usernameOrEmailError": "Vui lòng nhập tên đăng nhập hoặc email",
+        "confirm": "Gửi yêu cầu"
       }
     }
   }

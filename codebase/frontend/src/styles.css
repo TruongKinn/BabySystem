@@ -1834,3 +1834,51 @@ body {
 
 .premium-viewer-modal .viewer-error { padding: 60px 40px; text-align: center; }
 
+/* ================================================================
+   PREMIUM AUTH MODAL — Global Overrides
+   nz-modal renders at document.body so these MUST be global styles
+   ================================================================ */
+
+/* Strip all nz-modal default chrome */
+.premium-modal .ant-modal-content {
+  padding: 0 !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(124,58,237,0.09) !important;
+}
+
+.premium-modal .ant-modal-body {
+  padding: 0 !important;
+}
+
+/* Hide the default title bar entirely */
+.premium-modal .ant-modal-header {
+  display: none !important;
+}
+
+/* Hide the default footer bar entirely */
+.premium-modal .ant-modal-footer {
+  display: none !important;
+}
+
+/* Hide default X close button — we use our own */
+.premium-modal .ant-modal-close {
+  display: none !important;
+}
+
+/* Slide-in entrance animation */
+.premium-modal .ant-modal {
+  animation: premiumModalIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes premiumModalIn {
+  from { opacity: 0; transform: scale(0.94) translateY(20px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+/* Backdrop blur */
+.premium-modal-backdrop .ant-modal-mask {
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  background: rgba(15, 23, 42, 0.5) !important;
+}

@@ -1,4 +1,34 @@
 <div class="login-page">
+  <!-- ===== Language Selector Dropdown ===== -->
+  <div class="lang-selector-container" (click)="$event.stopPropagation()">
+    <button type="button" class="language-trigger" (click)="toggleLangDropdown($event)" [class.active]="isLangDropdownOpen" id="btnLanguageTrigger">
+      <span class="language-trigger__icon" nz-icon nzType="global" nzTheme="outline"></span>
+      <span class="language-trigger__code">{{ currentLanguageOption.shortLabel }}</span>
+      <span class="language-trigger__name">{{ currentLanguageOption.nativeLabel }}</span>
+      <span class="language-trigger__chevron" nz-icon nzType="down" [class.rotated]="isLangDropdownOpen"></span>
+    </button>
+    
+    <div class="lang-dropdown-menu" [class.show]="isLangDropdownOpen">
+      <div class="language-menu">
+        <button
+          type="button"
+          class="language-option"
+          *ngFor="let lang of supportedLanguages"
+          [class.language-option--active]="currentLanguageOption.code === lang.code"
+          (click)="selectLanguage(lang.code)"
+          [attr.id]="'btnLang_' + lang.code"
+        >
+          <span class="language-option__code">{{ lang.shortLabel }}</span>
+          <span class="language-option__copy">
+            <strong>{{ lang.nativeLabel }}</strong>
+            <small>{{ lang.label }}</small>
+          </span>
+          <span *ngIf="currentLanguageOption.code === lang.code" class="language-option__check" nz-icon nzType="check"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <div class="login-shell">
 
     <!-- ===== LEFT: Intro Panel ===== -->
@@ -206,7 +236,7 @@
 
           <div class="form-actions">
             <label nz-checkbox formControlName="remember" id="checkboxRemember">{{ 'auth.login.form.remember' | translate }}</label>
-            <span class="hint-link" id="linkForgotPassword">{{ 'auth.login.form.forgotPassword' | translate }}</span>
+            <span class="hint-link" id="linkForgotPassword" (click)="openForgotPasswordModal()">{{ 'auth.login.form.forgotPassword' | translate }}</span>
           </div>
 
           <button nz-button nzType="primary" nzBlock class="submit-btn" [nzLoading]="isLoading" [disabled]="!loginForm.valid" id="btnSubmitLogin">
@@ -245,23 +275,97 @@
   </div>
 
   <!-- ===== 2FA Modal ===== -->
+  <ng-template #emptyTpl></ng-template>
   <nz-modal
     [(nzVisible)]="isVisibleTwoFactorGuide"
-    [nzTitle]="'auth.login.twoFactorModal.title' | translate"
-    [nzFooter]="null"
+    [nzTitle]="emptyTpl"
+    [nzFooter]="emptyTpl"
+    [nzCentered]="true"
+    nzWidth="520px"
+    [nzClassName]="'premium-modal'"
     (nzOnCancel)="closeTwoFactorGuide()"
   >
     <ng-container *nzModalContent>
-      <div class="two-factor-guide-modal">
-        <p [innerHTML]="'auth.login.twoFactorModal.description' | translate"></p>
-        <ol>
-          <li>{{ 'auth.login.twoFactorModal.step1' | translate }}</li>
-          <li [innerHTML]="'auth.login.twoFactorModal.step2' | translate"></li>
-          <li>{{ 'auth.login.twoFactorModal.step3' | translate }}</li>
-          <li>{{ 'auth.login.twoFactorModal.step4' | translate }}</li>
-          <li>{{ 'auth.login.twoFactorModal.step5' | translate }}</li>
-        </ol>
-        <nz-alert nzType="info" nzShowIcon [nzMessage]="'auth.login.twoFactorModal.info' | translate"></nz-alert>
+      <div class="premium-modal-container">
+        <!-- Close Button -->
+        <button class="modal-close-btn" (click)="closeTwoFactorGuide()">
+          <span nz-icon nzType="close"></span>
+        </button>
+
+        <div class="modal-header-premium">
+          <div class="modal-icon-wrapper purple-glow">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </div>
+          <h3>{{ 'auth.login.twoFactorModal.title' | translate }}</h3>
+          <p class="modal-subtitle">{{ 'auth.login.twoFactorModal.description' | translate }}</p>
+        </div>
+
+        <div class="modal-body-premium">
+          <div class="visual-steps">
+            <!-- Step 1 -->
+            <div class="visual-step-card">
+              <div class="step-num">1</div>
+              <div class="step-details">
+                <h4>{{ 'auth.login.twoFactorModal.step1' | translate }}</h4>
+                <p>Tiến hành đăng nhập bằng tài khoản nội bộ bình thường.</p>
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="visual-step-card">
+              <div class="step-num">2</div>
+              <div class="step-details">
+                <h4>Thiết lập trong Profile</h4>
+                <p [innerHTML]="'auth.login.twoFactorModal.step2' | translate"></p>
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="visual-step-card">
+              <div class="step-num">3</div>
+              <div class="step-details">
+                <h4>{{ 'auth.login.twoFactorModal.step3' | translate }}</h4>
+                <p>Dùng Google Authenticator, Microsoft Authenticator hoặc các app OTP tương đương quét mã QR.</p>
+              </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="visual-step-card">
+              <div class="step-num">4</div>
+              <div class="step-details">
+                <h4>{{ 'auth.login.twoFactorModal.step4' | translate }}</h4>
+                <p>Ứng dụng sẽ tự động sinh mã số 6 chữ số thay đổi liên tục cứ sau mỗi 30 giây.</p>
+              </div>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="visual-step-card">
+              <div class="step-num">5</div>
+              <div class="step-details">
+                <h4>{{ 'auth.login.twoFactorModal.step5' | translate }}</h4>
+                <p>Tại các lần đăng nhập tiếp theo, điền đúng mã 6 số này để hoàn tất xác thực.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="premium-alert-glass">
+            <div class="alert-icon-wrapper">
+              <span nz-icon nzType="info-circle" nzTheme="fill"></span>
+            </div>
+            <div class="alert-content">
+              <p>{{ 'auth.login.twoFactorModal.info' | translate }}</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer-premium">
+          <button class="modal-btn-primary full-width" (click)="closeTwoFactorGuide()">
+            Đã hiểu, đóng lại
+          </button>
+        </div>
       </div>
     </ng-container>
   </nz-modal>
@@ -269,46 +373,159 @@
   <!-- ===== Force Change Password Modal ===== -->
   <nz-modal
     [(nzVisible)]="isVisibleForceChangePassword"
-    [nzTitle]="'auth.login.forceChangeModal.title' | translate"
-    [nzOkText]="'auth.login.forceChangeModal.confirm' | translate"
-    [nzCancelText]="'commonActions.cancel' | translate"
-    [nzOkLoading]="isForceChangeLoading"
+    [nzTitle]="emptyTpl"
+    [nzFooter]="emptyTpl"
+    [nzCentered]="true"
+    nzWidth="480px"
+    [nzClassName]="'premium-modal'"
+    [nzMaskClosable]="false"
     (nzOnCancel)="closeForceChangePasswordModal()"
-    (nzOnOk)="submitForceChangePassword()"
   >
     <ng-container *nzModalContent>
-      <form nz-form nzLayout="vertical" [formGroup]="forceChangeForm" class="force-change-password-form">
-        <p class="force-change-description">{{ 'auth.login.forceChangeModal.description' | translate }}</p>
+      <div class="premium-modal-container">
+        <div class="modal-header-premium">
+          <div class="modal-icon-wrapper orange-glow">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <h3>{{ 'auth.login.forceChangeModal.title' | translate }}</h3>
+          <p class="modal-subtitle">{{ 'auth.login.forceChangeModal.description' | translate }}</p>
+        </div>
 
-        <nz-form-item>
-          <nz-form-label [nzNoColon]="true">{{ 'auth.login.forceChangeModal.newPasswordLabel' | translate }}</nz-form-label>
-          <nz-form-control [nzErrorTip]="'auth.login.forceChangeModal.newPasswordError' | translate">
-            <input nz-input type="password" formControlName="newPassword" [placeholder]="'auth.login.forceChangeModal.newPasswordPlaceholder' | translate" />
-            <app-password-strength [password]="forceChangeForm.get('newPassword')?.value"></app-password-strength>
-          </nz-form-control>
-        </nz-form-item>
+        <div class="modal-body-premium">
+          <form nz-form nzLayout="vertical" [formGroup]="forceChangeForm">
+            <nz-form-item>
+              <nz-form-label [nzNoColon]="true">{{ 'auth.login.forceChangeModal.newPasswordLabel' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="'auth.login.forceChangeModal.newPasswordError' | translate">
+                <nz-input-group [nzSuffix]="newPwdToggle">
+                  <input
+                    [type]="newPwdVisible ? 'text' : 'password'"
+                    nz-input
+                    formControlName="newPassword"
+                    [placeholder]="'auth.login.forceChangeModal.newPasswordPlaceholder' | translate"
+                  />
+                </nz-input-group>
+                <ng-template #newPwdToggle>
+                  <span nz-icon [nzType]="newPwdVisible ? 'eye-invisible' : 'eye'" class="password-toggle" (click)="newPwdVisible = !newPwdVisible"></span>
+                </ng-template>
+                <app-password-strength [password]="forceChangeForm.get('newPassword')?.value"></app-password-strength>
+              </nz-form-control>
+            </nz-form-item>
 
-        <nz-form-item>
-          <nz-form-label [nzNoColon]="true">{{ 'auth.login.forceChangeModal.confirmPasswordLabel' | translate }}</nz-form-label>
-          <nz-form-control [nzErrorTip]="mismatchTpl">
-            <input
-              nz-input
-              type="password"
-              formControlName="confirmPassword"
-              [placeholder]="'auth.login.forceChangeModal.confirmPasswordPlaceholder' | translate"
-              (keydown.enter)="submitForceChangePassword()"
-            />
-            <ng-template #mismatchTpl>
-              <span *ngIf="forceChangeForm.errors?.['mismatch']; else requiredConfirm">
-                {{ 'auth.login.forceChangeModal.confirmPasswordMismatch' | translate }}
-              </span>
-              <ng-template #requiredConfirm>
-                {{ 'auth.login.forceChangeModal.confirmPasswordError' | translate }}
-              </ng-template>
-            </ng-template>
-          </nz-form-control>
-        </nz-form-item>
-      </form>
+            <nz-form-item>
+              <nz-form-label [nzNoColon]="true">{{ 'auth.login.forceChangeModal.confirmPasswordLabel' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="mismatchTpl">
+                <nz-input-group [nzSuffix]="confirmPwdToggle">
+                  <input
+                    [type]="confirmPwdVisible ? 'text' : 'password'"
+                    nz-input
+                    formControlName="confirmPassword"
+                    [placeholder]="'auth.login.forceChangeModal.confirmPasswordPlaceholder' | translate"
+                    (keydown.enter)="submitForceChangePassword()"
+                  />
+                </nz-input-group>
+                <ng-template #confirmPwdToggle>
+                  <span nz-icon [nzType]="confirmPwdVisible ? 'eye-invisible' : 'eye'" class="password-toggle" (click)="confirmPwdVisible = !confirmPwdVisible"></span>
+                </ng-template>
+                <ng-template #mismatchTpl>
+                  <span *ngIf="forceChangeForm.errors?.['mismatch']; else requiredConfirm">
+                    {{ 'auth.login.forceChangeModal.confirmPasswordMismatch' | translate }}
+                  </span>
+                  <ng-template #requiredConfirm>
+                    {{ 'auth.login.forceChangeModal.confirmPasswordError' | translate }}
+                  </ng-template>
+                </ng-template>
+              </nz-form-control>
+            </nz-form-item>
+          </form>
+        </div>
+
+        <div class="modal-footer-premium">
+          <button class="modal-btn-ghost" (click)="closeForceChangePasswordModal()">Huỷ</button>
+          <button
+            class="modal-btn-primary"
+            [class.loading]="isForceChangeLoading"
+            [disabled]="!forceChangeForm.valid || isForceChangeLoading"
+            (click)="submitForceChangePassword()"
+          >
+            <span nz-icon nzType="loading" *ngIf="isForceChangeLoading"></span>
+            {{ 'auth.login.forceChangeModal.confirm' | translate }}
+          </button>
+        </div>
+      </div>
+    </ng-container>
+  </nz-modal>
+
+  <!-- ===== Forgot Password Modal ===== -->
+  <nz-modal
+    [(nzVisible)]="isVisibleForgotPassword"
+    [nzTitle]="emptyTpl"
+    [nzFooter]="emptyTpl"
+    [nzCentered]="true"
+    nzWidth="460px"
+    [nzClassName]="'premium-modal'"
+    (nzOnCancel)="closeForgotPasswordModal()"
+  >
+    <ng-container *nzModalContent>
+      <div class="premium-modal-container">
+        <!-- Close btn -->
+        <button class="modal-close-btn" (click)="closeForgotPasswordModal()">
+          <span nz-icon nzType="close"></span>
+        </button>
+
+        <div class="modal-header-premium">
+          <div class="modal-icon-wrapper blue-glow">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+            </svg>
+          </div>
+          <h3>{{ 'auth.login.forgotPasswordModal.title' | translate }}</h3>
+          <p class="modal-subtitle">{{ 'auth.login.forgotPasswordModal.description' | translate }}</p>
+        </div>
+
+        <div class="modal-body-premium">
+          <form nz-form nzLayout="vertical" [formGroup]="forgotPasswordForm">
+            <nz-form-item style="margin-bottom: 0">
+              <nz-form-label [nzNoColon]="true">{{ 'auth.login.forgotPasswordModal.usernameOrEmailLabel' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="'auth.login.forgotPasswordModal.usernameOrEmailError' | translate">
+                <nz-input-group nzPrefixIcon="user">
+                  <input
+                    nz-input
+                    formControlName="usernameOrEmail"
+                    [placeholder]="'auth.login.forgotPasswordModal.usernameOrEmailPlaceholder' | translate"
+                    (keydown.enter)="submitForgotPassword()"
+                    id="inputForgotUsernameOrEmail"
+                  />
+                </nz-input-group>
+              </nz-form-control>
+            </nz-form-item>
+          </form>
+
+          <div class="premium-alert-glass info-sm" style="margin-top: 16px">
+            <div class="alert-icon-wrapper">
+              <span nz-icon nzType="mail" nzTheme="outline"></span>
+            </div>
+            <div class="alert-content">
+              <p>Mật khẩu tạm thời sẽ được gửi đến email đã đăng ký của bạn trong vòng vài giây.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer-premium">
+          <button class="modal-btn-ghost" (click)="closeForgotPasswordModal()">Huỷ bỏ</button>
+          <button
+            class="modal-btn-primary"
+            [class.loading]="isLoading"
+            [disabled]="!forgotPasswordForm.valid || isLoading"
+            (click)="submitForgotPassword()"
+          >
+            <span nz-icon nzType="loading" *ngIf="isLoading"></span>
+            {{ 'auth.login.forgotPasswordModal.confirm' | translate }}
+          </button>
+        </div>
+      </div>
     </ng-container>
   </nz-modal>
 </div>

@@ -1,0 +1,45 @@
+{
+  "hero": {
+    "title": "Bắt đầu hành trình cùng gia đình của bạn",
+    "subtitle": "Đăng ký tài khoản nội bộ và tận hưởng nền tảng số hóa quản lý chi tiêu, thực đơn, hoạt động và nhật ký phát triển của bé yêu.",
+    "point1": "Quản lý chi tiêu gia đình tiện lợi",
+    "point2": "Lên lịch bữa ăn & theo dõi sức khỏe bé",
+    "point3": "Bảo mật dữ liệu tuyệt đối với 2FA"
+  },
+  "card": {
+    "title": "Đăng ký tài khoản",
+    "subtitle": "Vui lòng nhập đầy đủ các thông tin bên dưới để tạo tài khoản mới."
+  },
+  "form": {
+    "usernameLabel": "Tên đăng nhập",
+    "usernamePlaceholder": "Nhập tên đăng nhập (viết liền, không dấu)",
+    "usernameError": "Tên đăng nhập tối thiểu 3 ký tự",
+    "emailLabel": "Địa chỉ Email",
+    "emailPlaceholder": "nhapemail@gmail.com",
+    "emailError": "Vui lòng nhập địa chỉ email hợp lệ",
+    "passwordLabel": "Mật khẩu",
+    "passwordPlaceholder": "••••••••",
+    "passwordError": "Mật khẩu tối thiểu 6 ký tự",
+    "confirmPasswordLabel": "Xác nhận mật khẩu",
+    "confirmPasswordPlaceholder": "Nhập lại mật khẩu",
+    "confirmPasswordError": "Vui lòng xác nhận mật khẩu của bạn",
+    "confirmPasswordMismatch": "Xác nhận mật khẩu không khớp",
+    "firstNameLabel": "Tên",
+    "firstNamePlaceholder": "Nhập tên (ví dụ: Anh)",
+    "firstNameError": "Vui lòng nhập tên của bạn",
+    "lastNameLabel": "Họ",
+    "lastNamePlaceholder": "Nhập họ & tên đệm",
+    "lastNameError": "Vui lòng nhập họ & tên đệm",
+    "phoneLabel": "Số điện thoại",
+    "phonePlaceholder": "09xxxxxxxx",
+    "phoneError": "Vui lòng nhập số điện thoại hợp lệ",
+    "submit": "Đăng ký tài khoản",
+    "loginLink": "Đã có tài khoản? Đăng nhập ngay"
+  },
+  "messages": {
+    "registerSuccessTitle": "Đăng ký thành công",
+    "registerSuccessDesc": "Tài khoản của bạn đã được tạo! Đang chuyển hướng về trang đăng nhập...",
+    "registerFailedTitle": "Đăng ký thất bại",
+    "registerFailedDesc": "Không thể tạo tài khoản. Vui lòng kiểm tra lại thông tin."
+  }
+}

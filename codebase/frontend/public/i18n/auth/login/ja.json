@@ -78,6 +78,14 @@
     "forceChangeSuccessDesc": "パスワードが正常に更新されました。再ログインしています...",
     "forceChangeMissingContext": "ユーザー名または一時パスワードが不足しています。もう一度ログインしてください。"
   },
+  "forgotPasswordModal": {
+    "title": "パスワードをお忘れですか？",
+    "description": "ユーザー名またはメールアドレスを入力してください。システムは自動的に一時パスワードを生成し、登録されたメールアドレスに送信します。",
+    "usernameOrEmailLabel": "ユーザー名またはメールアドレス",
+    "usernameOrEmailPlaceholder": "ユーザー名またはメールアドレスを入力",
+    "usernameOrEmailError": "ユーザー名またはメールアドレスを入力してください",
+    "confirm": "リクエスト送信"
+  },
   "forceChangeModal": {
     "title": "一時パスワードの変更",
     "description": "アカウントは一時パスワードを使用しています。続行するには新しいパスワードを設定してください。",

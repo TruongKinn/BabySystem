@@ -1750,6 +1750,51 @@
         "githubVerifyFailed": "无法向系统验证 GitHub 账号。请重试。",
         "socialSuccess": "社交账号关联并登录成功！"
       }
+    },
+    "register": {
+      "hero": {
+        "title": "与您的家人一同开启旅程",
+        "subtitle": "注册内部账户，享受平台为您带来的数字化家庭支出管理、餐食计划、日常活动及宝宝成长记录服务。",
+        "point1": "便捷的家庭支出管理",
+        "point2": "合理规划餐食并追踪宝宝健康状况",
+        "point3": "通过 2FA 确保数据的绝对安全"
+      },
+      "card": {
+        "title": "注册账号",
+        "subtitle": "请在下方填写完整信息以创建新账号。"
+      },
+      "form": {
+        "usernameLabel": "用户名",
+        "usernamePlaceholder": "请输入用户名 (连续，无空格/特殊字符)",
+        "usernameError": "用户名长度不能少于 3 个字符",
+        "emailLabel": "电子邮件",
+        "emailPlaceholder": "email@example.com",
+        "emailError": "请输入有效的电子邮件地址",
+        "passwordLabel": "密码",
+        "passwordPlaceholder": "••••••••",
+        "passwordError": "密码长度不能少于 6 个字符",
+        "confirmPasswordLabel": "确认密码",
+        "confirmPasswordPlaceholder": "请再次输入密码",
+        "confirmPasswordError": "请确认您的密码",
+        "confirmPasswordMismatch": "两次输入的密码不一致",
+        "firstNameLabel": "名字",
+        "firstNamePlaceholder": "输入您的名字 (例如: 伟)",
+        "firstNameError": "请输入您的名字",
+        "lastNameLabel": "姓氏",
+        "lastNamePlaceholder": "输入您的姓氏 (包含辈分/中间名)",
+        "lastNameError": "请输入您的姓氏",
+        "phoneLabel": "电话号码",
+        "phonePlaceholder": "09xxxxxxxx",
+        "phoneError": "请输入有效的电话号码",
+        "submit": "注册账号",
+        "loginLink": "已有账号？立即登录"
+      },
+      "messages": {
+        "registerSuccessTitle": "注册成功",
+        "registerSuccessDesc": "您的账号已创建！正在跳转至登录页面...",
+        "registerFailedTitle": "注册失败",
+        "registerFailedDesc": "无法创建账号。请检查您输入的信息。"
+      }
     }
   },
   "auth": {
@@ -1860,7 +1905,15 @@
         "forceChangeRequiredTitle": "需要更新密码",
         "forceChangeRequiredDesc": "在继续之前，您必须修改临时密码。"
       },
-      "themeToggleAria": "切换主题"
+      "themeToggleAria": "切换主题",
+      "forgotPasswordModal": {
+        "title": "忘记密码？",
+        "description": "请输入用户名或电子邮件。系统将自动生成临时密码并发送到该账户注册的邮箱中。",
+        "usernameOrEmailLabel": "用户名或电子邮件",
+        "usernameOrEmailPlaceholder": "输入用户名或电子邮件",
+        "usernameOrEmailError": "请输入用户名或电子邮件",
+        "confirm": "发送请求"
+      }
     }
   }
 }

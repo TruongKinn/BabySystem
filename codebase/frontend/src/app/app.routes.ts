@@ -9,6 +9,7 @@ import { AdminUsersComponent } from './admin/users/admin-users.component';
 import { AdminFinanceComponent } from './admin/finance/admin-finance.component';
 import { AdminPremiumComponent } from './admin/premium/admin-premium.component';
 import { LoginComponent } from './auth/login/login.component';
+import { RegisterComponent } from './auth/register/register.component';
 import { BabyComponent } from './baby/baby.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ExpensesComponent } from './expenses/expenses.component';
@@ -27,6 +28,7 @@ export const routes: Routes = [
   { path: 'login', pathMatch: 'full', redirectTo: 'admin/login' },
 
   { path: 'app/login', component: LoginComponent, data: { portal: 'user' } },
+  { path: 'app/register', component: RegisterComponent },
   { path: 'admin/login', component: LoginComponent, data: { portal: 'admin' } },
 
   {

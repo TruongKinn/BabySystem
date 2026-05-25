@@ -1750,101 +1750,173 @@
         "githubVerifyFailed": "Failed to verify GitHub account with the system. Please try again.",
         "socialSuccess": "Successfully linked and logged in with your social account!"
       }
+    },
+    "register": {
+      "hero": {
+        "title": "Start the journey with your family",
+        "subtitle": "Register an internal account and enjoy the platform to digitalize expenses, meals, activities, and development logs for your baby.",
+        "point1": "Convenient family expense management",
+        "point2": "Schedule meals & track baby health",
+        "point3": "Absolute data security with 2FA"
+      },
+      "card": {
+        "title": "Create Account",
+        "subtitle": "Please fill in the information below to create a new account."
+      },
+      "form": {
+        "usernameLabel": "Username",
+        "usernamePlaceholder": "Enter username",
+        "usernameError": "Username must be at least 3 characters",
+        "emailLabel": "Email Address",
+        "emailPlaceholder": "email@example.com",
+        "emailError": "Please enter a valid email address",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "••••••••",
+        "passwordError": "Password must be at least 6 characters",
+        "confirmPasswordLabel": "Confirm Password",
+        "confirmPasswordPlaceholder": "Re-enter password",
+        "confirmPasswordError": "Please confirm your password",
+        "confirmPasswordMismatch": "Password confirmation does not match",
+        "firstNameLabel": "First Name",
+        "firstNamePlaceholder": "Enter first name",
+        "firstNameError": "Please enter your first name",
+        "lastNameLabel": "Last Name",
+        "lastNamePlaceholder": "Enter last name",
+        "lastNameError": "Please enter your last name",
+        "phoneLabel": "Phone Number",
+        "phonePlaceholder": "09xxxxxxxx",
+        "phoneError": "Please enter a valid phone number",
+        "submit": "Sign Up",
+        "loginLink": "Already have an account? Sign in now"
+      },
+      "messages": {
+        "registerSuccessTitle": "Registration successful",
+        "registerSuccessDesc": "Your account has been created! Redirecting to login page...",
+        "registerFailedTitle": "Registration failed",
+        "registerFailedDesc": "Unable to create account. Please verify your input."
+      }
     }
   },
   "auth": {
     "login": {
       "card": {
-        "eyebrow": "BabySystem Admin",
-        "title": "Sign In",
-        "subtitle": "Welcome back! Please choose a login method"
+        "eyebrow": "Authentication",
+        "title": "Sign in",
+        "subtitle": "Choose one of the sign-in methods below."
       },
       "hero": {
-        "title": "Baby Management System",
-        "subtitle": "Smart and modern childcare solution",
-        "point1": "Information Security",
-        "point2": "Safety Certified",
-        "point3": "Cloud Sync"
+        "title": "One login, two authentication methods",
+        "subtitle": "Use <strong>Bearer token</strong> to sign in with your platform account, or switch to <strong>Keycloak</strong> if you use centralized SSO.",
+        "point1": "Internal account + 2FA",
+        "point2": "SSO via Keycloak",
+        "point3": "Unified token storage",
+        "badge": "Logistics Platform"
       },
       "portal": {
-        "adminHint": "Portal for System Administrators",
-        "userHint": "Portal for Family Members",
-        "switchToAdmin": "Switch to Admin Portal",
-        "switchToUser": "Switch to Family Portal"
+        "adminHint": "Admin Portal - manage user accounts and system operations",
+        "userHint": "User Portal - for family members using the app",
+        "switchToAdmin": "Sign in to Admin Portal",
+        "switchToUser": "Sign in to User Portal"
       },
       "switch": {
-        "bearer": "Email Sign In",
-        "keycloak": "System Sign In (Keycloak)"
+        "bearer": "Bearer token",
+        "keycloak": "Keycloak"
       },
       "form": {
-        "usernameLabel": "Username / Email",
-        "usernameError": "Please enter your username",
-        "usernamePlaceholder": "Enter username or email",
+        "usernameLabel": "Username",
+        "usernameError": "Please enter username",
+        "usernamePlaceholder": "Enter username",
         "passwordLabel": "Password",
-        "passwordError": "Password must be at least 6 characters",
-        "passwordPlaceholder": "Enter password",
-        "otpLabel": "OTP Authentication Code (2FA)",
-        "otpError": "OTP code must be 6 digits",
-        "otpPlaceholder": "Enter 6-digit OTP code",
-        "captchaLabel": "Verification Code",
-        "captchaError": "Please enter the 4-character verification code",
-        "captchaPlaceholder": "Enter Captcha code",
-        "captchaRefresh": "Click image to change Captcha code",
+        "passwordError": "Please enter password",
+        "passwordPlaceholder": "••••••••",
+        "otpLabel": "OTP Code (2FA)",
+        "otpError": "Please enter a 6-digit OTP",
+        "otpPlaceholder": "000000",
+        "captchaLabel": "CAPTCHA",
+        "captchaError": "Please enter CAPTCHA",
+        "captchaPlaceholder": "Verification code",
+        "captchaRefresh": "Click to refresh code",
         "remember": "Remember me",
         "forgotPassword": "Forgot password?",
-        "submitBearer": "Sign In",
-        "twoFactorHelp": "Having trouble with OTP (2FA)?"
+        "submitBearer": "Sign in with Bearer token",
+        "twoFactorHelp": "Where can I get the 2FA code?",
+        "register": "Create account",
+        "note": "OTP or CAPTCHA will be enabled automatically when required.",
+        "setupTwoFactor": "Set up 2FA",
+        "setupHint": "If you are signed in, this opens the QR setup page directly."
       },
       "keycloak": {
-        "description": "Keycloak is a centralized authentication system that enables secure Single Sign-On (SSO).",
-        "bullet1": "Use your internal corporate account to sign in",
-        "bullet2": "Enterprise-grade security encryption",
-        "bullet3": "Automatic role-based authorization",
-        "submit": "Sign In with Keycloak"
+        "description": "Use SSO to authenticate in Keycloak, then the system exchanges it into an internal session for gateway and downstream services.",
+        "bullet1": "Best for centralized identity accounts.",
+        "bullet2": "No need to re-enter internal password.",
+        "bullet3": "Final token is still stored consistently.",
+        "submit": "Sign in with Keycloak",
+        "title": "Sign in with Keycloak"
       },
       "twoFactorModal": {
-        "title": "Two-Factor Authentication (2FA) Guide",
-        "description": "Two-Factor Authentication (2FA) protects your account from unauthorized access by requiring a temporary verification code from your phone.",
-        "step1": "1. Install an authenticator app (such as Google Authenticator or Microsoft Authenticator) on your phone.",
-        "step2": "2. In the <b>Account Settings > 2FA</b> screen, scan the displayed QR code to set up.",
-        "step3": "3. The app will automatically generate a 6-digit code that changes every 30 seconds.",
-        "step4": "4. When logging in, after entering your password, the system will ask you for this code.",
-        "step5": "5. Enter the code displayed on your phone into the OTP field to complete the login.",
-        "info": "Note: If you have not enabled 2FA in your account, please log in normally (no OTP required) and then go to Settings to enable it."
+        "title": "How to get 2FA code",
+        "description": "The 2FA code is not generated on the login screen. You must enable 2FA first in <strong>2FA Setup</strong> after signing in.",
+        "step1": "Sign in to the system.",
+        "step2": "Open <strong>2FA Setup</strong> menu or go to <code>/2fa-setup</code>.",
+        "step3": "Scan QR with Google Authenticator or a compatible OTP app.",
+        "step4": "The app generates a new 6-digit code every 30 seconds.",
+        "step5": "When OTP is required later, enter that 6-digit code in login form.",
+        "info": "If your account has not enabled 2FA, OTP is not required."
       },
       "forceChangeModal": {
-        "title": "Password Change Required",
-        "confirm": "Change Password",
-        "description": "Your account is using a temporary password or your password has expired. Please set a highly secure new password to continue.",
-        "newPasswordLabel": "New Password",
-        "newPasswordError": "New password must be 8-20 characters, including at least one uppercase letter, one lowercase letter, one number, and one special character.",
+        "title": "Change temporary password",
+        "confirm": "Update password",
+        "description": "Your account is using a temporary password. Set a new password to continue.",
+        "newPasswordLabel": "New password",
+        "newPasswordError": "New password must be at least 6 characters",
         "newPasswordPlaceholder": "Enter new password",
-        "confirmPasswordLabel": "Confirm New Password",
-        "confirmPasswordError": "Please re-enter the new password",
-        "confirmPasswordMismatch": "Confirm password does not match"
+        "confirmPasswordLabel": "Confirm new password",
+        "confirmPasswordError": "Please confirm new password",
+        "confirmPasswordMismatch": "Password confirmation does not match",
+        "confirmPasswordPlaceholder": "Re-enter new password",
+        "strengthWeak": "Weak",
+        "strengthMedium": "Medium",
+        "strengthStrong": "Strong",
+        "reqLength": "8-20 characters",
+        "reqUpperLower": "1 uppercase & 1 lowercase",
+        "reqNumber": "1 number",
+        "reqSpecial": "1 special character"
       },
       "messages": {
         "googleVerifyFailed": "Failed to verify Google account with the system. Please try again.",
         "githubVerifyFailed": "Failed to verify GitHub account with the system. Please try again.",
         "socialSuccess": "Successfully linked and logged in with your social account!",
-        "captchaLoadFailed": "Failed to load Captcha code. Please try again.",
-        "loginFailedTitle": "Login Failed",
-        "loginSuccessTitle": "Login Successful",
-        "loginSuccessDesc": "Welcome back to the system!",
-        "keycloakVerifyFailed": "Failed to authenticate with Keycloak. Please try again.",
-        "captchaRequiredTitle": "Captcha Required",
-        "captchaRequiredDesc": "System detected suspicious activity. Please enter the Captcha code to continue.",
-        "captchaRequiredSimple": "Please enter the Captcha code",
-        "captchaInvalid": "Captcha code is incorrect or has expired",
-        "twoFactorRequiredTitle": "OTP Code Required (2FA)",
-        "twoFactorRequiredDesc": "Your account has two-factor authentication enabled. Please enter the OTP verification code from your app.",
-        "loginFailedFallback": "Incorrect username or password.",
-        "forceChangeMissingContext": "Temporary account information not found for changing password.",
-        "forceChangeSuccessTitle": "Password Changed Successfully",
-        "forceChangeSuccessDesc": "New password has been updated. The system is automatically logging you in again...",
-        "forceChangeFailed": "Failed to change password. Please try again.",
-        "forceChangeRequiredTitle": "Password Change Required",
-        "forceChangeRequiredDesc": "Your password has expired or needs to be updated for security reasons."
+        "captchaLoadFailed": "Unable to load CAPTCHA: {{message}}",
+        "loginFailedTitle": "Login failed",
+        "loginSuccessTitle": "Login successful",
+        "loginSuccessDesc": "Welcome back!",
+        "keycloakVerifyFailed": "Unable to verify with Keycloak",
+        "captchaRequiredTitle": "CAPTCHA required",
+        "captchaRequiredDesc": "Too many wrong password attempts. Please complete CAPTCHA to continue.",
+        "captchaRequiredSimple": "Please complete CAPTCHA verification.",
+        "captchaInvalid": "Invalid CAPTCHA code. Please try again.",
+        "twoFactorRequiredTitle": "Two-factor authentication required",
+        "twoFactorRequiredDesc": "This account has 2FA enabled. Please enter OTP from your Authenticator app.",
+        "loginFailedFallback": "Login failed. Please verify your account credentials.",
+        "forceChangeMissingContext": "Missing username or temporary password. Please login again.",
+        "forceChangeSuccessTitle": "Password updated",
+        "forceChangeSuccessDesc": "Password changed successfully. Signing you in...",
+        "forceChangeFailed": "Unable to change password. Please verify your input.",
+        "forceChangeRequiredTitle": "Password update required",
+        "forceChangeRequiredDesc": "You must change temporary password before continuing.",
+        "forgotPasswordSuccessTitle": "Request successful",
+        "forgotPasswordSuccessDesc": "A temporary password has been sent to your email. Please check your inbox.",
+        "forgotPasswordFailedTitle": "Request failed",
+        "forgotPasswordFailedDesc": "Unable to send password reset request. Please try again."
+      },
+      "themeToggleAria": "Switch theme",
+      "forgotPasswordModal": {
+        "title": "Forgot Password",
+        "description": "Enter your registered username or email address. The system will generate a temporary password and send it to your email address.",
+        "usernameOrEmailLabel": "Username or Email",
+        "usernameOrEmailPlaceholder": "Enter your username or email",
+        "usernameOrEmailError": "Please enter username or email",
+        "confirm": "Submit request"
       }
     }
   }

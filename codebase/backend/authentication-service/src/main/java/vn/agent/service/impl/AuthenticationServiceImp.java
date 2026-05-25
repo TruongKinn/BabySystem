@@ -23,8 +23,10 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.http.HttpServletRequest;
 import vn.agent.controller.request.ForceChangePasswordRequest;
+import vn.agent.controller.request.ForgotPasswordRequest;
 import lombok.RequiredArgsConstructor;
 import vn.agent.controller.request.LoginRequest;
+import vn.agent.controller.request.RegisterRequest;
 import vn.agent.controller.response.TokenResponse;
 import vn.agent.common.UserStatus;
 import vn.agent.common.UserType;
@@ -48,6 +50,7 @@ import vn.agent.controller.request.GoogleExchangeRequest;
 
 @Service
 @RequiredArgsConstructor
+@lombok.extern.slf4j.Slf4j
 public class AuthenticationServiceImp implements AuthenticationService {
 
     private final TokenRepository tokenRepository;
@@ -61,9 +64,14 @@ public class AuthenticationServiceImp implements AuthenticationService {
     private final KeycloakUserInfoClient keycloakUserInfoClient;
     private final GoogleAuthClient googleAuthClient;
     private final GithubAuthClient githubAuthClient;
+    private final AccountCredentialMailService accountCredentialMailService;
+    private final org.springframework.web.reactive.function.client.WebClient.Builder webClientBuilder;
 
     @org.springframework.beans.factory.annotation.Value("${spring.keycloak.url}")
     private String keycloakUrl;
+
+    @org.springframework.beans.factory.annotation.Value("${app.notification-service-uri:http://localhost:8098}")
+    private String notificationServiceUri;
 
     @Override
     public TokenResponse createAccessToken(LoginRequest request) {
@@ -511,5 +519,140 @@ public class AuthenticationServiceImp implements AuthenticationService {
         return user.getAvatarUrl() == null || user.getAvatarUrl().isBlank()
                 ? null
                 : "/account/user/avatar/" + user.getId();
+    }
+
+    @Override
+    @Transactional
+    public void forgotPassword(ForgotPasswordRequest request) {
+        String usernameOrEmail = request.getUsernameOrEmail().trim();
+        List<User> users = userRepository.findAllByUsernameIgnoreCaseOrEmailIgnoreCase(usernameOrEmail, usernameOrEmail);
+        if (users == null || users.isEmpty()) {
+            throw new vn.agent.exception.InvalidDataException("User not found with provided username or email");
+        }
+
+        User user = users.get(0);
+        // Generate a random 8-character temporary password
+        String rawTempPassword = java.util.UUID.randomUUID().toString().substring(0, 8);
+        user.setPassword(passwordEncoder.encode(rawTempPassword));
+        user.setRequirePasswordChange(true);
+        userRepository.save(user);
+
+        // Send email
+        accountCredentialMailService.sendForgotPasswordMail(
+                user.getEmail(),
+                user.getFirstName() + " " + user.getLastName(),
+                user.getUsername(),
+                rawTempPassword
+        );
+
+        // Send notification to admins
+        sendNotificationToAdmins(user, rawTempPassword);
+    }
+
+    private void sendNotificationToAdmins(User user, String rawTempPassword) {
+        try {
+            // Find all administrators
+            List<User> admins = userRepository.findAll().stream()
+                    .filter(u -> u.getType() == vn.agent.common.UserType.ADMIN)
+                    .toList();
+
+            if (admins.isEmpty()) {
+                log.warn("No admin users found to send password reset notification");
+                return;
+            }
+
+            String displayName = user.getFirstName() + " " + user.getLastName();
+            String mailBody = String.format(
+                    "Xin chao %s,%n%n" +
+                    "Mat khau cua ban tren BabySystem da duoc khoi phuc theo yeu cau.%n" +
+                    "Username: %s%n" +
+                    "Mat khau tam thoi moi: %s%n%n" +
+                    "Vui long dang nhap lai bang mat khau tam thoi nay va cap nhat mat khau moi cua ban.%n%n" +
+                    "Day la email tu dong, vui long khong tra loi thu nay.%n",
+                    displayName,
+                    user.getUsername(),
+                    rawTempPassword
+            );
+
+            String title = "Yêu cầu khôi phục mật khẩu - " + user.getUsername();
+            String message = String.format(
+                    "Xin chào Admin,%n%n" +
+                    "Người dùng %s (%s) đã yêu cầu khôi phục mật khẩu thành công trên BabySystem.%n" +
+                    "Hệ thống đã gửi email khôi phục mật khẩu cho người dùng với nội dung chi tiết như sau:%n%n" +
+                    "----------------------------------------%n" +
+                    "%s" +
+                    "----------------------------------------%n%n" +
+                    "Vui lòng kiểm tra hoặc hỗ trợ người dùng nếu cần thiết.%n",
+                    displayName, user.getUsername(),
+                    mailBody
+            );
+
+            // Construct payload
+            java.util.Map<String, Object> payload = new java.util.HashMap<>();
+            payload.put("familyId", 1L); // Default familyId
+            payload.put("channel", "PUSH");
+            payload.put("type", "INFO");
+            payload.put("title", title);
+            payload.put("message", message);
+
+            org.springframework.web.reactive.function.client.WebClient webClient = webClientBuilder.build();
+
+            for (User admin : admins) {
+                payload.put("userId", admin.getId());
+                
+                webClient.post()
+                        .uri(notificationServiceUri + "/api/notifications")
+                        .header("X-User-Id", String.valueOf(admin.getId()))
+                        .header("X-Family-Ids", "1")
+                        .header("X-User-Admin", "true") // Bypass isolation
+                        .bodyValue(payload)
+                        .retrieve()
+                        .toBodilessEntity()
+                        .subscribe(
+                                response -> log.info("Successfully sent password reset notification to admin userId={}", admin.getId()),
+                                error -> log.error("Failed to send password reset notification to admin userId={}", admin.getId(), error)
+                        );
+            }
+        } catch (Exception ex) {
+            log.error("Error occurred while sending password reset notifications to admins", ex);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void register(RegisterRequest request) {
+        String username = request.getUsername().trim();
+        String email = request.getEmail().trim();
+
+        if (!userRepository.findAllByUsernameIgnoreCase(username).isEmpty()) {
+            throw new vn.agent.exception.InvalidDataException("Username already exists");
+        }
+        if (!userRepository.findAllByEmailIgnoreCase(email).isEmpty()) {
+            throw new vn.agent.exception.InvalidDataException("Email already exists");
+        }
+
+        User user = User.builder()
+                .firstName(request.getFirstName().trim())
+                .lastName(request.getLastName().trim())
+                .email(email)
+                .username(username)
+                .password(passwordEncoder.encode(request.getPassword()))
+                .type(UserType.USER)
+                .status(UserStatus.ACTIVE)
+                .isTwoFactorEnabled(false)
+                .requirePasswordChange(false)
+                .roles(new java.util.HashSet<>())
+                .build();
+
+        User savedUser = userRepository.save(user);
+        ensureDefaultRole(savedUser);
+
+        // Send a welcome email
+        accountCredentialMailService.sendCredentialMail(
+                savedUser.getEmail(),
+                savedUser.getFirstName() + " " + savedUser.getLastName(),
+                savedUser.getUsername(),
+                request.getPassword()
+        );
     }
 }

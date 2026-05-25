@@ -138,3 +138,70 @@ if (antPathMatcher.match("/auth/2fa/**", requestPath)) {
 
 Điều này giúp tất cả các tài khoản bất kể vai trò (Admin, User, Caregiver) đều có thể tự cấu hình 2FA cho tài khoản của chính mình một cách trơn tru mà không cần can thiệp vào cơ sở dữ liệu phân quyền API động của hệ thống.
 
+## 6. Tính năng "Ghi nhớ" (Remember Me)
+
+Tính năng lưu trữ thông tin đăng nhập của người dùng tại máy khách để tăng tính tiện dụng.
+
+### Luồng xử lý Frontend
+1. **Lưu trữ**: Khi đăng nhập thành công (`submitForm()` trong `LoginComponent`) và checkbox "Ghi nhớ" (`remember` control) có giá trị `true`, hệ thống lưu giá trị của ô `username` vào `localStorage` với khóa `remembered_username`. Nếu người dùng bỏ tích, hệ thống sẽ thực hiện xóa khóa này.
+2. **Khôi phục**: Khi khởi tạo màn hình đăng nhập (`ngOnInit()`), hệ thống kiểm tra sự hiện diện của `remembered_username` trong `localStorage`. Nếu có, tự động patchValue vào `username` của form và đặt `remember` thành `true`.
+
+---
+
+## 7. Tính năng "Quên mật khẩu?" (Forgot Password?)
+
+Luồng phục hồi mật khẩu an toàn và bảo mật cao thông qua Email, tự động kích hoạt chế độ đổi mật khẩu bắt buộc.
+
+### 7.1. Backend API
+* **Endpoint**: `POST /auth/forgot-password` (Chuyển tiếp đến `/forgot-password` của `authentication-service`)
+* **Request Body (`ForgotPasswordRequest`)**:
+```json
+{
+  "usernameOrEmail": "user@example.com"
+}
+```
+* **Luồng nghiệp vụ**:
+  1. API Gateway bỏ qua xác thực token đối với đường dẫn `/auth/forgot-password` nhờ khai báo trong `PUBLIC_PATH_PREFIXES` của `ApiPermissionFilter.java`.
+  2. Dịch vụ xác thực tìm kiếm tài khoản theo `username` hoặc `email`.
+  3. Nếu tìm thấy, hệ thống sinh mật khẩu ngẫu nhiên tạm thời gồm 8 ký tự bằng `UUID`.
+  4. Mã hóa mật khẩu tạm bằng `PasswordEncoder`, cập nhật thuộc tính `password` và thiết lập cờ `requirePasswordChange = true`.
+  5. Gọi `AccountCredentialMailService.sendForgotPasswordMail(...)` để gửi thư điện tử chứa mật khẩu tạm cho người dùng qua SMTP Server.
+  6. **Gửi thông báo cho Admin**: Gọi nội bộ trực tiếp đến `notification-service` (`/api/notifications`) bằng `WebClient` của Spring WebFlux với các header đặc quyền (`X-User-Admin: true`, `X-User-Id: <admin_id>`) để gửi thông báo PUSH tới tất cả các Admin. Nội dung thông báo ghi đầy đủ chi tiết email khôi phục mật khẩu (Họ tên, Username, và Mật khẩu tạm thời mới) của người dùng để ban quản trị hệ thống nắm bắt và hỗ trợ kịp thời.
+  7. Khi người dùng đăng nhập bằng mật khẩu tạm này lần đầu, luồng **Force Change Password** hiện có trên Frontend sẽ tự động được kích hoạt, buộc người dùng phải thiết lập mật khẩu cá nhân mới trước khi vào dashboard.
+
+### 7.2. Frontend UI/UX
+* Một `nz-modal` với phong cách Glassmorphism và nền mờ sang trọng được nhúng trực tiếp trong màn hình đăng nhập.
+* Biểu mẫu xác thực nhập tên đăng nhập hoặc email, hiển thị trạng thái đang xử lý (`isLoading`) và đưa ra thông báo thành công/thất bại thông qua `NzNotificationService`.
+
+---
+
+## 8. Tính năng "Đăng ký tài khoản" (Register)
+
+Trang đăng ký tài khoản tự phục vụ dành cho người dùng mới, được xây dựng theo chuẩn giao diện cao cấp.
+
+### 8.1. Backend API
+* **Endpoint**: `POST /auth/register` (Chuyển tiếp đến `/register` của `authentication-service`)
+* **Request Body (`RegisterRequest`)**:
+```json
+{
+  "username": "truongkin",
+  "email": "truongkin@example.com",
+  "password": "Password@123",
+  "firstName": "Kin",
+  "lastName": "Truong",
+  "phone": "0987654321"
+}
+```
+* **Luồng nghiệp vụ**:
+  1. Kiểm tra tính độc bản (uniqueness) của `username` và `email` trên cơ sở dữ liệu.
+  2. Tạo mới đối tượng `User` với trạng thái `ACTIVE`, loại người dùng `USER`.
+  3. Tự động liên kết vai trò (Role Mapping) mặc định là `USER` trong cơ sở dữ liệu phân quyền.
+  4. Đồng bộ hóa tài khoản mới sang Keycloak Server (nếu Keycloak khả dụng).
+  5. Tạo bản ghi nhật ký kiểm toán hành vi `CREATE_USER` trong bảng `tbl_user_audit_log`.
+  6. Gửi thư điện tử chào mừng kèm chi tiết tài khoản đến email đã đăng ký.
+
+### 8.2. Frontend UI/UX
+* **Định tuyến**: Đăng ký route `/app/register` trỏ đến Standalone `RegisterComponent`.
+* **Mỹ thuật**: Áp dụng triệt để **Web Design Backbone Rule** với thiết kế 2 mảng màu gradient mượt, bo tròn góc lớn (`--radius-xl`), đổ bóng chiều sâu cao cấp và hiệu ứng hover chuyển động vi mô (hover micro-animations).
+* **Đo độ mạnh mật khẩu**: Tích hợp trực tiếp thành phần `<app-password-strength>` để phân tích độ bảo mật của mật khẩu theo thời gian thực (yêu cầu ít nhất 1 chữ hoa, 1 chữ thường, 1 số, 1 ký tự đặc biệt và độ dài 8-20 ký tự).
+* **Luồng hoàn thành**: Sau khi đăng ký thành công, thông báo chúc mừng hiện lên, hệ thống tự động ghi nhớ tên đăng nhập mới vào `localStorage` và chuyển hướng người dùng về trang đăng nhập với username đã được điền sẵn vô cùng mượt mà.

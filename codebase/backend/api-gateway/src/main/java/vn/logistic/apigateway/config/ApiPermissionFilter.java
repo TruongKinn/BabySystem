@@ -46,6 +46,8 @@ public class ApiPermissionFilter implements GlobalFilter, Ordered {
             "/auth/exchange-google-token",
             "/auth/exchange-github-token",
             "/auth/force-change-password",
+            "/auth/forgot-password",
+            "/auth/register",
             "/auth/captcha",
             "/auth/account/user/avatar/",
             "/actuator",

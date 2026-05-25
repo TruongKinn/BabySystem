@@ -78,6 +78,14 @@
     "forceChangeSuccessDesc": "密码已成功更新。正在重新登录...",
     "forceChangeMissingContext": "缺少用户名或临时密码。请重新登录。"
   },
+  "forgotPasswordModal": {
+    "title": "忘记密码？",
+    "description": "请输入用户名或电子邮件。系统将自动生成临时密码并发送到该账户注册的邮箱中。",
+    "usernameOrEmailLabel": "用户名或电子邮件",
+    "usernameOrEmailPlaceholder": "输入用户名或电子邮件",
+    "usernameOrEmailError": "请输入用户名或电子邮件",
+    "confirm": "发送请求"
+  },
   "forceChangeModal": {
     "title": "修改临时密码",
     "description": "账户正在使用临时密码。请设置新密码以继续。",

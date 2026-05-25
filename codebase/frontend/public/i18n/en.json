@@ -1750,6 +1750,51 @@
         "githubVerifyFailed": "Failed to verify GitHub account with the system. Please try again.",
         "socialSuccess": "Successfully linked and logged in with your social account!"
       }
+    },
+    "register": {
+      "hero": {
+        "title": "Start the journey with your family",
+        "subtitle": "Register an internal account and enjoy the platform to digitalize expenses, meals, activities, and development logs for your baby.",
+        "point1": "Convenient family expense management",
+        "point2": "Schedule meals & track baby health",
+        "point3": "Absolute data security with 2FA"
+      },
+      "card": {
+        "title": "Create Account",
+        "subtitle": "Please fill in the information below to create a new account."
+      },
+      "form": {
+        "usernameLabel": "Username",
+        "usernamePlaceholder": "Enter username",
+        "usernameError": "Username must be at least 3 characters",
+        "emailLabel": "Email Address",
+        "emailPlaceholder": "email@example.com",
+        "emailError": "Please enter a valid email address",
+        "passwordLabel": "Password",
+        "passwordPlaceholder": "••••••••",
+        "passwordError": "Password must be at least 6 characters",
+        "confirmPasswordLabel": "Confirm Password",
+        "confirmPasswordPlaceholder": "Re-enter password",
+        "confirmPasswordError": "Please confirm your password",
+        "confirmPasswordMismatch": "Password confirmation does not match",
+        "firstNameLabel": "First Name",
+        "firstNamePlaceholder": "Enter first name",
+        "firstNameError": "Please enter your first name",
+        "lastNameLabel": "Last Name",
+        "lastNamePlaceholder": "Enter last name",
+        "lastNameError": "Please enter your last name",
+        "phoneLabel": "Phone Number",
+        "phonePlaceholder": "09xxxxxxxx",
+        "phoneError": "Please enter a valid phone number",
+        "submit": "Sign Up",
+        "loginLink": "Already have an account? Sign in now"
+      },
+      "messages": {
+        "registerSuccessTitle": "Registration successful",
+        "registerSuccessDesc": "Your account has been created! Redirecting to login page...",
+        "registerFailedTitle": "Registration failed",
+        "registerFailedDesc": "Unable to create account. Please verify your input."
+      }
     }
   },
   "auth": {
@@ -1858,9 +1903,21 @@
         "forceChangeSuccessDesc": "Password changed successfully. Signing you in...",
         "forceChangeFailed": "Unable to change password. Please verify your input.",
         "forceChangeRequiredTitle": "Password update required",
-        "forceChangeRequiredDesc": "You must change temporary password before continuing."
+        "forceChangeRequiredDesc": "You must change temporary password before continuing.",
+        "forgotPasswordSuccessTitle": "Request successful",
+        "forgotPasswordSuccessDesc": "A temporary password has been sent to your email. Please check your inbox.",
+        "forgotPasswordFailedTitle": "Request failed",
+        "forgotPasswordFailedDesc": "Unable to send password reset request. Please try again."
       },
-      "themeToggleAria": "Switch theme"
+      "themeToggleAria": "Switch theme",
+      "forgotPasswordModal": {
+        "title": "Forgot Password",
+        "description": "Enter your registered username or email address. The system will generate a temporary password and send it to your email address.",
+        "usernameOrEmailLabel": "Username or Email",
+        "usernameOrEmailPlaceholder": "Enter your username or email",
+        "usernameOrEmailError": "Please enter username or email",
+        "confirm": "Submit request"
+      }
     }
   }
 }
