@@ -48,6 +48,49 @@
   background: linear-gradient(135deg, #0f4c81 0%, #0aa2c0 55%, #0f766e 100%);
 }
 
+.settings-page--admin .settings-card,
+.settings-page--admin .settings-summary-card {
+  border-radius: 14px;
+}
+
+.settings-page--admin .premium-theme-card {
+  border-color: #dbeafe;
+}
+
+.settings-page--admin .settings-summary-card {
+  background: linear-gradient(180deg, #f3f8fc 0%, #ffffff 100%);
+}
+
+.settings-page--admin .summary-item {
+  border-color: #c5d6e6;
+}
+
+.settings-page--admin .theme-swatch:hover:not(:disabled),
+.settings-page--admin .theme-segment button:hover:not(:disabled) {
+  border-color: #90afc9;
+  background: #e8f1f8;
+}
+
+.settings-page--admin .theme-swatch.active,
+.settings-page--admin .theme-segment button.active {
+  border-color: var(--admin-btn-primary-start, #0f4c81);
+  box-shadow: 0 0 0 3px rgba(12, 84, 135, 0.14);
+  background: rgba(15, 76, 129, 0.08);
+}
+
+.settings-page--admin .custom-color-panel--active {
+  border-color: rgba(15, 76, 129, 0.42);
+  box-shadow: 0 0 0 3px rgba(12, 84, 135, 0.12);
+}
+
+.settings-page--admin .custom-color-value {
+  background: rgba(15, 76, 129, 0.1);
+}
+
+::ng-deep .settings-page--admin .theme-radio .ant-radio-button-wrapper-checked {
+  color: var(--admin-btn-primary-start, #0f4c81) !important;
+}
+
 .settings-hero__orb {
   position: absolute;
   border-radius: 50%;
