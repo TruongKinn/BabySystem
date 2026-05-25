@@ -1,0 +1,106 @@
+{
+  "themeToggleAria": "Switch theme",
+  "hero": {
+    "badge": "Logistics Platform",
+    "title": "One login, two authentication methods",
+    "subtitle": "Use <strong>Bearer token</strong> to sign in with your platform account, or switch to <strong>Keycloak</strong> if you use centralized SSO.",
+    "point1": "Internal account + 2FA",
+    "point2": "SSO via Keycloak",
+    "point3": "Unified token storage"
+  },
+  "card": {
+    "eyebrow": "Authentication",
+    "title": "Sign in",
+    "subtitle": "Choose one of the sign-in methods below."
+  },
+  "switch": {
+    "bearer": "Bearer token",
+    "keycloak": "Keycloak"
+  },
+  "form": {
+    "usernameLabel": "Username",
+    "usernameError": "Please enter username",
+    "usernamePlaceholder": "Enter username",
+    "passwordLabel": "Password",
+    "passwordError": "Please enter password",
+    "passwordPlaceholder": "••••••••",
+    "otpLabel": "OTP Code (2FA)",
+    "otpError": "Please enter a 6-digit OTP",
+    "otpPlaceholder": "000000",
+    "captchaLabel": "CAPTCHA",
+    "captchaError": "Please enter CAPTCHA",
+    "captchaPlaceholder": "Verification code",
+    "captchaRefresh": "Click to refresh code",
+    "remember": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "register": "Create account",
+    "submitBearer": "Sign in with Bearer token",
+    "note": "OTP or CAPTCHA will be enabled automatically when required.",
+    "twoFactorHelp": "Where can I get the 2FA code?",
+    "setupTwoFactor": "Set up 2FA",
+    "setupHint": "If you are signed in, this opens the QR setup page directly."
+  },
+  "keycloak": {
+    "title": "Sign in with Keycloak",
+    "description": "Use SSO to authenticate in Keycloak, then the system exchanges it into an internal session for gateway and downstream services.",
+    "bullet1": "Best for centralized identity accounts.",
+    "bullet2": "No need to re-enter internal password.",
+    "bullet3": "Final token is still stored consistently.",
+    "submit": "Sign in with Keycloak"
+  },
+  "twoFactorModal": {
+    "title": "How to get 2FA code",
+    "description": "The 2FA code is not generated on the login screen. You must enable 2FA first in <strong>2FA Setup</strong> after signing in.",
+    "step1": "Sign in to the system.",
+    "step2": "Open <strong>2FA Setup</strong> menu or go to <code>/2fa-setup</code>.",
+    "step3": "Scan QR with Google Authenticator or a compatible OTP app.",
+    "step4": "The app generates a new 6-digit code every 30 seconds.",
+    "step5": "When OTP is required later, enter that 6-digit code in login form.",
+    "info": "If your account has not enabled 2FA, OTP is not required."
+  },
+  "forceChangeModal": {
+    "title": "Change temporary password",
+    "description": "Your account is using a temporary password. Set a new password to continue.",
+    "newPasswordLabel": "New password",
+    "newPasswordError": "New password must be at least 6 characters",
+    "newPasswordPlaceholder": "Enter new password",
+    "confirmPasswordLabel": "Confirm new password",
+    "confirmPasswordError": "Please confirm new password",
+    "confirmPasswordMismatch": "Password confirmation does not match",
+    "confirmPasswordPlaceholder": "Re-enter new password",
+    "confirm": "Update password",
+    "strengthWeak": "Weak",
+    "strengthMedium": "Medium",
+    "strengthStrong": "Strong",
+    "reqLength": "8-20 characters",
+    "reqUpperLower": "1 uppercase & 1 lowercase",
+    "reqNumber": "1 number",
+    "reqSpecial": "1 special character"
+  },
+  "messages": {
+    "captchaLoadFailed": "Unable to load CAPTCHA: {{message}}",
+    "loginSuccessTitle": "Login successful",
+    "loginSuccessDesc": "Welcome back!",
+    "keycloakVerifyFailed": "Unable to verify with Keycloak",
+    "loginFailedTitle": "Login failed",
+    "forceChangeRequiredTitle": "Password update required",
+    "forceChangeRequiredDesc": "You must change temporary password before continuing.",
+    "forceChangeSuccessTitle": "Password updated",
+    "forceChangeSuccessDesc": "Password changed successfully. Signing you in...",
+    "forceChangeFailed": "Unable to change password. Please verify your input.",
+    "forceChangeMissingContext": "Missing username or temporary password. Please login again.",
+    "captchaRequiredTitle": "CAPTCHA required",
+    "captchaRequiredDesc": "Too many wrong password attempts. Please complete CAPTCHA to continue.",
+    "captchaInvalid": "Invalid CAPTCHA code. Please try again.",
+    "captchaRequiredSimple": "Please complete CAPTCHA verification.",
+    "twoFactorRequiredTitle": "Two-factor authentication required",
+    "twoFactorRequiredDesc": "This account has 2FA enabled. Please enter OTP from your Authenticator app.",
+    "loginFailedFallback": "Login failed. Please verify your account credentials."
+  },
+  "portal": {
+    "adminHint": "Admin Portal - manage user accounts and system operations",
+    "userHint": "User Portal - for family members using the app",
+    "switchToAdmin": "Sign in to Admin Portal",
+    "switchToUser": "Sign in to User Portal"
+  }
+}

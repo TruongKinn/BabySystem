@@ -2,7 +2,9 @@ import { APP_INITIALIZER, ApplicationConfig, importProvidersFrom, provideBrowser
 import { HttpClient, provideHttpClient, withInterceptors } from '@angular/common/http';
 import { registerLocaleData } from '@angular/common';
 import en from '@angular/common/locales/en';
+import ja from '@angular/common/locales/ja';
 import vi from '@angular/common/locales/vi';
+import zh from '@angular/common/locales/zh';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { provideOAuthClient } from 'angular-oauth2-oidc';
@@ -18,7 +20,9 @@ import { DEFAULT_LANGUAGE } from './i18n/i18n.constants';
 import { I18nService } from './i18n/i18n.service';
 
 registerLocaleData(en);
+registerLocaleData(ja);
 registerLocaleData(vi);
+registerLocaleData(zh);
 
 export function createTranslateLoader(http: HttpClient): TranslateHttpLoader {
   return new TranslateHttpLoader(http, '/i18n/', '.json');

@@ -1,0 +1,106 @@
+{
+  "themeToggleAria": "テーマ切り替え",
+  "hero": {
+    "badge": "物流プラットフォーム",
+    "title": "1つのログイン、2つの認証方法",
+    "subtitle": "プラットフォームアカウントでログインするには <strong>Bearerトークン</strong> を使用し、集中SSOを使用する場合は <strong>Keycloak</strong> に切り替えます。",
+    "point1": "社内アカウント + 2FA",
+    "point2": "KeycloakによるSSO",
+    "point3": "トークンは一貫して保存されます"
+  },
+  "card": {
+    "eyebrow": "認証",
+    "title": "ログイン",
+    "subtitle": "以下のログイン方法のいずれかを選択してください。"
+  },
+  "switch": {
+    "bearer": "Bearerトークン",
+    "keycloak": "Keycloak"
+  },
+  "form": {
+    "usernameLabel": "ユーザー名",
+    "usernameError": "ユーザー名を入力してください",
+    "usernamePlaceholder": "ユーザー名を入力",
+    "passwordLabel": "パスワード",
+    "passwordError": "パスワードを入力してください",
+    "passwordPlaceholder": "••••••••",
+    "otpLabel": "OTPコード (2FA)",
+    "otpError": "6桁のOTPコードを入力してください",
+    "otpPlaceholder": "000000",
+    "captchaLabel": "CAPTCHAコード",
+    "captchaError": "CAPTCHAコードを入力してください",
+    "captchaPlaceholder": "検証コード",
+    "captchaRefresh": "クリックしてコードを変更",
+    "remember": "ログイン状態を保持する",
+    "forgotPassword": "パスワードをお忘れですか？",
+    "register": "アカウント登録",
+    "submitBearer": "Bearerトークンでログイン",
+    "note": "必要に応じて、システムはOTPまたはCAPTCHAを自動的に有効にします。",
+    "twoFactorHelp": "2FAコードはどこで取得できますか？",
+    "setupTwoFactor": "2FAのセットアップ",
+    "setupHint": "ログインしている場合、このボタンは直接QRセットアップページを開きます。"
+  },
+  "keycloak": {
+    "title": "Keycloakでログイン",
+    "description": "SSOを使用してKeycloakに切り替えた後、システムはトークンをゲートウェイおよびダウンストリームサービス用の内部セッションに交換します。",
+    "bullet1": "集中管理されたIDアカウントがある場合に最適です。",
+    "bullet2": "社内パスワードを再入力する必要はありません。",
+    "bullet3": "最終的なトークンはシステムによって一貫して保存されます。",
+    "submit": "Keycloakでログイン"
+  },
+  "twoFactorModal": {
+    "title": "2FAコードの取得手順",
+    "description": "2FAコードはログイン画面で自動生成されません。ログイン後、<strong>2FAセットアップ</strong>ページで2FAを有効にする必要があります。",
+    "step1": "システムにログインします。",
+    "step2": "<strong>2FAセットアップ</strong>メニューを開くか、<code>/2fa-setup</code>ルートにアクセスします。",
+    "step3": "Google Authenticatorまたは互換性のあるOTPアプリでQRコードをスキャンします。",
+    "step4": "アプリは30秒ごとに変わる6桁のコードを生成します。",
+    "step5": "次回システムからOTPが要求されたら、ログインフォームに正しい6桁のコードを入力します。",
+    "info": "アカウントで2FAを有効にしていない場合、OTPは不要です。"
+  },
+  "messages": {
+    "captchaLoadFailed": "CAPTCHAの読み込みに失敗しました: {{message}}",
+    "loginSuccessTitle": "ログイン成功",
+    "loginSuccessDesc": "おかえりなさい！",
+    "keycloakVerifyFailed": "Keycloakでの検証に失敗しました",
+    "loginFailedTitle": "ログイン失敗",
+    "captchaRequiredTitle": "CAPTCHA検証が必要です",
+    "captchaRequiredDesc": "パスワードが何度も間違えられました。続行するにはCAPTCHAを入力してください。",
+    "captchaInvalid": "無効なCAPTCHAコードです。もう一度入力してください。",
+    "captchaRequiredSimple": "CAPTCHA検証を完了してください。",
+    "twoFactorRequiredTitle": "2段階認証が必要です",
+    "twoFactorRequiredDesc": "このアカウントは2FAが有効になっています。AuthenticatorアプリからOTPコードを入力してください。",
+    "loginFailedFallback": "ログインに失敗しました。アカウント資格情報を確認してください。",
+    "forceChangeFailed": "パスワードを変更できません。入力内容を確認してください。",
+    "forceChangeRequiredTitle": "パスワードの更新が必要です",
+    "forceChangeSuccessTitle": "パスワードの変更完了",
+    "forceChangeRequiredDesc": "続行する前に一時パスワードを変更する必要があります。",
+    "forceChangeSuccessDesc": "パスワードが正常に更新されました。再ログインしています...",
+    "forceChangeMissingContext": "ユーザー名または一時パスワードが不足しています。もう一度ログインしてください。"
+  },
+  "forceChangeModal": {
+    "title": "一時パスワードの変更",
+    "description": "アカウントは一時パスワードを使用しています。続行するには新しいパスワードを設定してください。",
+    "newPasswordLabel": "新しいパスワード",
+    "newPasswordError": "新しいパスワードは6文字以上にする必要があります",
+    "newPasswordPlaceholder": "新しいパスワードを入力",
+    "confirmPasswordLabel": "新しいパスワードの確認",
+    "confirmPasswordError": "新しいパスワードを再度入力してください",
+    "confirmPasswordMismatch": "確認用パスワードが一致しません",
+    "confirmPasswordPlaceholder": "新しいパスワードを再入力",
+    "confirm": "パスワードを更新",
+    "strengthWeak": "弱い",
+    "strengthMedium": "中",
+    "strengthStrong": "強い",
+    "reqLength": "8-20文字",
+    "reqUpperLower": "大文字と小文字それぞれ1文字以上",
+    "reqNumber": "数字1文字以上",
+    "reqSpecial": "特殊文字1文字以上"
+  },
+  "portal": {
+    "adminHint": "管理者ポータル - ユーザーアカウント管理およびシステム運用",
+    "userHint": "ユーザーポータル - アプリを使用する家族メンバー用",
+    "switchToAdmin": "管理者ポータルにログイン",
+    "switchToUser": "ユーザーポータルにログイン"
+  }
+}

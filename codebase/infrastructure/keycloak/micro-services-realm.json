@@ -84,6 +84,21 @@
           "temporary": false
         }
       ]
+    },
+    {
+      "username": "truongkin0",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Truong",
+      "lastName": "Kinn",
+      "email": "truongkin0@local",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "admin123",
+          "temporary": false
+        }
+      ]
     }
   ]
 }

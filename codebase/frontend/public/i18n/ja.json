@@ -1,0 +1,1866 @@
+{
+  "common": {
+    "language": "言語",
+    "userFallback": "ユーザー",
+    "errorTitle": "エラー"
+  },
+  "commonActions": {
+    "refresh": "更新",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "edit": "編集",
+    "delete": "削除",
+    "details": "詳細",
+    "create": "作成",
+    "update": "更新"
+  },
+  "commonValues": {
+    "yes": "はい",
+    "no": "いいえ",
+    "na": "該当なし"
+  },
+  "pagination": {
+    "range": "{{total}} 件中 {{start}} ～ {{end}} 件の結果を表示中"
+  },
+  "momApp": {
+    "common": {
+      "success": "成功",
+      "warning": "警告",
+      "notAvailable": "該当なし",
+      "none": "なし"
+    },
+    "home": {
+      "title": "ログインに成功しました",
+      "subtitle": "すべてのファミリー モジュールがメイン ダッシュボードから利用できるようになりました。"
+    },
+    "layout": {
+      "brandTitle": "ママスーパーアプリ",
+      "brandSubtitle": "ファミリ OS",
+      "hello": "こんにちは。",
+      "toggleTheme": "テーマの切り替え",
+      "logout": "ログアウト",
+      "familyMember": "家族の一員",
+      "authenticatedSession": "認証されたセッション",
+      "userFallback": "ファミリーユーザー",
+      "menu": {
+        "overview": "概要",
+        "dashboard": "ダッシュボード",
+        "familyCare": "ファミリーケア",
+        "baby": "赤ちゃん",
+        "meals": "食事",
+        "tasks": "タスク",
+        "finance": "財務",
+        "expenses": "経費",
+        "shopping": "ショッピング",
+        "insights": "洞察",
+        "account": "アカウント",
+        "family": "ファミリー",
+        "profile": "プロフィール",
+        "settings": "設定",
+        "themeSettings": "テーマ設定",
+        "documents": "ドキュメント"
+      }
+    },
+    "admin": {
+      "menu": {
+        "portal": "システム管理者",
+        "dashboard": "管理ダッシュボード",
+        "users": "ユーザー管理",
+        "families": "家族管理",
+        "premium": "プレミアム構成",
+        "finance": "財務管理",
+        "exportPasswords": "パスワードのエクスポート",
+        "themeSettings": "テーマ設定",
+        "access": "アクセス制御",
+        "permissions": "許可カタログ"
+      },
+      "brandTitle": "ママコントロール",
+      "brandSubtitle": "運用コンソール",
+      "roleLabel": "システムオペレーター",
+      "header": {
+        "greeting": "オペレーター"
+      },
+      "dashboard": {
+        "hero": {
+          "kicker": "管理操作",
+          "title": "システム制御ダッシュボード",
+          "subtitle": "アカウントの健全性、セキュリティ体制、家族のデータ範囲を 1 か所で監視します。"
+        },
+        "lockRate": "ロック率",
+        "activeRate": "アクティブ率",
+        "updatedAt": "更新日",
+        "refresh": "スナップショットを更新",
+        "quickActions": {
+          "title": "クイックアクション",
+          "openUsers": "オープンユーザー管理",
+          "openFamilies": "オープン家系図ボード",
+          "openAccess": "オープンアクセス制御",
+          "openPermissions": "権限カタログを開く",
+          "goUserLogin": "ユーザーポータルのログインに移動します"
+        },
+        "alerts": {
+          "title": "運用に関するアラート",
+          "lockedUsers": {
+            "title": "ロックされたアカウントが検出されました",
+            "hint": "{{count}} アカウントは現在ロックされています。"
+          },
+          "inactiveUsers": {
+            "title": "非アクティブなユーザーがまだ存在します",
+            "hint": "{{count}} アカウントはアクティブな状態ではありません。"
+          },
+          "rolesWithoutPermissions": {
+            "title": "権限のないロール",
+            "hint": "{{count}} ロールはどの権限にもマップされていません。"
+          },
+          "stable": {
+            "title": "コントロール プレーンは安定しています",
+            "hint": "現在、即時の IAM またはアカウントリスクの警告はありません。"
+          }
+        },
+        "lockedUsers": {
+          "title": "最近ロックされたアカウント",
+          "username": "ユーザー名",
+          "roleType": "役割の種類",
+          "empty": "ロックされたアカウントは見つかりませんでした。"
+        },
+        "largestFamilies": {
+          "title": "最大世帯数",
+          "name": "家庭用",
+          "members": "メンバー",
+          "empty": "利用可能な世帯データはありません。"
+        },
+        "metrics": {
+          "totalUsers": {
+            "label": "総ユーザー数",
+            "description": "認証システム内のすべてのアカウント"
+          },
+          "activeUsers": {
+            "label": "アクティブ ユーザー",
+            "description": "サインイン可能なアカウント"
+          },
+          "lockedUsers": {
+            "label": "ロックされたユーザー",
+            "description": "アクセスが制限されているアカウント"
+          },
+          "adminUsers": {
+            "label": "管理者アカウント",
+            "description": "非ユーザー運用アカウント"
+          },
+          "totalFamilies": {
+            "label": "ファミリーグループ",
+            "description": "アカウント サービスのファミリー エンティティ"
+          },
+          "totalRoles": {
+            "label": "役割",
+            "description": "IAM ワークスペースのロール定義"
+          },
+          "menuPermissions": {
+            "label": "メニューの権限",
+            "description": "フロントエンド メニュー アクセス エントリ"
+          },
+          "apiPermissions": {
+            "label": "API 権限",
+            "description": "バックエンド エンドポイント アクセス ポリシー"
+          }
+        }
+      },
+      "users": {
+        "hero": {
+          "kicker": "アイデンティティとアクセス",
+          "title": "ユーザー管理",
+          "subtitle": "サポート操作のためにアカウントを検索、ロックまたはロック解除し、一時パスワードをリセットします。"
+        },
+        "stats": {
+          "visibleUsers": "表示可能なユーザー",
+          "locked": "ロックされました",
+          "adminOwner": "管理者/所有者"
+        },
+        "searchPlaceholder": "ユーザー名、電子メール、電話番号、ステータスで検索...",
+        "table": {
+          "id": "ID",
+          "username": "ユーザー名",
+          "fullName": "フルネーム",
+          "email": "メール",
+          "phone": "電話",
+          "roleType": "役割の種類",
+          "status": "ステータス",
+          "actions": "アクション",
+          "avatar": "アバター"
+        },
+        "actions": {
+          "lockConfirm": "このアカウントをロックしますか?",
+          "unlockConfirm": "このアカウントのロックを解除しますか?",
+          "lock": "ロック",
+          "unlock": "ロック解除",
+          "resetPassword": "パスワードをリセット",
+          "promoteToAdmin": "管理者に昇格",
+          "demoteToUser": "ユーザーに降格",
+          "viewDetails": "詳細を見る"
+        },
+        "resetModal": {
+          "title": "一時パスワードをリセット",
+          "confirm": "確認",
+          "usernameLabel": "ユーザー名",
+          "passwordPlaceholder": "一時パスワードを入力してください"
+        },
+        "status": {
+          "active": "アクティブ",
+          "inactive": "非アクティブ",
+          "locked": "ロックされました"
+        },
+        "role": {
+          "USER": "ユーザー",
+          "ADMIN": "管理者",
+          "OWNER": "オーナー"
+        },
+        "messages": {
+          "loadFailed": "ユーザーをロードできません。",
+          "passwordRequired": "一時パスワードが必要です。",
+          "resetSuccess": "一時パスワードがリセットされました。",
+          "resetFailed": "パスワードをリセットできません。",
+          "lockSuccess": "アカウントがロックされました。",
+          "unlockSuccess": "アカウントのロックが解除されました。",
+          "lockFailed": "アカウントをロックできません。",
+          "unlockFailed": "アカウントのロックを解除できません。",
+          "promoteSuccess": "ユーザーが管理者に昇格しました。",
+          "promoteFailed": "ユーザーを昇格できません。",
+          "promoteLocked": "アカウントがロックされている間は管理者に昇格できません。",
+          "demoteSuccess": "管理者がユーザーに降格されました。",
+          "demoteFailed": "管理者を降格できません。"
+        },
+        "detailModal": {
+          "title": "360 度のユーザー詳細",
+          "profileSection": "アカウント情報",
+          "familySection": "家族とメンバーの管理",
+          "babySection": "赤ちゃんの管理",
+          "genderLabel": "性別",
+          "birthDateLabel": "生年月日",
+          "createdAtLabel": "作成日",
+          "lastLoginLabel": "最終ログイン",
+          "familiesCount": "家族に加わりました",
+          "babiesCount": "赤ちゃんの数",
+          "editBabyTitle": "赤ちゃんの詳細を編集する",
+          "saveSuccess": "正常に更新されました。",
+          "deleteSuccess": "正常に削除されました。",
+          "popconfirm": {
+            "removeMember": "このメンバーをファミリーから削除してもよろしいですか?",
+            "deleteBaby": "この赤ちゃんをシステムから削除してもよろしいですか?"
+          },
+          "role": {
+            "OWNER": "ファミリーオーナー",
+            "MEMBER": "メンバー"
+          },
+          "loading": "データをロード中...",
+          "noFamilies": "参加しているファミリーはまだありません。",
+          "noBabies": "まだ赤ちゃんはいません。",
+          "editBaby": {
+            "title": "赤ちゃんの情報を編集する",
+            "name": "赤ちゃんの名前",
+            "birthDate": "生年月日",
+            "gender": "性別",
+            "weight": "重量(kg)",
+            "height": "高さ (cm)"
+          }
+        }
+      },
+      "families": {
+        "hero": {
+          "kicker": "管理システム",
+          "title": "世帯ディレクトリ",
+          "subtitle": "すべての家族世帯、そのメンバー、役割、関係階層を管理します。"
+        },
+        "totalHouseholds": "総世帯数",
+        "searchPlaceholder": "ファミリー名または作成者名で検索...",
+        "refresh": "更新",
+        "creator": "クリエイター",
+        "members": "メンバー",
+        "actions": {
+          "createFamily": "世帯を作成する",
+          "manageMembers": "メンバーの管理",
+          "deleteConfirm": "この世帯を削除してもよろしいですか?",
+          "removeMemberConfirm": "このメンバーを世帯から削除してもよろしいですか?"
+        },
+        "empty": {
+          "title": "世帯が見つかりませんでした",
+          "subtitle": "フィルターを再確認するか、新しい世帯を作成してください。"
+        },
+        "modal": {
+          "createTitle": "新しい世帯を作成する",
+          "editTitle": "世帯を編集する",
+          "nameLabel": "ファミリーネーム",
+          "namePlaceholder": "姓を入力してください",
+          "manageMembersTitle": "ファミリーメンバーを管理する",
+          "currentMembers": "現在のメンバー",
+          "displayName": "表示名",
+          "role": "役割",
+          "relation": "関係",
+          "parent": "親",
+          "actions": "アクション",
+          "addNewMember": "新しいメンバーを追加",
+          "searchUserPlaceholder": "ユーザー名または電子メールを入力してユーザーを検索してください...",
+          "searchUser": "ユーザーを検索",
+          "addMemberBtn": "ファミリーに追加",
+          "displayNamePlaceholder": "例: John Doe",
+          "username": "ユーザー名",
+          "usernamePlaceholder": "例: john.doe",
+          "email": "メール",
+          "emailPlaceholder": "例: john.doe@example.com",
+          "searchExisting": "既存の検索",
+          "createNew": "新規作成",
+          "inviteMemberBtn": "新しいメンバーを追加"
+        },
+        "messages": {
+          "loadFailed": "世帯をロードできません。",
+          "nameRequired": "姓は必須です。",
+          "creatorRequired": "作成者情報がありません。",
+          "createSuccess": "世帯が正常に作成されました。",
+          "createFailed": "世帯を作成できません。",
+          "updateSuccess": "世帯が正常に更新されました。",
+          "updateFailed": "世帯を更新できません。",
+          "deleteSuccess": "世帯が正常に削除されました。",
+          "deleteFailed": "世帯を削除できません。",
+          "searchKeywordRequired": "検索するにはユーザー名または電子メールを入力してください。",
+          "userFound": "ユーザーが見つかりました!",
+          "userNotFound": "条件に一致するユーザーが見つかりませんでした。",
+          "addMemberSuccess": "メンバーが世帯に正常に追加されました。",
+          "updateMemberSuccess": "メンバーが正常に更新されました。",
+          "removeMemberSuccess": "メンバーが世帯から正常に削除されました。",
+          "allFieldsRequired": "すべてのフィールドに入力してください。",
+          "inviteMemberSuccess": "新しいメンバーが正常に追加されました。"
+        }
+      },
+      "premium": {
+        "hero": {
+          "kicker": "プレミアム ガバナンス",
+          "title": "プレミアム機能の構成",
+          "subtitle": "どの世帯がプレミアム機能を使用できるかを制御し、各資格の変更を追跡します。"
+        },
+        "stats": {
+          "households": "世帯",
+          "members": "世帯のメンバー",
+          "enabledFeatures": "有効な機能"
+        },
+        "family": {
+          "selectPlaceholder": "設定する世帯を選択してください...",
+          "selected": "選択された世帯",
+          "id": "ファミリーID",
+          "members": "メンバー",
+          "empty": "プレミアム アクセスを設定する世帯を選択してください。"
+        },
+        "actions": {
+          "refreshConfig": "プレミアム データを更新する",
+          "save": "プレミアム構成を保存する"
+        },
+        "bulk": {
+          "title": "複数の世帯に構成を適用する",
+          "subtitle": "現在の資格設定を選択した世帯のテンプレートとして使用します。",
+          "selectPlaceholder": "対象世帯を選択してください...",
+          "apply": "選択した世帯に適用します"
+        },
+        "entitlements": {
+          "title": "機能の権利",
+          "subtitle": "この世帯のデフォルトの機能アクセスを上書きします。",
+          "statusLabel": "ステータス",
+          "expiresAtLabel": "有効期限: (オプション)",
+          "reasonLabel": "理由",
+          "reasonPlaceholder": "この権利が変更された理由を説明してください。",
+          "empty": "この世帯のプレミアム資格データは見つかりませんでした。"
+        },
+        "questPoints": {
+          "title": "ファミリークエストのポイント",
+          "subtitle": "付与クエスト ポイントはこの世帯を指し、ポイント付与履歴を追跡します。",
+          "currentPoints": "現在のポイント",
+          "currentStreak": "現在の連続記録",
+          "lastClaimDate": "最後の請求",
+          "pointsLabel": "付与ポイント",
+          "reasonLabel": "付与理由",
+          "reasonPlaceholder": "例: キャンペーンボーナス、サポート調整...",
+          "grantAction": "ポイントの付与",
+          "historyTitle": "ポイント付与履歴",
+          "historySubtitle": "この世帯に対する最新の 30 ポイントの付与。",
+          "historyEmpty": "ポイント付与エントリーはまだありません。",
+          "table": {
+            "points": "ポイント",
+            "reason": "理由",
+            "byUser": "によって付与されました",
+            "grantedAt": "で付与されました"
+          },
+          "messages": {
+            "invalidPoints": "0 より大きい有効なポイント値を入力してください。",
+            "grantSuccess": "{{points}} ポイントが正常に付与されました。",
+            "grantFailed": "ポイントを付与できません。"
+          }
+        },
+        "status": {
+          "INHERIT": "継承",
+          "ALLOW": "許可",
+          "DENY": "拒否"
+        },
+        "effectiveState": {
+          "enabled": "有効",
+          "disabled": "無効"
+        },
+        "effectiveReason": {
+          "ALLOW": "ルールにより許可されています",
+          "DENY": "ルールにより拒否されました",
+          "INHERIT": "継承",
+          "EXPIRED": "期限切れ",
+          "DEFAULT": "デフォルトのポリシー"
+        },
+        "audit": {
+          "title": "プレミアム変更監査",
+          "subtitle": "この世帯の最新 20 件の権利変更。",
+          "empty": "監査エントリはまだありません。",
+          "table": {
+            "feature": "特集",
+            "statusChange": "ステータス変更",
+            "expires": "有効期限の変更",
+            "reason": "理由",
+            "byUser": "によって変更されました",
+            "changedAt": "に変更されました"
+          }
+        },
+        "messages": {
+          "loadFamiliesFailed": "世帯リストをロードできません。",
+          "loadConfigFailed": "この世帯のプレミアム構成を読み込むことができません。",
+          "saveSuccess": "プレミアム構成が正常に更新されました。",
+          "saveFailed": "プレミアム構成を保存できません。",
+          "bulkTargetRequired": "対象世帯を少なくとも 1 つ選択してください。",
+          "bulkApplySuccess": "プレミアム構成を {{count}} 世帯に適用しました。",
+          "bulkApplyPartial": "{{success}} 世帯に適用されます。失敗した日: {{failed}}。",
+          "bulkApplyFailed": "選択した世帯にプレミアム構成を適用できません。"
+        }
+      },
+      "access": {
+        "hero": {
+          "kicker": "役割のガバナンス",
+          "title": "アクセス制御ワークスペース",
+          "subtitle": "ロール マッピングを管理し、各アカウントの効果的なメニュー/API アクセスを検査します。"
+        },
+        "stats": {
+          "roles": "役割",
+          "menuPermissions": "メニュー権限",
+          "apiPermissions": "API 権限"
+        },
+        "searchPlaceholder": "名前、ID、または権限 ID でロールを検索します...",
+        "table": {
+          "id": "ID",
+          "role": "役割",
+          "permissions": "権限",
+          "permissionCount": "権限",
+          "actions": "アクション"
+        },
+        "actions": {
+          "createRole": "ロールの作成",
+          "deleteRoleConfirm": "このロールを削除しますか?"
+        },
+        "permissionGroups": {
+          "menu": "メニューの権限",
+          "api": "API 権限"
+        },
+        "inspector": {
+          "title": "ユーザー アクセス インスペクター",
+          "userIdPlaceholder": "ユーザー ID を入力してください",
+          "inspect": "アクセスの検査",
+          "adminUser": "管理者アカウント",
+          "standardUser": "標準アカウント",
+          "roles": "役割",
+          "menuKeys": "メニューキー",
+          "apiPermissions": "API 権限"
+        },
+        "roleModal": {
+          "createTitle": "ロールの作成",
+          "editTitle": "役割の編集",
+          "roleName": "ロール名",
+          "roleNamePlaceholder": "ロール名を入力してください"
+        },
+        "messages": {
+          "loadWorkspaceFailed": "役割ワークスペースをロードできません。",
+          "roleNameRequired": "ロール名は必須です。",
+          "createRoleSuccess": "ロールが正常に作成されました。",
+          "createRoleFailed": "ロールを作成できません。",
+          "updateRoleSuccess": "ロールが正常に更新されました。",
+          "updateRoleFailed": "ロールを更新できません。",
+          "deleteRoleSuccess": "ロールが正常に削除されました。",
+          "deleteRoleFailed": "ロールを削除できません。",
+          "invalidUserId": "有効なユーザー ID を入力してください。",
+          "loadUserAccessFailed": "ユーザー アクセスをロードできません。"
+        },
+        "empty": {
+          "noRoleSelectedTitle": "役割が選択されていません",
+          "noRoleSelectedSubtitle": "テーブルからロールを選択して、権限マッピングを検査します。",
+          "roles": "役割が割り当てられていません。",
+          "menuPermissions": "このセクションには権限がありません。",
+          "apiPermissions": "このセクションには権限がありません。",
+          "userAccessTitle": "ユーザー アクセス データがロードされていません",
+          "userAccessSubtitle": "アカウント ID を入力し、アクセスの検査を実行します。"
+        }
+      },
+      "finance": {
+        "hero": {
+          "kicker": "ママコントロールセンター",
+          "title": "家族の家計管理",
+          "subtitle": "予算制限を注意深く監視し、実際の支出指標を分析し、システム内のすべての世帯の過剰支出のリスクを検出します。"
+        },
+        "searchPlaceholder": "ファミリー名または作成者名で検索...",
+        "monthLabel": "チェック月:",
+        "refresh": "更新",
+        "loading": "マイクロサービスから財務データを集約しています...",
+        "kpis": {
+          "families": {
+            "title": "監視対象家族",
+            "meta": "システム内の世帯"
+          },
+          "totalBudget": {
+            "title": "割り当てられた予算の合計",
+            "meta": "月の予算制限 {{month}}"
+          },
+          "totalSpent": {
+            "title": "実際の支出総額",
+            "meta": "その月に費やした合計金額"
+          },
+          "usageRate": {
+            "title": "資金利用率",
+            "meta": "システム全体の資金流出率"
+          }
+        },
+        "table": {
+          "id": "ファミリーID",
+          "name": "姓",
+          "creator": "責任者 / クリエイター",
+          "members": "メンバー",
+          "budget": "毎月の予算",
+          "spent": "使用済み",
+          "remaining": "残り",
+          "usage": "使用法",
+          "status": "ステータス",
+          "actions": "アクション"
+        },
+        "empty": {
+          "title": "データが見つかりませんでした",
+          "subtitle": "検索キーワードを変更するか、別の月に更新してみてください。"
+        },
+        "drawer": {
+          "title": "家計の財務詳細",
+          "subtitle": "ファミリ: {{name}} | ID: #{{id}}",
+          "budget": "毎月の予算",
+          "spent": "支出総額",
+          "remaining": "残り制限数",
+          "usageRate": "今月の予算使用率:",
+          "alerts": {
+            "over": "🚨 この世帯は、{{amount}} までに割り当てられた制限を超過しました。",
+            "warning": "⚠️ この世帯は支出の安全警告のしきい値 (>80%) に達しています。",
+            "good": "✅ 支出は安全圏にあり、予算のバランスが取れています。"
+          },
+          "categories": {
+            "title": "カテゴリ別の支出の内訳",
+            "totalSpent": "{{percent}}% (合計の)",
+            "empty": "今月のカテゴリ内訳データはありません。"
+          },
+          "expenses": {
+            "title": "月の支出ログ {{month}}",
+            "date": "日付",
+            "category": "カテゴリ",
+            "amount": "金額",
+            "note": "注",
+            "noNote": "注記なし",
+            "empty": "今月はまだ支出取引が記録されていません。"
+          }
+        },
+        "memberCount": "{{count}} 人",
+        "usedPercent": "{{percent}}% が使用されました",
+        "notSet": "予算が設定されていません",
+        "status": {
+          "good": "安全",
+          "warning": "警告",
+          "over": "使いすぎ",
+          "notSet": "未設定"
+        },
+        "actions": {
+          "inspect": "詳細"
+        },
+        "messages": {
+          "loadFailed": "財務データをロードできません。"
+        }
+      },
+      "exportPasswords": {
+        "hero": {
+          "kicker": "安全なエクスポート",
+          "title": "エクスポートパスワード管理",
+          "subtitle": "平文のパスワードを公開せずに、パスワードで保護された XLSX エクスポートをユーザー、世帯、レポート月ごとに確認します。"
+        },
+        "stats": {
+          "total": "一致するレコード",
+          "visible": "表示可能な行",
+          "pageSize": "ページ ファイル サイズ",
+          "allUsers": "すべてのユーザー"
+        },
+        "filters": {
+          "userPlaceholder": "ユーザーによるフィルター",
+          "familyPlaceholder": "ファミリーID",
+          "monthLabel": "レポート月"
+        },
+        "security": {
+          "title": "パスワードデータは保護されています",
+          "description": "現在のスコープ: {{user}}。この表には、マスクされたパスワードとハッシュ アルゴリズムのみが示されています。平文のパスワードは決して返されません。"
+        },
+        "table": {
+          "file": "エクスポートファイル",
+          "user": "ユーザー",
+          "family": "ファミリー",
+          "month": "月",
+          "password": "パスワード",
+          "algorithm": "ハッシュアルゴリズム",
+          "createdAt": "作成場所",
+          "actions": "アクション"
+        },
+        "actions": {
+          "filter": "フィルター",
+          "reset": "リセット",
+          "delete": "レコードを削除",
+          "deleteConfirm": "このエクスポート パスワード メタデータ レコードを削除しますか?",
+          "showPassword": "パスワードを表示",
+          "hidePassword": "パスワードを非表示にする"
+        },
+        "empty": {
+          "title": "エクスポートパスワードレコードがありません",
+          "subtitle": "別のユーザー、世帯、またはレポート月を試してください。"
+        },
+        "messages": {
+          "loadFailed": "エクスポート パスワード レコードをロードできません。",
+          "deleteSuccess": "エクスポート パスワード メタデータが削除されました。",
+          "deleteFailed": "エクスポート パスワード メタデータを削除できません。"
+        }
+      },
+      "permissions": {
+        "hero": {
+          "kicker": "ポリシーレジストリ",
+          "title": "許可カタログ",
+          "subtitle": "MENU/API 権限を管理し、各ポリシーを使用しているロールの数を監視します。"
+        },
+        "stats": {
+          "total": "合計権限",
+          "menu": "メニューの権限",
+          "api": "API 権限"
+        },
+        "searchPlaceholder": "名前、説明、メソッド、またはパスによる検索権限...",
+        "filters": {
+          "all": "すべて",
+          "menu": "メニュー",
+          "api": "API"
+        },
+        "types": {
+          "menu": "メニュー権限",
+          "api": "API権限"
+        },
+        "table": {
+          "id": "ID",
+          "name": "権限名",
+          "type": "タイプ",
+          "summary": "概要",
+          "usedByRoles": "ロールによって使用されます",
+          "actions": "アクション"
+        },
+        "actions": {
+          "createMenuPermission": "新しいメニュー権限",
+          "createApiPermission": "新しい API 権限",
+          "deleteConfirm": "この権限を削除しますか?"
+        },
+        "missingApis": {
+          "title": "未登録の権限 API",
+          "subtitle": "ゲートウェイ ドキュメントから検出された、権限データベースにまだ存在しないエンドポイント。",
+          "addAction": "権限の追加",
+          "empty": "不足している権限 API はありません。"
+        },
+        "modal": {
+          "createTitle": "権限の作成",
+          "editTitle": "編集権限",
+          "name": "権限名",
+          "namePlaceholder": "権限名を入力してください",
+          "description": "説明",
+          "descriptionPlaceholder": "権限の説明を入力してください",
+          "menuKey": "メニューキー",
+          "menuKeyPlaceholder": "メニューキーを入力してください",
+          "apiMethod": "API メソッド",
+          "apiMethodPlaceholder": "例: GET",
+          "apiPath": "API パス",
+          "apiPathPlaceholder": "例: /api/orders/**"
+        },
+        "messages": {
+          "loadFailed": "権限ワークスペースをロードできません。",
+          "nameRequired": "権限名は必須です。",
+          "menuKeyRequired": "MENU 権限にはメニュー キーが必要です。",
+          "apiFieldRequired": "API 権限には API メソッドとパスが必要です。",
+          "createSuccess": "権限が正常に作成されました。",
+          "createFailed": "権限を作成できません。",
+          "updateSuccess": "権限が正常に更新されました。",
+          "updateFailed": "権限を更新できません。",
+          "deleteSuccess": "権限が正常に削除されました。",
+          "deleteFailed": "権限を削除できません。",
+          "loadMissingApiFailed": "未登録の権限 API をロードできません。"
+        }
+      }
+    },
+    "dashboard": {
+      "title": "ファミリー ダッシュボード",
+      "subtitle": "今日の概要",
+      "familyFallback": "ファミリー",
+      "moodScore": "気分スコア",
+      "spentToday": "今日の過ごし方",
+      "pendingTasks": "保留中のタスク",
+      "shoppingReminders": "ショッピングリマインダー",
+      "babySleepHours": "赤ちゃんの睡眠時間",
+      "todayMeals": "本日の食事",
+      "noMeals": "今日の食事の予定はまだありません。",
+      "budgetHealth": "予算の健全性",
+      "topCategory": "トップカテゴリー",
+      "healthScoreLabel": "家族の健康スコア",
+      "healthScoreMeta": "気分、赤ちゃんの日課、作業負荷、予算の安全性から計算されます。",
+      "prioritiesTitle": "優先事項",
+      "viewInsights": "分析情報を見る",
+      "activityTodayTitle": "今日のアクティビティ",
+      "quickShortcutsTitle": "クイックショートカット",
+      "budgetRemaining": "残りの予算",
+      "priorities": {
+        "budget": {
+          "title": "毎月の予算が圧迫されています",
+          "hint": "{{percent}} 予算の % が使用されました。"
+        },
+        "tasks": {
+          "title": "タスクの負荷が高くなっています",
+          "hint": "{{count}} タスクは処理を待っています。"
+        },
+        "shopping": {
+          "title": "ショッピング チェックリストに記入する必要があります",
+          "hint": "{{count}} 項目はまだ保留中です。"
+        },
+        "vaccine": {
+          "title": "赤ちゃんの予防接種の日が近づいています",
+          "hint": "次のマイルストーン: {{date}}。"
+        },
+        "noUrgent": {
+          "title": "今日はすべてが安定しているようです",
+          "hint": "即時に処理する必要がある緊急アラートはありません。"
+        }
+      },
+      "timeline": {
+        "meals": {
+          "title": "今日の食事",
+          "detail": "{{count}} 食事はすでに計画されています。",
+          "empty": "今日の食事プランは設定されていません。"
+        },
+        "baby": {
+          "title": "赤ちゃんの生活リズム",
+          "detail": "{{hours}}もう寝ますか？ {{feedings}} 授乳中? {{diapers}} おむつ交換。"
+        },
+        "workload": {
+          "title": "家族のワークロード",
+          "detail": "{{tasks}} タスクは保留中ですか? {{shopping}} ショッピングのリマインダー。"
+        }
+      },
+      "quick": {
+        "tasksPending": "{{count}} 保留中のタスク",
+        "shoppingPending": "{{count}} 購入するアイテム",
+        "budgetUsed": "{{percent}}% の予算が使用されました",
+        "sleepToday": "{{hours}}今日は寝ます"
+      },
+      "quest": {
+        "title": "ファミリークエスト",
+        "subtitle": "今すぐすべてのミッションを完了して、毎日の報酬をアンロックしてください。",
+        "streak": "{{days}} 日連続",
+        "totalPoints": "{{points}} XP",
+        "claimReward": "+{{points}} XP 報酬を請求する",
+        "claimedToday": "今日報酬を受け取りました",
+        "completeAll": "すべてのミッションを完了して獲得してください",
+        "claimSuccess": "素晴らしい走りでした！ +{{points}} XP と連続 {{streak}} 日。",
+        "claimFailed": "現在、報酬を受け取ることができません。もう一度試してください。",
+        "rewardsTitle": "クエスト報酬ショップ",
+        "rewardsSubtitle": "XP を家庭用ブーストや収集品に費やします。",
+        "rewardsEmpty": "利用可能な報酬はまだありません。",
+        "redeemCost": "コスト: {{points}} XP",
+        "redeemAction": "引き換え",
+        "redeeming": "引き換え中...",
+        "redeemSuccess": "{{reward}} を {{points}} XP と引き換えました。",
+        "redeemFailed": "現在、この特典を引き換えることはできません。",
+        "redeemHistoryTitle": "最近の引き換え履歴",
+        "redeemHistoryEmpty": "特典はまだ引き換えられていません。",
+        "nextTier": "{{points}} XP で {{tier}} に到達",
+        "maxTier": "最大階層に到達しました",
+        "tiers": {
+          "seed": "シード",
+          "bloom": "ブルーム",
+          "star": "スター",
+          "legend": "凡例"
+        },
+        "missions": {
+          "sleep10": {
+            "title": "睡眠チャンピオン",
+            "detail": "今日の赤ちゃんの睡眠時間: {{hours}} 時間 (目標: 10 時間以上)"
+          },
+          "sleep11": {
+            "title": "ディープスリープマスター",
+            "detail": "今日の赤ちゃんの睡眠時間: {{hours}} 時間 (目標: 11 時間以上)"
+          },
+          "meal1": {
+            "title": "食事プランナー",
+            "detail": "今日の食事の予定: {{count}} (目標: 少なくとも 1 つ)"
+          },
+          "meal2": {
+            "title": "食事の勢い",
+            "detail": "今日の食事の予定: {{count}} (目標: 少なくとも 2 食)"
+          },
+          "tasks2": {
+            "title": "タスクテイマー",
+            "detail": "保留中のタスク: {{count}} (目標: 2 個以下)"
+          },
+          "tasks1": {
+            "title": "タスクフィニッシャー",
+            "detail": "保留中のタスク: {{count}} (目標: 1 件以下)"
+          },
+          "budget80": {
+            "title": "バジェットガーディアン",
+            "detail": "予算使用率: {{percent}}% (目標: 80% 以下)"
+          },
+          "budget70": {
+            "title": "バジェットヒーロー",
+            "detail": "予算使用率: {{percent}}% (目標: 70% 以下)"
+          },
+          "mood70": {
+            "title": "穏やかな家",
+            "detail": "気分スコア: {{score}}/100 (目標: 70+)"
+          },
+          "mood80": {
+            "title": "ジョイフル ホーム",
+            "detail": "気分スコア: {{score}}/100 (目標: 80+)"
+          },
+          "shopping0": {
+            "title": "クリアショッピングボード",
+            "detail": "残りのショッピングリマインダー: {{count}} (目標: 0)"
+          },
+          "feedings5": {
+            "title": "摂食リズム",
+            "detail": "今日の餌やり: {{count}} (対象: 5 名以上)"
+          },
+          "diapers3": {
+            "title": "ケアの一貫性",
+            "detail": "今日のおむつ交換: {{count}} (対象: 3 名以上)"
+          }
+        }
+      }
+    },
+    "tasks": {
+      "title": "家族のタスク",
+      "subtitle": "リスト、カレンダー、ドラッグ ドロップ ボードを備えたタスク ワークスペース",
+      "unassigned": "未割り当て",
+      "noDeadline": "期限なし",
+      "noDescription": "説明なし",
+      "notTracked": "該当なし",
+      "actions": {
+        "create": "新しいタスク",
+        "assign": "割り当てる",
+        "start": "開始",
+        "complete": "完了"
+      },
+      "summary": {
+        "total": "タスクの合計数",
+        "today": "本日締切",
+        "upcoming": "今後の予定",
+        "overdue": "期限切れ"
+      },
+      "views": {
+        "list": "リスト",
+        "calendar": "カレンダー",
+        "kanban": "カンバン"
+      },
+      "filters": {
+        "today": "今日",
+        "upcoming": "今後の予定",
+        "overdue": "期限切れ",
+        "assignedToMe": "私に割り当てられました",
+        "createdByMe": "私が作成しました"
+      },
+      "table": {
+        "title": "タスク",
+        "status": "ステータス",
+        "due": "期限",
+        "assignee": "譲受人",
+        "createdBy": "作成者",
+        "actions": "アクション"
+      },
+      "status": {
+        "done": "完了",
+        "inProgress": "進行中",
+        "pending": "保留中"
+      },
+      "detail": {
+        "dueAt": "期限",
+        "assignee": "譲受人",
+        "createdBy": "作成者",
+        "empty": "タスクを選択して詳細を表示します。"
+      },
+      "calendar": {
+        "title": "タスクカレンダー",
+        "selectedDay": "選択した日",
+        "empty": "この日はタスクがありません。"
+      },
+      "kanban": {
+        "empty": "ここにタスクをドロップします"
+      },
+      "pagination": {
+        "showing": "表示中",
+        "to": "から",
+        "of": "/",
+        "results": "の結果"
+      },
+      "modal": {
+        "createTitle": "タスクの作成",
+        "editTitle": "タスクの編集",
+        "assignTitle": "タスクの割り当て",
+        "titleLabel": "タスクのタイトル",
+        "titlePlaceholder": "例:ワクチン接種の予約をする",
+        "descriptionLabel": "説明",
+        "descriptionPlaceholder": "オプションの詳細",
+        "assigneeLabel": "譲受人",
+        "assigneePlaceholder": "家族メンバーを選択してください",
+        "dueAtLabel": "期限"
+      },
+      "messages": {
+        "loadFailed": "タスクをロードできません。",
+        "createSuccess": "タスクが正常に作成されました。",
+        "createFailed": "タスクを作成できません。",
+        "updateSuccess": "タスクが正常に更新されました。",
+        "updateFailed": "タスクを更新できません。",
+        "assignSuccess": "タスク担当者が更新されました。",
+        "assignFailed": "タスクを割り当てることができません。",
+        "dragUpdateSuccess": "タスクのステータスが更新されました。",
+        "dragUpdateFailed": "タスクのステータスを更新できません。",
+        "startSuccess": "タスクは進行中としてマークされています。",
+        "startFailed": "タスクを開始できません。",
+        "completeSuccess": "タスクは完了としてマークされています。",
+        "completeFailed": "タスクを完了できません。",
+        "deleteSuccess": "タスクは正常に削除されました。",
+        "deleteFailed": "タスクを削除できません。",
+        "deleteConfirm": "このタスクを削除しますか?"
+      }
+    },
+    "shopping": {
+      "title": "買い物リスト",
+      "subtitle": "食料品とベビー用品を 1 つのチェックリストにまとめました",
+      "totalLabel": "アイテム",
+      "actions": {
+        "create": "アイテムを追加",
+        "check": "マークを購入しました",
+        "uncheck": "マーク保留中",
+        "clearSearch": "クリア"
+      },
+      "quickAdd": {
+        "namePlaceholder": "アイテムを簡単に追加...",
+        "quantityPlaceholder": "数量",
+        "notePlaceholder": "注",
+        "submit": "クイック追加"
+      },
+      "filters": {
+        "all": "すべて",
+        "pending": "保留中",
+        "bought": "購入しました"
+      },
+      "sort": {
+        "label": "並べ替え",
+        "smart": "スマート",
+        "nameAsc": "名前 A ～ Z",
+        "nameDesc": "名前 Z-A"
+      },
+      "status": {
+        "bought": "購入しました",
+        "toBuy": "購入するには"
+      },
+      "sections": {
+        "pending": "購入するには",
+        "bought": "購入しました"
+      },
+      "searchPlaceholder": "検索項目、数量、メモ...",
+      "loading": "買い物リストを読み込み中...",
+      "modal": {
+        "createTitle": "ショッピングアイテムを追加",
+        "nameLabel": "アイテム名",
+        "namePlaceholder": "例:おむつサイズM",
+        "quantityLabel": "数量",
+        "quantityPlaceholder": "例: 2パック",
+        "noteLabel": "注",
+        "notePlaceholder": "オプションのメモ"
+      },
+      "messages": {
+        "createSuccess": "ショッピングアイテムが作成されました。",
+        "quickAddSuccess": "アイテムがすぐに追加されました。",
+        "createFailed": "ショッピングアイテムを作成できません。",
+        "loadFailed": "ショッピングリストを読み込めません。",
+        "updateFailed": "ショッピングアイテムを更新できません。"
+      },
+      "empty": "ショッピングアイテムはまだありません。開始するには 1 つ追加してください。",
+      "noFilterMatch": "現在のフィルターに一致する項目はありません。",
+      "summary": {
+        "totalItems": "合計アイテム数",
+        "checkedItems": "購入しました",
+        "remainingItems": "残り"
+      }
+    },
+    "meals": {
+      "title": "ミールプランナー",
+      "subtitle": "両親のための週ごとの食事プランと赤ちゃんに優しいルーティン",
+      "totalLabel": "予定日",
+      "actions": {
+        "create": "プランを追加",
+        "aiSuggest": "AI サジェスト"
+      },
+      "stats": {
+        "totalMeals": "食事の合計",
+        "daysWithMeals": "食事のある日",
+        "period": {
+          "week": "週: {{start}} - {{end}}",
+          "month": "月 {{month}}/{{year}}",
+          "year": "年 {{year}}"
+        }
+      },
+      "filters": {
+        "week": "週別",
+        "month": "月別",
+        "year": "年別",
+        "selectWeek": "週を選択してください",
+        "selectMonth": "月を選択してください",
+        "selectYear": "年を選択してください"
+      },
+      "empty": {
+        "dayNoMeals": "食事はまだありません",
+        "noPlans": "食事の予定はまだありません",
+        "createFirstPlan": "最初の食事プランを作成する"
+      },
+      "table": {
+        "day": "日",
+        "breakfast": "朝食",
+        "lunch": "ランチ",
+        "dinner": "ディナー"
+      },
+      "mealType": {
+        "BREAKFAST": "朝食",
+        "LUNCH": "ランチ",
+        "DINNER": "ディナー",
+        "SNACK": "スナック"
+      },
+      "modal": {
+        "createTitle": "食事計画を作成する",
+        "savePlan": "プランを保存",
+        "applyFor": "申し込み:",
+        "applyDay": "1日",
+        "applyWeek": "一週間中",
+        "selectWeekStart": "週の開始日を選択してください",
+        "selectDate": "計画日",
+        "dateRequired": "日付を選択してください",
+        "dishesTitle": "料理リスト",
+        "addDish": "料理を追加",
+        "mealTypePlaceholder": "食事の種類",
+        "removeDish": "皿を取り外す",
+        "notesLabel": "注記",
+        "notesPlaceholder": "オプションのメモ",
+        "mealNameLabel": "食事名",
+        "mealNamePlaceholder": "例:チキンスープ",
+        "mealTypeLabel": "食事の種類",
+        "planDateLabel": "計画日",
+        "noteLabel": "注",
+        "notePlaceholder": "オプションのメモ"
+      },
+      "ai": {
+        "modalTitle": "AIによる食事提案",
+        "inputLabel": "利用可能な材料を入力してください (カンマ区切り)",
+        "inputPlaceholder": "例: 鶏肉、にんじん、ジャガイモ、玉ねぎ",
+        "searchButton": "料理の提案",
+        "loading": "成分を分析中...",
+        "suggestionsTitle": "おすすめの料理",
+        "ingredientsLabel": "材料:",
+        "applyTitle": "食事プランに追加",
+        "applyMealLabel": "食事:",
+        "applyModeLabel": "適用:",
+        "applyDateLabel": "適用日:",
+        "addToMenuButton": "{{count}} 料理を食事プランに追加します",
+        "selectHint": "続けるには少なくとも 1 つの料理を選択してください"
+      },
+      "messages": {
+        "createSuccess": "食事プランが作成されました。",
+        "createFailed": "食事プランを作成できません。",
+        "requireAtLeastOneDish": "一品以上追加してください。",
+        "missingIngredients": "原材料を入力してください。",
+        "selectAtLeastOneSuggestion": "提案された料理を少なくとも 1 つ選択してください。",
+        "selectApplyDate": "適用日を選択してください。",
+        "addFromAiSuccess": "{{count}} 料理を食事プランに追加しました。",
+        "addFromAiFailed": "AI の提案から料理を追加できません。"
+      }
+    },
+    "expenses": {
+      "title": "経費管理",
+      "subtitle": "家族の支出を追跡し、毎月の予算を安全に保ちます",
+      "actions": {
+        "create": "経費を追加"
+      },
+      "budgetUsed": "使用された予算",
+      "monthlyOverview": "月次概要",
+      "spentLabel": "使用済み",
+      "budgetLabel": "予算",
+      "topCategory": "トップカテゴリー",
+      "modal": {
+        "createTitle": "経費の作成",
+        "amountLabel": "金額",
+        "amountPlaceholder": "金額を入力してください",
+        "categoryLabel": "カテゴリ",
+        "categoryPlaceholder": "例:ミルクとおむつ",
+        "noteLabel": "注",
+        "notePlaceholder": "オプションのメモ",
+        "createSub": "その月の支出を記録する",
+        "deleteCategory": "このカテゴリを削除します"
+      },
+      "messages": {
+        "createSuccess": "経費が正常に作成されました。",
+        "createFailed": "経費を作成できません。",
+        "uploadReceiptSuccess": "領収書は正常にアップロードされました。",
+        "uploadReceiptFailed": "領収書をアップロードできません。",
+        "unlimitedMemoryRequired": "このアクションには、プレミアム プランの無制限のメモリが必要です。",
+        "downloadReceiptFailed": "領収書をダウンロードできません。",
+        "deleteReceiptSuccess": "レシートは正常に削除されました。",
+        "deleteReceiptFailed": "レシートを削除できません。",
+        "loadWorkspaceFailed": "経費ワークスペースをロードできません。"
+      },
+      "receipts": {
+        "title": "経費別の領収書",
+        "modalTitle": "領収書の管理",
+        "emptyExpenses": "領収書の添付には経費はかかりません。",
+        "emptyFiles": "この経費にはまだ領収書が添付されていません。",
+        "columns": {
+          "category": "カテゴリ",
+          "amount": "金額",
+          "spentAt": "での支出",
+          "note": "注",
+          "actions": "アクション"
+        },
+        "actions": {
+          "manage": "領収書の管理",
+          "upload": "領収書のアップロード",
+          "download": "ダウンロード",
+          "delete": "削除"
+        },
+        "modalSub": "請求書と取引文書を管理する",
+        "summaryAmount": "取引金額",
+        "uploadTitle": "ここをクリックして領収書をアップロードしてください",
+        "uploadSub": "画像 (PNG、JPG) または PDF ドキュメント (最大 10MB) を受け入れます",
+        "uploadingTitle": "ドキュメントをシステムにアップロードしています...",
+        "uploadingSub": "このウィンドウを閉じないでください",
+        "syncing": "ドキュメント リストを同期中...",
+        "emptyVaultTitle": "領収書はまだありません",
+        "emptyVaultSub": "領収書をアップロードして透明性のある情報を保存します。"
+      },
+      "remainingBudget": "残りの予算",
+      "spentToday": "今日の過ごし方",
+      "expenseRecords": "経費記録",
+      "averagePerExpense": "経費あたりの平均",
+      "remainingLabel": "残り",
+      "budgetStatus": {
+        "notSet": "予算が設定されていません",
+        "over": "予算を {{percent}}% 超過しています",
+        "warning": "予算制限に近づいています",
+        "good": "予算は健全です"
+      },
+      "filters": {
+        "selectMonth": "月を選択してください",
+        "category": "カテゴリ",
+        "allCategories": "すべてのカテゴリ",
+        "selectedCategory": "選択したカテゴリ",
+        "search": "検索",
+        "searchPlaceholder": "カテゴリまたはメモから検索",
+        "sortLabel": "並べ替え",
+        "clear": "クリア",
+        "sort": {
+          "newest": "新しい順",
+          "oldest": "古い順",
+          "highest": "最高額",
+          "lowest": "最低金額",
+          "category": "カテゴリ別 (A-Z)"
+        }
+      },
+      "categoryBreakdown": {
+        "title": "カテゴリの内訳",
+        "empty": "今月はカテゴリ データがありません。",
+        "expenseCount": "{{count}} 経費"
+      },
+      "table": {
+        "showing": "表示中",
+        "records": "レコード",
+        "filter": "フィルター",
+        "visibleTotal": "表示される合計",
+        "loading": "経費データをロードしています...",
+        "noFilterMatch": "現在のフィルターに一致する経費はありません。"
+      },
+      "budgetConfig": {
+        "title": "構成予算制限",
+        "modalTitle": "予算構成",
+        "modalSub": "月 {{month}} の予算制限を設定します",
+        "limitLabel": "予算制限 (VND)",
+        "limitError": "0 以上の有効な制限を入力してください",
+        "limitPlaceholder": "限度額を入力してください (例: 15000000)"
+      },
+      "viewer": {
+        "viewDirectly": "直接表示",
+        "size": "サイズ",
+        "uploadedAt": "にアップロードされました",
+        "preparing": "ドキュメントを表示する準備をしています..."
+      }
+    },
+    "baby": {
+      "title": "赤ちゃんの追跡",
+      "subtitle": "睡眠、授乳、おむつ、ワクチンのリマインダーの毎日のログ",
+      "quickLogTitle": "クイックログ",
+      "careStreak": "{{days}}-デイケア連続勤務",
+      "lastUpdated": "最終更新日",
+      "unknownName": "赤ちゃん",
+      "actions": {
+        "addProfile": "プロフィールを追加",
+        "addLog": "ログを追加",
+        "addGrowth": "成長を追加",
+        "addVaccination": "ワクチンを追加"
+      },
+      "nextVaccine": "次のワクチン",
+      "profileTitle": "プロフィール",
+      "sleepToday": "今日は寝てください",
+      "feedingCount": "給餌回数",
+      "diaperChanges": "おむつ交換",
+      "vaccineDate": "ワクチン接種日",
+      "age": {
+        "unknown": "年齢不明",
+        "day": "{{count}} 日",
+        "days": "{{count}} 日",
+        "month": "{{count}} 月",
+        "months": "{{count}} か月",
+        "year": "{{count}} 年",
+        "years": "{{count}} 年",
+        "yearsMonths": "{{years}}y {{months}}m"
+      },
+      "dashboard": {
+        "sleepSelectedDay": "睡眠 (選択した日)",
+        "latestWeight": "最新の重量",
+        "careTrendTitle": "ケアの傾向 (過去 7 日間)",
+        "noTrendData": "傾向データがありません",
+        "selectedDayLogsTitle": "選択した日のログ",
+        "recentActivityTitle": "最近のアクティビティ",
+        "noRecentActivity": "アクティビティはありません",
+        "noNote": "注記なし"
+      },
+      "growth": {
+        "title": "成長トラッカー",
+        "latestLabel": "最新",
+        "weightLabel": "重量",
+        "heightLabel": "高さ",
+        "headLabel": "ヘッド",
+        "deltaWeightLabel": "デルタウェイト",
+        "deltaHeightLabel": "デルタ高さ",
+        "noRecords": "成長記録はまだありません"
+      },
+      "vaccination": {
+        "title": "予防接種計画",
+        "upcomingLabel": "今後の予定",
+        "overdueLabel": "期限切れ",
+        "nextDueLabel": "次回予定",
+        "noPlan": "ワクチン接種計画なし",
+        "dueLabel": "期限",
+        "status": {
+          "completed": "完了",
+          "overdue": "期限切れ",
+          "upcoming": "今後の予定"
+        }
+      },
+      "gender": {
+        "MALE": "男性",
+        "FEMALE": "女性",
+        "OTHER": "その他"
+      },
+      "logType": {
+        "SLEEP": "睡眠",
+        "FEEDING": "給餌",
+        "DIAPER": "おむつ"
+      },
+      "modal": {
+        "createProfileTitle": "赤ちゃんのプロフィールを作成する",
+        "nameLabel": "赤ちゃんの名前",
+        "namePlaceholder": "赤ちゃんの名前を入力してください",
+        "birthDateLabel": "生年月日",
+        "genderLabel": "性別",
+        "noteLabel": "注",
+        "notePlaceholder": "オプションのメモ",
+        "createLogTitle": "ベビーログを作成する",
+        "logTypeLabel": "ログの種類",
+        "valueLabel": "値",
+        "valuePlaceholder": "睡眠時間を確保する",
+        "logTimeLabel": "ログ時間",
+        "createGrowthTitle": "成長記録を追加",
+        "measuredDateLabel": "測定日",
+        "weightKgLabel": "重量 (kg)",
+        "weightKgPlaceholder": "例: 7.4",
+        "heightCmLabel": "高さ (cm)",
+        "heightCmPlaceholder": "例: 66",
+        "headCircumferenceLabel": "頭囲(cm)",
+        "headCircumferencePlaceholder": "例: 42",
+        "createVaccinationTitle": "ワクチン接種を追加",
+        "vaccineNameLabel": "ワクチン名",
+        "vaccineNamePlaceholder": "例: 6-in-1 用量 1",
+        "dueDateLabel": "期限"
+      },
+      "logs": {
+        "title": "今日の記録",
+        "empty": "今日のログはまだありません。"
+      },
+      "messages": {
+        "createBabySuccess": "赤ちゃんのプロフィールが作成されました。",
+        "createBabyFailed": "赤ちゃんのプロフィールを作成できません。",
+        "createLogSuccess": "ベビーログが作成されました。",
+        "createLogFailed": "ベビーログを作成できません。",
+        "summaryLoadFailed": "赤ちゃんの概要を読み込めません。",
+        "logLoadFailed": "ベビーログをロードできません。",
+        "saveLogSuccess": "ベビーログが保存されました。",
+        "measurementRequired": "少なくとも 1 つの測定値を入力します。",
+        "growthCreateSuccess": "成長記録が保存されました。",
+        "growthCreateFailed": "成長記録を保存できません。",
+        "vaccinationCreateSuccess": "ワクチン接種アイテムが作成されました。",
+        "vaccinationCreateFailed": "ワクチン接種アイテムを作成できません。",
+        "growthLoadFailed": "成長記録をロードできません。",
+        "vaccinationLoadFailed": "ワクチン接種を読み込めません。",
+        "premiumGrowthRequired": "高度な成長追跡は、プレミアム世帯のみが利用できます。"
+      },
+      "gallery": {
+        "title": "赤ちゃんのフォトギャラリー",
+        "selectBaby": "赤ちゃんを選択してください",
+        "selectedBaby": "選択された赤ちゃん",
+        "empty": "ギャラリーに写真がありません。",
+        "actions": {
+          "upload": "写真をアップロード",
+          "download": "ダウンロード",
+          "delete": "削除"
+        },
+        "messages": {
+          "loadFailed": "ベビーリストをロードできません。",
+          "selectBabyFirst": "アップロードする前に赤ちゃんを選択してください。",
+          "uploadSuccess": "写真が正常にアップロードされました。",
+          "uploadFailed": "写真をアップロードできません。",
+          "unlimitedMemoryRequired": "写真のアップロード制限に達しました。続行するには、無制限のメモリにアップグレードしてください。",
+          "downloadFailed": "写真をダウンロードできません。",
+          "deleteSuccess": "写真は正常に削除されました。",
+          "deleteFailed": "写真を削除できません。"
+        }
+      }
+    },
+    "family": {
+      "title": "家族メンバー",
+      "subtitle": "各メンバーの役割とコラボレーションの概要",
+      "totalLabel": "アクティブメンバー",
+      "birthdays": {
+        "title": "もうすぐ誕生日",
+        "subtitle": "今後 14 日以内に誕生日を迎える家族",
+        "empty": "選択したウィンドウに今後の誕生日はありません。",
+        "today": "今日",
+        "tomorrow": "明日",
+        "inDays": "{{days}} 日後"
+      },
+      "actions": {
+        "create": "メンバーを追加",
+        "deleteConfirm": "このファミリーメンバーを削除しますか?"
+      },
+      "role": {
+        "MOM": "お母さん",
+        "DAD": "お父さん",
+        "GRANDMA": "おばあちゃん",
+        "CAREGIVER": "介護者",
+        "ADMIN": "管理者"
+      },
+      "modal": {
+        "createTitle": "ファミリーメンバーを作成する",
+        "createSub": "この世帯に新しいメンバーを招待します",
+        "displayNameLabel": "表示名",
+        "displayNamePlaceholder": "表示名を入力してください",
+        "usernameLabel": "ユーザー名",
+        "usernamePlaceholder": "ユーザー名を入力してください",
+        "emailLabel": "メール",
+        "emailPlaceholder": "メールアドレスを入力してください",
+        "birthDateLabel": "生年月日",
+        "roleLabel": "役割",
+        "editRoleTitle": "家族メンバーの役割を編集する",
+        "editTitle": "家族メンバーを編集する",
+        "rolePlaceholder": "役割の選択",
+        "relationLabel": "赤ちゃんとの関係",
+        "relationPlaceholder": "リレーションの選択",
+        "parentLabel": "親ブランチ",
+        "parentPlaceholder": "選択なし = ルート ノード"
+      },
+      "messages": {
+        "createSuccess": "ファミリーメンバーが作成されました。",
+        "createFailed": "ファミリ メンバーを作成できません。",
+        "updateSuccess": "ロールが正常に更新されました。",
+        "updateFailed": "ロールを更新できません。",
+        "deleteSuccess": "ファミリーメンバーが削除されました。",
+        "deleteFailed": "ファミリーメンバーを削除できません。",
+        "collaborationPremiumRequired": "この操作には、プレミアム プランの Family Collaboration Plus が必要です。"
+      },
+      "relation": {
+        "ONG_NOI": "祖父 (父方)",
+        "BA_NOI": "祖母 (父方)",
+        "ONG_NGOAI": "祖父 (母方)",
+        "BA_NGOAI": "祖母 (母方)",
+        "BO": "父",
+        "ME": "母",
+        "ANH_TRAI": "お兄さん",
+        "CHI_GAI": "お姉さん",
+        "EM_TRAI": "弟",
+        "EM_GAI": "妹",
+        "CON_TRAI": "息子",
+        "CON_GAI": "娘",
+        "CHU": "叔父 (父方)",
+        "BAC": "年配の叔父/叔母",
+        "CO": "叔母 (父方)",
+        "DI": "叔母 (母方)",
+        "CAU": "叔父 (母方)",
+        "MO": "結婚した叔母",
+        "THIM": "叔母 (父方の婚姻による)",
+        "BAO_MAU": "介護者",
+        "THANH_VIEN_KHAC": "他のメンバー"
+      },
+      "validation": {
+        "displayNameRequired": "表示名を入力してください",
+        "usernameRequired": "ユーザー名を入力してください",
+        "emailInvalid": "有効なメールアドレスを入力してください"
+      },
+      "card": {
+        "username": "ユーザー名",
+        "email": "メール",
+        "relation": "関係",
+        "branch": "ブランチ"
+      }
+    },
+    "insights": {
+      "title": "家族に関する洞察",
+      "subtitle": "睡眠、予算、仕事量の簡単な指標",
+      "sleepScore": "赤ちゃんの睡眠スコア",
+      "budgetScore": "予算の安全性スコア",
+      "workloadScore": "ワークロードバランス",
+      "risk": {
+        "good": "良い",
+        "warning": "警告",
+        "critical": "クリティカル"
+      },
+      "export": {
+        "action": "安全な XLSX をエクスポートする",
+        "reportTitle": "家族の洞察レポート",
+        "generatedAt": "で生成されました",
+        "reportMonth": "レポート月",
+        "family": "ファミリー",
+        "currency": "通貨",
+        "summary": "レポートの概要",
+        "metric": "メトリック",
+        "value": "値",
+        "unit": "ユニット",
+        "taskCompletionRate": "タスク完了率",
+        "moodScore": "気分スコア",
+        "monthlyExpense": "毎月の出費",
+        "expenseCount": "経費カウント",
+        "mealsPlanned": "食事の予定",
+        "sleepHours": "睡眠時間",
+        "feedings": "餌やり",
+        "diaperChanges": "おむつ交換",
+        "budgetUsed": "使用された予算",
+        "pendingTaskGap": "保留中のタスクのギャップ",
+        "recommendations": "推奨されるアクション",
+        "tone": "トーン",
+        "title": "タイトル",
+        "detail": "詳細",
+        "dailyBreakdown": "日次内訳",
+        "date": "日付",
+        "expense": "経費",
+        "rawAmount": "生の量",
+        "pendingTasks": "保留中のタスク",
+        "riskLevel": "リスクレベル",
+        "riskReason": "理由",
+        "noRecommendations": "この期間には推奨事項はありません。",
+        "lockedRecommendations": "AI レコメンデーションはロックされています。",
+        "passwordTitle": "XLSX エクスポートの保護",
+        "passwordSubtitle": "このワークブックのパスワードを入力してください。 Excel は、ダウンロードしたファイルを開く前にそれを要求します。",
+        "passwordLabel": "ワークブックのパスワード",
+        "confirmPasswordLabel": "パスワードを確認してください",
+        "passwordPlaceholder": "少なくとも 8 文字",
+        "confirmPasswordPlaceholder": "パスワードを再入力してください",
+        "passwordRequired": "パスワードは 8 ～ 128 文字である必要があります。",
+        "confirmPasswordRequired": "パスワードを確認してください。",
+        "passwordMismatch": "パスワードが一致しません。",
+        "filenameRule": "ファイル名はバックエンドによって生成されます: MOM_INSIGHTS_F{familyId}_{yyyymm}_{timestamp}_{code}.xlsx",
+        "passwordHelp": "ワークブックは暗号化されています。データベースには、プレーンテキストのパスワードではなく、エクスポート メタデータと監査用のパスワード ハッシュが保存されます。",
+        "confirm": "XLSX のエクスポート",
+        "cancel": "キャンセル",
+        "success": "保護された XLSX レポートがダウンロードされました。",
+        "failed": "保護された XLSX レポートをエクスポートできません。",
+        "noFile": "エクスポート ファイルが空です。",
+        "reason": {
+          "taskPressure": "{{count}} 保留中のタスク",
+          "lowSleep": "睡眠時間は目標を下回っています ({{hours}}h)",
+          "expenseSpike": "1 日の平均を上回る費用 ({{amount}})",
+          "stable": "安定した日"
+        }
+      },
+      "messages": {
+        "premiumReportsRequired": "毎月の分析情報を表示するには、プレミアム レポートが必要です。",
+        "aiCareAssistantRequired": "AI による推奨事項は、AI Care Assistant で利用できます。"
+      }
+    },
+    "profile": {
+      "title": "プロフィール",
+      "subtitle": "家族の調整におけるアカウントのアイデンティティと役割",
+      "changeAvatar": "アバターの変更",
+      "uploadHint": "画像ファイルのみ、最大サイズ 30MB。",
+      "roleLabel": "役割",
+      "usernameLabel": "ユーザー名",
+      "emailLabel": "メール",
+      "messages": {
+        "selectImageOnly": "有効な画像ファイルを選択してください。",
+        "fileTooLarge": "画像サイズが 30MB の制限を超えています。",
+        "uploadSuccess": "アバターは正常に更新されました。",
+        "uploadFailed": "アバターをアップロードできません。"
+      },
+      "uploading": "アップロード中...",
+      "stats": {
+        "members": "メンバー",
+        "family": "ファミリー",
+        "role": "役割",
+        "active": "アクティブ",
+        "status": "ステータス"
+      },
+      "cards": {
+        "account": {
+          "title": "アカウントの詳細",
+          "subtitle": "サインインと ID 情報",
+          "displayName": "表示名",
+          "status": "ステータス",
+          "activeStatus": "アクティブ"
+        },
+        "familyRole": {
+          "title": "家族の役割",
+          "subtitle": "家族における立場と関係性",
+          "primaryRole": "家族内での主な役割",
+          "memberCount": "メンバー数",
+          "memberUnit": "人"
+        },
+        "premium": {
+          "title": "プレミアム アクセス",
+          "subtitle": "この世帯で現在利用できる機能"
+        },
+        "security": {
+          "title": "セキュリティと設定",
+          "subtitle": "アカウントのセキュリティ構成",
+          "password": {
+            "title": "パスワード",
+            "subtitle": "パスワードを定期的に変更する",
+            "status": "保護されています"
+          },
+          "session": {
+            "title": "セッション",
+            "subtitle": "サインインしたデバイスを管理する",
+            "status": "安全"
+          },
+          "notifications": {
+            "title": "通知",
+            "subtitle": "重要なアラートを受け取る",
+            "status": "オン"
+          }
+        }
+      },
+      "premium": {
+        "enabled": "有効",
+        "disabled": "無効",
+        "empty": "プレミアム構成は現在利用できません。",
+        "expiresAt": "有効期限は次のとおりです",
+        "featureLabels": {
+          "advanced_growth_tracking": "高度な成長追跡",
+          "smart_reminders": "スマートリマインダー",
+          "ai_care_assistant": "AIケアアシスタント",
+          "premium_reports": "プレミアム レポート",
+          "family_collaboration_plus": "ファミリー コラボレーション プラス",
+          "medical_vault_export": "医療保管庫のエクスポート",
+          "unlimited_memory": "無制限のメモリ"
+        }
+      },
+      "familyTree": {
+        "title": "家系図",
+        "subtitle": "世帯内の人間関係の階層。",
+        "empty": "この家族には利用可能な家系図データがありません。",
+        "babyBoy": "息子",
+        "babyGirl": "娘",
+        "babyChild": "子"
+      }
+    },
+    "settings": {
+      "title": "設定",
+      "subtitle": "テーマ、通知、およびワークスペースの設定",
+      "appearance": {
+        "title": "外観とシステム",
+        "languageTitle": "言語",
+        "languageDesc": "このアカウントの表示言語",
+        "modeTitle": "テーマモード",
+        "modeDesc": "ライトまたはダーク インターフェイス モード",
+        "light": "ライト",
+        "dark": "ダーク"
+      },
+      "themeStudio": {
+        "kicker": "プレミアムテーマ",
+        "title": "テーマスタジオ",
+        "subtitle": "プレミアム パレットとインターフェイス密度でワークスペースをパーソナライズします。",
+        "access": "テーマへのアクセス",
+        "locked": "プレミアムロック",
+        "unlocked": "ロック解除されました",
+        "cardSubtitle": "アクセント、密度、半径のコントロールは、Premium 資格によって管理されます。",
+        "previewTitle": "ワークスペースのプレビュー",
+        "previewSubtitle": "現在のパレットとレイアウトのリズム",
+        "lockedHint": "管理者にこのファミリーのテーマのカスタマイズを有効にするよう依頼してください。",
+        "accent": {
+          "title": "アクセントパレット",
+          "subtitle": "共有カラー言語",
+          "orange": "暖かい",
+          "orangeDesc": "オレンジとピンク",
+          "blue": "フォーカス",
+          "blueDesc": "ブルーとシアン",
+          "emerald": "穏やか",
+          "emeraldDesc": "グリーンとティール",
+          "violet": "クリエイティブ",
+          "violetDesc": "バイオレットとマゼンタ",
+          "rose": "ローズ",
+          "roseDesc": "ローズとオレンジ",
+          "pink": "ピンク",
+          "pinkDesc": "甘いピンク",
+          "amber": "アンバー",
+          "amberDesc": "アンバーとゴールド",
+          "indigo": "インディゴ",
+          "indigoDesc": "インディゴとシアン",
+          "graphite": "グラファイト",
+          "graphiteDesc": "スレートとスチール",
+          "custom": "カスタム",
+          "customDesc": "あなただけのカラー"
+        },
+        "custom": {
+          "title": "カスタムカラー",
+          "subtitle": "主アクセントと副アクセントを選択する",
+          "primary": "原色",
+          "secondary": "二次色"
+        },
+        "density": {
+          "title": "密度",
+          "comfortable": "快適",
+          "comfortableDesc": "広々とした列",
+          "compact": "コンパクト",
+          "compactDesc": "より狭いワークスペース",
+          "spacious": "広々とした",
+          "spaciousDesc": "より大きなタッチターゲット"
+        },
+        "radius": {
+          "title": "形状",
+          "soft": "ソフト",
+          "softDesc": "丸みを帯びたコントロール",
+          "sharp": "シャープ",
+          "sharpDesc": "鮮明なエッジ",
+          "rounded": "角丸",
+          "roundedDesc": "より表現力豊かなサーフェス",
+          "pill": "錠剤",
+          "pillDesc": "完全に丸いボタン"
+        }
+      },
+      "notifications": {
+        "title": "通知"
+      },
+      "preferences": {
+        "title": "一般設定",
+        "currencyTitle": "表示通貨",
+        "currencyDesc": "家族費のデフォルトの通貨単位",
+        "weekStartTitle": "週の始まりは",
+        "weekStartDesc": "初日をスケジュールに表示",
+        "monday": "月曜日",
+        "sunday": "日曜日"
+      },
+      "dailyReminder": {
+        "title": "毎日のリマインダー",
+        "desc": "保護者向けの概要リマインダーを有効にする"
+      },
+      "reminderTime": {
+        "title": "リマインダー時間",
+        "desc": "ファミリーダイジェストの希望時間"
+      },
+      "modal": {
+        "title": "設定を保存する",
+        "description": "時間とともにリマインダー設定を適用します {{hour}}?",
+        "confirmTitle": "設定変更の確認",
+        "confirmSubtitle": "選択した設定をこのアカウントに適用します。",
+        "confirmBody": "システムは保存された設定を更新し、新しいテーマをすぐに適用します。"
+      },
+      "messages": {
+        "saveSuccess": "設定は正常に保存されました。",
+        "saveFailed": "設定を保存できません。",
+        "smartReminderPremiumRequired": "スマート リマインダーはこのファミリーでは有効になっていません。管理者に連絡してアクセスを許可してください。",
+        "themeCustomizationPremiumRequired": "テーマのカスタマイズはプレミアム機能です。管理者はプレミアム構成でそれを付与できます。"
+      }
+    },
+    "forbidden": {
+      "message": "このページにアクセスする権限がありません。",
+      "goUserPortal": "ユーザーポータルに移動",
+      "goAdminPortal": "管理ポータルに移動"
+    }
+  },
+  "app": {
+    "settings": {
+      "titleTest": "テストシステム設定",
+      "testButton": "テストボタン"
+    },
+    "profile": {
+      "2fa": {
+        "title": "2段階認証の設定",
+        "step1": "ステップ 1: 認証アプリのインストール",
+        "step1Desc": "スマートフォンにGoogle AuthenticatorまたはMicrosoft Authenticatorをダウンロードします。",
+        "step2": "ステップ 2: QRコードの読み取り",
+        "step2Desc": "認証アプリを開き、下のQRコードをスキャンします。",
+        "step3": "ステップ 3: 認証コードの入力",
+        "step3Desc": "認証アプリに表示される6桁のコードを入力してください",
+        "secretLabel": "手動設定キー:",
+        "remainingTime": "新しいコードまで: {time}秒",
+        "cancel": "キャンセル",
+        "enable": "2段階認証を有効にする",
+        "disableTitle": "2段階認証を無効にする",
+        "disableConfirm": "本当に2段階認証（2FA）を無効にしますか？ アカウントのセキュリティが低下します。",
+        "disableSuccess": "2段階認証を無効にしました！",
+        "enableSuccess": "2段階認証を有効にしました！",
+        "appStore": "App Store",
+        "googlePlay": "Google Play",
+        "status": {
+          "title": "2段階認証 (2FA)",
+          "desc": "OTPコードを使用してアカウントのセキュリティを強化します",
+          "enabled": "有効",
+          "disabled": "未有効",
+          "setup": "設定する",
+          "turnOff": "2FAを無効化"
+        }
+      }
+    },
+    "login": {
+      "messages": {
+        "googleVerifyFailed": "Googleアカウントをシステムで検証できませんでした。もう一度お試しください。",
+        "githubVerifyFailed": "GitHubアカウントをシステムで検証できませんでした。もう一度お試しください。",
+        "socialSuccess": "ソーシャルアカウントとの連携およびログインに成功しました！"
+      }
+    }
+  },
+  "auth": {
+    "login": {
+      "card": {
+        "eyebrow": "認証",
+        "title": "ログイン",
+        "subtitle": "以下のログイン方法のいずれかを選択してください。"
+      },
+      "hero": {
+        "title": "1つのログイン、2つの認証方法",
+        "subtitle": "プラットフォームアカウントでログインするには <strong>Bearerトークン</strong> を使用し、集中SSOを使用する場合は <strong>Keycloak</strong> に切り替えます。",
+        "point1": "社内アカウント + 2FA",
+        "point2": "KeycloakによるSSO",
+        "point3": "トークンは一貫して保存されます",
+        "badge": "物流プラットフォーム"
+      },
+      "portal": {
+        "adminHint": "管理者ポータル - ユーザーアカウント管理およびシステム運用",
+        "userHint": "ユーザーポータル - アプリを使用する家族メンバー用",
+        "switchToAdmin": "管理者ポータルにログイン",
+        "switchToUser": "ユーザーポータルにログイン"
+      },
+      "switch": {
+        "bearer": "Bearerトークン",
+        "keycloak": "Keycloak"
+      },
+      "form": {
+        "usernameLabel": "ユーザー名",
+        "usernameError": "ユーザー名を入力してください",
+        "usernamePlaceholder": "ユーザー名を入力",
+        "passwordLabel": "パスワード",
+        "passwordError": "パスワードを入力してください",
+        "passwordPlaceholder": "••••••••",
+        "otpLabel": "OTPコード (2FA)",
+        "otpError": "6桁のOTPコードを入力してください",
+        "otpPlaceholder": "000000",
+        "captchaLabel": "CAPTCHAコード",
+        "captchaError": "CAPTCHAコードを入力してください",
+        "captchaPlaceholder": "検証コード",
+        "captchaRefresh": "クリックしてコードを変更",
+        "remember": "ログイン状態を保持する",
+        "forgotPassword": "パスワードをお忘れですか？",
+        "submitBearer": "Bearerトークンでログイン",
+        "twoFactorHelp": "2FAコードはどこで取得できますか？",
+        "register": "アカウント登録",
+        "note": "必要に応じて、システムはOTPまたはCAPTCHAを自動的に有効にします。",
+        "setupTwoFactor": "2FAのセットアップ",
+        "setupHint": "ログインしている場合、このボタンは直接QRセットアップページを開きます。"
+      },
+      "keycloak": {
+        "description": "SSOを使用してKeycloakに切り替えた後、システムはトークンをゲートウェイおよびダウンストリームサービス用の内部セッションに交換します。",
+        "bullet1": "集中管理されたIDアカウントがある場合に最適です。",
+        "bullet2": "社内パスワードを再入力する必要はありません。",
+        "bullet3": "最終的なトークンはシステムによって一貫して保存されます。",
+        "submit": "Keycloakでログイン",
+        "title": "Keycloakでログイン"
+      },
+      "twoFactorModal": {
+        "title": "2FAコードの取得手順",
+        "description": "2FAコードはログイン画面で自動生成されません。ログイン後、<strong>2FAセットアップ</strong>ページで2FAを有効にする必要があります。",
+        "step1": "システムにログインします。",
+        "step2": "<strong>2FAセットアップ</strong>メニューを開くか、<code>/2fa-setup</code>ルートにアクセスします。",
+        "step3": "Google Authenticatorまたは互換性のあるOTPアプリでQRコードをスキャンします。",
+        "step4": "アプリは30秒ごとに変わる6桁のコードを生成します。",
+        "step5": "次回システムからOTPが要求されたら、ログインフォームに正しい6桁のコードを入力します。",
+        "info": "アカウントで2FAを有効にしていない場合、OTPは不要です。"
+      },
+      "forceChangeModal": {
+        "title": "一時パスワードの変更",
+        "confirm": "パスワードを更新",
+        "description": "アカウントは一時パスワードを使用しています。続行するには新しいパスワードを設定してください。",
+        "newPasswordLabel": "新しいパスワード",
+        "newPasswordError": "新しいパスワードは6文字以上にする必要があります",
+        "newPasswordPlaceholder": "新しいパスワードを入力",
+        "confirmPasswordLabel": "新しいパスワードの確認",
+        "confirmPasswordError": "新しいパスワードを再度入力してください",
+        "confirmPasswordMismatch": "確認用パスワードが一致しません",
+        "confirmPasswordPlaceholder": "新しいパスワードを再入力",
+        "strengthWeak": "弱い",
+        "strengthMedium": "中",
+        "strengthStrong": "強い",
+        "reqLength": "8-20文字",
+        "reqUpperLower": "大文字と小文字それぞれ1文字以上",
+        "reqNumber": "数字1文字以上",
+        "reqSpecial": "特殊文字1文字以上"
+      },
+      "messages": {
+        "googleVerifyFailed": "Googleアカウントをシステムで検証できませんでした。もう一度お試しください。",
+        "githubVerifyFailed": "GitHubアカウントをシステムで検証できませんでした。もう一度お試しください。",
+        "socialSuccess": "ソーシャルアカウントとの連携およびログインに成功しました！",
+        "captchaLoadFailed": "CAPTCHAの読み込みに失敗しました: {{message}}",
+        "loginFailedTitle": "ログイン失敗",
+        "loginSuccessTitle": "ログイン成功",
+        "loginSuccessDesc": "おかえりなさい！",
+        "keycloakVerifyFailed": "Keycloakでの検証に失敗しました",
+        "captchaRequiredTitle": "CAPTCHA検証が必要です",
+        "captchaRequiredDesc": "パスワードが何度も間違えられました。続行するにはCAPTCHAを入力してください。",
+        "captchaRequiredSimple": "CAPTCHA検証を完了してください。",
+        "captchaInvalid": "無効なCAPTCHAコードです。もう一度入力してください。",
+        "twoFactorRequiredTitle": "2段階認証が必要です",
+        "twoFactorRequiredDesc": "このアカウントは2FAが有効になっています。AuthenticatorアプリからOTPコードを入力してください。",
+        "loginFailedFallback": "ログインに失敗しました。アカウント資格情報を確認してください。",
+        "forceChangeMissingContext": "ユーザー名または一時パスワードが不足しています。もう一度ログインしてください。",
+        "forceChangeSuccessTitle": "パスワードの変更完了",
+        "forceChangeSuccessDesc": "パスワードが正常に更新されました。再ログインしています...",
+        "forceChangeFailed": "パスワードを変更できません。入力内容を確認してください。",
+        "forceChangeRequiredTitle": "パスワードの更新が必要です",
+        "forceChangeRequiredDesc": "続行する前に一時パスワードを変更する必要があります。"
+      },
+      "themeToggleAria": "テーマ切り替え"
+    }
+  }
+}

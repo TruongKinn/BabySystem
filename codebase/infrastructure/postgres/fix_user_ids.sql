@@ -17,6 +17,7 @@ UPDATE families SET created_by_user_id = created_by_user_id + 1000000;
 -- Since I don't have a cross-db join, I'll do it manually for the known ones reported by the user
 -- and common demo users.
 
+UPDATE users SET id = 9224 WHERE username ILIKE 'truongkin0';
 UPDATE users SET id = 9223 WHERE username ILIKE 'ChinhNTT';
 UPDATE users SET id = 9222 WHERE username ILIKE 'TruongTV11' OR username ILIKE 'truongtv11';
 UPDATE users SET id = 9221 WHERE username ILIKE 'demo.user' OR username ILIKE 'demo';

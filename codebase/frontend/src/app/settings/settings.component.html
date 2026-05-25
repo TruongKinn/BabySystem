@@ -72,6 +72,8 @@
             <nz-select [(ngModel)]="selectedLanguage" class="settings-select">
               <nz-option nzValue="vi" nzLabel="Tiếng Việt"></nz-option>
               <nz-option nzValue="en" nzLabel="English"></nz-option>
+              <nz-option nzValue="ja" nzLabel="日本語"></nz-option>
+              <nz-option nzValue="zh" nzLabel="中文"></nz-option>
             </nz-select>
           </div>
         </div>
@@ -154,12 +156,24 @@
                   [class.active]="themeAccent === option.value"
                   [disabled]="isThemeStudioLocked"
                   (click)="selectAccent(option.value)"
+                  [style.--accent-primary]="resolveAccentColors(option.value).primary"
+                  [style.--accent-secondary]="resolveAccentColors(option.value).secondary"
                 >
-                  <span class="swatch-dot" [ngClass]="'swatch-dot--' + option.value"></span>
-                  <span>
-                    <strong>{{ option.labelKey | translate }}</strong>
-                    <small>{{ option.descriptionKey | translate }}</small>
+                  <!-- Checked tick in top-right corner when active -->
+                  <span *ngIf="themeAccent === option.value" class="swatch-check">
+                    <span nz-icon nzType="check"></span>
                   </span>
+
+                  <!-- Center white card with large icon -->
+                  <div class="swatch-icon-container">
+                    <span nz-icon [nzType]="getAccentIcon(option.value)" nzTheme="fill" class="swatch-large-icon"></span>
+                  </div>
+
+                  <!-- Footer bar with small icon and translation label -->
+                  <div class="swatch-footer">
+                    <span nz-icon [nzType]="getAccentIcon(option.value)" class="swatch-small-icon"></span>
+                    <span class="swatch-label-text">{{ option.labelKey | translate }}</span>
+                  </div>
                 </button>
               </div>
             </div>
@@ -432,7 +446,13 @@
       </div>
       <div class="modal-summary__item">
         <span>{{ 'momApp.settings.appearance.languageTitle' | translate }}</span>
-        <strong>{{ selectedLanguage === 'vi' ? 'Tiếng Việt' : 'English' }}</strong>
+        <strong>
+          {{ 
+            selectedLanguage === 'vi' ? 'Tiếng Việt' : 
+            selectedLanguage === 'en' ? 'English' : 
+            selectedLanguage === 'ja' ? '日本語' : '中文' 
+          }}
+        </strong>
       </div>
       <div class="modal-summary__item">
         <span>{{ 'momApp.settings.dailyReminder.title' | translate }}</span>

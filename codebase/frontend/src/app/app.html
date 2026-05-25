@@ -27,13 +27,20 @@
 
       <div class="header-right">
         <!-- Language switcher -->
-        <div class="lang-switcher">
-          <button
-            *ngFor="let lang of languageOptions"
-            class="lang-btn"
-            [class.active]="currentLanguage === lang.code"
-            (click)="setLanguage(lang.code)"
-          >{{ lang.shortLabel }}</button>
+        <div
+          class="language-picker"
+          nz-popover
+          [(nzPopoverVisible)]="languagePopoverVisible"
+          [nzPopoverContent]="languageMenu"
+          nzPopoverPlacement="bottomRight"
+          nzPopoverTrigger="click"
+        >
+          <button type="button" class="language-trigger" [attr.aria-label]="'common.language' | translate">
+            <span class="language-trigger__icon" nz-icon nzType="global" nzTheme="outline"></span>
+            <span class="language-trigger__code">{{ currentLanguageOption.shortLabel }}</span>
+            <span class="language-trigger__name">{{ currentLanguageOption.nativeLabel }}</span>
+            <span class="language-trigger__chevron" nz-icon nzType="down"></span>
+          </button>
         </div>
 
         <!-- Notification Bell -->
@@ -133,6 +140,25 @@
       <span nz-icon nzType="logout"></span>
       <span>{{ 'momApp.layout.logout' | translate }}</span>
     </div>
+  </div>
+</ng-template>
+
+<ng-template #languageMenu>
+  <div class="language-menu">
+    <button
+      type="button"
+      class="language-option"
+      *ngFor="let lang of languageOptions; trackBy: trackByLanguageCode"
+      [class.language-option--active]="currentLanguage === lang.code"
+      (click)="setLanguage(lang.code)"
+    >
+      <span class="language-option__code">{{ lang.shortLabel }}</span>
+      <span class="language-option__copy">
+        <strong>{{ lang.nativeLabel }}</strong>
+        <small>{{ lang.label }}</small>
+      </span>
+      <span *ngIf="currentLanguage === lang.code" class="language-option__check" nz-icon nzType="check"></span>
+    </button>
   </div>
 </ng-template>
 

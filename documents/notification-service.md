@@ -26,6 +26,17 @@ Tài liệu này giải thích chi tiết các lỗi đã khắc phục và các
   - Cập nhật mapper `toResponse` ở `NotificationService.java` để chuyển chính xác giá trị `entity.getCreatedAt()` sang DTO.
   - Sửa đổi hàm ánh xạ ở Frontend để lấy trường `createdAt` (với fallback là `sentAt` hoặc `scheduledAt`).
 
+### 1.3. Lỗi tin nhắn thông báo đẩy (Push Notification) bị mất chữ và hiển thị dấu ba chấm (`...`) không hợp lệ
+- **Nguyên nhân:**
+  - Lớp `.notification-desc` trong `app.css` của real-time push notification thiếu thuộc tính `white-space: pre-wrap;` và `word-break: break-word;` / `overflow-wrap: break-word;`.
+  - Khi quản trị viên gửi thông báo mật khẩu báo cáo chứa các dấu xuống dòng (`\n\n`) và tên tệp Excel rất dài (ví dụ: `MOM_INSIGHTS_F1_202605_202605_20260525194200_ABCD1234.xlsx`), trình duyệt không thể ngắt dòng thông minh đối với từ siêu dài này.
+  - Việc thiếu ngắt dòng và thiếu giữ định dạng xuống dòng đã khiến toàn bộ chuỗi text bị dồn cục, bị tràn khỏi độ rộng tối đa của popup (`max-width: 400px`) và kích hoạt cơ chế `text-overflow: ellipsis` của Flexbox/trình duyệt tại nhiều vị trí ở giữa câu, làm ẩn hoàn toàn thông tin mật khẩu cực kỳ quan trọng.
+  - Ngoài ra, icon quả chuông bị căn giữa (`align-items: center`), trông không được cân đối khi tin nhắn có độ dài nhiều dòng.
+- **Giải pháp:**
+  - Bổ sung thuộc tính `white-space: pre-wrap;`, `word-break: break-word;`, và `overflow-wrap: break-word;` cho lớp `.notification-desc` trong `app.css`.
+  - Cập nhật lớp `.custom-ws-notification` sang `align-items: flex-start;` để icon quả chuông luôn căn chuẩn trên cùng bên trái.
+  - Tăng `max-width` của `.custom-ws-notification` từ `400px` lên `450px` và thiết lập `width: 100%` kết hợp `flex: 1; min-width: 0;` cho `.notification-content` để tăng tối đa không gian hiển thị, giúp co giãn linh hoạt và ngăn chặn tuyệt đối lỗi tràn layout.
+
 ---
 
 ## 2. Tính năng Xem chi tiết thông báo (Premium Detail Modal)

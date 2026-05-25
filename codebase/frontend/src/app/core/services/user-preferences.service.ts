@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
 
 export type ThemeMode = 'light' | 'dark';
-export type ThemeAccent = 'orange' | 'blue' | 'emerald' | 'violet' | 'rose' | 'amber' | 'indigo' | 'graphite' | 'custom';
+export type ThemeAccent = 'orange' | 'blue' | 'emerald' | 'violet' | 'rose' | 'pink' | 'amber' | 'indigo' | 'graphite' | 'custom';
 export type ThemeDensity = 'comfortable' | 'compact' | 'spacious';
 export type ThemeRadius = 'soft' | 'sharp' | 'rounded' | 'pill';
 
@@ -120,6 +120,7 @@ export class UserPreferencesService {
       'theme-accent-emerald',
       'theme-accent-violet',
       'theme-accent-rose',
+      'theme-accent-pink',
       'theme-accent-amber',
       'theme-accent-indigo',
       'theme-accent-graphite',
@@ -199,6 +200,7 @@ export class UserPreferencesService {
       value === 'emerald' ||
       value === 'violet' ||
       value === 'rose' ||
+      value === 'pink' ||
       value === 'amber' ||
       value === 'indigo' ||
       value === 'graphite' ||

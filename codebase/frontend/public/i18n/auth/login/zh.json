@@ -1,0 +1,106 @@
+{
+  "themeToggleAria": "切换主题",
+  "hero": {
+    "badge": "物流平台",
+    "title": "一处登录，双重认证方式",
+    "subtitle": "使用 <strong>Bearer token</strong> 登录平台账户，或者在使用集中式 SSO 时切换至 <strong>Keycloak</strong>。",
+    "point1": "内部账号 + 2FA",
+    "point2": "通过 Keycloak 进行 SSO",
+    "point3": "统一保存 Token"
+  },
+  "card": {
+    "eyebrow": "认证",
+    "title": "登录",
+    "subtitle": "选择以下一种登录方式。"
+  },
+  "switch": {
+    "bearer": "Bearer token",
+    "keycloak": "Keycloak"
+  },
+  "form": {
+    "usernameLabel": "用户名",
+    "usernameError": "请输入用户名",
+    "usernamePlaceholder": "输入用户名",
+    "passwordLabel": "密码",
+    "passwordError": "请输入密码",
+    "passwordPlaceholder": "••••••••",
+    "otpLabel": "OTP 验证码 (2FA)",
+    "otpError": "请输入 6 位 OTP 验证码",
+    "otpPlaceholder": "000000",
+    "captchaLabel": "CAPTCHA 验证码",
+    "captchaError": "请输入 CAPTCHA 验证码",
+    "captchaPlaceholder": "验证码",
+    "captchaRefresh": "点击更换验证码",
+    "remember": "记住登录状态",
+    "forgotPassword": "忘记密码？",
+    "register": "注册账号",
+    "submitBearer": "使用 Bearer token 登录",
+    "note": "系统会根据需要自动启用 OTP 或 CAPTCHA。",
+    "twoFactorHelp": "如何获取 2FA 验证码？",
+    "setupTwoFactor": "设置 2FA",
+    "setupHint": "如果您已登录，点击此按钮可直接打开 QR 二维码设置页面。"
+  },
+  "keycloak": {
+    "title": "使用 Keycloak 登录",
+    "description": "使用 SSO 登录 Keycloak，随后系统会将 Token 转换为网关及下游服务的内部 Session。",
+    "bullet1": "适用于已有集中式账号的情况。",
+    "bullet2": "无需重复输入内部密码。",
+    "bullet3": "最终 Token 仍由系统统一保存。",
+    "submit": "使用 Keycloak 登录"
+  },
+  "twoFactorModal": {
+    "title": "如何获取 2FA 验证码",
+    "description": "2FA 验证码并非由登录界面自动生成。您必须在登录后，在<strong>设置 2FA</strong> 页面中启用 2FA。",
+    "step1": "登录系统。",
+    "step2": "打开 <strong>设置 2FA</strong> 菜单或访问 <code>/2fa-setup</code> 路由。",
+    "step3": "使用 Google Authenticator 或其他兼容 of OTP 应用扫描 QR 二维码。",
+    "step4": "应用将生成每 30 秒更改一次的 6 位数验证码。",
+    "step5": "下次系统要求输入 OTP 时，在登录表单中输入正确的 6 位数验证码。",
+    "info": "如果账户未启用 2FA，则无需输入 OTP。"
+  },
+  "messages": {
+    "captchaLoadFailed": "无法加载 CAPTCHA: {{message}}",
+    "loginSuccessTitle": "登录成功",
+    "loginSuccessDesc": "欢迎回来！",
+    "keycloakVerifyFailed": "无法通过 Keycloak 验证",
+    "loginFailedTitle": "登录失败",
+    "captchaRequiredTitle": "需要 CAPTCHA 验证",
+    "captchaRequiredDesc": "密码错误次数过多。请完成 CAPTCHA 验证以继续。",
+    "captchaInvalid": "CAPTCHA 验证码无效。请重新输入。",
+    "captchaRequiredSimple": "请完成 CAPTCHA 验证。",
+    "twoFactorRequiredTitle": "需要双重身份验证",
+    "twoFactorRequiredDesc": "此账户已启用 2FA。请输入 Authenticator 应用中的 OTP 验证码。",
+    "loginFailedFallback": "登录失败。请检查您的账户凭证。",
+    "forceChangeFailed": "无法更改密码。请检查输入的信息。",
+    "forceChangeRequiredTitle": "需要更新密码",
+    "forceChangeSuccessTitle": "修改密码成功",
+    "forceChangeRequiredDesc": "在继续之前，您必须修改临时密码。",
+    "forceChangeSuccessDesc": "密码已成功更新。正在重新登录...",
+    "forceChangeMissingContext": "缺少用户名或临时密码。请重新登录。"
+  },
+  "forceChangeModal": {
+    "title": "修改临时密码",
+    "description": "账户正在使用临时密码。请设置新密码以继续。",
+    "newPasswordLabel": "新密码",
+    "newPasswordError": "新密码长度不能少于 6 位",
+    "newPasswordPlaceholder": "输入新密码",
+    "confirmPasswordLabel": "确认新密码",
+    "confirmPasswordError": "请确认新密码",
+    "confirmPasswordMismatch": "两次输入的密码不一致",
+    "confirmPasswordPlaceholder": "再次输入新密码",
+    "confirm": "更新密码",
+    "strengthWeak": "弱",
+    "strengthMedium": "中等",
+    "strengthStrong": "强",
+    "reqLength": "8-20 个字符",
+    "reqUpperLower": "包含大小写字母",
+    "reqNumber": "包含数字",
+    "reqSpecial": "包含特殊字符"
+  },
+  "portal": {
+    "adminHint": "管理门户 - 管理用户账户及系统运维",
+    "userHint": "用户门户 - 供使用应用的家庭成员使用",
+    "switchToAdmin": "登录管理员门户",
+    "switchToUser": "登录家庭门户"
+  }
+}

@@ -104,6 +104,11 @@ export class SettingsComponent implements OnInit {
       descriptionKey: 'momApp.settings.themeStudio.accent.roseDesc'
     },
     {
+      value: 'pink',
+      labelKey: 'momApp.settings.themeStudio.accent.pink',
+      descriptionKey: 'momApp.settings.themeStudio.accent.pinkDesc'
+    },
+    {
       value: 'amber',
       labelKey: 'momApp.settings.themeStudio.accent.amber',
       descriptionKey: 'momApp.settings.themeStudio.accent.amberDesc'
@@ -547,6 +552,7 @@ export class SettingsComponent implements OnInit {
       value === 'emerald' ||
       value === 'violet' ||
       value === 'rose' ||
+      value === 'pink' ||
       value === 'amber' ||
       value === 'indigo' ||
       value === 'graphite' ||
@@ -572,7 +578,10 @@ export class SettingsComponent implements OnInit {
   }
 
   private normalizeLanguage(value: string | undefined): LanguageCode {
-    return value === 'en' ? 'en' : 'vi';
+    if (value === 'en' || value === 'ja' || value === 'zh') {
+      return value;
+    }
+    return 'vi';
   }
 
   private normalizeHexColor(value: string | undefined, fallback: string): string {
@@ -580,7 +589,23 @@ export class SettingsComponent implements OnInit {
     return normalized && /^#[0-9A-Fa-f]{6}$/.test(normalized) ? normalized.toLowerCase() : fallback;
   }
 
-  private resolveAccentColors(accent: ThemeAccent): { primary: string; secondary: string } {
+  getAccentIcon(accent: ThemeAccent): string {
+    const icons: Record<ThemeAccent, string> = {
+      orange: 'fire',
+      blue: 'bulb',
+      emerald: 'compass',
+      violet: 'experiment',
+      rose: 'heart',
+      pink: 'heart',
+      amber: 'star',
+      indigo: 'global',
+      graphite: 'sliders',
+      custom: 'bg-colors'
+    };
+    return icons[accent] || 'bg-colors';
+  }
+
+  resolveAccentColors(accent: ThemeAccent): { primary: string; secondary: string } {
     if (accent === 'custom') {
       return {
         primary: this.themeCustomPrimary,
@@ -594,6 +619,7 @@ export class SettingsComponent implements OnInit {
       emerald: { primary: '#059669', secondary: '#14b8a6' },
       violet: { primary: '#7c3aed', secondary: '#d946ef' },
       rose: { primary: '#e11d48', secondary: '#f97316' },
+      pink: { primary: '#ec4899', secondary: '#f472b6' },
       amber: { primary: '#d97706', secondary: '#eab308' },
       indigo: { primary: '#4f46e5', secondary: '#06b6d4' },
       graphite: { primary: '#334155', secondary: '#64748b' }

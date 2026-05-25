@@ -1,7 +1,0 @@
-{
-  "messages": {
-    "googleVerifyFailed": "Không thể xác thực tài khoản Google với hệ thống. Vui lòng thử lại.",
-    "githubVerifyFailed": "Không thể xác thực tài khoản GitHub với hệ thống. Vui lòng thử lại.",
-    "socialSuccess": "Liên kết và đăng nhập tài khoản mạng xã hội thành công!"
-  }
-}

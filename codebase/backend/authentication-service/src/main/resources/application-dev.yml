@@ -43,7 +43,7 @@ jwt:
 
 oauth2:
   google:
-    client-id: ${GOOGLE_CLIENT_ID:}
+    client-id: ${GOOGLE_CLIENT_ID:793208159346-4ucpps18skm5kcq7ppp4uke1ci38l85q.apps.googleusercontent.com}
   github:
-    client-id: ${GITHUB_CLIENT_ID:}
-    client-secret: ${GITHUB_CLIENT_SECRET:}
+    client-id: ${GITHUB_CLIENT_ID:Ov23liwCFxVfCS2HTgbN}
+    client-secret: ${GITHUB_CLIENT_SECRET:7559c717069caeb3bae254ef5d174839dcd06071}

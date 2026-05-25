@@ -1,0 +1,29 @@
+{
+  "2fa": {
+    "title": "设置双重身份验证 (2FA)",
+    "step1": "步骤 1: 安装身份验证器应用",
+    "step1Desc": "在手机上下载 Google Authenticator 或 Microsoft Authenticator。",
+    "step2": "步骤 2: 扫描二维码",
+    "step2Desc": "打开身份验证器应用，扫描下方二维码。",
+    "step3": "步骤 3: 输入验证码",
+    "step3Desc": "输入身份验证器应用中的 6 位数字验证码",
+    "secretLabel": "手动设置密钥:",
+    "remainingTime": "新验证码将在：{time}秒后生成",
+    "cancel": "取消",
+    "enable": "启用双重身份验证",
+    "disableTitle": "停用双重身份验证",
+    "disableConfirm": "您确定要停用双重身份验证 (2FA) 吗？这会降低您账号的安全性。",
+    "disableSuccess": "双重身份验证停用成功！",
+    "enableSuccess": "双重身份验证启用成功！",
+    "appStore": "App Store",
+    "googlePlay": "Google Play",
+    "status": {
+      "title": "双重身份验证 (2FA)",
+      "desc": "使用动态口令 (OTP) 增强账号安全性",
+      "enabled": "已启用",
+      "disabled": "未启用",
+      "setup": "设置",
+      "turnOff": "停用 2FA"
+    }
+  }
+}

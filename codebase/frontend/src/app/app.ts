@@ -11,7 +11,7 @@ import { AuthService } from './auth/auth.service';
 import { PREMIUM_FEATURE_KEYS } from './core/constants/premium-feature.constants';
 import { ResolvedPremiumFeature, SuperAppCommandService } from './core/services/super-app-command.service';
 import { UserPreferencesService } from './core/services/user-preferences.service';
-import { SUPPORTED_LANGUAGES } from './i18n/i18n.constants';
+import { LanguageOption, SUPPORTED_LANGUAGES } from './i18n/i18n.constants';
 import { I18nService } from './i18n/i18n.service';
 import { LanguageCode } from './i18n/language.model';
 import { MenuItem, SidebarComponent } from './shared/sidebar/sidebar.component';
@@ -48,6 +48,7 @@ export class App implements OnInit, OnDestroy {
   sidebarMenuItems: MenuItem[] = [];
   readonly languageOptions = SUPPORTED_LANGUAGES;
   currentLanguage: LanguageCode = 'vi';
+  languagePopoverVisible = false;
   private notificationSub?: Subscription;
   private premiumThemeEnabled = true;
   private readonly themeCustomizationFeatureKey = PREMIUM_FEATURE_KEYS.themeCustomization;
@@ -183,6 +184,10 @@ export class App implements OnInit, OnDestroy {
     return this.router.url.startsWith('/admin');
   }
 
+  get currentLanguageOption(): LanguageOption {
+    return this.getLanguageOption(this.currentLanguage);
+  }
+
   get username(): string {
     const firstName = this.authService.getStoredItem('atg_first_name');
     const lastName = this.authService.getStoredItem('atg_last_name');
@@ -213,7 +218,15 @@ export class App implements OnInit, OnDestroy {
   }
 
   setLanguage(language: LanguageCode): void {
+    this.languagePopoverVisible = false;
+    if (language === this.currentLanguage) {
+      return;
+    }
     void this.i18nService.setLanguage(language);
+  }
+
+  trackByLanguageCode(_index: number, language: LanguageOption): LanguageCode {
+    return language.code;
   }
 
   private syncPortalState(url: string): void {
@@ -252,6 +265,10 @@ export class App implements OnInit, OnDestroy {
 
   private isFeatureEnabled(features: ResolvedPremiumFeature[], featureKey: string): boolean {
     return features.some((item) => item.featureKey === featureKey && item.enabled === true);
+  }
+
+  private getLanguageOption(code: LanguageCode): LanguageOption {
+    return this.languageOptions.find((item) => item.code === code) ?? this.languageOptions[0];
   }
 
   ngOnDestroy(): void {

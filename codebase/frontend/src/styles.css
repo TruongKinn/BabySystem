@@ -536,6 +536,17 @@ body {
     --admin-btn-primary-end: #f97316;
 }
 
+.theme-accent-pink {
+    --primary-color: #ec4899;
+    --user-primary: #ec4899;
+    --user-secondary: #f472b6;
+    --user-accent: #fbcfe8;
+    --user-grad-1: linear-gradient(135deg, #ec4899 0%, #f472b6 100%);
+    --user-grad-2: linear-gradient(135deg, #be185d 0%, #db2777 100%);
+    --admin-btn-primary-start: #be185d;
+    --admin-btn-primary-end: #f472b6;
+}
+
 .theme-accent-amber {
     --primary-color: #d97706;
     --user-primary: #d97706;

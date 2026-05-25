@@ -30,6 +30,17 @@ Các tài khoản dưới đây được cấu hình sẵn trong file khởi t�
 
 ### 2.1. Tài khoản Quản trị viên (Admin Account)
 Tài khoản có toàn quyền quản trị và vận hành toàn hệ thống.
+
+#### Tài khoản `truongkin0`
+* **Username**: `truongkin0`
+* **Họ và tên**: Truong Kinn
+* **Email**: `truongkin0@local`
+* **Trạng thái**: Đã kích hoạt (`enabled: true`)
+* **Xác thực email**: Đã xác thực (`emailVerified: true`)
+* **Mật khẩu khởi tạo**: `admin123`
+* **Quyền hạn trong DB**: Quyền `ADMIN` (được gán Role ID 2 thông qua migration `V36`).
+
+#### Tài khoản `truongtv11`
 * **Username**: `truongtv11`
 * **Họ và tên**: Truong TV11
 * **Email**: `truongtv11@local`

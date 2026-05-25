@@ -1,0 +1,106 @@
+{
+  "themeToggleAria": "Chuyển giao diện",
+  "hero": {
+    "badge": "Nền tảng Logistics",
+    "title": "Đăng nhập một nơi, dùng hai phương thức",
+    "subtitle": "Chọn <strong>Bearer token</strong> để đăng nhập bằng tài khoản hệ thống, hoặc chuyển sang <strong>Keycloak</strong> nếu bạn dùng SSO tập trung.",
+    "point1": "Tài khoản nội bộ + 2FA",
+    "point2": "SSO qua Keycloak",
+    "point3": "Token được lưu đồng nhất"
+  },
+  "card": {
+    "eyebrow": "Authentication",
+    "title": "Đăng nhập",
+    "subtitle": "Chọn một trong hai cách đăng nhập bên dưới."
+  },
+  "switch": {
+    "bearer": "Bearer token",
+    "keycloak": "Keycloak"
+  },
+  "form": {
+    "usernameLabel": "Tên đăng nhập",
+    "usernameError": "Vui lòng nhập tên đăng nhập",
+    "usernamePlaceholder": "Nhập username",
+    "passwordLabel": "Mật khẩu",
+    "passwordError": "Vui lòng nhập mật khẩu",
+    "passwordPlaceholder": "••••••••",
+    "otpLabel": "Mã OTP (2FA)",
+    "otpError": "Vui lòng nhập mã OTP 6 số",
+    "otpPlaceholder": "000000",
+    "captchaLabel": "Mã CAPTCHA",
+    "captchaError": "Vui lòng nhập mã CAPTCHA",
+    "captchaPlaceholder": "Mã xác nhận",
+    "captchaRefresh": "Nhấn để đổi mã khác",
+    "remember": "Ghi nhớ",
+    "forgotPassword": "Quên mật khẩu?",
+    "register": "Đăng ký tài khoản",
+    "submitBearer": "Đăng nhập bằng Bearer token",
+    "note": "Hệ thống sẽ tự bật OTP hoặc CAPTCHA khi cần.",
+    "twoFactorHelp": "Mã 2FA lấy ở đâu?",
+    "setupTwoFactor": "Thiết lập 2FA",
+    "setupHint": "Nếu đã đăng nhập, nút này mở trang quét QR ngay."
+  },
+  "keycloak": {
+    "title": "Đăng nhập bằng Keycloak",
+    "description": "Dùng SSO để chuyển sang Keycloak, sau đó hệ thống đổi token thành session nội bộ cho gateway và các service phía sau.",
+    "bullet1": "Phù hợp khi đã có tài khoản tập trung.",
+    "bullet2": "Không cần nhập lại mật khẩu nội bộ.",
+    "bullet3": "Token cuối cùng vẫn được hệ thống lưu đồng nhất.",
+    "submit": "Đăng nhập với Keycloak"
+  },
+  "twoFactorModal": {
+    "title": "Hướng dẫn lấy mã 2FA",
+    "description": "Mã 2FA không phải do hệ thống tự sinh ở màn login. Bạn phải bật 2FA trước trong trang <strong>Thiết lập 2FA</strong> sau khi đã đăng nhập.",
+    "step1": "Đăng nhập vào hệ thống.",
+    "step2": "Mở menu <strong>Thiết lập 2FA</strong> hoặc vào route <code>/2fa-setup</code>.",
+    "step3": "Quét QR bằng Google Authenticator hoặc ứng dụng OTP tương tự.",
+    "step4": "Ứng dụng sẽ sinh mã 6 số thay đổi mỗi 30 giây.",
+    "step5": "Khi lần sau hệ thống yêu cầu OTP, nhập đúng mã 6 số vào ô đăng nhập.",
+    "info": "Nếu tài khoản chưa bật 2FA, bạn không cần nhập OTP."
+  },
+  "messages": {
+    "captchaLoadFailed": "Không thể tải CAPTCHA: {{message}}",
+    "loginSuccessTitle": "Đăng nhập thành công",
+    "loginSuccessDesc": "Chào mừng bạn quay trở lại!",
+    "keycloakVerifyFailed": "Không thể xác thực với Keycloak",
+    "loginFailedTitle": "Đăng nhập thất bại",
+    "captchaRequiredTitle": "Yêu cầu xác nhận CAPTCHA",
+    "captchaRequiredDesc": "Mật khẩu sai nhiều lần. Vui lòng nhập CAPTCHA để tiếp tục.",
+    "captchaInvalid": "Mã CAPTCHA không hợp lệ. Vui lòng nhập lại.",
+    "captchaRequiredSimple": "Vui lòng xác nhận CAPTCHA.",
+    "twoFactorRequiredTitle": "Yêu cầu xác thực 2 bước",
+    "twoFactorRequiredDesc": "Tài khoản này đã bật 2FA. Vui lòng nhập mã OTP từ ứng dụng Authenticator.",
+    "loginFailedFallback": "Đăng nhập thất bại. Vui lòng kiểm tra lại tài khoản.",
+    "forceChangeFailed": "Không thể đổi mật khẩu. Vui lòng kiểm tra lại thông tin.",
+    "forceChangeRequiredTitle": "Yêu cầu cập nhật mật khẩu",
+    "forceChangeSuccessTitle": "Đổi mật khẩu thành công",
+    "forceChangeRequiredDesc": "Bạn phải đổi mật khẩu tạm trước khi tiếp tục.",
+    "forceChangeSuccessDesc": "Mật khẩu đã được cập nhật. Đang đăng nhập lại...",
+    "forceChangeMissingContext": "Thiếu username hoặc mật khẩu tạm. Vui lòng đăng nhập lại."
+  },
+  "forceChangeModal": {
+    "title": "Đổi mật khẩu tạm",
+    "description": "Tài khoản đang dùng mật khẩu tạm. Vui lòng đặt mật khẩu mới để tiếp tục.",
+    "newPasswordLabel": "Mật khẩu mới",
+    "newPasswordError": "Mật khẩu mới tối thiểu 6 ký tự",
+    "newPasswordPlaceholder": "Nhập mật khẩu mới",
+    "confirmPasswordLabel": "Xác nhận mật khẩu mới",
+    "confirmPasswordError": "Vui lòng xác nhận mật khẩu mới",
+    "confirmPasswordMismatch": "Mật khẩu xác nhận không khớp",
+    "confirmPasswordPlaceholder": "Nhập lại mật khẩu mới",
+    "confirm": "Cập nhật mật khẩu",
+    "strengthWeak": "Yếu",
+    "strengthMedium": "Trung bình",
+    "strengthStrong": "Mạnh",
+    "reqLength": "8-20 ký tự",
+    "reqUpperLower": "1 chữ hoa & 1 chữ thường",
+    "reqNumber": "1 chữ số",
+    "reqSpecial": "1 ký tự đặc biệt"
+  },
+  "portal": {
+    "adminHint": "Admin Portal - quản lý tài khoản người dùng và vận hành hệ thống",
+    "userHint": "User Portal - dành cho thành viên gia đình sử dụng ứng dụng",
+    "switchToAdmin": "Đăng nhập vào Admin Portal",
+    "switchToUser": "Đăng nhập vào User Portal"
+  }
+}

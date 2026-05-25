@@ -1,0 +1,29 @@
+{
+  "2fa": {
+    "title": "2段階認証の設定",
+    "step1": "ステップ 1: 認証アプリのインストール",
+    "step1Desc": "スマートフォンにGoogle AuthenticatorまたはMicrosoft Authenticatorをダウンロードします。",
+    "step2": "ステップ 2: QRコードの読み取り",
+    "step2Desc": "認証アプリを開き、下のQRコードをスキャンします。",
+    "step3": "ステップ 3: 認証コードの入力",
+    "step3Desc": "認証アプリに表示される6桁のコードを入力してください",
+    "secretLabel": "手動設定キー:",
+    "remainingTime": "新しいコードまで: {time}秒",
+    "cancel": "キャンセル",
+    "enable": "2段階認証を有効にする",
+    "disableTitle": "2段階認証を無効にする",
+    "disableConfirm": "本当に2段階認証（2FA）を無効にしますか？ アカウントのセキュリティが低下します。",
+    "disableSuccess": "2段階認証を無効にしました！",
+    "enableSuccess": "2段階認証を有効にしました！",
+    "appStore": "App Store",
+    "googlePlay": "Google Play",
+    "status": {
+      "title": "2段階認証 (2FA)",
+      "desc": "OTPコードを使用してアカウントのセキュリティを強化します",
+      "enabled": "有効",
+      "disabled": "未有効",
+      "setup": "設定する",
+      "turnOff": "2FAを無効化"
+    }
+  }
+}

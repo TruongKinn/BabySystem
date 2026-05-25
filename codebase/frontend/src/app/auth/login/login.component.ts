@@ -224,7 +224,7 @@ export class LoginComponent implements OnInit {
     if (!response || !response.credential) {
       this.notification.error(
         this.i18nService.translate('auth.login.messages.loginFailedTitle'),
-        this.i18nService.translate('app.login.messages.googleVerifyFailed')
+        this.i18nService.translate('auth.login.messages.googleVerifyFailed')
       );
       return;
     }
@@ -242,7 +242,7 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        const message = err.error?.message || this.i18nService.translate('app.login.messages.googleVerifyFailed');
+        const message = err.error?.message || this.i18nService.translate('auth.login.messages.googleVerifyFailed');
         this.errorMsg = message;
         this.notification.error(this.i18nService.translate('auth.login.messages.loginFailedTitle'), message);
       }
@@ -307,7 +307,7 @@ export class LoginComponent implements OnInit {
       },
       error: (err) => {
         this.isLoading = false;
-        const message = err.error?.message || this.i18nService.translate('app.login.messages.githubVerifyFailed');
+        const message = err.error?.message || this.i18nService.translate('auth.login.messages.githubVerifyFailed');
         this.errorMsg = message;
         this.notification.error(this.i18nService.translate('auth.login.messages.loginFailedTitle'), message);
 

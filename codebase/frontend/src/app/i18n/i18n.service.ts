@@ -2,7 +2,7 @@ import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { BehaviorSubject, firstValueFrom } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
-import { NzI18nService, en_US, vi_VN } from 'ng-zorro-antd/i18n';
+import { NzI18nService, en_US, ja_JP, vi_VN, zh_CN } from 'ng-zorro-antd/i18n';
 import { DEFAULT_LANGUAGE, LANGUAGE_STORAGE_KEY, SUPPORTED_LANGUAGES } from './i18n.constants';
 import { LanguageCode } from './language.model';
 
@@ -65,16 +65,30 @@ export class I18nService {
     if (browserLanguage.startsWith('en')) {
       return 'en';
     }
+    if (browserLanguage.startsWith('ja')) {
+      return 'ja';
+    }
+    if (browserLanguage.startsWith('zh')) {
+      return 'zh';
+    }
 
     return DEFAULT_LANGUAGE;
   }
 
   private applyUiLocale(language: LanguageCode): void {
-    if (language === 'vi') {
-      this.nzI18nService.setLocale(vi_VN);
-      return;
+    switch (language) {
+      case 'en':
+        this.nzI18nService.setLocale(en_US);
+        return;
+      case 'ja':
+        this.nzI18nService.setLocale(ja_JP);
+        return;
+      case 'zh':
+        this.nzI18nService.setLocale(zh_CN);
+        return;
+      default:
+        this.nzI18nService.setLocale(vi_VN);
     }
-    this.nzI18nService.setLocale(en_US);
   }
 
   private persistLanguage(language: LanguageCode): void {

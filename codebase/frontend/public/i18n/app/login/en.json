@@ -1,7 +1,0 @@
-{
-  "messages": {
-    "googleVerifyFailed": "Failed to verify Google account with the system. Please try again.",
-    "githubVerifyFailed": "Failed to verify GitHub account with the system. Please try again.",
-    "socialSuccess": "Successfully linked and logged in with your social account!"
-  }
-}

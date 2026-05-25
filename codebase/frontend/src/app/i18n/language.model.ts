@@ -1,1 +1,1 @@
-export type LanguageCode = 'vi' | 'en';
+export type LanguageCode = 'vi' | 'en' | 'ja' | 'zh';
