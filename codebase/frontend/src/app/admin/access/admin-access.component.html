@@ -38,7 +38,7 @@
       </div>
     </div>
 
-    <nz-table [nzData]="filteredRoles" [nzFrontPagination]="false" [nzLoading]="loadingWorkspace" [nzPageSize]="10">
+    <nz-table [nzData]="filteredRoles" [nzFrontPagination]="false" [nzLoading]="loadingWorkspace" [nzPageSize]="10" [nzScroll]="{ x: '800px' }">
       <thead>
         <tr>
           <th>{{ 'momApp.admin.access.table.id' | translate }}</th>

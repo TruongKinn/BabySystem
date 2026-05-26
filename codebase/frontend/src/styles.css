@@ -2338,3 +2338,189 @@ body {
     width: 100%;
   }
 }
+
+/* ================================================================
+   PREMIUM PAGINATION & PAGE SIZE CHANGER — Global Override
+   Applies to all nz-pagination components in the application
+   Supports both Admin Portal (Teal) and User Portal (Warm)
+   ================================================================ */
+
+.ant-pagination {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'Inter', sans-serif !important;
+}
+
+/* Pagination Items (Numbers, arrows) */
+.ant-pagination-item,
+.ant-pagination-prev,
+.ant-pagination-next,
+.ant-pagination-jump-prev,
+.ant-pagination-jump-next {
+  min-width: 36px !important;
+  height: 36px !important;
+  line-height: 34px !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border-color, #e2e8f0) !important;
+  background: #ffffff !important;
+  transition: all 0.2s ease !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+}
+
+.ant-pagination-item a {
+  color: var(--text-secondary, #475569) !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+  transition: color 0.2s ease !important;
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+}
+
+/* Hover state */
+.ant-pagination-item:hover,
+.ant-pagination-prev:hover,
+.ant-pagination-next:hover {
+  border-color: var(--color-primary, var(--user-primary, #0f766e)) !important;
+  background: rgba(15, 118, 110, 0.04) !important;
+}
+
+.ant-pagination-item:hover a {
+  color: var(--color-primary, var(--user-primary, #0f766e)) !important;
+}
+
+/* Active State (Selected Page) */
+.ant-pagination-item-active {
+  background: var(--color-primary, var(--user-primary, #0f766e)) !important;
+  border-color: var(--color-primary, var(--user-primary, #0f766e)) !important;
+}
+
+.ant-pagination-item-active a {
+  color: #ffffff !important;
+  font-weight: 750 !important;
+}
+
+.ant-pagination-item-active:hover {
+  background: var(--color-primary, var(--user-primary, #0f766e)) !important;
+  border-color: var(--color-primary, var(--user-primary, #0f766e)) !important;
+}
+
+.ant-pagination-item-active:hover a {
+  color: #ffffff !important;
+}
+
+/* Disabled state */
+.ant-pagination-disabled,
+.ant-pagination-disabled:hover {
+  border-color: var(--border-color, #e2e8f0) !important;
+  background: #f8fafc !important;
+  cursor: not-allowed !important;
+}
+
+.ant-pagination-disabled .ant-pagination-item-link,
+.ant-pagination-disabled:hover .ant-pagination-item-link {
+  color: var(--text-muted, #94a3b8) !important;
+}
+
+/* Page Size Changer (Select container) */
+.ant-pagination-options {
+  margin-left: 12px !important;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ant-pagination-options-size-changer.ant-select {
+  margin: 0 !important;
+}
+
+/* Target the select selector inside the changer */
+.ant-pagination-options-size-changer .ant-select-selector {
+  height: 36px !important;
+  padding: 0 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid var(--border-color, #e2e8f0) !important;
+  background: #ffffff !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+}
+
+.ant-pagination-options-size-changer .ant-select-selection-item {
+  line-height: 34px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: var(--text-secondary, #475569) !important;
+}
+
+.ant-pagination-options-size-changer:hover .ant-select-selector {
+  border-color: var(--color-primary, var(--user-primary, #0f766e)) !important;
+}
+
+.ant-pagination-options-size-changer.ant-select-focused .ant-select-selector {
+  border-color: var(--color-primary, var(--user-primary, #0f766e)) !important;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12) !important;
+}
+
+.ant-pagination-options-size-changer .ant-select-arrow {
+  color: var(--text-muted, #94a3b8) !important;
+  font-size: 11px !important;
+  transition: color 0.2s ease !important;
+}
+
+.ant-pagination-options-size-changer:hover .ant-select-arrow {
+  color: var(--color-primary, var(--user-primary, #0f766e)) !important;
+}
+
+/* --- Dark Theme Support for Pagination --- */
+.dark-theme .ant-pagination-item,
+.dark-theme .ant-pagination-prev,
+.dark-theme .ant-pagination-next,
+.dark-theme .ant-pagination-jump-prev,
+.dark-theme .ant-pagination-jump-next {
+  background: #1e293b !important;
+  border-color: rgba(148, 163, 184, 0.16) !important;
+}
+
+.dark-theme .ant-pagination-item a {
+  color: #cbd5e1 !important;
+}
+
+.dark-theme .ant-pagination-item:hover,
+.dark-theme .ant-pagination-prev:hover,
+.dark-theme .ant-pagination-next:hover {
+  background: rgba(20, 184, 166, 0.08) !important;
+}
+
+.dark-theme .ant-pagination-item-active {
+  background: var(--color-primary, var(--user-primary, #0f766e)) !important;
+  border-color: var(--color-primary, var(--user-primary, #0f766e)) !important;
+}
+
+.dark-theme .ant-pagination-item-active a {
+  color: #ffffff !important;
+}
+
+.dark-theme .ant-pagination-disabled,
+.dark-theme .ant-pagination-disabled:hover {
+  background: #0f172a !important;
+  border-color: rgba(148, 163, 184, 0.08) !important;
+}
+
+.dark-theme .ant-pagination-disabled .ant-pagination-item-link {
+  color: #475569 !important;
+}
+
+.dark-theme .ant-pagination-options-size-changer .ant-select-selector {
+  background: #1e293b !important;
+  border-color: rgba(148, 163, 184, 0.16) !important;
+}
+
+.dark-theme .ant-pagination-options-size-changer .ant-select-selection-item {
+  color: #cbd5e1 !important;
+}
