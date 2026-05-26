@@ -7,15 +7,17 @@
 }
 
 .permissions-hero {
-  border-radius: 18px;
+  border-radius: var(--user-card-radius, 18px);
   padding: 16px 18px;
   display: flex;
   justify-content: space-between;
   gap: 16px;
   background:
-    radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.24), transparent 42%),
-    linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f766e 100%);
+    radial-gradient(circle at 90% 10%, color-mix(in srgb, var(--primary-color, #0f766e) 30%, transparent), transparent 50%),
+    linear-gradient(140deg, #0f172a 0%, #112235 60%, color-mix(in srgb, var(--primary-color, #0f766e) 35%, #0f172a) 100%);
   box-shadow: 0 18px 34px rgba(15, 23, 42, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
 .hero-copy {
@@ -49,13 +51,22 @@
 }
 
 .hero-stat {
-  border: 1px solid rgba(153, 246, 228, 0.4);
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.34);
+  border: 1px solid color-mix(in srgb, var(--primary-color, #0f766e) 25%, rgba(255, 255, 255, 0.1));
+  border-radius: var(--user-btn-radius, 12px);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
   padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-stat:hover {
+  border-color: color-mix(in srgb, var(--primary-color, #0f766e) 50%, rgba(255, 255, 255, 0.2));
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .hero-stat span {
@@ -70,7 +81,7 @@
 }
 
 .permissions-card {
-  border-radius: 14px;
+  border-radius: var(--user-card-radius, 14px);
 }
 
 .toolbar {
@@ -175,7 +186,7 @@ code {
 
 .missing-api-item {
   border: 1px solid #fed7aa;
-  border-radius: 10px;
+  border-radius: var(--user-btn-radius, 10px);
   padding: 10px 12px;
   display: flex;
   justify-content: space-between;

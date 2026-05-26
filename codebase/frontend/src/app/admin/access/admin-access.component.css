@@ -7,15 +7,17 @@
 }
 
 .access-hero {
-  border-radius: 18px;
+  border-radius: var(--user-card-radius, 18px);
   padding: 16px 18px;
   display: flex;
   justify-content: space-between;
   gap: 16px;
   background:
-    radial-gradient(circle at 85% 0%, rgba(56, 189, 248, 0.3), transparent 45%),
-    linear-gradient(140deg, #0f172a 0%, #102a43 52%, #0b6b67 100%);
+    radial-gradient(circle at 90% 10%, color-mix(in srgb, var(--primary-color, #0f766e) 30%, transparent), transparent 50%),
+    linear-gradient(140deg, #0f172a 0%, #112235 60%, color-mix(in srgb, var(--primary-color, #0f766e) 35%, #0f172a) 100%);
   box-shadow: 0 18px 34px rgba(8, 47, 73, 0.3);
+  position: relative;
+  overflow: hidden;
 }
 
 .hero-copy {
@@ -49,13 +51,22 @@
 }
 
 .hero-stat {
-  border: 1px solid rgba(186, 230, 253, 0.4);
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.36);
+  border: 1px solid color-mix(in srgb, var(--primary-color, #0f766e) 25%, rgba(255, 255, 255, 0.1));
+  border-radius: var(--user-btn-radius, 12px);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
   padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-stat:hover {
+  border-color: color-mix(in srgb, var(--primary-color, #0f766e) 50%, rgba(255, 255, 255, 0.2));
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .hero-stat span {
@@ -72,7 +83,7 @@
 .roles-card,
 .permission-board,
 .access-inspector {
-  border-radius: 14px;
+  border-radius: var(--user-card-radius, 14px);
 }
 
 .toolbar {
@@ -95,20 +106,20 @@
 }
 
 .role-link {
-  border: 1px solid #c5d6e6;
-  background: #f3f8fc;
+  border: 1px solid color-mix(in srgb, var(--primary-color, #0f766e) 30%, #cbd5e1);
+  background: color-mix(in srgb, var(--primary-color, #0f766e) 6%, #f8fafc);
   padding: 4px 10px;
-  border-radius: 8px;
-  color: #16446d;
+  border-radius: var(--user-btn-radius, 8px);
+  color: var(--primary-color, #0f766e);
   font-weight: 700;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
 .role-link:hover {
-  color: #123653;
-  border-color: #90afc9;
-  background: #e8f1f8;
+  color: var(--primary-color, #0f766e);
+  border-color: var(--primary-color, #0f766e);
+  background: color-mix(in srgb, var(--primary-color, #0f766e) 12%, transparent);
 }
 
 .row-actions {
@@ -153,8 +164,8 @@
 }
 
 .permission-column {
-  border: 1px solid #dbeafe;
-  border-radius: 12px;
+  border: 1px solid color-mix(in srgb, var(--primary-color, #0f766e) 20%, #e2e8f0);
+  border-radius: var(--user-btn-radius, 12px);
   background: #f8fafc;
   padding: 10px;
 }
@@ -176,7 +187,7 @@
 
 .permission-column li {
   border: 1px solid #e2e8f0;
-  border-radius: 10px;
+  border-radius: var(--user-btn-radius, 10px);
   padding: 8px;
   display: flex;
   flex-direction: column;
@@ -270,7 +281,7 @@
 
 .picker-column {
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: var(--user-btn-radius, 12px);
   padding: 10px;
   max-height: 320px;
   overflow: auto;

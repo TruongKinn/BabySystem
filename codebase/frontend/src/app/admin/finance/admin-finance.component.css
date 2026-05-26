@@ -44,10 +44,9 @@
 .finance-hero-card {
   position: relative;
   background:
-    radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.28), transparent 42%),
-    radial-gradient(circle at 100% 100%, rgba(16, 185, 129, 0.26), transparent 48%),
-    linear-gradient(135deg, #0f172a 0%, #0b2746 48%, #0f766e 100%);
-  border-radius: 20px;
+    radial-gradient(circle at 90% 10%, color-mix(in srgb, var(--primary-color, #0f766e) 30%, transparent), transparent 50%),
+    linear-gradient(140deg, #0f172a 0%, #112235 60%, color-mix(in srgb, var(--primary-color, #0f766e) 35%, #0f172a) 100%);
+  border-radius: var(--user-card-radius, 20px);
   padding: 24px 32px;
   color: #ffffff;
   overflow: hidden;
@@ -105,7 +104,7 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(255, 255, 255, 0.5);
-  border-radius: 16px;
+  border-radius: var(--user-card-radius, 16px);
   box-shadow: var(--admin-shadow-sm);
 }
 
@@ -132,7 +131,7 @@
 .search-input {
   width: 100%;
   padding: 10px 14px 10px 40px !important;
-  border-radius: 10px !important;
+  border-radius: var(--user-btn-radius, 10px) !important;
   border: 1px solid #e2e8f0 !important;
   background: #ffffff !important;
   font-size: 0.95rem;
@@ -152,7 +151,7 @@
 
 .month-picker {
   padding: 9px 12px;
-  border-radius: 10px;
+  border-radius: var(--user-btn-radius, 10px);
   border: 1px solid #e2e8f0;
   background: #ffffff;
   font-weight: 600;
@@ -179,9 +178,9 @@
 .kpi-card {
   position: relative;
   background: #ffffff;
-  border-radius: 14px !important;
+  border-radius: var(--user-card-radius, 14px) !important;
   padding: 20px 24px;
-  border: 1px solid #dbeafe !important;
+  border: 1px solid color-mix(in srgb, var(--primary-color, #0f766e) 20%, #e2e8f0) !important;
   box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08) !important;
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
               box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1),
@@ -192,26 +191,8 @@
 
 .kpi-card:hover {
   transform: translateY(-4px);
-}
-
-.kpi-card.blue:hover {
-  box-shadow: 0 12px 30px rgba(37, 99, 235, 0.18) !important;
-  border-color: rgba(37, 99, 235, 0.8) !important;
-}
-
-.kpi-card.green:hover {
-  box-shadow: 0 12px 30px rgba(16, 185, 129, 0.18) !important;
-  border-color: rgba(16, 185, 129, 0.8) !important;
-}
-
-.kpi-card.orange:hover {
-  box-shadow: 0 12px 30px rgba(249, 115, 22, 0.18) !important;
-  border-color: rgba(249, 115, 22, 0.8) !important;
-}
-
-.kpi-card.purple:hover {
-  box-shadow: 0 12px 30px rgba(168, 85, 247, 0.18) !important;
-  border-color: rgba(168, 85, 247, 0.8) !important;
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--primary-color, #0f766e) 25%, transparent) !important;
+  border-color: var(--primary-color, #0f766e) !important;
 }
 
 .kpi-header {
@@ -261,7 +242,7 @@
 /* Tables Custom Style */
 .premium-table-card {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: var(--user-card-radius, 16px);
   border: 1px solid #f1f5f9;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
   overflow: hidden;
@@ -396,11 +377,11 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  background: linear-gradient(135deg, #4f46e5 0%, #3730a3 100%);
+  background: linear-gradient(135deg, var(--primary-color, #4f46e5) 0%, color-mix(in srgb, var(--primary-color, #4f46e5) 80%, #000) 100%);
   color: #ffffff;
   border: none;
   padding: 8px 16px;
-  border-radius: 8px;
+  border-radius: var(--user-btn-radius, 8px);
   font-weight: 600;
   font-size: 0.85rem;
   cursor: pointer;
@@ -434,7 +415,7 @@
 .bento-card {
   background: #f8fafc;
   border: 1px solid #f1f5f9;
-  border-radius: 12px;
+  border-radius: var(--user-card-radius, 12px);
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -475,7 +456,7 @@
 .category-card {
   background: #ffffff;
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: var(--user-card-radius, 12px);
   padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
   transition: all 0.3s ease;

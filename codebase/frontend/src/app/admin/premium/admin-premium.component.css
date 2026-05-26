@@ -7,15 +7,17 @@
 }
 
 .premium-hero {
-  border-radius: 20px;
+  border-radius: var(--user-card-radius, 20px);
   padding: 22px 24px;
   display: flex;
   justify-content: space-between;
   gap: 16px;
   background:
-    radial-gradient(circle at 100% 0%, rgba(14, 165, 233, 0.25), transparent 42%),
+    radial-gradient(circle at 90% 10%, color-mix(in srgb, var(--primary-color, #0f766e) 30%, transparent), transparent 50%),
     linear-gradient(145deg, #0f172a 0%, #1e293b 45%, #0f766e 100%);
   box-shadow: 0 16px 34px rgba(15, 23, 42, 0.24);
+  position: relative;
+  overflow: hidden;
 }
 
 .hero-copy {
@@ -49,13 +51,22 @@
 }
 
 .hero-stat {
-  border: 1px solid rgba(153, 246, 228, 0.35);
-  border-radius: 12px;
-  background: rgba(15, 23, 42, 0.35);
+  border: 1px solid color-mix(in srgb, var(--primary-color, #0f766e) 25%, rgba(255, 255, 255, 0.1));
+  border-radius: var(--user-btn-radius, 12px);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(8px);
   padding: 10px;
   display: flex;
   flex-direction: column;
   gap: 4px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hero-stat:hover {
+  border-color: color-mix(in srgb, var(--primary-color, #0f766e) 50%, rgba(255, 255, 255, 0.2));
+  background: rgba(255, 255, 255, 0.06);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
 }
 
 .hero-stat span {
@@ -70,7 +81,7 @@
 }
 
 .premium-card {
-  border-radius: 14px;
+  border-radius: var(--user-card-radius, 14px);
 }
 
 .family-card {
@@ -106,7 +117,7 @@
 .bulk-toolbar {
   margin-top: 14px;
   border: 1px dashed #93c5fd;
-  border-radius: 12px;
+  border-radius: var(--user-card-radius, 12px);
   background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
   padding: 12px;
   display: grid;
@@ -140,7 +151,7 @@
 
 .quest-points-pill {
   border: 1px solid #bae6fd;
-  border-radius: 12px;
+  border-radius: var(--user-btn-radius, 12px);
   background: linear-gradient(180deg, #f0f9ff 0%, #ffffff 100%);
   padding: 10px 12px;
   display: flex;
@@ -161,7 +172,7 @@
 
 .quest-points-form {
   border: 1px dashed #93c5fd;
-  border-radius: 12px;
+  border-radius: var(--user-card-radius, 12px);
   background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
   padding: 12px;
   display: grid;
@@ -203,7 +214,7 @@
 
 .entitlement-card {
   border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border-radius: var(--user-card-radius, 12px);
   padding: 12px;
   background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
 }
