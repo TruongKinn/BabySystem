@@ -2494,12 +2494,12 @@ body {
   height: 38px !important;
   padding: 0 14px !important;
   border-radius: var(--user-btn-radius, 10px) !important;
-  border: 1px solid rgba(0, 0, 0, 0.05) !important;
-  background: rgba(15, 23, 42, 0.02) !important;
+  border: 1.5px solid color-mix(in srgb, var(--primary-color, #0f766e) 15%, rgba(0, 0, 0, 0.08)) !important;
+  background: #ffffff !important;
   display: flex !important;
   align-items: center !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  box-shadow: none !important;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.03) !important;
 }
 
 .ant-pagination-options-size-changer .ant-select-selection-item {
@@ -2523,13 +2523,15 @@ body {
 }
 
 .ant-pagination-options-size-changer .ant-select-arrow {
-  color: var(--text-muted, #94a3b8) !important;
-  font-size: 11px !important;
+  color: var(--primary-color, #0f766e) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
   transition: all 0.3s ease !important;
 }
 
 .ant-pagination-options-size-changer:hover .ant-select-arrow {
   color: var(--primary-color, #0f766e) !important;
+  transform: scale(1.1);
 }
 
 /* --- Dark Theme Support for Pagination --- */
@@ -2571,8 +2573,9 @@ body {
 }
 
 .dark-theme .ant-pagination-options-size-changer .ant-select-selector {
-  background: rgba(255, 255, 255, 0.03) !important;
-  border-color: rgba(255, 255, 255, 0.06) !important;
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
 }
 
 .dark-theme .ant-pagination-options-size-changer .ant-select-selection-item {
@@ -2582,4 +2585,59 @@ body {
 .dark-theme .ant-pagination-options-size-changer:hover .ant-select-selector,
 .dark-theme .ant-pagination-options-size-changer.ant-select-focused .ant-select-selector {
   background: #1e293b !important;
+  border-color: var(--primary-color, #0f766e) !important;
+}
+
+/* --- Global Select Dropdown Styling for Unified Premium Theme --- */
+::ng-deep .ant-select-dropdown {
+  border-radius: var(--user-btn-radius, 10px) !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(12px) !important;
+  -webkit-backdrop-filter: blur(12px) !important;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.12) !important;
+  padding: 4px !important;
+  font-family: 'Space Grotesk', 'Inter', sans-serif !important;
+}
+
+::ng-deep .dark-theme .ant-select-dropdown {
+  background: rgba(30, 41, 59, 0.95) !important;
+  border-color: rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+::ng-deep .ant-select-dropdown .ant-select-item {
+  border-radius: calc(var(--user-btn-radius, 10px) - 4px) !important;
+  padding: 8px 12px !important;
+  font-size: 13.5px !important;
+  font-weight: 600 !important;
+  color: var(--text-secondary, #475569) !important;
+  transition: all 0.2s ease !important;
+}
+
+::ng-deep .dark-theme .ant-select-dropdown .ant-select-item {
+  color: #cbd5e1 !important;
+}
+
+/* Hover / Active Item */
+::ng-deep .ant-select-dropdown .ant-select-item-option-active {
+  background: color-mix(in srgb, var(--primary-color, #0f766e) 8%, transparent) !important;
+  color: var(--primary-color, #0f766e) !important;
+}
+
+::ng-deep .dark-theme .ant-select-dropdown .ant-select-item-option-active {
+  background: rgba(255, 255, 255, 0.06) !important;
+  color: #ffffff !important;
+}
+
+/* Selected Item */
+::ng-deep .ant-select-dropdown .ant-select-item-option-selected {
+  background: var(--primary-color, #0f766e) !important;
+  color: #ffffff !important;
+  font-weight: 750 !important;
+}
+
+::ng-deep .dark-theme .ant-select-dropdown .ant-select-item-option-selected {
+  background: var(--primary-color, #0f766e) !important;
+  color: #ffffff !important;
 }
