@@ -25,7 +25,7 @@
 
 /* ---- Brand / Logo ---------------------------------------- */
 .sidebar-brand {
-  height: 72px;
+  height: 64px;
   padding: 0 14px;
   border-bottom: 1px solid var(--border-color, #f0f0f0);
   flex-shrink: 0;
@@ -545,6 +545,10 @@
   box-shadow: 4px 0 24px rgba(15, 23, 42, 0.09);
 }
 
+:host:not(.user-mode) .sidebar-brand {
+  border-bottom: 1px solid rgba(9, 30, 66, 0.08);
+}
+
 :host:not(.user-mode).collapsed {
   width: 64px;
 }
@@ -619,6 +623,10 @@
   background:
     linear-gradient(180deg, rgba(2, 6, 23, 0.96) 0%, rgba(8, 22, 37, 0.95) 100%);
   border-right-color: rgba(56, 189, 248, 0.24);
+}
+
+:host.dark-mode:not(.user-mode) .sidebar-brand {
+  border-bottom: 1px solid rgba(100, 116, 139, 0.35);
 }
 
 :host.dark-mode:not(.user-mode) .metis-parent {

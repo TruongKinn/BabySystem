@@ -1800,27 +1800,56 @@
   "auth": {
     "login": {
       "card": {
-        "eyebrow": "认证",
+        "eyebrow": "BabySystem",
         "title": "登录",
-        "subtitle": "选择以下一种登录方式。"
+        "subtitle": "选择适合您账号的认证方式。"
       },
       "hero": {
-        "title": "一处登录，双重认证方式",
-        "subtitle": "使用 <strong>Bearer token</strong> 登录平台账户，或者在使用集中式 SSO 时切换至 <strong>Keycloak</strong>。",
-        "point1": "内部账号 + 2FA",
-        "point2": "通过 Keycloak 进行 SSO",
-        "point3": "统一保存 Token",
-        "badge": "物流平台"
+        "title": "登录 BabySystem",
+        "subtitle": "一个账号进入正确的工作区：家庭成员使用 User Portal，运营管理员使用 Admin Portal。",
+        "point1": "家庭事务管理",
+        "point2": "访问权限控制",
+        "point3": "2FA 安全保护",
+        "badge": "BabySystem"
       },
       "portal": {
-        "adminHint": "管理门户 - 管理用户账户及系统运维",
-        "userHint": "用户门户 - 供使用应用的家庭成员使用",
-        "switchToAdmin": "登录管理员门户",
-        "switchToUser": "登录家庭门户"
+        "adminHint": "适合管理账号、权限和系统运营的管理员。",
+        "userHint": "适合日常使用应用的家庭成员。",
+        "switchToAdmin": "登录 Admin Portal",
+        "switchToUser": "登录 User Portal",
+        "currentLabel": "当前门户",
+        "userName": "User Portal",
+        "adminName": "Admin Portal",
+        "userBadge": "User Portal",
+        "adminBadge": "Admin Portal",
+        "userTitle": "User Portal 用于日常家庭管理",
+        "userDescription": "这里是面向家庭成员的 /app 工作区：育儿、餐食、支出、任务、购物、文档和洞察。",
+        "adminTitle": "Admin Portal 用于系统运营和控制",
+        "adminDescription": "这里是面向 Owner/Admin 的 /admin 工作区：用户、家庭、高级功能、财务、权限和 API。",
+        "afterLoginTitle": "登录后的工作区",
+        "userOutcome1": "育儿、餐食计划和任务",
+        "userOutcome2": "购物、支出和家庭文档",
+        "userOutcome3": "快速查看家庭趋势洞察",
+        "adminOutcome1": "用户、角色和家庭",
+        "adminOutcome2": "访问控制、2FA 和 API 权限",
+        "adminOutcome3": "高级功能、财务和运营日志",
+        "userFeature1": "育儿",
+        "userFeature2": "支出",
+        "userFeature3": "文档",
+        "userFeature4": "通知",
+        "adminFeature1": "用户",
+        "adminFeature2": "家庭",
+        "adminFeature3": "权限",
+        "adminFeature4": "审计",
+        "switchToAdminHint": "供 Owner/Admin 运营系统使用",
+        "switchToUserHint": "供家庭成员使用应用",
+        "adminAccessNote": "管理员账号由 Owner 或管理员授予。家庭用户应返回 User Portal。"
       },
       "switch": {
-        "bearer": "Bearer token",
-        "keycloak": "Keycloak"
+        "bearer": "系统账号",
+        "keycloak": "Keycloak SSO",
+        "bearerHint": "适合内部账号快速登录",
+        "keycloakHint": "使用集中身份认证"
       },
       "form": {
         "usernameLabel": "用户名",
@@ -1838,30 +1867,39 @@
         "captchaRefresh": "点击更换验证码",
         "remember": "记住登录状态",
         "forgotPassword": "忘记密码？",
-        "submitBearer": "使用 Bearer token 登录",
+        "submitBearer": "登录",
         "twoFactorHelp": "如何获取 2FA 验证码？",
         "register": "注册账号",
         "note": "系统会根据需要自动启用 OTP 或 CAPTCHA。",
         "setupTwoFactor": "设置 2FA",
-        "setupHint": "如果您已登录，点击此按钮可直接打开 QR 二维码设置页面。"
+        "setupHint": "如果您已登录，点击此按钮可直接打开 QR 二维码设置页面。",
+        "registerPrompt": "还没有账号？",
+        "registerCta": "创建 User Portal 账号",
+        "dividerEmail": "或使用账号登录"
       },
       "keycloak": {
-        "description": "使用 SSO 登录 Keycloak，随后系统会将 Token 转换为网关及下游服务的内部 Session。",
+        "description": "当组织通过 Keycloak 管理身份时使用 SSO。认证后，系统会将其转换为网关和服务使用的内部会话。",
         "bullet1": "适用于已有集中式账号的情况。",
         "bullet2": "无需重复输入内部密码。",
-        "bullet3": "最终 Token 仍由系统统一保存。",
-        "submit": "使用 Keycloak 登录",
+        "bullet3": "最终会话仍遵循 BabySystem 的权限规则。",
+        "submit": "继续使用 Keycloak",
         "title": "使用 Keycloak 登录"
       },
       "twoFactorModal": {
         "title": "如何获取 2FA 验证码",
-        "description": "2FA 验证码并非由登录界面自动生成。您必须在登录后，在<strong>设置 2FA</strong> 页面中启用 2FA。",
-        "step1": "登录系统。",
-        "step2": "打开 <strong>设置 2FA</strong> 菜单或访问 <code>/2fa-setup</code> 路由。",
-        "step3": "使用 Google Authenticator 或其他兼容 of OTP 应用扫描 QR 二维码。",
-        "step4": "应用将生成每 30 秒更改一次的 6 位数验证码。",
-        "step5": "下次系统要求输入 OTP 时，在登录表单中输入正确的 6 位数验证码。",
-        "info": "如果账户未启用 2FA，则无需输入 OTP。"
+        "description": "2FA 验证码不会在登录界面生成。您需要登录后先在<strong>设置 2FA</strong>中启用 2FA。",
+        "step1": "使用密码登录",
+        "step2": "打开 <strong>设置 2FA</strong> 菜单或访问 <code>/2fa-setup</code>。",
+        "step3": "扫描 QR 二维码",
+        "step4": "获取 6 位验证码",
+        "step5": "系统要求时输入 OTP",
+        "info": "如果账户未启用 2FA，则无需输入 OTP。",
+        "step1Desc": "首次使用内部账号正常登录系统。",
+        "step2Title": "在个人资料中启用 2FA",
+        "step3Desc": "使用 Google Authenticator、Microsoft Authenticator 或其他兼容 OTP 应用。",
+        "step4Desc": "OTP 应用每 30 秒生成新的验证码。",
+        "step5Desc": "之后登录时，输入 6 位验证码即可完成验证。",
+        "close": "明白了"
       },
       "forceChangeModal": {
         "title": "修改临时密码",
@@ -1883,8 +1921,8 @@
         "reqSpecial": "包含特殊字符"
       },
       "messages": {
-        "googleVerifyFailed": "无法向系统验证 Google 账号。请重试。",
-        "githubVerifyFailed": "无法向系统验证 GitHub 账号。请重试。",
+        "googleVerifyFailed": "无法验证 Google 账号。请重试。",
+        "githubVerifyFailed": "无法验证 GitHub 账号。请重试。",
         "socialSuccess": "社交账号关联并登录成功！",
         "captchaLoadFailed": "无法加载 CAPTCHA: {{message}}",
         "loginFailedTitle": "登录失败",
@@ -1903,16 +1941,30 @@
         "forceChangeSuccessDesc": "密码已成功更新。正在重新登录...",
         "forceChangeFailed": "无法更改密码。请检查输入的信息。",
         "forceChangeRequiredTitle": "需要更新密码",
-        "forceChangeRequiredDesc": "在继续之前，您必须修改临时密码。"
+        "forceChangeRequiredDesc": "在继续之前，您必须修改临时密码。",
+        "forgotPasswordSuccessTitle": "请求成功",
+        "forgotPasswordSuccessDesc": "临时密码已发送到您的邮箱，请检查收件箱。",
+        "forgotPasswordFailedTitle": "请求失败",
+        "forgotPasswordFailedDesc": "无法发送密码重置请求。请重试。"
       },
       "themeToggleAria": "切换主题",
       "forgotPasswordModal": {
         "title": "忘记密码？",
-        "description": "请输入用户名或电子邮件。系统将自动生成临时密码并发送到该账户注册的邮箱中。",
+        "description": "请输入已注册的用户名或邮箱地址。系统会生成临时密码并发送到您的邮箱。",
         "usernameOrEmailLabel": "用户名或电子邮件",
         "usernameOrEmailPlaceholder": "输入用户名或电子邮件",
         "usernameOrEmailError": "请输入用户名或电子邮件",
-        "confirm": "发送请求"
+        "confirm": "发送请求",
+        "info": "临时密码将在几秒内发送到注册邮箱。"
+      },
+      "actions": {
+        "close": "关闭"
+      },
+      "social": {
+        "google": "Google",
+        "github": "GitHub",
+        "facebook": "Facebook",
+        "soon": "即将"
       }
     }
   }

@@ -1800,27 +1800,56 @@
   "auth": {
     "login": {
       "card": {
-        "eyebrow": "Authentication",
+        "eyebrow": "BabySystem",
         "title": "Sign in",
-        "subtitle": "Choose one of the sign-in methods below."
+        "subtitle": "Choose the authentication method that matches your account."
       },
       "hero": {
-        "title": "One login, two authentication methods",
-        "subtitle": "Use <strong>Bearer token</strong> to sign in with your platform account, or switch to <strong>Keycloak</strong> if you use centralized SSO.",
-        "point1": "Internal account + 2FA",
-        "point2": "SSO via Keycloak",
-        "point3": "Unified token storage",
-        "badge": "Logistics Platform"
+        "title": "Sign in to BabySystem",
+        "subtitle": "One account, routed to the right workspace: families use User Portal, operators use Admin Portal.",
+        "point1": "Family operations",
+        "point2": "Access control",
+        "point3": "2FA protection",
+        "badge": "BabySystem"
       },
       "portal": {
-        "adminHint": "Admin Portal - manage user accounts and system operations",
-        "userHint": "User Portal - for family members using the app",
+        "adminHint": "For administrators managing accounts, permissions, and system operations.",
+        "userHint": "For family members using the app day to day.",
         "switchToAdmin": "Sign in to Admin Portal",
-        "switchToUser": "Sign in to User Portal"
+        "switchToUser": "Sign in to User Portal",
+        "currentLabel": "Current portal",
+        "userName": "User Portal",
+        "adminName": "Admin Portal",
+        "userBadge": "User Portal",
+        "adminBadge": "Admin Portal",
+        "userTitle": "User Portal is for daily family management",
+        "userDescription": "This is the /app workspace for family members: baby care, meals, expenses, tasks, shopping, documents, and insights.",
+        "adminTitle": "Admin Portal is for system operations and control",
+        "adminDescription": "This is the /admin workspace for Owners/Admins: users, families, premium, finance, permissions, and APIs.",
+        "afterLoginTitle": "Workspace after sign-in",
+        "userOutcome1": "Baby care, meal plans, and tasks",
+        "userOutcome2": "Shopping, expenses, and family documents",
+        "userOutcome3": "Insights for quick household trends",
+        "adminOutcome1": "Users, roles, and families",
+        "adminOutcome2": "Access control, 2FA, and API permissions",
+        "adminOutcome3": "Premium, finance, and operational logs",
+        "userFeature1": "Baby care",
+        "userFeature2": "Expenses",
+        "userFeature3": "Documents",
+        "userFeature4": "Notifications",
+        "adminFeature1": "Users",
+        "adminFeature2": "Families",
+        "adminFeature3": "Permissions",
+        "adminFeature4": "Audit",
+        "switchToAdminHint": "For Owners/Admins operating the system",
+        "switchToUserHint": "For family members using the app",
+        "adminAccessNote": "Admin accounts are granted by an Owner or administrator. Family users should return to User Portal."
       },
       "switch": {
-        "bearer": "Bearer token",
-        "keycloak": "Keycloak"
+        "bearer": "System account",
+        "keycloak": "Keycloak SSO",
+        "bearerHint": "Fast for internal accounts",
+        "keycloakHint": "Use centralized identity"
       },
       "form": {
         "usernameLabel": "Username",
@@ -1838,30 +1867,39 @@
         "captchaRefresh": "Click to refresh code",
         "remember": "Remember me",
         "forgotPassword": "Forgot password?",
-        "submitBearer": "Sign in with Bearer token",
+        "submitBearer": "Sign in",
         "twoFactorHelp": "Where can I get the 2FA code?",
         "register": "Create account",
         "note": "OTP or CAPTCHA will be enabled automatically when required.",
         "setupTwoFactor": "Set up 2FA",
-        "setupHint": "If you are signed in, this opens the QR setup page directly."
+        "setupHint": "If you are signed in, this opens the QR setup page directly.",
+        "registerPrompt": "Need an account?",
+        "registerCta": "Create User Portal account",
+        "dividerEmail": "or sign in with account"
       },
       "keycloak": {
-        "description": "Use SSO to authenticate in Keycloak, then the system exchanges it into an internal session for gateway and downstream services.",
+        "description": "Use SSO when your organization manages identity in Keycloak. After verification, the system exchanges it into an internal session for gateway and services.",
         "bullet1": "Best for centralized identity accounts.",
         "bullet2": "No need to re-enter internal password.",
-        "bullet3": "Final token is still stored consistently.",
-        "submit": "Sign in with Keycloak",
+        "bullet3": "The final session still follows BabySystem permission rules.",
+        "submit": "Continue with Keycloak",
         "title": "Sign in with Keycloak"
       },
       "twoFactorModal": {
         "title": "How to get 2FA code",
         "description": "The 2FA code is not generated on the login screen. You must enable 2FA first in <strong>2FA Setup</strong> after signing in.",
-        "step1": "Sign in to the system.",
+        "step1": "Sign in with password",
         "step2": "Open <strong>2FA Setup</strong> menu or go to <code>/2fa-setup</code>.",
-        "step3": "Scan QR with Google Authenticator or a compatible OTP app.",
-        "step4": "The app generates a new 6-digit code every 30 seconds.",
-        "step5": "When OTP is required later, enter that 6-digit code in login form.",
-        "info": "If your account has not enabled 2FA, OTP is not required."
+        "step3": "Scan the QR code",
+        "step4": "Get the 6-digit code",
+        "step5": "Enter OTP when prompted",
+        "info": "If your account has not enabled 2FA, OTP is not required.",
+        "step1Desc": "Use your internal account normally for the first sign-in.",
+        "step2Title": "Enable 2FA in profile",
+        "step3Desc": "Use Google Authenticator, Microsoft Authenticator, or another compatible OTP app.",
+        "step4Desc": "The OTP app generates a fresh code every 30 seconds.",
+        "step5Desc": "On later sign-ins, enter the 6-digit code to complete verification.",
+        "close": "Got it"
       },
       "forceChangeModal": {
         "title": "Change temporary password",
@@ -1883,9 +1921,9 @@
         "reqSpecial": "1 special character"
       },
       "messages": {
-        "googleVerifyFailed": "Failed to verify Google account with the system. Please try again.",
-        "githubVerifyFailed": "Failed to verify GitHub account with the system. Please try again.",
-        "socialSuccess": "Successfully linked and logged in with your social account!",
+        "googleVerifyFailed": "Unable to verify Google account with the system. Please try again.",
+        "githubVerifyFailed": "Unable to verify GitHub account with the system. Please try again.",
+        "socialSuccess": "Social account linked and signed in successfully!",
         "captchaLoadFailed": "Unable to load CAPTCHA: {{message}}",
         "loginFailedTitle": "Login failed",
         "loginSuccessTitle": "Login successful",
@@ -1911,12 +1949,22 @@
       },
       "themeToggleAria": "Switch theme",
       "forgotPasswordModal": {
-        "title": "Forgot Password",
+        "title": "Forgot password",
         "description": "Enter your registered username or email address. The system will generate a temporary password and send it to your email address.",
         "usernameOrEmailLabel": "Username or Email",
         "usernameOrEmailPlaceholder": "Enter your username or email",
         "usernameOrEmailError": "Please enter username or email",
-        "confirm": "Submit request"
+        "confirm": "Submit request",
+        "info": "A temporary password will be sent to your registered email within a few seconds."
+      },
+      "actions": {
+        "close": "Close"
+      },
+      "social": {
+        "google": "Google",
+        "github": "GitHub",
+        "facebook": "Facebook",
+        "soon": "Soon"
       }
     }
   }

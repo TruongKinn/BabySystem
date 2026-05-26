@@ -1,5 +1,4 @@
-<div class="login-page">
-  <!-- ===== Language Selector Dropdown ===== -->
+<div class="login-page" [class.portal-user]="portalMode === 'user'" [class.portal-admin]="portalMode === 'admin'">
   <div class="lang-selector-container" (click)="$event.stopPropagation()">
     <button type="button" class="language-trigger" (click)="toggleLangDropdown($event)" [class.active]="isLangDropdownOpen" id="btnLanguageTrigger">
       <span class="language-trigger__icon" nz-icon nzType="global" nzTheme="outline"></span>
@@ -7,7 +6,7 @@
       <span class="language-trigger__name">{{ currentLanguageOption.nativeLabel }}</span>
       <span class="language-trigger__chevron" nz-icon nzType="down" [class.rotated]="isLangDropdownOpen"></span>
     </button>
-    
+
     <div class="lang-dropdown-menu" [class.show]="isLangDropdownOpen">
       <div class="language-menu">
         <button
@@ -30,134 +29,179 @@
   </div>
 
   <div class="login-shell">
-
-    <!-- ===== LEFT: Intro Panel ===== -->
     <section class="intro-panel">
-      <div class="intro-brand">
+      <div class="intro-topline">
         <div class="brand-logo">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <rect width="32" height="32" rx="8" fill="url(#brandGrad)"/>
-            <path d="M16 6C10.477 6 6 10.477 6 16s4.477 10 10 10 10-4.477 10-10S21.523 6 16 6zm0 3a7 7 0 110 14A7 7 0 0116 9zm0 2a5 5 0 100 10A5 5 0 0016 11z" fill="white" fill-opacity="0.9"/>
-            <defs>
-              <linearGradient id="brandGrad" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#7C3AED"/>
-                <stop offset="1" stop-color="#4F46E5"/>
-              </linearGradient>
-            </defs>
-          </svg>
+          <span class="brand-mark" nz-icon nzType="heart" nzTheme="fill"></span>
           <span class="brand-name">{{ 'auth.login.card.eyebrow' | translate }}</span>
         </div>
+        <span class="portal-badge" *ngIf="portalMode === 'user'">{{ 'auth.login.portal.userBadge' | translate }}</span>
+        <span class="portal-badge portal-badge--admin" *ngIf="portalMode === 'admin'">{{ 'auth.login.portal.adminBadge' | translate }}</span>
       </div>
 
       <div class="intro-content">
-        <h1>{{ 'auth.login.hero.title' | translate }}</h1>
-        <p [innerHTML]="'auth.login.hero.subtitle' | translate"></p>
+        <p class="eyebrow">{{ 'auth.login.hero.badge' | translate }}</p>
+        <ng-container *ngIf="portalMode === 'user'; else adminIntro">
+          <h1>{{ 'auth.login.portal.userTitle' | translate }}</h1>
+          <p>{{ 'auth.login.portal.userDescription' | translate }}</p>
+        </ng-container>
+        <ng-template #adminIntro>
+          <h1>{{ 'auth.login.portal.adminTitle' | translate }}</h1>
+          <p>{{ 'auth.login.portal.adminDescription' | translate }}</p>
+        </ng-template>
       </div>
 
-      <div class="hero-points">
-        <div class="hero-point">
-          <div class="hero-point-icon">
-            <span nz-icon nzType="lock"></span>
-          </div>
-          <div class="hero-point-text">{{ 'auth.login.hero.point1' | translate }}</div>
+      <div class="portal-outcomes" *ngIf="portalMode === 'user'; else adminOutcomes">
+        <div class="outcome-item">
+          <span nz-icon nzType="calendar"></span>
+          <span>{{ 'auth.login.portal.userOutcome1' | translate }}</span>
         </div>
-        <div class="hero-point">
-          <div class="hero-point-icon">
+        <div class="outcome-item">
+          <span nz-icon nzType="shopping-cart"></span>
+          <span>{{ 'auth.login.portal.userOutcome2' | translate }}</span>
+        </div>
+        <div class="outcome-item">
+          <span nz-icon nzType="line-chart"></span>
+          <span>{{ 'auth.login.portal.userOutcome3' | translate }}</span>
+        </div>
+      </div>
+      <ng-template #adminOutcomes>
+        <div class="portal-outcomes">
+          <div class="outcome-item">
+            <span nz-icon nzType="team"></span>
+            <span>{{ 'auth.login.portal.adminOutcome1' | translate }}</span>
+          </div>
+          <div class="outcome-item">
             <span nz-icon nzType="safety-certificate"></span>
+            <span>{{ 'auth.login.portal.adminOutcome2' | translate }}</span>
           </div>
-          <div class="hero-point-text">{{ 'auth.login.hero.point2' | translate }}</div>
-        </div>
-        <div class="hero-point">
-          <div class="hero-point-icon">
-            <span nz-icon nzType="cloud"></span>
+          <div class="outcome-item">
+            <span nz-icon nzType="control"></span>
+            <span>{{ 'auth.login.portal.adminOutcome3' | translate }}</span>
           </div>
-          <div class="hero-point-text">{{ 'auth.login.hero.point3' | translate }}</div>
         </div>
-      </div>
+      </ng-template>
 
-      <div class="intro-decoration">
-        <div class="deco-card deco-card-1">
-          <div class="deco-dot green"></div>
-          <div class="deco-lines">
-            <div class="deco-line w-60"></div>
-            <div class="deco-line w-40"></div>
+      <div class="portal-summary">
+        <div class="summary-header">
+          <span nz-icon nzType="appstore"></span>
+          <strong>{{ 'auth.login.portal.afterLoginTitle' | translate }}</strong>
+        </div>
+
+        <div class="feature-grid" *ngIf="portalMode === 'user'; else adminFeatures">
+          <div class="feature-item">
+            <span nz-icon nzType="medicine-box"></span>
+            <span>{{ 'auth.login.portal.userFeature1' | translate }}</span>
+          </div>
+          <div class="feature-item">
+            <span nz-icon nzType="wallet"></span>
+            <span>{{ 'auth.login.portal.userFeature2' | translate }}</span>
+          </div>
+          <div class="feature-item">
+            <span nz-icon nzType="file-text"></span>
+            <span>{{ 'auth.login.portal.userFeature3' | translate }}</span>
+          </div>
+          <div class="feature-item">
+            <span nz-icon nzType="bell"></span>
+            <span>{{ 'auth.login.portal.userFeature4' | translate }}</span>
           </div>
         </div>
-        <div class="deco-card deco-card-2">
-          <div class="deco-dot purple"></div>
-          <div class="deco-lines">
-            <div class="deco-line w-70"></div>
-            <div class="deco-line w-50"></div>
+        <ng-template #adminFeatures>
+          <div class="feature-grid">
+            <div class="feature-item">
+              <span nz-icon nzType="user-switch"></span>
+              <span>{{ 'auth.login.portal.adminFeature1' | translate }}</span>
+            </div>
+            <div class="feature-item">
+              <span nz-icon nzType="apartment"></span>
+              <span>{{ 'auth.login.portal.adminFeature2' | translate }}</span>
+            </div>
+            <div class="feature-item">
+              <span nz-icon nzType="api"></span>
+              <span>{{ 'auth.login.portal.adminFeature3' | translate }}</span>
+            </div>
+            <div class="feature-item">
+              <span nz-icon nzType="audit"></span>
+              <span>{{ 'auth.login.portal.adminFeature4' | translate }}</span>
+            </div>
           </div>
-        </div>
-        <div class="deco-card deco-card-3">
-          <div class="deco-dot orange"></div>
-          <div class="deco-lines">
-            <div class="deco-line w-55"></div>
-            <div class="deco-line w-35"></div>
-          </div>
-        </div>
+        </ng-template>
       </div>
     </section>
 
-    <!-- ===== RIGHT: Login Card ===== -->
     <section class="login-card">
       <div class="card-inner">
+        <div class="portal-context">
+          <div class="portal-context__icon">
+            <span *ngIf="portalMode === 'user'" nz-icon nzType="home"></span>
+            <span *ngIf="portalMode === 'admin'" nz-icon nzType="crown"></span>
+          </div>
+          <div class="portal-context__copy">
+            <span>{{ 'auth.login.portal.currentLabel' | translate }}</span>
+            <strong *ngIf="portalMode === 'user'">{{ 'auth.login.portal.userName' | translate }}</strong>
+            <strong *ngIf="portalMode === 'admin'">{{ 'auth.login.portal.adminName' | translate }}</strong>
+            <p *ngIf="portalMode === 'user'">{{ 'auth.login.portal.userHint' | translate }}</p>
+            <p *ngIf="portalMode === 'admin'">{{ 'auth.login.portal.adminHint' | translate }}</p>
+          </div>
+        </div>
 
         <div class="card-header">
           <h2>{{ 'auth.login.card.title' | translate }}</h2>
           <p>{{ 'auth.login.card.subtitle' | translate }}</p>
-          <p class="portal-hint" *ngIf="portalMode === 'admin'">{{ 'auth.login.portal.adminHint' | translate }}</p>
-          <p class="portal-hint" *ngIf="portalMode === 'user'">{{ 'auth.login.portal.userHint' | translate }}</p>
         </div>
 
-        <!-- ===== Social Login Buttons ===== -->
         <div class="social-login">
           <button type="button" class="social-btn google-btn" (click)="loginWithGoogle()" id="btnLoginGoogle">
-            <svg class="social-icon" viewBox="0 0 24 24" fill="none">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
               <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
               <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
               <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
               <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
             </svg>
-            Google
+            {{ 'auth.login.social.google' | translate }}
           </button>
 
           <button type="button" class="social-btn github-btn" (click)="loginWithGithub()" id="btnLoginGithub">
-            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
             </svg>
-            GitHub
+            {{ 'auth.login.social.github' | translate }}
           </button>
 
           <button type="button" class="social-btn facebook-btn" disabled id="btnLoginFacebook">
-            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor">
+            <svg class="social-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
               <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
             </svg>
-            Facebook
-            <span class="coming-soon-badge">Soon</span>
+            {{ 'auth.login.social.facebook' | translate }}
+            <span class="coming-soon-badge">{{ 'auth.login.social.soon' | translate }}</span>
           </button>
         </div>
 
         <div class="divider">
           <span class="divider-line"></span>
-          <span class="divider-text">hoặc đăng nhập bằng email</span>
+          <span class="divider-text">{{ 'auth.login.form.dividerEmail' | translate }}</span>
           <span class="divider-line"></span>
         </div>
 
-        <!-- ===== Auth Mode Switch ===== -->
-        <div class="auth-switch">
-          <button type="button" class="switch-btn" [class.active]="authMode === 'bearer'" (click)="selectAuthMode('bearer')">
-            {{ 'auth.login.switch.bearer' | translate }}
+        <div class="auth-switch" role="tablist">
+          <button type="button" class="switch-btn" [class.active]="authMode === 'bearer'" (click)="selectAuthMode('bearer')" role="tab">
+            <span nz-icon nzType="key"></span>
+            <span>
+              <strong>{{ 'auth.login.switch.bearer' | translate }}</strong>
+              <small>{{ 'auth.login.switch.bearerHint' | translate }}</small>
+            </span>
           </button>
-          <button type="button" class="switch-btn" [class.active]="authMode === 'keycloak'" (click)="selectAuthMode('keycloak')">
-            {{ 'auth.login.switch.keycloak' | translate }}
+          <button type="button" class="switch-btn" [class.active]="authMode === 'keycloak'" (click)="selectAuthMode('keycloak')" role="tab">
+            <span nz-icon nzType="safety"></span>
+            <span>
+              <strong>{{ 'auth.login.switch.keycloak' | translate }}</strong>
+              <small>{{ 'auth.login.switch.keycloakHint' | translate }}</small>
+            </span>
           </button>
         </div>
 
         <nz-alert *ngIf="errorMsg" nzType="error" [nzMessage]="errorMsg" nzShowIcon class="error-banner"></nz-alert>
 
-        <!-- ===== Bearer Login Form ===== -->
         <form
           *ngIf="authMode === 'bearer'"
           nz-form
@@ -169,7 +213,7 @@
           <nz-form-item>
             <nz-form-label [nzNoColon]="true">{{ 'auth.login.form.usernameLabel' | translate }}</nz-form-label>
             <nz-form-control [nzErrorTip]="'auth.login.form.usernameError' | translate">
-              <input nz-input formControlName="username" [placeholder]="'auth.login.form.usernamePlaceholder' | translate" id="inputUsername" />
+              <input nz-input formControlName="username" [placeholder]="'auth.login.form.usernamePlaceholder' | translate" autocomplete="username" id="inputUsername" />
             </nz-form-control>
           </nz-form-item>
 
@@ -182,6 +226,7 @@
                   nz-input
                   formControlName="password"
                   [placeholder]="'auth.login.form.passwordPlaceholder' | translate"
+                  autocomplete="current-password"
                   id="inputPassword"
                 />
               </nz-input-group>
@@ -236,7 +281,9 @@
 
           <div class="form-actions">
             <label nz-checkbox formControlName="remember" id="checkboxRemember">{{ 'auth.login.form.remember' | translate }}</label>
-            <span class="hint-link" id="linkForgotPassword" (click)="openForgotPasswordModal()">{{ 'auth.login.form.forgotPassword' | translate }}</span>
+            <button type="button" class="link-button" id="linkForgotPassword" (click)="openForgotPasswordModal()">
+              {{ 'auth.login.form.forgotPassword' | translate }}
+            </button>
           </div>
 
           <button nz-button nzType="primary" nzBlock class="submit-btn" [nzLoading]="isLoading" [disabled]="!loginForm.valid" id="btnSubmitLogin">
@@ -244,13 +291,21 @@
           </button>
 
           <div class="bottom-links">
-            <a (click)="openTwoFactorGuide()" id="linkTwoFactorHelp">{{ 'auth.login.form.twoFactorHelp' | translate }}</a>
+            <button type="button" class="link-button" (click)="openTwoFactorGuide()" id="linkTwoFactorHelp">
+              <span nz-icon nzType="question-circle"></span>
+              {{ 'auth.login.form.twoFactorHelp' | translate }}
+            </button>
           </div>
         </form>
 
-        <!-- ===== Keycloak Panel ===== -->
         <div *ngIf="authMode === 'keycloak'" class="keycloak-panel">
-          <p>{{ 'auth.login.keycloak.description' | translate }}</p>
+          <div class="keycloak-card">
+            <span nz-icon nzType="cloud-server"></span>
+            <div>
+              <strong>{{ 'auth.login.keycloak.title' | translate }}</strong>
+              <p>{{ 'auth.login.keycloak.description' | translate }}</p>
+            </div>
+          </div>
           <ul>
             <li>{{ 'auth.login.keycloak.bullet1' | translate }}</li>
             <li>{{ 'auth.login.keycloak.bullet2' | translate }}</li>
@@ -261,20 +316,37 @@
           </button>
         </div>
 
-        <div class="register-link">
-          Chưa có tài khoản? <a routerLink="/app/register" id="linkRegister">Đăng ký ngay</a>
+        <div class="register-link" *ngIf="portalMode === 'user'; else adminAccessNote">
+          {{ 'auth.login.form.registerPrompt' | translate }}
+          <a routerLink="/app/register" id="linkRegister">{{ 'auth.login.form.registerCta' | translate }}</a>
         </div>
+        <ng-template #adminAccessNote>
+          <div class="admin-note">
+            <span nz-icon nzType="lock"></span>
+            <span>{{ 'auth.login.portal.adminAccessNote' | translate }}</span>
+          </div>
+        </ng-template>
 
         <div class="portal-switch-links">
-          <a *ngIf="portalMode === 'user'" routerLink="/admin/login" id="linkSwitchAdmin">{{ 'auth.login.portal.switchToAdmin' | translate }}</a>
-          <a *ngIf="portalMode === 'admin'" routerLink="/app/login" id="linkSwitchUser">{{ 'auth.login.portal.switchToUser' | translate }}</a>
+          <a *ngIf="portalMode === 'user'" routerLink="/admin/login" id="linkSwitchAdmin" class="portal-switch-card">
+            <span nz-icon nzType="crown"></span>
+            <span>
+              <strong>{{ 'auth.login.portal.switchToAdmin' | translate }}</strong>
+              <small>{{ 'auth.login.portal.switchToAdminHint' | translate }}</small>
+            </span>
+          </a>
+          <a *ngIf="portalMode === 'admin'" routerLink="/app/login" id="linkSwitchUser" class="portal-switch-card">
+            <span nz-icon nzType="home"></span>
+            <span>
+              <strong>{{ 'auth.login.portal.switchToUser' | translate }}</strong>
+              <small>{{ 'auth.login.portal.switchToUserHint' | translate }}</small>
+            </span>
+          </a>
         </div>
-
       </div>
     </section>
   </div>
 
-  <!-- ===== 2FA Modal ===== -->
   <ng-template #emptyTpl></ng-template>
   <nz-modal
     [(nzVisible)]="isVisibleTwoFactorGuide"
@@ -287,66 +359,57 @@
   >
     <ng-container *nzModalContent>
       <div class="premium-modal-container">
-        <!-- Close Button -->
-        <button class="modal-close-btn" (click)="closeTwoFactorGuide()">
+        <button class="modal-close-btn" (click)="closeTwoFactorGuide()" [attr.aria-label]="'auth.login.actions.close' | translate">
           <span nz-icon nzType="close"></span>
         </button>
 
         <div class="modal-header-premium">
           <div class="modal-icon-wrapper purple-glow">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
+            <span nz-icon nzType="safety-certificate"></span>
           </div>
           <h3>{{ 'auth.login.twoFactorModal.title' | translate }}</h3>
-          <p class="modal-subtitle">{{ 'auth.login.twoFactorModal.description' | translate }}</p>
+          <p class="modal-subtitle" [innerHTML]="'auth.login.twoFactorModal.description' | translate"></p>
         </div>
 
         <div class="modal-body-premium">
           <div class="visual-steps">
-            <!-- Step 1 -->
             <div class="visual-step-card">
               <div class="step-num">1</div>
               <div class="step-details">
                 <h4>{{ 'auth.login.twoFactorModal.step1' | translate }}</h4>
-                <p>Tiến hành đăng nhập bằng tài khoản nội bộ bình thường.</p>
+                <p>{{ 'auth.login.twoFactorModal.step1Desc' | translate }}</p>
               </div>
             </div>
 
-            <!-- Step 2 -->
             <div class="visual-step-card">
               <div class="step-num">2</div>
               <div class="step-details">
-                <h4>Thiết lập trong Profile</h4>
+                <h4>{{ 'auth.login.twoFactorModal.step2Title' | translate }}</h4>
                 <p [innerHTML]="'auth.login.twoFactorModal.step2' | translate"></p>
               </div>
             </div>
 
-            <!-- Step 3 -->
             <div class="visual-step-card">
               <div class="step-num">3</div>
               <div class="step-details">
                 <h4>{{ 'auth.login.twoFactorModal.step3' | translate }}</h4>
-                <p>Dùng Google Authenticator, Microsoft Authenticator hoặc các app OTP tương đương quét mã QR.</p>
+                <p>{{ 'auth.login.twoFactorModal.step3Desc' | translate }}</p>
               </div>
             </div>
 
-            <!-- Step 4 -->
             <div class="visual-step-card">
               <div class="step-num">4</div>
               <div class="step-details">
                 <h4>{{ 'auth.login.twoFactorModal.step4' | translate }}</h4>
-                <p>Ứng dụng sẽ tự động sinh mã số 6 chữ số thay đổi liên tục cứ sau mỗi 30 giây.</p>
+                <p>{{ 'auth.login.twoFactorModal.step4Desc' | translate }}</p>
               </div>
             </div>
 
-            <!-- Step 5 -->
             <div class="visual-step-card">
               <div class="step-num">5</div>
               <div class="step-details">
                 <h4>{{ 'auth.login.twoFactorModal.step5' | translate }}</h4>
-                <p>Tại các lần đăng nhập tiếp theo, điền đúng mã 6 số này để hoàn tất xác thực.</p>
+                <p>{{ 'auth.login.twoFactorModal.step5Desc' | translate }}</p>
               </div>
             </div>
           </div>
@@ -363,14 +426,13 @@
 
         <div class="modal-footer-premium">
           <button class="modal-btn-primary full-width" (click)="closeTwoFactorGuide()">
-            Đã hiểu, đóng lại
+            {{ 'auth.login.twoFactorModal.close' | translate }}
           </button>
         </div>
       </div>
     </ng-container>
   </nz-modal>
 
-  <!-- ===== Force Change Password Modal ===== -->
   <nz-modal
     [(nzVisible)]="isVisibleForceChangePassword"
     [nzTitle]="emptyTpl"
@@ -385,9 +447,7 @@
       <div class="premium-modal-container">
         <div class="modal-header-premium">
           <div class="modal-icon-wrapper orange-glow">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
+            <span nz-icon nzType="security-scan"></span>
           </div>
           <h3>{{ 'auth.login.forceChangeModal.title' | translate }}</h3>
           <p class="modal-subtitle">{{ 'auth.login.forceChangeModal.description' | translate }}</p>
@@ -442,7 +502,7 @@
         </div>
 
         <div class="modal-footer-premium">
-          <button class="modal-btn-ghost" (click)="closeForceChangePasswordModal()">Huỷ</button>
+          <button class="modal-btn-ghost" (click)="closeForceChangePasswordModal()">{{ 'common.cancel' | translate }}</button>
           <button
             class="modal-btn-primary"
             [class.loading]="isForceChangeLoading"
@@ -457,7 +517,6 @@
     </ng-container>
   </nz-modal>
 
-  <!-- ===== Forgot Password Modal ===== -->
   <nz-modal
     [(nzVisible)]="isVisibleForgotPassword"
     [nzTitle]="emptyTpl"
@@ -469,17 +528,13 @@
   >
     <ng-container *nzModalContent>
       <div class="premium-modal-container">
-        <!-- Close btn -->
-        <button class="modal-close-btn" (click)="closeForgotPasswordModal()">
+        <button class="modal-close-btn" (click)="closeForgotPasswordModal()" [attr.aria-label]="'auth.login.actions.close' | translate">
           <span nz-icon nzType="close"></span>
         </button>
 
         <div class="modal-header-premium">
           <div class="modal-icon-wrapper blue-glow">
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="2" y="4" width="20" height="16" rx="2"/>
-              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-            </svg>
+            <span nz-icon nzType="mail"></span>
           </div>
           <h3>{{ 'auth.login.forgotPasswordModal.title' | translate }}</h3>
           <p class="modal-subtitle">{{ 'auth.login.forgotPasswordModal.description' | translate }}</p>
@@ -487,7 +542,7 @@
 
         <div class="modal-body-premium">
           <form nz-form nzLayout="vertical" [formGroup]="forgotPasswordForm">
-            <nz-form-item style="margin-bottom: 0">
+            <nz-form-item>
               <nz-form-label [nzNoColon]="true">{{ 'auth.login.forgotPasswordModal.usernameOrEmailLabel' | translate }}</nz-form-label>
               <nz-form-control [nzErrorTip]="'auth.login.forgotPasswordModal.usernameOrEmailError' | translate">
                 <nz-input-group nzPrefixIcon="user">
@@ -503,18 +558,18 @@
             </nz-form-item>
           </form>
 
-          <div class="premium-alert-glass info-sm" style="margin-top: 16px">
+          <div class="premium-alert-glass info-sm">
             <div class="alert-icon-wrapper">
               <span nz-icon nzType="mail" nzTheme="outline"></span>
             </div>
             <div class="alert-content">
-              <p>Mật khẩu tạm thời sẽ được gửi đến email đã đăng ký của bạn trong vòng vài giây.</p>
+              <p>{{ 'auth.login.forgotPasswordModal.info' | translate }}</p>
             </div>
           </div>
         </div>
 
         <div class="modal-footer-premium">
-          <button class="modal-btn-ghost" (click)="closeForgotPasswordModal()">Huỷ bỏ</button>
+          <button class="modal-btn-ghost" (click)="closeForgotPasswordModal()">{{ 'common.cancel' | translate }}</button>
           <button
             class="modal-btn-primary"
             [class.loading]="isLoading"

@@ -1800,27 +1800,56 @@
   "auth": {
     "login": {
       "card": {
-        "eyebrow": "認証",
+        "eyebrow": "BabySystem",
         "title": "ログイン",
-        "subtitle": "以下のログイン方法のいずれかを選択してください。"
+        "subtitle": "アカウントに合った認証方法を選択してください。"
       },
       "hero": {
-        "title": "1つのログイン、2つの認証方法",
-        "subtitle": "プラットフォームアカウントでログインするには <strong>Bearerトークン</strong> を使用し、集中SSOを使用する場合は <strong>Keycloak</strong> に切り替えます。",
-        "point1": "社内アカウント + 2FA",
-        "point2": "KeycloakによるSSO",
-        "point3": "トークンは一貫して保存されます",
-        "badge": "物流プラットフォーム"
+        "title": "BabySystemにログイン",
+        "subtitle": "1つのアカウントを適切なワークスペースへ案内します。家族はUser Portal、運用担当者はAdmin Portalを使用します。",
+        "point1": "家庭の予定管理",
+        "point2": "アクセス制御",
+        "point3": "2FA保護",
+        "badge": "BabySystem"
       },
       "portal": {
-        "adminHint": "管理者ポータル - ユーザーアカウント管理およびシステム運用",
-        "userHint": "ユーザーポータル - アプリを使用する家族メンバー用",
-        "switchToAdmin": "管理者ポータルにログイン",
-        "switchToUser": "ユーザーポータルにログイン"
+        "adminHint": "アカウント、権限、システム運用を管理する管理者向けです。",
+        "userHint": "日常的にアプリを使う家族メンバー向けです。",
+        "switchToAdmin": "Admin Portalにログイン",
+        "switchToUser": "User Portalにログイン",
+        "currentLabel": "現在のポータル",
+        "userName": "User Portal",
+        "adminName": "Admin Portal",
+        "userBadge": "User Portal",
+        "adminBadge": "Admin Portal",
+        "userTitle": "User Portalは日々の家庭管理に使います",
+        "userDescription": "これは家族メンバー向けの/appワークスペースです。育児、食事、支出、タスク、買い物、資料、インサイトを扱います。",
+        "adminTitle": "Admin Portalはシステム運用と管理に使います",
+        "adminDescription": "これはOwner/Admin向けの/adminワークスペースです。ユーザー、家族、プレミアム、財務、権限、APIを管理します。",
+        "afterLoginTitle": "ログイン後のワークスペース",
+        "userOutcome1": "育児、食事計画、タスク",
+        "userOutcome2": "買い物、支出、家族資料",
+        "userOutcome3": "家庭の傾向をすばやく把握",
+        "adminOutcome1": "ユーザー、ロール、家族",
+        "adminOutcome2": "アクセス制御、2FA、API権限",
+        "adminOutcome3": "プレミアム、財務、運用ログ",
+        "userFeature1": "育児",
+        "userFeature2": "支出",
+        "userFeature3": "資料",
+        "userFeature4": "通知",
+        "adminFeature1": "ユーザー",
+        "adminFeature2": "家族",
+        "adminFeature3": "権限",
+        "adminFeature4": "監査",
+        "switchToAdminHint": "システム運用担当のOwner/Admin向け",
+        "switchToUserHint": "アプリを使う家族メンバー向け",
+        "adminAccessNote": "管理者アカウントはOwnerまたは管理者から付与されます。家族ユーザーはUser Portalへ戻ってください。"
       },
       "switch": {
-        "bearer": "Bearerトークン",
-        "keycloak": "Keycloak"
+        "bearer": "システムアカウント",
+        "keycloak": "Keycloak SSO",
+        "bearerHint": "内部アカウント向け",
+        "keycloakHint": "集中IDを使用"
       },
       "form": {
         "usernameLabel": "ユーザー名",
@@ -1838,30 +1867,39 @@
         "captchaRefresh": "クリックしてコードを変更",
         "remember": "ログイン状態を保持する",
         "forgotPassword": "パスワードをお忘れですか？",
-        "submitBearer": "Bearerトークンでログイン",
+        "submitBearer": "ログイン",
         "twoFactorHelp": "2FAコードはどこで取得できますか？",
         "register": "アカウント登録",
         "note": "必要に応じて、システムはOTPまたはCAPTCHAを自動的に有効にします。",
         "setupTwoFactor": "2FAのセットアップ",
-        "setupHint": "ログインしている場合、このボタンは直接QRセットアップページを開きます。"
+        "setupHint": "ログインしている場合、このボタンは直接QRセットアップページを開きます。",
+        "registerPrompt": "アカウントが必要ですか？",
+        "registerCta": "User Portalアカウントを作成",
+        "dividerEmail": "またはアカウントでログイン"
       },
       "keycloak": {
-        "description": "SSOを使用してKeycloakに切り替えた後、システムはトークンをゲートウェイおよびダウンストリームサービス用の内部セッションに交換します。",
-        "bullet1": "集中管理されたIDアカウントがある場合に最適です。",
-        "bullet2": "社内パスワードを再入力する必要はありません。",
-        "bullet3": "最終的なトークンはシステムによって一貫して保存されます。",
-        "submit": "Keycloakでログイン",
+        "description": "組織がKeycloakでIDを管理している場合はSSOを使用します。認証後、システムはゲートウェイとサービス用の内部セッションに交換します。",
+        "bullet1": "集中管理されたIDアカウントに適しています。",
+        "bullet2": "内部パスワードを再入力する必要はありません。",
+        "bullet3": "最終セッションはBabySystemの権限ルールに従います。",
+        "submit": "Keycloakで続行",
         "title": "Keycloakでログイン"
       },
       "twoFactorModal": {
         "title": "2FAコードの取得手順",
-        "description": "2FAコードはログイン画面で自動生成されません。ログイン後、<strong>2FAセットアップ</strong>ページで2FAを有効にする必要があります。",
-        "step1": "システムにログインします。",
-        "step2": "<strong>2FAセットアップ</strong>メニューを開くか、<code>/2fa-setup</code>ルートにアクセスします。",
-        "step3": "Google Authenticatorまたは互換性のあるOTPアプリでQRコードをスキャンします。",
-        "step4": "アプリは30秒ごとに変わる6桁のコードを生成します。",
-        "step5": "次回システムからOTPが要求されたら、ログインフォームに正しい6桁のコードを入力します。",
-        "info": "アカウントで2FAを有効にしていない場合、OTPは不要です。"
+        "description": "2FAコードはログイン画面で自動生成されません。ログイン後、<strong>2FAセットアップ</strong>で2FAを有効にする必要があります。",
+        "step1": "パスワードでログイン",
+        "step2": "<strong>2FAセットアップ</strong>メニューを開くか、<code>/2fa-setup</code>にアクセスします。",
+        "step3": "QRコードをスキャン",
+        "step4": "6桁コードを取得",
+        "step5": "要求されたらOTPを入力",
+        "info": "アカウントで2FAを有効にしていない場合、OTPは不要です。",
+        "step1Desc": "最初は内部アカウントで通常どおりログインします。",
+        "step2Title": "プロフィールで2FAを有効化",
+        "step3Desc": "Google Authenticator、Microsoft Authenticator、または互換OTPアプリを使用します。",
+        "step4Desc": "OTPアプリは30秒ごとに新しいコードを生成します。",
+        "step5Desc": "次回以降のログインでは、6桁のコードを入力して認証を完了します。",
+        "close": "了解"
       },
       "forceChangeModal": {
         "title": "一時パスワードの変更",
@@ -1883,9 +1921,9 @@
         "reqSpecial": "特殊文字1文字以上"
       },
       "messages": {
-        "googleVerifyFailed": "Googleアカウントをシステムで検証できませんでした。もう一度お試しください。",
-        "githubVerifyFailed": "GitHubアカウントをシステムで検証できませんでした。もう一度お試しください。",
-        "socialSuccess": "ソーシャルアカウントとの連携およびログインに成功しました！",
+        "googleVerifyFailed": "Googleアカウントを検証できませんでした。もう一度お試しください。",
+        "githubVerifyFailed": "GitHubアカウントを検証できませんでした。もう一度お試しください。",
+        "socialSuccess": "ソーシャルアカウントの連携とログインに成功しました！",
         "captchaLoadFailed": "CAPTCHAの読み込みに失敗しました: {{message}}",
         "loginFailedTitle": "ログイン失敗",
         "loginSuccessTitle": "ログイン成功",
@@ -1896,23 +1934,37 @@
         "captchaRequiredSimple": "CAPTCHA検証を完了してください。",
         "captchaInvalid": "無効なCAPTCHAコードです。もう一度入力してください。",
         "twoFactorRequiredTitle": "2段階認証が必要です",
-        "twoFactorRequiredDesc": "このアカウントは2FAが有効になっています。AuthenticatorアプリからOTPコードを入力してください。",
-        "loginFailedFallback": "ログインに失敗しました。アカウント資格情報を確認してください。",
+        "twoFactorRequiredDesc": "このアカウントは2FAが有効です。AuthenticatorアプリからOTPコードを入力してください。",
+        "loginFailedFallback": "ログインに失敗しました。アカウント情報を確認してください。",
         "forceChangeMissingContext": "ユーザー名または一時パスワードが不足しています。もう一度ログインしてください。",
-        "forceChangeSuccessTitle": "パスワードの変更完了",
-        "forceChangeSuccessDesc": "パスワードが正常に更新されました。再ログインしています...",
+        "forceChangeSuccessTitle": "パスワードを変更しました",
+        "forceChangeSuccessDesc": "パスワードが更新されました。再ログインしています...",
         "forceChangeFailed": "パスワードを変更できません。入力内容を確認してください。",
-        "forceChangeRequiredTitle": "パスワードの更新が必要です",
-        "forceChangeRequiredDesc": "続行する前に一時パスワードを変更する必要があります。"
+        "forceChangeRequiredTitle": "パスワード更新が必要です",
+        "forceChangeRequiredDesc": "続行する前に一時パスワードを変更する必要があります。",
+        "forgotPasswordSuccessTitle": "リクエスト成功",
+        "forgotPasswordSuccessDesc": "一時パスワードをメールに送信しました。受信箱を確認してください。",
+        "forgotPasswordFailedTitle": "リクエスト失敗",
+        "forgotPasswordFailedDesc": "パスワードリセット要求を送信できません。もう一度お試しください。"
       },
       "themeToggleAria": "テーマ切り替え",
       "forgotPasswordModal": {
         "title": "パスワードをお忘れですか？",
-        "description": "ユーザー名またはメールアドレスを入力してください。システムは自動的に一時パスワードを生成し、登録されたメールアドレスに送信します。",
+        "description": "登録済みのユーザー名またはメールアドレスを入力してください。システムが一時パスワードを生成して送信します。",
         "usernameOrEmailLabel": "ユーザー名またはメールアドレス",
         "usernameOrEmailPlaceholder": "ユーザー名またはメールアドレスを入力",
         "usernameOrEmailError": "ユーザー名またはメールアドレスを入力してください",
-        "confirm": "リクエスト送信"
+        "confirm": "リクエスト送信",
+        "info": "一時パスワードは数秒以内に登録済みメールへ送信されます。"
+      },
+      "actions": {
+        "close": "閉じる"
+      },
+      "social": {
+        "google": "Google",
+        "github": "GitHub",
+        "facebook": "Facebook",
+        "soon": "近日"
       }
     }
   }

@@ -1,21 +1,32 @@
 {
+  "actions": {
+    "close": "Đóng"
+  },
   "themeToggleAria": "Chuyển giao diện",
   "hero": {
-    "badge": "Nền tảng Logistics",
-    "title": "Đăng nhập một nơi, dùng hai phương thức",
-    "subtitle": "Chọn <strong>Bearer token</strong> để đăng nhập bằng tài khoản hệ thống, hoặc chuyển sang <strong>Keycloak</strong> nếu bạn dùng SSO tập trung.",
-    "point1": "Tài khoản nội bộ + 2FA",
-    "point2": "SSO qua Keycloak",
-    "point3": "Token được lưu đồng nhất"
+    "badge": "BabySystem",
+    "title": "Đăng nhập BabySystem",
+    "subtitle": "Một tài khoản cho đúng cổng làm việc: gia đình dùng User Portal, quản trị dùng Admin Portal.",
+    "point1": "Theo dõi việc gia đình",
+    "point2": "Quản lý quyền truy cập",
+    "point3": "Bảo mật bằng 2FA"
   },
   "card": {
-    "eyebrow": "Authentication",
+    "eyebrow": "BabySystem",
     "title": "Đăng nhập",
-    "subtitle": "Chọn một trong hai cách đăng nhập bên dưới."
+    "subtitle": "Chọn cách xác thực phù hợp với tài khoản của bạn."
+  },
+  "social": {
+    "google": "Google",
+    "github": "GitHub",
+    "facebook": "Facebook",
+    "soon": "Sắp có"
   },
   "switch": {
-    "bearer": "Bearer token",
-    "keycloak": "Keycloak"
+    "bearer": "Tài khoản hệ thống",
+    "bearerHint": "Nhanh cho tài khoản nội bộ",
+    "keycloak": "Keycloak SSO",
+    "keycloakHint": "Dùng định danh tập trung"
   },
   "form": {
     "usernameLabel": "Tên đăng nhập",
@@ -34,7 +45,10 @@
     "remember": "Ghi nhớ",
     "forgotPassword": "Quên mật khẩu?",
     "register": "Đăng ký tài khoản",
-    "submitBearer": "Đăng nhập bằng Bearer token",
+    "registerPrompt": "Chưa có tài khoản?",
+    "registerCta": "Đăng ký User Portal",
+    "dividerEmail": "hoặc đăng nhập bằng tài khoản",
+    "submitBearer": "Đăng nhập",
     "note": "Hệ thống sẽ tự bật OTP hoặc CAPTCHA khi cần.",
     "twoFactorHelp": "Mã 2FA lấy ở đâu?",
     "setupTwoFactor": "Thiết lập 2FA",
@@ -42,26 +56,35 @@
   },
   "keycloak": {
     "title": "Đăng nhập bằng Keycloak",
-    "description": "Dùng SSO để chuyển sang Keycloak, sau đó hệ thống đổi token thành session nội bộ cho gateway và các service phía sau.",
+    "description": "Dùng SSO nếu tổ chức đã quản lý tài khoản qua Keycloak. Sau xác thực, hệ thống đổi token thành session nội bộ cho gateway và các service.",
     "bullet1": "Phù hợp khi đã có tài khoản tập trung.",
     "bullet2": "Không cần nhập lại mật khẩu nội bộ.",
-    "bullet3": "Token cuối cùng vẫn được hệ thống lưu đồng nhất.",
-    "submit": "Đăng nhập với Keycloak"
+    "bullet3": "Session cuối cùng vẫn đi qua cơ chế quyền của BabySystem.",
+    "submit": "Tiếp tục với Keycloak"
   },
   "twoFactorModal": {
     "title": "Hướng dẫn lấy mã 2FA",
-    "description": "Mã 2FA không phải do hệ thống tự sinh ở màn login. Bạn phải bật 2FA trước trong trang <strong>Thiết lập 2FA</strong> sau khi đã đăng nhập.",
-    "step1": "Đăng nhập vào hệ thống.",
+    "description": "Mã 2FA không được sinh ở màn login. Bạn cần bật 2FA trước trong trang <strong>Thiết lập 2FA</strong> sau khi đã đăng nhập.",
+    "step1": "Đăng nhập bằng mật khẩu",
+    "step1Desc": "Dùng tài khoản nội bộ bình thường để vào hệ thống lần đầu.",
+    "step2Title": "Bật 2FA trong hồ sơ",
     "step2": "Mở menu <strong>Thiết lập 2FA</strong> hoặc vào route <code>/2fa-setup</code>.",
-    "step3": "Quét QR bằng Google Authenticator hoặc ứng dụng OTP tương tự.",
-    "step4": "Ứng dụng sẽ sinh mã 6 số thay đổi mỗi 30 giây.",
-    "step5": "Khi lần sau hệ thống yêu cầu OTP, nhập đúng mã 6 số vào ô đăng nhập.",
-    "info": "Nếu tài khoản chưa bật 2FA, bạn không cần nhập OTP."
+    "step3": "Quét mã QR",
+    "step3Desc": "Dùng Google Authenticator, Microsoft Authenticator hoặc ứng dụng OTP tương thích.",
+    "step4": "Lấy mã 6 số",
+    "step4Desc": "Ứng dụng OTP sẽ sinh mã mới sau mỗi 30 giây.",
+    "step5": "Nhập OTP khi được yêu cầu",
+    "step5Desc": "Ở các lần đăng nhập sau, điền mã 6 số để hoàn tất xác thực.",
+    "info": "Nếu tài khoản chưa bật 2FA, bạn không cần nhập OTP.",
+    "close": "Đã hiểu"
   },
   "messages": {
     "captchaLoadFailed": "Không thể tải CAPTCHA: {{message}}",
     "loginSuccessTitle": "Đăng nhập thành công",
     "loginSuccessDesc": "Chào mừng bạn quay trở lại!",
+    "googleVerifyFailed": "Không thể xác thực tài khoản Google với hệ thống. Vui lòng thử lại.",
+    "githubVerifyFailed": "Không thể xác thực tài khoản GitHub với hệ thống. Vui lòng thử lại.",
+    "socialSuccess": "Liên kết và đăng nhập tài khoản mạng xã hội thành công!",
     "keycloakVerifyFailed": "Không thể xác thực với Keycloak",
     "loginFailedTitle": "Đăng nhập thất bại",
     "captchaRequiredTitle": "Yêu cầu xác nhận CAPTCHA",
@@ -84,10 +107,11 @@
   },
   "forgotPasswordModal": {
     "title": "Quên mật khẩu",
-    "description": "Nhập tên đăng nhập hoặc địa chỉ email đã đăng ký. Hệ thống sẽ tạo mật khẩu tạm thời và gửi về địa chỉ email của bạn.",
+    "description": "Nhập tên đăng nhập hoặc địa chỉ email đã đăng ký. Hệ thống sẽ tạo mật khẩu tạm thời và gửi về email của bạn.",
     "usernameOrEmailLabel": "Tên đăng nhập hoặc Email",
     "usernameOrEmailPlaceholder": "Nhập username hoặc email của bạn",
     "usernameOrEmailError": "Vui lòng nhập tên đăng nhập hoặc email",
+    "info": "Mật khẩu tạm thời sẽ được gửi đến email đã đăng ký trong vòng vài giây.",
     "confirm": "Gửi yêu cầu"
   },
   "forceChangeModal": {
@@ -110,9 +134,36 @@
     "reqSpecial": "1 ký tự đặc biệt"
   },
   "portal": {
-    "adminHint": "Admin Portal - quản lý tài khoản người dùng và vận hành hệ thống",
-    "userHint": "User Portal - dành cho thành viên gia đình sử dụng ứng dụng",
-    "switchToAdmin": "Đăng nhập vào Admin Portal",
-    "switchToUser": "Đăng nhập vào User Portal"
+    "currentLabel": "Cổng hiện tại",
+    "userName": "User Portal",
+    "adminName": "Admin Portal",
+    "userBadge": "User Portal",
+    "adminBadge": "Admin Portal",
+    "userTitle": "User Portal dùng để quản lý việc gia đình hằng ngày",
+    "userDescription": "Đây là khu vực /app cho thành viên gia đình: theo dõi bé, bữa ăn, chi tiêu, việc cần làm, mua sắm, tài liệu và insight.",
+    "adminTitle": "Admin Portal dùng để vận hành và kiểm soát hệ thống",
+    "adminDescription": "Đây là khu vực /admin cho Owner/Admin: quản lý người dùng, gia đình, gói premium, tài chính, quyền và API.",
+    "userHint": "Dành cho thành viên gia đình sử dụng ứng dụng hằng ngày.",
+    "adminHint": "Dành cho quản trị viên quản lý tài khoản, quyền và vận hành hệ thống.",
+    "afterLoginTitle": "Không gian sau đăng nhập",
+    "userOutcome1": "Lịch chăm sóc bé, bữa ăn và nhiệm vụ",
+    "userOutcome2": "Mua sắm, chi tiêu và tài liệu gia đình",
+    "userOutcome3": "Insight để xem nhanh xu hướng trong nhà",
+    "adminOutcome1": "Người dùng, vai trò và gia đình",
+    "adminOutcome2": "Quyền truy cập, 2FA và API permission",
+    "adminOutcome3": "Premium, tài chính và nhật ký vận hành",
+    "userFeature1": "Baby care",
+    "userFeature2": "Expenses",
+    "userFeature3": "Documents",
+    "userFeature4": "Notifications",
+    "adminFeature1": "Users",
+    "adminFeature2": "Families",
+    "adminFeature3": "Permissions",
+    "adminFeature4": "Audit",
+    "switchToAdmin": "Đăng nhập Admin Portal",
+    "switchToAdminHint": "Dành cho Owner/Admin vận hành hệ thống",
+    "switchToUser": "Đăng nhập User Portal",
+    "switchToUserHint": "Dành cho thành viên gia đình dùng app",
+    "adminAccessNote": "Tài khoản admin được cấp bởi Owner hoặc quản trị viên. Người dùng gia đình nên quay lại User Portal."
   }
 }
