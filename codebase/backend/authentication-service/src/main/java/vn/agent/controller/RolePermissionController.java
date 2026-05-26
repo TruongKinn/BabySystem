@@ -14,13 +14,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import vn.agent.common.PermissionType;
 import vn.agent.controller.request.CreatePermissionRequest;
 import vn.agent.controller.request.CreateRoleRequest;
 import vn.agent.controller.request.UpdatePermissionRequest;
 import vn.agent.controller.request.UpdateRoleRequest;
 import vn.agent.controller.request.UpdateRolePermissionsRequest;
 import vn.agent.controller.response.MissingApiPermissionResponse;
+import vn.agent.controller.response.PageResponse;
 import vn.agent.controller.response.PermissionResponse;
 import vn.agent.controller.response.RolePermissionResponse;
 import vn.agent.controller.response.RolePermissionWorkspaceResponse;
@@ -104,5 +107,15 @@ public class RolePermissionController {
     @Operation(summary = "Get user access (role/menu/api permissions)")
     public ResponseEntity<UserAccessResponse> getUserAccess(@PathVariable Long userId) {
         return ResponseEntity.ok(rolePermissionService.getUserAccess(userId));
+    }
+
+    @GetMapping("/permissions")
+    @Operation(summary = "Get permissions list with pagination and optional search/filter")
+    public ResponseEntity<PageResponse<PermissionResponse>> getPermissions(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String searchText,
+            @RequestParam(required = false) PermissionType type) {
+        return ResponseEntity.ok(rolePermissionService.getPermissionsPage(page, size, searchText, type));
     }
 }

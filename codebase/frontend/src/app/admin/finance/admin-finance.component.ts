@@ -14,8 +14,8 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
-import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { forkJoin, Observable, of, Subject } from 'rxjs';
+import { catchError, debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 import { AuthService } from '../../auth/auth.service';
@@ -86,10 +86,18 @@ export class AdminFinanceComponent implements OnInit {
   loading = false;
   searchText = '';
   monthKey = ''; // YYYY-MM
-  
-  // Danh sách đầy đủ sau tổng hợp
+
+  // Dữ liệu trang hiện tại sau tổng hợp
   familiesFinance: FamilyFinanceItem[] = [];
   filteredFamilies: FamilyFinanceItem[] = [];
+
+  // Phân trang Backend
+  pageIndex = 1;
+  pageSize = 10;
+  total = 0;
+
+  // Debounce search
+  private readonly searchSubject = new Subject<string>();
 
   // Drawer xem chi tiết
   isDrawerVisible = false;
@@ -101,22 +109,54 @@ export class AdminFinanceComponent implements OnInit {
   systemUsagePercent = 0;
 
   ngOnInit(): void {
-    // Mặc định lấy tháng hiện tại (ví dụ: "2026-05")
+    // Mặc định lấy tháng hiện tại
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     this.monthKey = `${year}-${month}`;
+
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.pageIndex = 1;
+      this.loadFinanceData();
+    });
+
+    this.loadFinanceData();
+  }
+
+  onPageIndexChange(page: number): void {
+    this.pageIndex = page;
+    this.loadFinanceData();
+  }
+
+  onPageSizeChange(size: number): void {
+    this.pageSize = size;
+    this.pageIndex = 1;
     this.loadFinanceData();
   }
 
   loadFinanceData(): void {
     this.loading = true;
-    
-    // Bước 1: Lấy danh sách các gia đình từ account-service
-    this.http.get<ApiEnvelope<FamilyApi[]>>(`${API_CONFIG.GATEWAY_URL}/account/admin/families`)
+
+    // Bước 1: Gọi API phân trang từ account-service
+    let params = new HttpParams()
+      .set('page', String(Math.max(this.pageIndex - 1, 0)))
+      .set('size', String(this.pageSize));
+
+    if (this.searchText.trim()) {
+      params = params.set('searchText', this.searchText.trim());
+    }
+
+    this.http.get<ApiEnvelope<{ page: number; size: number; total: number; items: FamilyApi[] }>>(
+      `${API_CONFIG.GATEWAY_URL}/account/admin/families/page`, { params }
+    )
       .pipe(
         switchMap((response) => {
-          const families = response.data ?? [];
+          const pageData = response.data;
+          this.total = pageData?.total ?? 0;
+          const families = pageData?.items ?? [];
           if (families.length === 0) {
             return of([]);
           }
@@ -199,8 +239,8 @@ export class AdminFinanceComponent implements OnInit {
       .subscribe({
         next: (results) => {
           this.familiesFinance = results;
+          this.filteredFamilies = results;
           this.calculateSystemMetrics();
-          this.applyFilters();
           this.loading = false;
         },
         error: () => {
@@ -216,28 +256,18 @@ export class AdminFinanceComponent implements OnInit {
   onMonthChange(newMonth: string): void {
     if (newMonth && newMonth !== this.monthKey) {
       this.monthKey = newMonth;
+      this.pageIndex = 1;
       this.loadFinanceData();
     }
   }
 
   onSearchChange(value: string): void {
     this.searchText = value;
-    this.applyFilters();
+    this.searchSubject.next(value);
   }
 
   applyFilters(): void {
-    const keyword = this.searchText.trim().toLowerCase();
-    if (!keyword) {
-      this.filteredFamilies = [...this.familiesFinance];
-      return;
-    }
-
-    this.filteredFamilies = this.familiesFinance.filter(
-      (item) =>
-        item.name.toLowerCase().includes(keyword) ||
-        item.creatorName.toLowerCase().includes(keyword) ||
-        item.id.toString().includes(keyword)
-    );
+    this.filteredFamilies = [...this.familiesFinance];
   }
 
   calculateSystemMetrics(): void {

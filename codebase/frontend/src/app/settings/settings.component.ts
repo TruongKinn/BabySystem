@@ -598,11 +598,11 @@ export class SettingsComponent implements OnInit {
       rose: 'heart',
       pink: 'heart',
       amber: 'star',
-      indigo: 'global',
-      graphite: 'sliders',
-      custom: 'bg-colors'
+      indigo: 'environment',
+      graphite: 'build',
+      custom: 'highlight'
     };
-    return icons[accent] || 'bg-colors';
+    return icons[accent] || 'highlight';
   }
 
   resolveAccentColors(accent: ThemeAccent): { primary: string; secondary: string } {

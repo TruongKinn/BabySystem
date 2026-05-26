@@ -103,7 +103,7 @@ export class AdminExportPasswordsComponent implements OnInit {
   monthFilter = '';
 
   pageIndex = 1;
-  pageSize = 12;
+  pageSize = 10;
   total = 0;
 
   // Notification send modal state

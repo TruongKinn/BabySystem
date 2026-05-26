@@ -57,14 +57,17 @@
 
     <nz-table
       #permissionsTable="nzTable"
-      [nzData]="filteredPermissions"
+      [nzData]="permissions"
       [(nzPageIndex)]="pageIndex"
       [(nzPageSize)]="pageSize"
-      [nzFrontPagination]="true"
+      [nzFrontPagination]="false"
+      [nzTotal]="total"
       [nzLoading]="loading"
       [nzShowSizeChanger]="true"
-      [nzPageSizeOptions]="[12, 24, 48, 96]"
+      [nzPageSizeOptions]="[10, 20, 50]"
       [nzScroll]="{ x: '1000px' }"
+      (nzPageIndexChange)="onPageIndexChange($event)"
+      (nzPageSizeChange)="onPageSizeChange($event)"
     >
       <thead>
         <tr>

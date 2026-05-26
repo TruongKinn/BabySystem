@@ -14,6 +14,7 @@ import com.mom.account.controller.dto.FamilyResponse;
 import com.mom.account.controller.dto.GrantFamilyQuestPointsRequest;
 import com.mom.account.controller.dto.GrantFamilyQuestPointsResponse;
 import com.mom.account.controller.dto.InviteFamilyMemberRequest;
+import com.mom.account.controller.dto.PageResponse;
 import com.mom.account.controller.dto.PremiumFeatureResponse;
 import com.mom.account.controller.dto.RedeemFamilyQuestRewardRequest;
 import com.mom.account.controller.dto.RedeemFamilyQuestRewardResponse;
@@ -179,6 +180,15 @@ public class AccountController {
     @GetMapping("/admin/families")
     public ApiResponse<List<FamilyResponse>> getAllFamiliesForAdmin() {
         return ApiResponse.ok("Success", accountService.getAllFamiliesForAdmin());
+    }
+
+    @GetMapping("/admin/families/page")
+    public ApiResponse<PageResponse<FamilyResponse>> getAllFamiliesPageForAdmin(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(required = false) String searchText
+    ) {
+        return ApiResponse.ok("Success", accountService.getAllFamiliesPageForAdmin(page, size, searchText));
     }
 
     @GetMapping("/admin/families/{id}")

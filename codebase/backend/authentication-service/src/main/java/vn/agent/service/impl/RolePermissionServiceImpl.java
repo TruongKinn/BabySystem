@@ -37,6 +37,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 @Service
 @RequiredArgsConstructor
@@ -450,5 +453,33 @@ public class RolePermissionServiceImpl implements RolePermissionService {
         }
         String trimmed = value.trim();
         return trimmed.isEmpty() ? null : trimmed;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public vn.agent.controller.response.PageResponse<PermissionResponse> getPermissionsPage(
+            int page, int size, String searchText, PermissionType type) {
+        String normalizedSearch = (searchText == null || searchText.isBlank()) ? null : searchText.trim();
+        PermissionType normalizedType = type;
+
+        PageRequest pageable = PageRequest.of(
+                Math.max(page, 0),
+                Math.max(size, 1),
+                Sort.by(Sort.Direction.ASC, "name")
+        );
+
+        Page<Permission> resultPage = permissionRepository.searchPermissions(
+                normalizedSearch, normalizedType, pageable);
+
+        List<PermissionResponse> items = resultPage.getContent().stream()
+                .map(this::toPermissionResponse)
+                .toList();
+
+        return vn.agent.controller.response.PageResponse.<PermissionResponse>builder()
+                .page(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .total(resultPage.getTotalElements())
+                .items(items)
+                .build();
     }
 }

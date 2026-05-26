@@ -54,7 +54,7 @@
             <span nz-icon nzType="team"></span>
           </div>
         </div>
-        <div class="kpi-value">{{ familiesFinance.length }}</div>
+        <div class="kpi-value">{{ total }}</div>
         <div class="kpi-meta">{{ 'momApp.admin.finance.kpis.families.meta' | translate }}</div>
       </div>
 
@@ -102,8 +102,15 @@
         [nzData]="filteredFamilies" 
         [nzLoading]="loading"
         class="premium-table"
-        [nzPageSize]="10"
+        [nzFrontPagination]="false"
+        [nzTotal]="total"
+        [nzPageIndex]="pageIndex"
+        [nzPageSize]="pageSize"
+        [nzShowSizeChanger]="true"
+        [nzPageSizeOptions]="[10, 20, 50]"
         [nzScroll]="{ x: '1200px' }"
+        (nzPageIndexChange)="onPageIndexChange($event)"
+        (nzPageSizeChange)="onPageSizeChange($event)"
       >
         <thead>
           <tr>

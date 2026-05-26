@@ -35,7 +35,7 @@
 
     <div class="settings-hero__status">
       <div class="status-tile" [class.status-tile--off]="isThemeStudioLocked">
-        <span nz-icon nzType="bg-colors" nzTheme="outline"></span>
+        <span nz-icon nzType="highlight" nzTheme="outline"></span>
         <div>
           <p class="status-label">{{ 'momApp.settings.themeStudio.access' | translate }}</p>
           <strong>{{ themeAccessLabelKey | translate }}</strong>
@@ -222,7 +222,7 @@
                 </label>
               </div>
               <div class="custom-color-value">
-                <span nz-icon nzType="bg-colors"></span>
+                <span nz-icon nzType="highlight" nzTheme="outline"></span>
                 {{ customColorLabel }}
               </div>
             </div>

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -11,6 +11,8 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { Subject } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 
@@ -38,6 +40,13 @@ interface RolePermissionWorkspaceResponse {
   roles: RolePermissionResponse[];
   menuPermissions: PermissionResponse[];
   apiPermissions: PermissionResponse[];
+}
+
+interface PermissionPageResponse {
+  page: number;
+  size: number;
+  total: number;
+  items: PermissionResponse[];
 }
 
 interface MissingApiPermissionResponse {
@@ -76,16 +85,25 @@ export class AdminPermissionsComponent implements OnInit {
   savingPermission = false;
   deletingPermissionId: number | null = null;
 
+  // Dữ liệu bảng (phân trang BE)
   permissions: PermissionResponse[] = [];
-  filteredPermissions: PermissionResponse[] = [];
   roles: RolePermissionResponse[] = [];
   missingApiPermissions: MissingApiPermissionResponse[] = [];
+
+  // Thống kê tổng (lấy từ workspace)
+  totalMenuPermissions = 0;
+  totalApiPermissions = 0;
 
   searchText = '';
   filterType: PermissionFilterType = 'ALL';
 
+  // Phân trang BE
   pageIndex = 1;
-  pageSize = 12;
+  pageSize = 10;
+  total = 0;
+
+  // Subject debounce để tìm kiếm không gọi API liên tục khi gõ
+  private readonly searchSubject = new Subject<string>();
 
   isPermissionModalVisible = false;
   permissionModalMode: PermissionModalMode = 'create';
@@ -99,19 +117,30 @@ export class AdminPermissionsComponent implements OnInit {
   apiPath = '';
 
   ngOnInit(): void {
-    this.refreshAll();
+    // Khởi tạo debounce search 400ms để tối ưu UX
+    this.searchSubject.pipe(
+      debounceTime(400),
+      distinctUntilChanged()
+    ).subscribe(() => {
+      this.pageIndex = 1;
+      this.loadPermissions();
+    });
+
+    this.loadWorkspaceStats();
+    this.loadPermissions();
+    this.loadMissingApiPermissions();
   }
 
   get totalPermissions(): number {
-    return this.permissions.length;
+    return this.total;
   }
 
   get menuPermissionCount(): number {
-    return this.permissions.filter((permission) => permission.type === 'MENU').length;
+    return this.totalMenuPermissions;
   }
 
   get apiPermissionCount(): number {
-    return this.permissions.filter((permission) => permission.type === 'API').length;
+    return this.totalApiPermissions;
   }
 
   get missingApiPermissionCount(): number {
@@ -129,29 +158,52 @@ export class AdminPermissionsComponent implements OnInit {
   }
 
   refreshAll(): void {
-    this.loadWorkspace();
+    this.pageIndex = 1;
+    this.loadWorkspaceStats();
+    this.loadPermissions();
     this.loadMissingApiPermissions();
   }
 
-  loadWorkspace(): void {
-    this.loading = true;
+  /** Tải thống kê tổng (roles + tổng số permissions theo loại) từ workspace */
+  loadWorkspaceStats(): void {
     this.http.get<RolePermissionWorkspaceResponse>(`${API_CONFIG.GATEWAY_URL}/auth/roles/workspace`).subscribe({
       next: (workspace) => {
+        this.roles = [...(workspace.roles ?? [])].sort((a, b) => a.name.localeCompare(b.name));
+        this.totalMenuPermissions = (workspace.menuPermissions ?? []).length;
+        this.totalApiPermissions = (workspace.apiPermissions ?? []).length;
+      },
+      error: () => {
+        this.roles = [];
+        this.totalMenuPermissions = 0;
+        this.totalApiPermissions = 0;
+      }
+    });
+  }
+
+  /** Tải danh sách permissions từ Backend với phân trang */
+  loadPermissions(): void {
+    this.loading = true;
+    let params = new HttpParams()
+      .set('page', String(Math.max(this.pageIndex - 1, 0)))
+      .set('size', String(this.pageSize));
+
+    if (this.searchText.trim()) {
+      params = params.set('searchText', this.searchText.trim());
+    }
+    if (this.filterType !== 'ALL') {
+      params = params.set('type', this.filterType);
+    }
+
+    this.http.get<PermissionPageResponse>(`${API_CONFIG.GATEWAY_URL}/auth/roles/permissions`, { params }).subscribe({
+      next: (response) => {
         this.loading = false;
-
-        const roles = [...(workspace.roles ?? [])].sort((left, right) => left.name.localeCompare(right.name));
-        const menuPermissions = [...(workspace.menuPermissions ?? [])];
-        const apiPermissions = [...(workspace.apiPermissions ?? [])];
-
-        this.roles = roles;
-        this.permissions = [...menuPermissions, ...apiPermissions].sort((left, right) => left.name.localeCompare(right.name));
-        this.applyFilters();
+        this.permissions = response.items ?? [];
+        this.total = response.total ?? 0;
       },
       error: () => {
         this.loading = false;
         this.permissions = [];
-        this.filteredPermissions = [];
-        this.roles = [];
+        this.total = 0;
         this.message.error(this.i18n.translate('momApp.admin.permissions.messages.loadFailed'));
       }
     });
@@ -176,14 +228,24 @@ export class AdminPermissionsComponent implements OnInit {
 
   onSearchChange(value: string): void {
     this.searchText = value;
-    this.pageIndex = 1;
-    this.applyFilters();
+    this.searchSubject.next(value);
   }
 
   setFilterType(type: PermissionFilterType): void {
     this.filterType = type;
     this.pageIndex = 1;
-    this.applyFilters();
+    this.loadPermissions();
+  }
+
+  onPageIndexChange(page: number): void {
+    this.pageIndex = page;
+    this.loadPermissions();
+  }
+
+  onPageSizeChange(size: number): void {
+    this.pageSize = size;
+    this.pageIndex = 1;
+    this.loadPermissions();
   }
 
   openCreatePermissionModal(type: PermissionType): void {
@@ -330,31 +392,6 @@ export class AdminPermissionsComponent implements OnInit {
     this.apiMethod = candidate.method;
     this.apiPath = candidate.path;
     this.isPermissionModalVisible = true;
-  }
-
-  private applyFilters(): void {
-    const keyword = this.searchText.trim().toLowerCase();
-
-    this.filteredPermissions = this.permissions.filter((permission) => {
-      if (this.filterType !== 'ALL' && permission.type !== this.filterType) {
-        return false;
-      }
-
-      if (!keyword) {
-        return true;
-      }
-
-      const haystacks = [
-        permission.id.toString(),
-        permission.name,
-        permission.description ?? '',
-        permission.menuKey ?? '',
-        permission.apiMethod ?? '',
-        permission.apiPath ?? ''
-      ];
-
-      return haystacks.some((value) => value.toLowerCase().includes(keyword));
-    });
   }
 
   private buildCreatePayload(name: string): Record<string, string> {

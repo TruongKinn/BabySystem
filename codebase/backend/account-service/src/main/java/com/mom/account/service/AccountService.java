@@ -6,6 +6,7 @@ import com.mom.account.controller.dto.CreateUserRequest;
 import com.mom.account.controller.dto.FamilyMemberResponse;
 import com.mom.account.controller.dto.FamilyResponse;
 import com.mom.account.controller.dto.InviteFamilyMemberRequest;
+import com.mom.account.controller.dto.PageResponse;
 import com.mom.account.controller.dto.UpcomingBirthdayResponse;
 import com.mom.account.controller.dto.UpdateFamilyRequest;
 import com.mom.account.controller.dto.UpdatePreferencesRequest;
@@ -36,6 +37,8 @@ import com.lowagie.text.pdf.PdfPTable;
 import com.lowagie.text.pdf.PdfPCell;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
@@ -287,6 +290,22 @@ public class AccountService {
         return familyRepository.findAllByOrderByCreatedAtDesc().stream()
                 .map(this::buildFamilyResponse)
                 .toList();
+    }
+
+    public PageResponse<FamilyResponse> getAllFamiliesPageForAdmin(int page, int size, String searchText) {
+        ensureRequestAuthenticated();
+        String normalizedSearch = (searchText == null || searchText.isBlank()) ? null : searchText.trim();
+        PageRequest pageable = PageRequest.of(Math.max(page, 0), Math.max(size, 1));
+        Page<FamilyEntity> resultPage = familyRepository.searchFamilies(normalizedSearch, pageable);
+        List<FamilyResponse> items = resultPage.getContent().stream()
+                .map(this::buildFamilyResponse)
+                .toList();
+        return PageResponse.<FamilyResponse>builder()
+                .page(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .total(resultPage.getTotalElements())
+                .items(items)
+                .build();
     }
 
     @Transactional
