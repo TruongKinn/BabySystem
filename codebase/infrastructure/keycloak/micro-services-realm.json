@@ -2,6 +2,7 @@
   "realm": "micro-services",
   "enabled": true,
   "displayName": "Micro Services",
+  "loginTheme": "babysystem",
   "sslRequired": "none",
   "registrationAllowed": false,
   "loginWithEmailAllowed": true,

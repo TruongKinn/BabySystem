@@ -1,0 +1,316 @@
+/* ==========================================================================
+   KEYCLOAK CUSTOM LOGIN THEME — BabySystem
+   Synchronized with the latest premium Teal-Orange Auth Design
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap');
+
+/* --- Page Wrapper Override --- */
+html,
+body,
+.login-pf-page {
+  background:
+    linear-gradient(90deg, rgba(15, 118, 110, 0.05) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(234, 88, 12, 0.04) 1px, transparent 1px),
+    linear-gradient(135deg, #f8fafc 0%, #eef7f4 45%, #fff7ed 100%) !important;
+  background-size: 28px 28px, 28px 28px, auto !important;
+  font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, sans-serif !important;
+  color: #334155 !important;
+  min-height: 100vh;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 24px 16px !important;
+  box-sizing: border-box;
+}
+
+/* --- Hide Keycloak Default External Header --- */
+#kc-header {
+  display: none !important;
+}
+
+/* --- Card container override --- */
+.login-pf-page .card-pf {
+  width: 440px !important;
+  max-width: 100% !important;
+  padding: 36px 32px !important;
+  border-radius: 14px !important;
+  border: 1px solid rgba(15, 23, 42, 0.08) !important;
+  background: #ffffff !important;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.12) !important;
+  margin: 0 auto !important;
+  box-sizing: border-box !important;
+}
+
+/* --- Logo & Title container --- */
+#kc-header-wrapper {
+  text-align: center !important;
+  padding: 0 !important;
+  margin-bottom: 24px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+}
+
+/* Simulated Heart Brand Logo matching Admin sidebar */
+#kc-header-wrapper::before {
+  content: "❤️";
+  font-size: 20px;
+  width: 42px;
+  height: 42px;
+  border-radius: 11px;
+  background: linear-gradient(135deg, #0ea5e9, #2563eb, #0f766e);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.28);
+  margin-bottom: 12px;
+  color: white;
+}
+
+/* Keycloak Page Title */
+#kc-page-title {
+  font-family: 'Space Grotesk', 'Inter', sans-serif !important;
+  font-size: 24px !important;
+  font-weight: 850 !important;
+  letter-spacing: -0.025em !important;
+  color: #172033 !important;
+  margin: 0 0 6px 0 !important;
+  line-height: 1.2 !important;
+  text-align: center !important;
+}
+
+/* Subtitle description */
+.instruction {
+  font-size: 13.5px !important;
+  color: #64748b !important;
+  line-height: 1.6 !important;
+  margin: 0 0 16px 0 !important;
+  text-align: center !important;
+}
+
+/* --- Form Fields styling --- */
+.form-group {
+  margin-bottom: 16px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.form-group label {
+  color: #334155 !important;
+  font-weight: 750 !important;
+  font-size: 13px !important;
+  text-transform: none !important;
+  margin: 0 !important;
+  display: block !important;
+  text-align: left !important;
+  line-height: 1.4 !important;
+}
+
+.form-control {
+  height: 44px !important;
+  border-radius: 8px !important;
+  border: 1px solid #e2e8f0 !important;
+  background: #ffffff !important;
+  color: #172033 !important;
+  font-size: 14px !important;
+  padding: 0 14px !important;
+  box-shadow: none !important;
+  transition: border-color 0.16s ease, box-shadow 0.16s ease !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.form-control:focus {
+  border-color: #0f766e !important;
+  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12) !important;
+  outline: none !important;
+}
+
+/* --- Actions Options (Remember me & Forgot password) --- */
+#kc-form-options {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  margin-bottom: 20px !important;
+  font-size: 13px !important;
+}
+
+.checkbox label {
+  font-weight: 600 !important;
+  color: #334155 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  cursor: pointer !important;
+  user-select: none !important;
+}
+
+.checkbox input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid #cbd5e1;
+  accent-color: #0f766e;
+  cursor: pointer;
+}
+
+/* --- Submit Button styling --- */
+.btn-primary,
+#kc-login {
+  width: 100% !important;
+  height: 46px !important;
+  border: 0 !important;
+  border-radius: 8px !important;
+  background: #0f766e !important; /* Teal */
+  color: #ffffff !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0 !important;
+  box-shadow: 0 8px 18px rgba(15, 118, 110, 0.16) !important;
+  cursor: pointer !important;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, background-color 0.16s ease !important;
+  box-sizing: border-box !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-transform: none !important;
+  font-family: inherit !important;
+}
+
+.btn-primary:hover:not([disabled]),
+#kc-login:hover:not([disabled]) {
+  background: #115e59 !important;
+  box-shadow: 0 12px 24px rgba(15, 118, 110, 0.22) !important;
+  transform: translateY(-1px) !important;
+}
+
+.btn-primary:active,
+#kc-login:active {
+  transform: translateY(0) !important;
+}
+
+.btn-primary:disabled,
+#kc-login:disabled {
+  background: #cbd5e1 !important;
+  box-shadow: none !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+/* --- Links (Global override) --- */
+a,
+.login-pf-page a {
+  color: #0f766e !important;
+  font-weight: 700 !important;
+  text-decoration: none !important;
+  font-size: 13.5px !important;
+  transition: color 0.16s ease !important;
+}
+
+a:hover,
+.login-pf-page a:hover {
+  color: #115e59 !important;
+  text-decoration: underline !important;
+}
+
+/* --- Register link / Info Footer --- */
+#kc-info {
+  margin-top: 18px !important;
+  padding-top: 16px !important;
+  border-top: 1px solid #e2e8f0 !important;
+  text-align: center !important;
+  color: #64748b !important;
+  font-size: 13px !important;
+}
+
+#kc-info-wrapper {
+  padding: 0 !important;
+}
+
+/* --- Alert Messages styling (Errors, Warnings) --- */
+.alert {
+  padding: 12px 14px !important;
+  border-radius: 8px !important;
+  margin-bottom: 16px !important;
+  font-size: 13px !important;
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 10px !important;
+  border: 1px solid transparent !important;
+}
+
+.alert-error {
+  background-color: #fef2f2 !important;
+  border-color: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+.alert-warning {
+  background-color: #fffbeb !important;
+  border-color: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+.alert-success {
+  background-color: #f0fdf4 !important;
+  border-color: #dcfce7 !important;
+  color: #166534 !important;
+}
+
+.alert span.kc-feedback-text {
+  font-weight: 600 !important;
+}
+
+/* Remove default Patternfly icons if they clutter */
+.alert .pficon {
+  display: none !important;
+}
+
+/* --- Dark Theme Support (Keycloak) --- */
+.dark-theme html,
+.dark-theme body,
+.dark-theme .login-pf-page {
+  background:
+    linear-gradient(90deg, rgba(20, 184, 166, 0.06) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(249, 115, 22, 0.06) 1px, transparent 1px),
+    #0f172a !important;
+  background-size: 28px 28px, 28px 28px, auto !important;
+  color: #cbd5e1 !important;
+}
+
+.dark-theme .login-pf-page .card-pf {
+  background: #121826 !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.4) !important;
+}
+
+.dark-theme #kc-page-title {
+  color: #f8fafc !important;
+}
+
+.dark-theme .form-group label {
+  color: #cbd5e1 !important;
+}
+
+.dark-theme .form-control {
+  border-color: rgba(148, 163, 184, 0.24) !important;
+  background: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+.dark-theme .form-control:focus {
+  border-color: #0f766e !important;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15) !important;
+}
+
+.dark-theme .checkbox label {
+  color: #cbd5e1 !important;
+}
+
+.dark-theme #kc-info {
+  border-top-color: rgba(255, 255, 255, 0.06) !important;
+  color: #94a3b8 !important;
+}
