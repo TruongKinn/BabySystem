@@ -2363,31 +2363,56 @@ body {
 .theme-accent-custom .admin-theme, .theme-accent-custom.admin-theme { --primary-color: var(--custom-theme-primary); }
 
 .ant-pagination {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
   font-family: 'Space Grotesk', 'Inter', sans-serif !important;
 }
 
-/* Pagination Items (Numbers, arrows) */
+/* Pagination Items (Numbers, arrows) - Borderless Premium Stripe Style */
 .ant-pagination-item,
 .ant-pagination-prev,
 .ant-pagination-next,
 .ant-pagination-jump-prev,
 .ant-pagination-jump-next {
-  min-width: 38px !important;
-  height: 38px !important;
-  line-height: 36px !important;
-  border-radius: var(--user-btn-radius, 10px) !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  background: #ffffff !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+  min-width: 34px !important;
+  height: 34px !important;
+  line-height: 34px !important;
+  border-radius: var(--user-btn-radius, 8px) !important;
+  border: none !important;
+  background: transparent !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 3px !important;
+  box-shadow: none !important;
   cursor: pointer;
+}
+
+/* Clear default Ant Design borders, backgrounds and border-radius on prev/next button link contents */
+.ant-pagination-prev .ant-pagination-item-link,
+.ant-pagination-next .ant-pagination-item-link,
+.ant-pagination-prev button,
+.ant-pagination-next button {
+  border: none !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: var(--user-btn-radius, 8px) !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  color: var(--text-secondary, #475569) !important;
+}
+
+.ant-pagination-prev:hover .ant-pagination-item-link,
+.ant-pagination-next:hover .ant-pagination-item-link,
+.ant-pagination-prev:hover button,
+.ant-pagination-next:hover button {
+  color: var(--primary-color, #0f766e) !important;
 }
 
 .ant-pagination-item a {
@@ -2395,9 +2420,9 @@ body {
   font-weight: 600 !important;
   font-size: 13.5px !important;
   transition: color 0.3s ease !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   width: 100%;
   height: 100%;
 }
@@ -2409,37 +2434,21 @@ body {
   border-color: var(--primary-color, #0f766e) !important;
   background: rgba(15, 118, 110, 0.04) !important;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(15, 118, 110, 0.12) !important;
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--primary-color, #0f766e) 15%, transparent) !important;
 }
 
-/* Specific hover accents based on primary color */
-.theme-accent-blue .ant-pagination-item:hover,
-.theme-accent-blue .ant-pagination-prev:hover,
-.theme-accent-blue .ant-pagination-next:hover { background: rgba(37, 99, 235, 0.04) !important; box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12) !important; }
-.theme-accent-emerald .ant-pagination-item:hover,
-.theme-accent-emerald .ant-pagination-prev:hover,
-.theme-accent-emerald .ant-pagination-next:hover { background: rgba(5, 150, 105, 0.04) !important; box-shadow: 0 6px 16px rgba(5, 150, 105, 0.12) !important; }
-.theme-accent-violet .ant-pagination-item:hover,
-.theme-accent-violet .ant-pagination-prev:hover,
-.theme-accent-violet .ant-pagination-next:hover { background: rgba(124, 58, 237, 0.04) !important; box-shadow: 0 6px 16px rgba(124, 58, 237, 0.12) !important; }
-
+/* Hover accents based on primary color */
 .ant-pagination-item:hover a {
   color: var(--primary-color, #0f766e) !important;
 }
 
-/* Active State (Selected Page) */
+/* Active State (Selected Page) - Vibrant accent color with soft glow */
 .ant-pagination-item-active {
   background: var(--primary-color, #0f766e) !important;
-  border-color: var(--primary-color, #0f766e) !important;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(15, 118, 110, 0.3) !important;
+  border: none !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--primary-color, #0f766e) 30%, transparent) !important;
 }
-
-/* Active shadows based on primary color */
-.theme-accent-blue .ant-pagination-item-active { box-shadow: 0 6px 20px rgba(37, 99, 235, 0.3) !important; }
-.theme-accent-emerald .ant-pagination-item-active { box-shadow: 0 6px 20px rgba(5, 150, 105, 0.3) !important; }
-.theme-accent-violet .ant-pagination-item-active { box-shadow: 0 6px 20px rgba(124, 58, 237, 0.3) !important; }
-.theme-accent-custom .ant-pagination-item-active { box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important; }
 
 .ant-pagination-item-active a {
   color: #ffffff !important;
@@ -2448,18 +2457,16 @@ body {
 
 .ant-pagination-item-active:hover {
   background: var(--primary-color, #0f766e) !important;
-  border-color: var(--primary-color, #0f766e) !important;
 }
 
 .ant-pagination-item-active:hover a {
   color: #ffffff !important;
 }
 
-/* Disabled state */
+/* Disabled state - Clean and subtle */
 .ant-pagination-disabled,
 .ant-pagination-disabled:hover {
-  border-color: rgba(0, 0, 0, 0.04) !important;
-  background: #f8fafc !important;
+  background: transparent !important;
   cursor: not-allowed !important;
   transform: none !important;
   box-shadow: none !important;
@@ -2467,12 +2474,13 @@ body {
 
 .ant-pagination-disabled .ant-pagination-item-link,
 .ant-pagination-disabled:hover .ant-pagination-item-link {
-  color: var(--text-muted, #94a3b8) !important;
+  color: var(--text-muted, #cbd5e1) !important;
+  opacity: 0.4;
 }
 
 /* Page Size Changer (Select container) */
 .ant-pagination-options {
-  margin-left: 16px !important;
+  margin-left: 12px !important;
   display: inline-flex;
   align-items: center;
 }
@@ -2486,12 +2494,12 @@ body {
   height: 38px !important;
   padding: 0 14px !important;
   border-radius: var(--user-btn-radius, 10px) !important;
-  border: 1px solid rgba(0, 0, 0, 0.08) !important;
-  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
+  background: rgba(15, 23, 42, 0.02) !important;
   display: flex !important;
   align-items: center !important;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+  box-shadow: none !important;
 }
 
 .ant-pagination-options-size-changer .ant-select-selection-item {
@@ -2503,16 +2511,15 @@ body {
 
 .ant-pagination-options-size-changer:hover .ant-select-selector {
   border-color: var(--primary-color, #0f766e) !important;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(15, 118, 110, 0.08) !important;
+  background: #ffffff !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--primary-color, #0f766e) 15%, transparent) !important;
 }
-
-.theme-accent-blue .ant-pagination-options-size-changer:hover .ant-select-selector { box-shadow: 0 4px 12px rgba(37, 99, 235, 0.08) !important; }
-.theme-accent-emerald .ant-pagination-options-size-changer:hover .ant-select-selector { box-shadow: 0 4px 12px rgba(5, 150, 105, 0.08) !important; }
 
 .ant-pagination-options-size-changer.ant-select-focused .ant-select-selector {
   border-color: var(--primary-color, #0f766e) !important;
-  box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.12) !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary-color, #0f766e) 15%, transparent) !important;
 }
 
 .ant-pagination-options-size-changer .ant-select-arrow {
@@ -2530,25 +2537,24 @@ body {
 .dark-theme .ant-pagination-prev,
 .dark-theme .ant-pagination-next,
 .dark-theme .ant-pagination-jump-prev,
-.dark-theme .dark-theme .ant-pagination-jump-next {
-  background: #1e293b !important;
-  border-color: rgba(148, 163, 184, 0.12) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+.dark-theme .ant-pagination-jump-next {
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .dark-theme .ant-pagination-item a {
-  color: #cbd5e1 !important;
+  color: #94a3b8 !important;
 }
 
 .dark-theme .ant-pagination-item:hover,
 .dark-theme .ant-pagination-prev:hover,
 .dark-theme .ant-pagination-next:hover {
-  background: rgba(255, 255, 255, 0.03) !important;
+  background: rgba(255, 255, 255, 0.06) !important;
 }
 
 .dark-theme .ant-pagination-item-active {
   background: var(--primary-color, #0f766e) !important;
-  border-color: var(--primary-color, #0f766e) !important;
+  box-shadow: 0 6px 16px color-mix(in srgb, var(--primary-color, #0f766e) 30%, transparent) !important;
 }
 
 .dark-theme .ant-pagination-item-active a {
@@ -2557,8 +2563,7 @@ body {
 
 .dark-theme .ant-pagination-disabled,
 .dark-theme .ant-pagination-disabled:hover {
-  background: #0f172a !important;
-  border-color: rgba(148, 163, 184, 0.04) !important;
+  background: transparent !important;
 }
 
 .dark-theme .ant-pagination-disabled .ant-pagination-item-link {
@@ -2566,11 +2571,15 @@ body {
 }
 
 .dark-theme .ant-pagination-options-size-changer .ant-select-selector {
-  background: #1e293b !important;
-  border-color: rgba(148, 163, 184, 0.12) !important;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: rgba(255, 255, 255, 0.06) !important;
 }
 
 .dark-theme .ant-pagination-options-size-changer .ant-select-selection-item {
   color: #cbd5e1 !important;
+}
+
+.dark-theme .ant-pagination-options-size-changer:hover .ant-select-selector,
+.dark-theme .ant-pagination-options-size-changer.ant-select-focused .ant-select-selector {
+  background: #1e293b !important;
 }
