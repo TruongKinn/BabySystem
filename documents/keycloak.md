@@ -106,3 +106,62 @@ Client dành cho ứng dụng Frontend SPA (Angular) được cấu hình với 
 * **Redirect URIs**: Cho phép chuyển hướng về trang phát triển local `http://localhost:4200/*`
 * **Web Origins**: Cho phép CORS từ `http://localhost:4200`
 * **Default Scopes**: `web-origins`, `profile`, `roles`, `email`
+
+---
+
+## 5. Cấu Hình Custom Theme Đăng Nhập (babysystem)
+
+Hệ thống sử dụng một Custom Theme của Keycloak (tên là `babysystem`) để đồng bộ giao diện đăng nhập SSO tập trung của Keycloak với phong cách thiết kế hiện đại của ứng dụng chính (tông màu xanh Teal `#0f766e` chủ đạo và màu cam nhấn `#ea580c`).
+
+### 5.1. Cấu trúc thư mục của Theme trong Project
+Tất cả các tài nguyên giao diện của custom theme được lưu trữ tại đường dẫn sau trong dự án:
+```text
+codebase/infrastructure/keycloak/themes/babysystem/
+└── login/
+    ├── theme.properties
+    └── resources/
+        └── css/
+            └── login.css
+```
+
+* **`theme.properties`**: Định nghĩa cấu hình kế thừa từ theme `keycloak` mặc định và khai báo CSS file tùy biến:
+  ```properties
+  parent=keycloak
+  import=common/keycloak
+  styles=css/login.css
+  ```
+* **`login.css`**: Chứa toàn bộ mã CSS ghi đè giao diện đăng nhập mặc định của Keycloak, bao gồm:
+  - Nền lưới tọa độ mịn, gradient Teal-Cam nhạt đồng nhất với ứng dụng.
+  - Card chứa form bo góc 14px, shadow 3 tầng sâu, nền trắng tinh khiết.
+  - Logo hình trái tim giả lập màu đỏ trên nền gradient xanh da trời (đồng điệu với sidebar).
+  - Inputs cao 44px, bo góc 8px, focus ring màu xanh Teal mượt mà.
+  - Submit Button màu xanh Teal đậm, hover nhô lên kèm shadow óng ánh.
+  - Hỗ trợ đầy đủ hiển thị Responsive và Dark Theme (`.dark-theme`).
+
+### 5.2. Cách thức triển khai và mount Container
+Dịch vụ Keycloak trong `docker-compose.yml` được mount thêm thư mục chứa theme tùy chỉnh thông qua volume:
+```yaml
+  keycloak:
+    ...
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+      - ./keycloak:/opt/keycloak/data/import
+      - ./keycloak/themes:/opt/keycloak/themes  # Volume mount cho custom themes
+```
+
+### 5.3. Áp dụng Theme tự động qua Realm
+Theme được tự động kích hoạt cho realm `micro-services` thông qua thuộc tính `"loginTheme"` trong file cấu hình Realm [micro-services-realm.json](file:///d:/AI-AGENT/BabySystem/codebase/infrastructure/keycloak/micro-services-realm.json):
+```json
+{
+  "realm": "micro-services",
+  "enabled": true,
+  "displayName": "Micro Services",
+  "loginTheme": "babysystem",  // Áp dụng custom theme babysystem
+  ...
+}
+```
+
+### 5.4. Hướng dẫn bảo trì và tùy biến thêm
+Khi có nhu cầu thay đổi giao diện trang đăng nhập Keycloak:
+1. Bạn chỉnh sửa trực tiếp mã CSS tại tệp tin [login.css](file:///d:/AI-AGENT/BabySystem/codebase/infrastructure/keycloak/themes/babysystem/login/resources/css/login.css).
+2. Do thư mục `themes` được mount dạng Live (Host sang Container), các thay đổi CSS sẽ được áp dụng ngay lập tức mà **không cần khởi động lại container Keycloak**. Bạn chỉ cần nhấn `F5` hoặc xóa cache trình duyệt để kiểm tra trực quan.
