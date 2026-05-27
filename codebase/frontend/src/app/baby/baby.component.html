@@ -174,25 +174,41 @@
       ></nz-empty>
 
       <div class="baby-log-list" *ngIf="!isLoadingSelectedDateLogs && selectedDateLogs.length > 0">
-        <div class="baby-log-item" *ngFor="let log of selectedDateLogs">
-          <div
-            class="baby-log-icon"
-            [class.log-icon-sleep]="log.logType === 'SLEEP'"
-            [class.log-icon-feeding]="log.logType === 'FEEDING'"
-            [class.log-icon-diaper]="log.logType === 'DIAPER'"
-          >
-            <span nz-icon [nzType]="logTypeIcon(log.logType)"></span>
-          </div>
-
-          <div class="baby-log-content">
-            <div class="baby-log-top">
-              <span class="baby-log-type">{{ logTypeLabel(log.logType) }}</span>
-              <span class="baby-log-time">{{ formatDateTime(log.loggedAt) }}</span>
+        <div class="baby-log-wrapper" *ngFor="let log of selectedDateLogs" style="margin-bottom: 16px; width: 100%;">
+          <div class="baby-log-item" style="display: flex; align-items: center; width: 100%;">
+            <div
+              class="baby-log-icon"
+              [class.log-icon-sleep]="log.logType === 'SLEEP'"
+              [class.log-icon-feeding]="log.logType === 'FEEDING'"
+              [class.log-icon-diaper]="log.logType === 'DIAPER'"
+            >
+              <span nz-icon [nzType]="logTypeIcon(log.logType)"></span>
             </div>
-            <div class="baby-log-note">{{ log.note || ('momApp.common.notAvailable' | translate) }}</div>
+
+            <div class="baby-log-content" style="flex-grow: 1;">
+              <div class="baby-log-top">
+                <span class="baby-log-type">{{ logTypeLabel(log.logType) }}</span>
+                <span class="baby-log-time">{{ formatDateTime(log.loggedAt) }}</span>
+              </div>
+              <div class="baby-log-note">{{ log.note || ('momApp.common.notAvailable' | translate) }}</div>
+            </div>
+
+            <div class="baby-log-value" *ngIf="log.value !== null && log.value !== undefined" style="margin-right: 12px;">{{ log.value }}</div>
+            
+            <!-- Nút bật/tắt xem bình luận -->
+            <button nz-button nzType="text" class="btn-comment-toggle" (click)="toggleComments(log)" style="color: var(--color-primary, #f97316); display: flex; align-items: center; gap: 4px; padding: 4px 8px;">
+              <span nz-icon nzType="message" nzTheme="outline"></span>
+              <span>{{ 'momApp.baby.comments.btnTitle' | translate }}</span>
+            </button>
           </div>
 
-          <div class="baby-log-value" *ngIf="log.value !== null && log.value !== undefined">{{ log.value }}</div>
+          <!-- KHỐI BÌNH LUẬN MỚI (PHÂN CẤP, BIỂU CẢM & NHẮC TÊN) -->
+          <app-baby-comments
+            *ngIf="expandedComments[log.id]"
+            [logId]="log.id"
+            [babyId]="selectedBabyId || 0"
+            [familyMembers]="familyMembers"
+          ></app-baby-comments>
         </div>
       </div>
     </nz-card>

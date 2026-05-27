@@ -1,0 +1,255 @@
+<div class="baby-comments-container">
+  
+  <!-- Trạng thái đang tải bình luận -->
+  <div *ngIf="isLoading" class="spinner-container">
+    <nz-spin nzSimple nzSize="small"></nz-spin>
+  </div>
+
+  <!-- Danh sách các bình luận -->
+  <div class="comments-list-section" *ngIf="!isLoading">
+    
+    <!-- Render danh sách bình luận (chỉ những comment gốc, parentId === null) -->
+    <ng-container *ngFor="let comment of comments">
+      <div class="comment-thread" *ngIf="!comment.parentId">
+        
+        <!-- BÌNH LUẬN GỐC (CẤP 1) -->
+        <div class="comment-block root-comment animate-fade-in">
+          <!-- Avatar -->
+          <div class="avatar-wrap">
+            <img *ngIf="getCommenterAvatar(comment.userId) as avatar; else avatarFallback" [src]="avatar" [alt]="getCommenterName(comment.userId)" class="avatar-img" />
+            <ng-template #avatarFallback>
+              <span nz-icon nzType="user" class="avatar-icon"></span>
+            </ng-template>
+          </div>
+          
+          <!-- Nội dung & Tương tác -->
+          <div class="comment-content-wrap">
+            <div class="comment-bubble">
+              <div class="bubble-header">
+                <span class="user-name">{{ getCommenterName(comment.userId) }}</span>
+                <nz-tag *ngIf="getCommenterRole(comment.userId) as role" nzColor="orange" class="role-tag">{{ role }}</nz-tag>
+              </div>
+              <p class="comment-text">{{ comment.content }}</p>
+              
+              <!-- Badge thống kê reactions lồng trong bubble góc dưới bên phải -->
+              <div class="reaction-stats-badge" *ngIf="getTotalReactions(comment.reactionCounts) > 0">
+                <span class="reaction-emojis">
+                  <span class="emoji-item" *ngFor="let react of getTopReactions(comment.reactionCounts)" [style.color]="react.color" [title]="react.labelKey | translate">
+                    {{ react.emoji }}
+                  </span>
+                </span>
+                <span class="reaction-count-text">{{ getTotalReactions(comment.reactionCounts) }}</span>
+              </div>
+            </div>
+            
+            <!-- Hàng nút chức năng bên dưới bong bóng chat -->
+            <div class="comment-actions">
+              <!-- Nút Thích tích hợp Reactions Popover -->
+              <div class="like-button-container">
+                <button class="action-btn like-btn" [class.active-like]="comment.myReaction" (click)="toggleLike(comment)">
+                  <span *ngIf="getReactionInfo(comment.myReaction) as activeReact; else defaultLikeIcon" [style.color]="activeReact.color" class="active-react-display animate-bounce-in">
+                    <span class="react-emoji-icon">{{ activeReact.emoji }}</span>
+                    <span>{{ activeReact.labelKey | translate }}</span>
+                  </span>
+                  <ng-template #defaultLikeIcon>
+                    <span nz-icon nzType="like" nzTheme="outline"></span>
+                    <span>{{ 'momApp.baby.comments.reactions.like' | translate }}</span>
+                  </ng-template>
+                </button>
+                
+                <!-- Thanh Reactions Popover Bar bay nổi lên khi hover -->
+                <div class="reactions-popover-bar">
+                  <div class="reaction-item-option" *ngFor="let react of reactionsList" (click)="reactComment(comment, react.type)">
+                    <span class="reaction-emoji">{{ react.emoji }}</span>
+                    <span class="reaction-tooltip">{{ react.labelKey | translate }}</span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Nút Trả lời -->
+              <button class="action-btn reply-btn" (click)="openReplyForm(comment.id)">
+                <span nz-icon nzType="message" nzTheme="outline"></span>
+                <span>{{ 'momApp.baby.comments.reply' | translate }}</span>
+              </button>
+              
+              <!-- Thời gian tạo -->
+              <span class="comment-time">{{ formatDateTime(comment.createdAt) }}</span>
+              
+              <!-- Nút Xóa (chỉ hiển thị khi có quyền) -->
+              <button *ngIf="canDeleteComment(comment.userId)" class="delete-btn" (click)="deleteComment(comment.id)" [title]="'momApp.baby.comments.delete' | translate">
+                <span nz-icon nzType="delete"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- DANH SÁCH BÌNH LUẬN CON (CẤP 2) - THỤT LỀ 32PX -->
+        <div class="replies-list-container" *ngIf="comment.replies && comment.replies.length > 0">
+          <div class="comment-block reply-comment animate-fade-in" *ngFor="let reply of comment.replies">
+            <!-- Avatar con -->
+            <div class="avatar-wrap avatar-wrap--small">
+              <img *ngIf="getCommenterAvatar(reply.userId) as avatar; else avatarFallbackSmall" [src]="avatar" [alt]="getCommenterName(reply.userId)" class="avatar-img" />
+              <ng-template #avatarFallbackSmall>
+                <span nz-icon nzType="user" class="avatar-icon"></span>
+              </ng-template>
+            </div>
+            
+            <!-- Nội dung con -->
+            <div class="comment-content-wrap">
+              <div class="comment-bubble">
+                <div class="bubble-header">
+                  <span class="user-name">{{ getCommenterName(reply.userId) }}</span>
+                  <nz-tag *ngIf="getCommenterRole(reply.userId) as role" nzColor="orange" class="role-tag">{{ role }}</nz-tag>
+                </div>
+                <p class="comment-text">{{ reply.content }}</p>
+                
+                <!-- Badge reactions cho comment con -->
+                <div class="reaction-stats-badge" *ngIf="getTotalReactions(reply.reactionCounts) > 0">
+                  <span class="reaction-emojis">
+                    <span class="emoji-item" *ngFor="let react of getTopReactions(reply.reactionCounts)" [style.color]="react.color">
+                      {{ react.emoji }}
+                    </span>
+                  </span>
+                  <span class="reaction-count-text">{{ getTotalReactions(reply.reactionCounts) }}</span>
+                </div>
+              </div>
+              
+              <!-- Hàng nút chức năng cho comment con -->
+              <div class="comment-actions">
+                <!-- Nút thích cho comment con -->
+                <div class="like-button-container">
+                  <button class="action-btn like-btn" [class.active-like]="reply.myReaction" (click)="toggleLike(reply)">
+                    <span *ngIf="getReactionInfo(reply.myReaction) as activeReact; else defaultLikeIconReply" [style.color]="activeReact.color" class="active-react-display animate-bounce-in">
+                      <span class="react-emoji-icon">{{ activeReact.emoji }}</span>
+                      <span>{{ activeReact.labelKey | translate }}</span>
+                    </span>
+                    <ng-template #defaultLikeIconReply>
+                      <span nz-icon nzType="like" nzTheme="outline"></span>
+                      <span>{{ 'momApp.baby.comments.reactions.like' | translate }}</span>
+                    </ng-template>
+                  </button>
+                  
+                  <div class="reactions-popover-bar">
+                    <div class="reaction-item-option" *ngFor="let react of reactionsList" (click)="reactComment(reply, react.type)">
+                      <span class="reaction-emoji">{{ react.emoji }}</span>
+                      <span class="reaction-tooltip">{{ react.labelKey | translate }}</span>
+                    </div>
+                  </div>
+                </div>
+                
+                <!-- Nút Trả lời cho comment con (sẽ tự động tag tên người đó và reply lên comment gốc) -->
+                <button class="action-btn reply-btn" (click)="openReplyForm(comment.id)">
+                  <span nz-icon nzType="message" nzTheme="outline"></span>
+                  <span>{{ 'momApp.baby.comments.reply' | translate }}</span>
+                </button>
+                
+                <span class="comment-time">{{ formatDateTime(reply.createdAt) }}</span>
+                
+                <!-- Nút Xóa comment con -->
+                <button *ngIf="canDeleteComment(reply.userId)" class="delete-btn" (click)="deleteComment(reply.id)" [title]="'momApp.baby.comments.delete' | translate">
+                  <span nz-icon nzType="delete"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- FORM NHẬP REPLY CHO COMMENT GỐC NÀY -->
+        <div class="comment-reply-form animate-slide-up" *ngIf="activeReplyFormId === comment.id">
+          <div class="avatar-wrap avatar-wrap--small">
+            <span nz-icon nzType="user" class="avatar-icon"></span>
+          </div>
+          
+          <div class="form-input-wrap">
+            <input
+              #replyInputEl
+              nz-input
+              [(ngModel)]="replyInputs[comment.id]"
+              [placeholder]="'momApp.baby.comments.replyPlaceholder' | translate"
+              (input)="onInput($event, comment.id)"
+              (keyup.enter)="submitReply(comment.id)"
+              [disabled]="isSubmittingReply[comment.id]"
+              class="comments-input"
+            />
+            <button
+              nz-button
+              nzType="primary"
+              class="btn-user-primary submit-btn-small"
+              [nzLoading]="isSubmittingReply[comment.id]"
+              (click)="submitReply(comment.id)"
+            >
+              <span nz-icon nzType="send" nzTheme="outline"></span>
+            </button>
+
+            <!-- Dropdown gợi ý Nhắc tên (Mention Dropdown) dưới ô Reply -->
+            <div class="mention-dropdown-menu" *ngIf="showMentionDropdown && activeInputId === comment.id && filteredMembers.length > 0">
+              <div class="mention-item" *ngFor="let member of filteredMembers" (click)="selectMember(member, replyInputEl)">
+                <div class="mention-avatar-wrap">
+                  <img *ngIf="member.avatarUrl; else mentionAvatarFallback" [src]="member.avatarUrl" [alt]="member.displayName" class="mention-avatar" />
+                  <ng-template #mentionAvatarFallback>
+                    <span nz-icon nzType="user"></span>
+                  </ng-template>
+                </div>
+                <div class="mention-info">
+                  <span class="mention-name">{{ member.displayName }}</span>
+                  <span class="mention-role">{{ 'momApp.family.role.' + member.role | translate }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
+
+    <!-- Trạng thái trống (Chưa có comment) -->
+    <div class="comments-empty-state animate-fade-in" *ngIf="comments.length === 0">
+      <span nz-icon nzType="message" class="empty-icon"></span>
+      <p>{{ 'momApp.baby.comments.empty' | translate }}</p>
+    </div>
+
+  </div>
+
+  <!-- FORM GỬI BÌNH LUẬN MỚI TOÀN CỤC -->
+  <div class="comment-compose-section animate-fade-in">
+    <div class="form-input-wrap">
+      <input
+        #newCommentInputEl
+        nz-input
+        [(ngModel)]="newCommentText"
+        [placeholder]="'momApp.baby.comments.placeholder' | translate"
+        (input)="onInput($event, 'new')"
+        (keyup.enter)="submitNewComment()"
+        [disabled]="isSubmittingNewComment"
+        class="comments-input comments-input--large"
+      />
+      <button
+        nz-button
+        nzType="primary"
+        class="btn-user-primary submit-btn-large"
+        [nzLoading]="isSubmittingNewComment"
+        (click)="submitNewComment()"
+      >
+        <span nz-icon nzType="send" nzTheme="outline"></span>
+        <span>{{ 'momApp.baby.comments.submit' | translate }}</span>
+      </button>
+
+      <!-- Dropdown gợi ý Nhắc tên (Mention Dropdown) dưới ô New Comment -->
+      <div class="mention-dropdown-menu" *ngIf="showMentionDropdown && activeInputId === 'new' && filteredMembers.length > 0">
+        <div class="mention-item" *ngFor="let member of filteredMembers" (click)="selectMember(member, newCommentInputEl)">
+          <div class="mention-avatar-wrap">
+            <img *ngIf="member.avatarUrl; else newMentionAvatarFallback" [src]="member.avatarUrl" [alt]="member.displayName" class="mention-avatar" />
+            <ng-template #newMentionAvatarFallback>
+              <span nz-icon nzType="user"></span>
+            </ng-template>
+          </div>
+          <div class="mention-info">
+            <span class="mention-name">{{ member.displayName }}</span>
+            <span class="mention-role">{{ 'momApp.family.role.' + member.role | translate }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>

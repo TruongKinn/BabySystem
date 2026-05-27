@@ -70,6 +70,18 @@ export interface BabyCareTrendPoint {
   totalLogs: number;
 }
 
+export interface BabyLogComment {
+  id: number;
+  babyLogId: number;
+  userId: number;
+  content: string;
+  createdAt: string;
+  parentId: number | null;
+  replies?: BabyLogComment[];
+  reactionCounts?: Record<string, number>;
+  myReaction?: string | null;
+}
+
 export interface BabyGrowthRecord {
   id: number;
   babyId: number;
@@ -843,6 +855,55 @@ export class SuperAppCommandService {
       params = params.set('date', date.trim());
     }
     return this.get<BabyLogEntry[]>(`/baby/babies/${babyId}/logs`, params);
+  }
+
+  getBabyLogComments(logId: number): Observable<BabyLogComment[]> {
+    return this.get<BabyLogComment[]>(`/baby/babies/logs/${logId}/comments`);
+  }
+
+  createBabyLogComment(logId: number, content: string, parentId?: number | null, taggedUserIds?: number[]): Observable<BabyLogComment> {
+    return this.post<BabyLogComment>(`/baby/babies/logs/${logId}/comments`, { 
+      content,
+      parentId: parentId || null,
+      taggedUserIds: taggedUserIds || []
+    });
+  }
+
+  deleteBabyLogComment(commentId: number): Observable<void> {
+    return this.http
+      .delete<ApiEnvelope<unknown>>(`${this.apiBase}/baby/babies/logs/comments/${commentId}`)
+      .pipe(
+        map((response) => {
+          if (!response.success) throw new Error(response.message || 'API error');
+          return undefined;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  reactBabyLogComment(commentId: number, reactionType: string): Observable<void> {
+    const params = new HttpParams().set('type', reactionType);
+    return this.http
+      .post<ApiEnvelope<void>>(`${this.apiBase}/baby/babies/logs/comments/${commentId}/react`, {}, { params })
+      .pipe(
+        map((response) => {
+          if (!response.success) throw new Error(response.message || 'API error');
+          return undefined;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
+  unreactBabyLogComment(commentId: number): Observable<void> {
+    return this.http
+      .delete<ApiEnvelope<unknown>>(`${this.apiBase}/baby/babies/logs/comments/${commentId}/react`)
+      .pipe(
+        map((response) => {
+          if (!response.success) throw new Error(response.message || 'API error');
+          return undefined;
+        }),
+        catchError(this.handleError)
+      );
   }
 
   getVaccinations(babyId: number): Observable<BabyVaccination[]> {

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { BehaviorSubject, catchError, forkJoin, map, of, shareReplay, switchMap, tap } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -28,10 +28,14 @@ import {
   ResolvedPremiumFeature,
   BabyVaccination,
   FileMetadata,
-  SuperAppCommandService
+  SuperAppCommandService,
+  BabyLogComment,
+  FamilyMemberProfile
 } from '../core/services/super-app-command.service';
 import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
 import { I18nService } from '../i18n/i18n.service';
+
+import { BabyCommentsComponent } from './baby-comments.component';
 
 interface GalleryFileView extends FileMetadata {
   previewUrl: string | null;
@@ -42,6 +46,7 @@ interface GalleryFileView extends FileMetadata {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     TranslateModule,
     NzCardModule,
@@ -55,7 +60,8 @@ interface GalleryFileView extends FileMetadata {
     NzSpinModule,
     NzEmptyModule,
     NzImageModule,
-    NzTagModule
+    NzTagModule,
+    BabyCommentsComponent
   ],
   templateUrl: './baby.component.html',
   styleUrl: './baby.component.css'
@@ -130,6 +136,15 @@ export class BabyComponent {
   galleryFiles: GalleryFileView[] = [];
   selectedBabyAvatarUrl: string | null = null;
 
+  familyMembers: FamilyMemberProfile[] = [];
+  currentUserId: number | null = null;
+  
+  expandedComments: Record<number, boolean> = {};
+  commentsByLogId: Record<number, BabyLogComment[]> = {};
+  commentsLoading: Record<number, boolean> = {};
+  commentInputs: Record<number, string> = {};
+  isSubmittingComment: Record<number, boolean> = {};
+
   readonly selectedBabyControl = this.fb.control<number | null>(null);
   readonly selectedDateControl = this.fb.control<Date>(new Date(), { nonNullable: true });
 
@@ -162,6 +177,8 @@ export class BabyComponent {
   });
 
   constructor() {
+    this.loadFamilyMembersAndUser();
+
     this.selectedBabyControl.valueChanges.pipe(takeUntilDestroyed(this.destroyRef)).subscribe((babyId) => {
       if (!babyId) {
         this.resetSelectedBabyState();
@@ -938,6 +955,113 @@ export class BabyComponent {
           this.galleryLoadError = err?.message || this.i18n.translate('momApp.baby.gallery.messages.loadFailed');
         }
       });
+  }
+
+  loadFamilyMembersAndUser(): void {
+    this.command.getFamilyMembersDetailed().subscribe({
+      next: (members) => {
+        this.familyMembers = members;
+      }
+    });
+
+    this.command.getProfile().subscribe({
+      next: (profile) => {
+        this.currentUserId = profile.userId;
+      }
+    });
+  }
+
+  toggleComments(log: BabyLogEntry): void {
+    const isExpanded = !!this.expandedComments[log.id];
+    this.expandedComments[log.id] = !isExpanded;
+    if (!isExpanded) {
+      this.loadComments(log.id);
+    }
+  }
+
+  loadComments(logId: number): void {
+    this.commentsLoading[logId] = true;
+    this.command.getBabyLogComments(logId).subscribe({
+      next: (comments) => {
+        this.commentsLoading[logId] = false;
+        this.commentsByLogId[logId] = comments;
+      },
+      error: () => {
+        this.commentsLoading[logId] = false;
+        this.commentsByLogId[logId] = [];
+      }
+    });
+  }
+
+  submitComment(logId: number): void {
+    const content = (this.commentInputs[logId] ?? '').trim();
+    if (!content) {
+      return;
+    }
+
+    this.isSubmittingComment[logId] = true;
+    this.command.createBabyLogComment(logId, content).subscribe({
+      next: (newComment) => {
+        this.isSubmittingComment[logId] = false;
+        this.commentInputs[logId] = '';
+        
+        // Cập nhật optimistic UI
+        const list = this.commentsByLogId[logId] ?? [];
+        this.commentsByLogId[logId] = [...list, newComment];
+        
+        // Tải lại để đảm bảo dữ liệu mới nhất
+        this.loadComments(logId);
+        
+        // Cập nhật dashboard
+        this.loadBabyCareOverview();
+      },
+      error: (err) => {
+        this.isSubmittingComment[logId] = false;
+        this.notification.error(
+          this.i18n.translate('common.errorTitle'),
+          err?.message || this.i18n.translate('momApp.baby.comments.messages.createFailed')
+        );
+      }
+    });
+  }
+
+  deleteComment(logId: number, commentId: number): void {
+    this.command.deleteBabyLogComment(commentId).subscribe({
+      next: () => {
+        this.commentsByLogId[logId] = (this.commentsByLogId[logId] ?? []).filter(c => c.id !== commentId);
+        this.notification.success(
+          this.i18n.translate('momApp.common.success'),
+          this.i18n.translate('momApp.baby.comments.messages.deleteSuccess')
+        );
+        this.loadBabyCareOverview();
+      },
+      error: (err) => {
+        this.notification.error(
+          this.i18n.translate('common.errorTitle'),
+          err?.message || this.i18n.translate('momApp.baby.comments.messages.deleteFailed')
+        );
+      }
+    });
+  }
+
+  getCommenterName(userId: number): string {
+    const member = this.familyMembers.find(m => m.userId === userId);
+    return member?.displayName || `#User_${userId}`;
+  }
+
+  getCommenterAvatar(userId: number): string | null {
+    const member = this.familyMembers.find(m => m.userId === userId);
+    return member?.avatarUrl || null;
+  }
+
+  getCommenterRole(userId: number): string {
+    const member = this.familyMembers.find(m => m.userId === userId);
+    if (!member) return '';
+    return this.i18n.translate(`momApp.family.role.${member.role}`);
+  }
+
+  canDeleteComment(commentUserId: number): boolean {
+    return commentUserId === this.currentUserId;
   }
 
   private resetSelectedBabyState(): void {

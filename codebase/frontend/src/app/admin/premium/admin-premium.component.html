@@ -45,6 +45,11 @@
         <button nz-button nzType="primary" [disabled]="!selectedFamilyId" (click)="refreshSelectedFamilyConfig()">
           {{ 'momApp.admin.premium.actions.refreshConfig' | translate }}
         </button>
+        <!-- Nút mở Lịch sử thay đổi Premium (chỉ kích hoạt khi Admin đã lựa chọn một hộ gia đình cụ thể) -->
+        <button nz-button nzType="default" [disabled]="!selectedFamilyId" (click)="openAuditModal()">
+          <span nz-icon nzType="history"></span>
+          {{ 'momApp.admin.premium.audit.title' | translate }}
+        </button>
       </div>
     </div>
 
@@ -250,56 +255,72 @@
     </nz-card>
   </ng-template>
 
-  <nz-card class="premium-card" *ngIf="selectedFamilyId">
-    <div class="section-head">
-      <h2>{{ 'momApp.admin.premium.audit.title' | translate }}</h2>
-      <p>{{ 'momApp.admin.premium.audit.subtitle' | translate }}</p>
-    </div>
-
-    <nz-table
-      #auditTable
-      [nzData]="premiumAudit"
-      [nzFrontPagination]="false"
-      [nzShowPagination]="false"
-      nzSize="small"
-      nzTableLayout="fixed"
-      [nzScroll]="{ x: '1150px' }"
-    >
-      <thead>
-        <tr>
-          <th nzWidth="180px">{{ 'momApp.admin.premium.audit.table.feature' | translate }}</th>
-          <th nzWidth="160px">{{ 'momApp.admin.premium.audit.table.statusChange' | translate }}</th>
-          <th nzWidth="170px">{{ 'momApp.admin.premium.audit.table.expires' | translate }}</th>
-          <th nzWidth="220px">{{ 'momApp.admin.premium.audit.table.reason' | translate }}</th>
-          <th nzWidth="250px">{{ 'momApp.admin.premium.audit.table.byUser' | translate }}</th>
-          <th nzWidth="170px">{{ 'momApp.admin.premium.audit.table.changedAt' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let row of auditTable.data">
-          <td>{{ row.featureKey }}</td>
-          <td>
-            <span>{{ row.oldStatus ? statusLabel(row.oldStatus) : ('momApp.common.notAvailable' | translate) }}</span>
-            <span> -> </span>
-            <strong>{{ statusLabel(row.newStatus) }}</strong>
-          </td>
-          <td>
-            <span>{{ formatDateTime(row.oldExpiresAt) }}</span>
-            <span> -> </span>
-            <span>{{ formatDateTime(row.newExpiresAt) }}</span>
-          </td>
-          <td>{{ row.reason || ('momApp.common.notAvailable' | translate) }}</td>
-          <td>
-            <div class="audit-actor-primary">{{ changedByDisplay(row) }}</div>
-            <div class="audit-actor-meta" *ngIf="changedByMeta(row)">{{ changedByMeta(row) }}</div>
-          </td>
-          <td>{{ formatDateTime(row.changedAt) }}</td>
-        </tr>
-      </tbody>
-    </nz-table>
-
-    <div class="empty-inline" *ngIf="premiumAudit.length === 0">
-      {{ 'momApp.admin.premium.audit.empty' | translate }}
-    </div>
-  </nz-card>
 </section>
+
+<!-- MODAL LỊCH SỬ THAY ĐỔI PREMIUM (PREMIUM AUDIT LOG) 
+     - Thiết kế chuẩn Admin cao cấp với class `admin-role-modal`
+     - Chiều rộng rộng rãi 1200px giúp bảng dữ liệu hiển thị trực quan không bị tràn
+     - Không sử dụng footer mặc định, cho phép đóng nhanh qua nút X hoặc click backdrop mờ -->
+<nz-modal
+  nzWrapClassName="admin-role-modal"
+  [(nzVisible)]="isAuditModalVisible"
+  [nzTitle]="('momApp.admin.premium.audit.title' | translate) + (selectedFamily ? ': ' + selectedFamily.name : '')"
+  [nzWidth]="1200"
+  [nzFooter]="null"
+  (nzOnCancel)="closeAuditModal()"
+>
+  <ng-container *nzModalContent>
+    <!-- Hiển thị danh sách tối đa 20 dòng lịch sử thay đổi entitlement gần đây nhất của gia đình -->
+    <div class="premium-audit-modal-content" style="padding: 10px 0;">
+      <p class="modal-subtitle" style="margin-bottom: 20px; color: var(--color-text-secondary, #666); font-size: 14px;">
+        {{ 'momApp.admin.premium.audit.subtitle' | translate }}
+      </p>
+
+      <nz-table
+        #auditTable
+        [nzData]="premiumAudit"
+        [nzFrontPagination]="false"
+        [nzShowPagination]="false"
+        nzSize="small"
+        nzTableLayout="fixed"
+        [nzScroll]="{ x: '1150px' }"
+      >
+        <thead>
+          <tr>
+            <th nzWidth="180px">{{ 'momApp.admin.premium.audit.table.feature' | translate }}</th>
+            <th nzWidth="160px">{{ 'momApp.admin.premium.audit.table.statusChange' | translate }}</th>
+            <th nzWidth="170px">{{ 'momApp.admin.premium.audit.table.expires' | translate }}</th>
+            <th nzWidth="220px">{{ 'momApp.admin.premium.audit.table.reason' | translate }}</th>
+            <th nzWidth="250px">{{ 'momApp.admin.premium.audit.table.byUser' | translate }}</th>
+            <th nzWidth="170px">{{ 'momApp.admin.premium.audit.table.changedAt' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of auditTable.data">
+            <td><strong style="color: var(--color-primary, #1890ff);">{{ row.featureKey }}</strong></td>
+            <td>
+              <span>{{ row.oldStatus ? statusLabel(row.oldStatus) : ('momApp.common.notAvailable' | translate) }}</span>
+              <span style="margin: 0 8px; color: var(--color-text-muted, #999);">→</span>
+              <strong>{{ statusLabel(row.newStatus) }}</strong>
+            </td>
+            <td>
+              <span>{{ formatDateTime(row.oldExpiresAt) }}</span>
+              <span style="margin: 0 8px; color: var(--color-text-muted, #999);">→</span>
+              <span>{{ formatDateTime(row.newExpiresAt) }}</span>
+            </td>
+            <td>{{ row.reason || ('momApp.common.notAvailable' | translate) }}</td>
+            <td>
+              <div class="audit-actor-primary" style="font-weight: 500;">{{ changedByDisplay(row) }}</div>
+              <div class="audit-actor-meta" style="font-size: 12px; color: var(--color-text-muted, #999);">{{ changedByMeta(row) }}</div>
+            </td>
+            <td>{{ formatDateTime(row.changedAt) }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+
+      <div class="empty-inline" *ngIf="premiumAudit.length === 0" style="padding: 40px; text-align: center; color: var(--color-text-muted, #999); font-style: italic;">
+        {{ 'momApp.admin.premium.audit.empty' | translate }}
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>

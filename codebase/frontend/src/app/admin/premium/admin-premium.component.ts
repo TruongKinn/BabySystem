@@ -1,4 +1,4 @@
-﻿import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -8,6 +8,7 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzMessageService } from 'ng-zorro-antd/message';
+import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTableModule } from 'ng-zorro-antd/table';
@@ -106,6 +107,7 @@ interface GrantFamilyQuestPointsResponseApi {
     NzCardModule,
     NzEmptyModule,
     NzInputModule,
+    NzModalModule,
     NzSelectModule,
     NzSpinModule,
     NzTableModule,
@@ -137,10 +139,32 @@ export class AdminPremiumComponent implements OnInit {
   questGrantPointsInput = 100;
   questGrantReasonInput = '';
 
+  /**
+   * Trạng thái hiển thị của Modal Lịch sử Thay đổi Premium (Premium Audit Log).
+   * Được thiết kế theo chuẩn giao diện admin cao cấp (admin-role-modal) rộng 1200px
+   * giúp hiển thị tối ưu các cột dữ liệu lịch sử thay đổi entitlement.
+   */
+  isAuditModalVisible = false;
+
   readonly entitlementStatuses: PremiumEntitlementStatus[] = ['INHERIT', 'ALLOW', 'DENY'];
 
   ngOnInit(): void {
     this.loadFamilies();
+  }
+
+  /**
+   * Mở Modal Lịch sử Thay đổi Premium.
+   * Chỉ kích hoạt từ thanh công cụ khi đã chọn một hộ gia đình cụ thể.
+   */
+  openAuditModal(): void {
+    this.isAuditModalVisible = true;
+  }
+
+  /**
+   * Đóng Modal Lịch sử Thay đổi Premium.
+   */
+  closeAuditModal(): void {
+    this.isAuditModalVisible = false;
   }
 
   get selectedFamily(): FamilyOption | null {

@@ -159,3 +159,20 @@ Chúng tôi đã xóa bỏ toàn bộ mã CSS cục bộ trùng lặp và chuy�
 - **Baby Page:**
   - Chuyển nút thêm nhật ký (`.btn-gradient-primary`) và nút tải ảnh trong thư viện thành `.btn-user-primary`.
   - Đồng bộ các nút thao tác phụ ("Thêm bé", "Growth log", "Vaccination log") thành `.btn-user-outline` đồng bộ, gọn gàng.
+
+---
+
+## 5. Chuẩn hóa & Di chuyển Lịch sử thay đổi Premium vào Popup chuẩn Admin
+
+Nhằm tối ưu hóa diện tích hiển thị giao diện và mang lại trải nghiệm chuyên nghiệp cho quản trị viên tại phân hệ **Cấu hình Premium** (`/admin/premium`), chúng tôi đã thiết kế và đưa tính năng xem lịch sử thay đổi Premium (Premium Audit Log) vào cấu trúc Popup (Modal) tương tác cao cấp.
+
+### A. Thiết kế Popup Chuẩn Admin
+- **Modal Wrapper (`nz-modal`):** Sử dụng cấu hình `nzWrapClassName="admin-role-modal"` đồng bộ với các modal quản trị của hệ thống.
+- **Kích thước lớn (`[nzWidth]="1200"`):** Chiều rộng `1200px` giúp bảng dữ liệu Audit Log hiển thị gọn gàng, rõ ràng, không bị co giật hay tràn cột thông tin quan trọng.
+- **Nút đóng góc phải & Backdrop Blur:** Modal sử dụng `[nzFooter]="null"`, cho phép đóng nhanh thông qua nút `X` hoặc click bên ngoài màn hình nền kính mờ sang trọng.
+- **Style chi tiết:** Chữ được thiết kế theo hệ màu thương hiệu của Admin, các key tính năng hiển thị màu primary đậm nét và có khoảng cách micro-spacing cân đối.
+
+### B. Tích hợp nút hành động trực quan
+- **Vị trí tích hợp:** Nút bấm **Lịch sử thay đổi Premium** (kèm icon Lịch sử 🕒) được bố trí ngay tại thanh công cụ Hộ gia đình (`toolbar-actions`) bên cạnh nút "Tải lại cấu hình".
+- **Cơ chế hoạt động:** Nút chỉ được kích hoạt (enabled) khi Admin đã lựa chọn một hộ gia đình cụ thể. Khi bấm vào, modal sẽ mở ra ngay lập tức và tải/hiển thị 20 dòng thay đổi entitlement gần đây nhất của gia đình đó.
+

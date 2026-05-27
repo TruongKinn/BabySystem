@@ -1350,6 +1350,28 @@
           "deleteSuccess": "Photo deleted successfully.",
           "deleteFailed": "Unable to delete photo."
         }
+      },
+      "comments": {
+        "btnTitle": "Comment",
+        "empty": "No comments yet. Write the first comment!",
+        "placeholder": "Write a comment... (Type @ to mention family members)",
+        "submit": "Send",
+        "messages": {
+          "createFailed": "Failed to send comment",
+          "deleteSuccess": "Comment deleted successfully",
+          "deleteFailed": "Failed to delete comment"
+        },
+        "reply": "Reply",
+        "replyPlaceholder": "Write a reply... (Type @ to mention family members)",
+        "delete": "Delete comment",
+        "reactions": {
+          "like": "Like",
+          "love": "Love",
+          "haha": "Haha",
+          "wow": "Wow",
+          "sad": "Sad",
+          "angry": "Angry"
+        }
       }
     },
     "family": {

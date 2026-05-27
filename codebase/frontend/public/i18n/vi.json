@@ -1348,6 +1348,28 @@
           "deleteSuccess": "Xóa ảnh thành công.",
           "deleteFailed": "Không thể xóa ảnh."
         }
+      },
+      "comments": {
+        "btnTitle": "Bình luận",
+        "empty": "Chưa có bình luận nào. Hãy để lại bình luận đầu tiên!",
+        "placeholder": "Viết bình luận của bạn... (Gõ @ để nhắc tên thành viên)",
+        "submit": "Gửi",
+        "messages": {
+          "createFailed": "Không thể gửi bình luận",
+          "deleteSuccess": "Đã xóa bình luận thành công",
+          "deleteFailed": "Không thể xóa bình luận"
+        },
+        "reply": "Trả lời",
+        "replyPlaceholder": "Viết câu trả lời của bạn... (Gõ @ để nhắc tên thành viên)",
+        "delete": "Xóa bình luận",
+        "reactions": {
+          "like": "Thích",
+          "love": "Yêu thích",
+          "haha": "Haha",
+          "wow": "Ngạc nhiên",
+          "sad": "Buồn",
+          "angry": "Phẫn nộ"
+        }
       }
     },
     "family": {
