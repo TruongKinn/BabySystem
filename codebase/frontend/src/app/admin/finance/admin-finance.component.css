@@ -547,3 +547,210 @@
     font-size: 1.8rem;
   }
 }
+
+/* Admin Pending Proposals area in side drawer */
+.admin-proposals-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-proposal-card {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: var(--user-card-radius, 14px);
+  padding: 16px;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.03);
+  border-left: 4px solid #f59e0b;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-proposal-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.12);
+  border-color: #fcd34d;
+}
+
+.admin-proposal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #f1f5f9;
+}
+
+.admin-proposal-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-proposal-proposer {
+  display: flex;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #1e293b;
+}
+
+.admin-proposal-date {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.admin-proposal-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.admin-proposal-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-proposal-name {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.admin-proposal-approver-info {
+  font-size: 0.8rem;
+  color: #64748b;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.admin-proposal-amount {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #f59e0b;
+  white-space: nowrap;
+}
+
+.admin-proposal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.admin-btn-approve, .admin-btn-reject {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: none;
+  padding: 8px 16px;
+  border-radius: var(--user-btn-radius, 10px);
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-btn-approve {
+  background: rgba(34, 197, 94, 0.1);
+  color: #16a34a;
+  border: 1px solid rgba(34, 197, 94, 0.2);
+}
+
+.admin-btn-approve:hover {
+  background: #16a34a;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);
+}
+
+.admin-btn-reject {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.admin-btn-reject:hover {
+  background: #ef4444;
+  color: #ffffff;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+/* Quick Reject Form */
+.admin-proposal-reject-form {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reject-form-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #b91c1c;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.reject-textarea {
+  border-radius: 8px !important;
+  border: 1px solid #f1f5f9 !important;
+  background: #f8fafc !important;
+  font-size: 0.85rem !important;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.reject-textarea:focus {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+  background: #ffffff !important;
+}
+
+.reject-form-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Empty proposals state style */
+.admin-proposals-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px dashed #e2e8f0;
+  border-radius: var(--user-card-radius, 14px);
+}
+
+.proposals-empty-icon {
+  font-size: 2.2rem;
+  color: #22c55e;
+  margin-bottom: 10px;
+  animation: pulse-green 2s infinite;
+}
+
+.proposals-empty-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 4px;
+}
+
+.proposals-empty-subtitle {
+  font-size: 0.85rem;
+  color: #64748b;
+  max-width: 280px;
+}
+
+@keyframes pulse-green {
+  0% { transform: scale(1); opacity: 0.9; }
+  50% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); opacity: 0.9; }
+}

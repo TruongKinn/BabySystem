@@ -1,0 +1,28 @@
+{
+  "drawer": {
+    "proposals": {
+      "title": "Đề xuất chi tiêu đang chờ duyệt",
+      "loading": "Đang tải các đề xuất chi tiêu...",
+      "assignedApprover": "Người duyệt được chỉ định: {{name}}",
+      "actions": {
+        "approve": "Phê duyệt",
+        "reject": "Từ chối"
+      },
+      "rejectForm": {
+        "title": "Lý do từ chối đề xuất",
+        "placeholder": "Vui lòng nhập lý do từ chối (ví dụ: Vượt ngân sách cấp phép...)",
+        "confirm": "Xác nhận từ chối",
+        "cancel": "Hủy"
+      },
+      "empty": {
+        "title": "Tuyệt vời! Không có đề xuất nào đang chờ duyệt",
+        "subtitle": "Hộ gia đình này hiện không có khoản chi đề xuất nào cần bạn xử lý."
+      }
+    }
+  },
+  "messages": {
+    "approveSuccess": "Đã phê duyệt đề xuất chi tiêu thành công",
+    "rejectSuccess": "Đã từ chối đề xuất chi tiêu thành công",
+    "rejectReasonRequired": "Vui lòng nhập lý do từ chối"
+  }
+}

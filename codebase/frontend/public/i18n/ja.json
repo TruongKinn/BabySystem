@@ -47,6 +47,7 @@
         "dashboard": "ダッシュボード",
         "familyCare": "ファミリーケア",
         "baby": "赤ちゃん",
+        "journey": "Journey+",
         "meals": "食事",
         "tasks": "タスク",
         "finance": "財務",
@@ -1583,6 +1584,7 @@
           "ai_care_assistant": "AIケアアシスタント",
           "premium_reports": "プレミアム レポート",
           "family_collaboration_plus": "ファミリー コラボレーション プラス",
+          "baby_journey_plus": "Baby Journey+",
           "medical_vault_export": "医療保管庫のエクスポート",
           "unlimited_memory": "無制限のメモリ"
         }
@@ -1794,6 +1796,220 @@
         "registerSuccessDesc": "アカウントが作成されました！ログイン画面にリダイレクトしています...",
         "registerFailedTitle": "登録失敗",
         "registerFailedDesc": "アカウントを作成できませんでした。入力内容を確認してください。"
+      }
+    },
+    "journey": {
+      "hero": {
+        "kicker": "ベビージャーニー+ プレミアム",
+        "title": "メモリー DNA",
+        "description": "毎日のケア記録、写真、成長の節目、実家の声などを、赤ちゃんの生き生きとした成長の軌跡に変えて保存します。",
+        "careRhythm": "ケアリズム",
+        "growthStory": "成長ストーリー",
+        "futureCapsules": "タイムカプセル",
+        "aiCurator": "AIキュレーター"
+      },
+      "score": {
+        "label": "メモリーDNAスコア",
+        "grade": {
+          "great": "素晴らしい",
+          "good": "成長中",
+          "start": "スタート"
+        }
+      },
+      "toolbar": {
+        "babySelectPlaceholder": "赤ちゃんのプロフィールを選択",
+        "refresh": "更新",
+        "timeCapsule": "タイムカプセル",
+        "addMilestone": "マイルストーンを追加"
+      },
+      "loading": "赤ちゃんのジャーニーを読み込み中...",
+      "lock": {
+        "kicker": "プレミアム限定機能",
+        "title": "ベビージャーニー+ はロックされています",
+        "description": "これはBabySystemのシグネチャー機能です。AIキュレーターが思い出の瞬間を自動的に検出し、お子様ごとのリビングタイムライン、タイムカプセル、月間ストーリーブックを作成します。",
+        "unlock": "プレミアムをアンロック",
+        "features": {
+          "aiCurator": "AIメモリキュレーター",
+          "timeline": "リビングタイムライン",
+          "storybook": "月間ストーリーブック",
+          "privacy": "スマートプライバシー"
+        }
+      },
+      "empty": {
+        "noBaby": "ベビージャーニー+ を利用するには、まず赤ちゃんのプロフィールを作成してください。",
+        "noMilestone": "ジャーニーにマイルストーンがまだありません。",
+        "noSuggestion": "保存する推奨される瞬間がまだありません。",
+        "noCapsule": "タイムカプセルがまだありません。",
+        "noStorybook": "今月はストーリーブックを生成するデータがありません。"
+      },
+      "tabs": {
+        "timeline": "リビングタイムライン",
+        "aiCurator": "AIキュレーター",
+        "timeCapsule": "タイムカプセル",
+        "storybook": "ストーリーブック"
+      },
+      "timeline": {
+        "title": "リビングタイムライン",
+        "subtitle": "ケア記録、健康の兆候、家族の声、タイムカプセルを含む思い出の生きた流れ。",
+        "pendingSuggestions": "AIキュレーターに新しい提案があります"
+      },
+      "aiCurator": {
+        "title": "AIメモリーキュレーター",
+        "subtitle": "ケア、成長、ワクチン、ギャラリーのデータから思い出に残る瞬間を提案します。",
+        "rescan": "再スキャン",
+        "confidence": "信頼度",
+        "save": "ジャーニーに保存",
+        "saved": "保存済み"
+      },
+      "capsule": {
+        "title": "タイムカプセル",
+        "subtitle": "誕生日、入学式、または将来の特定の日までロックされたプライベートメッセージ。",
+        "lockedCount": "ロック中",
+        "create": "カプセルを作成",
+        "status": {
+          "locked": "ロック中",
+          "open": "開封済み"
+        },
+        "openAt": "開封日",
+        "openedAt": "開封済み"
+      },
+      "storybook": {
+        "subtitle": "メモリーDNAレイヤーを自動的にまとめて1つの思い出の章にする月間サマリー。",
+        "kicker": "月間メモリーストーリーブック",
+        "stats": {
+          "milestones": "マイルストーン",
+          "aiSuggestions": "AI提案",
+          "capsules": "カプセル"
+        }
+      },
+      "modal": {
+        "memory": {
+          "title": "メモリーDNAにマイルストーンを追加",
+          "subtitle": "赤ちゃんの思い出の瞬間を記録する",
+          "form": {
+            "title": "タイトル",
+            "titlePlaceholder": "例: 赤ちゃんが初めて立ち上がった",
+            "type": "メモリーDNAレイヤー",
+            "happenedAt": "時間",
+            "privacy": "プライバシー",
+            "story": "ストーリー",
+            "storyPlaceholder": "家族が覚えておきたいことを書き留めてください...",
+            "submit": "マイルストーンを保存"
+          }
+        },
+        "capsule": {
+          "title": "タイムカプセルを作成",
+          "subtitle": "将来の特定の日までロックされるメッセージ",
+          "form": {
+            "title": "タイトル",
+            "titlePlaceholder": "例: 1歳の赤ちゃんへの手紙",
+            "recipient": "受取人",
+            "recipientPlaceholder": "赤ちゃんの名前または受取人",
+            "openAt": "アンロック日",
+            "privacy": "プライバシー",
+            "message": "将来へのメッセージ",
+            "messagePlaceholder": "赤ちゃんが将来開けるメッセージを書いてください...",
+            "submit": "カプセルをロック"
+          }
+        },
+        "cancel": "キャンセル"
+      },
+      "types": {
+        "care": "ケアリズム",
+        "growth": "成長ストーリー",
+        "health": "健康シグナル",
+        "family": "家族の声",
+        "visual": "ビジュアルメモリー",
+        "capsule": "タイムカプセル"
+      },
+      "privacy": {
+        "family": "家族全員",
+        "parents": "両親のみ",
+        "private": "非公開"
+      },
+      "sources": {
+        "ai": "AIキュレーター",
+        "system": "BabySystem",
+        "capsule": "タイムカプセル",
+        "family": "家族の声"
+      },
+      "notifications": {
+        "chooseBaby": "先に赤ちゃんのプロフィールを選択してください。",
+        "saveSuccess": "マイルストーンがメモリーDNAに保存されました。",
+        "futureDateRequired": "ロック解除日は将来の日付である必要があります。",
+        "capsuleSuccess": "タイムカプセルが将来に向けてロックされました。",
+        "aiSuggestionSuccess": "瞬間がリビングタイムラインに追加されました。",
+        "deleteSuccess": "マイルストーンがジャーニーから削除されました。",
+        "premiumWarning": "この機能を使用するには、プレミアム設定でベビージャーニー+を有効にしてください。"
+      },
+      "systemEvents": {
+        "care": {
+          "title": "今日のケアリズム",
+          "story": "今日は授乳{{feedings}}回、オムツ替え{{diaperChanges}}回、睡眠{{sleepHours}}時間を記録しました。これはメモリーDNAのケアリズムレイヤーです。"
+        },
+        "growth": {
+          "title": "成長ストーリーを更新",
+          "story": "体重{{weightKg}}kg、身長{{heightCm}}cm、頭囲{{headCircumferenceCm}}cm。"
+        },
+        "health": {
+          "title": "健康マイルストーン: {{vaccineName}}",
+          "story": "{{dueDate}}に予防接種を予定しています。タイムラインはこれを健康シグナルとして保存します。"
+        },
+        "visual": {
+          "title": "ビジュアルメモリーに新しい写真",
+          "story": "ギャラリーに{{fileName}}が追加されました。AIキュレーターがこれを思い出の瞬間に変えることができます。"
+        }
+      },
+      "suggestions": {
+        "care": {
+          "title": "ケアに満ちた一日",
+          "detail": "家族が授乳{{feedings}}回、オムツ替え{{diaperChanges}}回、睡眠{{sleepHours}}時間を記録しました。",
+          "reason": "生活リズムの思い出として保存するのに十分なケア記録があります。"
+        },
+        "growth": {
+          "title": "新しい成長マイルストーン",
+          "detail": "最新の測定値: 体重{{weightKg}}kg、身長{{heightCm}}cm。{{deltaWeight}}",
+          "deltaWeight": " 体重が{{deltaWeightKg}}kg変化しました。",
+          "reason": "すべての成長指数は、成長ストーリーの1つの章です。"
+        },
+        "health": {
+          "title": "{{vaccineName}}の準備",
+          "detail": "予約日: {{dueDate}}。タイムラインにリマインダーや両親の気持ちを追加できます。",
+          "reason": "重要な健康のマイルストーンは、赤ちゃんの専用タイムラインに保存されるべきです。"
+        },
+        "visual": {
+          "title": "新しい写真が思い出になるかも",
+          "detail": "{{fileName}}は今月のビジュアルメモリーとして保存できます。",
+          "reason": "ケア日に近い新しい写真は、ストーリーブックを作成するための素晴らしい手がかりです。"
+        },
+        "family": {
+          "title": "家族の視点を追加",
+          "detail": "各メンバーが短いメッセージを残すことで、タイムラインにデータだけでなく感情も加わります。",
+          "reason": "家族の声は、BabySystemを通常のトラッキングアプリと区別する要素です。"
+        }
+      },
+      "dnaLayers": {
+        "care": {
+          "meta": "最近のケアシグナル{{count}}件"
+        },
+        "growth": {
+          "meta": "成長測定{{count}}回"
+        },
+        "voice": {
+          "meta": "保存されたメッセージ{{count}}件"
+        },
+        "visual": {
+          "meta": "写真またはビジュアルメモリー{{count}}件"
+        },
+        "capsule": {
+          "meta": "将来へのメッセージ{{count}}件"
+        }
+      },
+      "displayStory": {
+        "lockedCapsule": "このタイムカプセルは{{openAt}}に{{recipient}}向けにロック解除されます。"
+      },
+      "errors": {
+        "loadBabies": "赤ちゃんのプロフィールを読み込めません。"
       }
     }
   },

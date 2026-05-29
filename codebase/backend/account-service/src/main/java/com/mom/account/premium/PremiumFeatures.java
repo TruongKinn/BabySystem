@@ -6,5 +6,6 @@ public final class PremiumFeatures {
     }
 
     public static final String FAMILY_COLLABORATION_PLUS = "family_collaboration_plus";
+    public static final String BABY_JOURNEY_PLUS = "baby_journey_plus";
     public static final String THEME_CUSTOMIZATION = "theme_customization";
 }

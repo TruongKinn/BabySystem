@@ -1,0 +1,46 @@
+{
+  "proposals": {
+    "title": "Đề xuất & Phê duyệt Chi tiêu Gia đình",
+    "createBtn": "Tạo đề xuất mới",
+    "table": {
+      "title": "Nội dung đề xuất",
+      "amount": "Số tiền đề xuất",
+      "proposer": "Người đề xuất",
+      "approver": "Người phê duyệt",
+      "status": "Trạng thái",
+      "actions": "Hành động"
+    },
+    "status": {
+      "pending": "Chờ phê duyệt",
+      "approved": "Đã duyệt",
+      "rejected": "Bị từ chối"
+    },
+    "steps": {
+      "submit": "Gửi đề xuất",
+      "review": "Xem xét",
+      "result": "Kết quả"
+    },
+    "actions": {
+      "approve": "Duyệt",
+      "reject": "Từ chối",
+      "resubmit": "Sửa & Gửi lại"
+    },
+    "modal": {
+      "createTitle": "Tạo đề xuất chi tiêu mới",
+      "editTitle": "Chỉnh sửa & Gửi lại đề xuất",
+      "titleLabel": "Tên khoản chi tiêu",
+      "titlePlaceholder": "Ví dụ: Mua máy hút sữa cho bé",
+      "amountLabel": "Số tiền (VND)",
+      "categoryLabel": "Danh mục chi tiêu",
+      "approverLabel": "Thành viên phê duyệt",
+      "approverPlaceholder": "Chọn thành viên duyệt đề xuất",
+      "rejectTitle": "Từ chối đề xuất chi tiêu",
+      "rejectReasonLabel": "Lý do từ chối đề xuất",
+      "rejectReasonPlaceholder": "Nhập lý do từ chối chi tiết...",
+      "successCreate": "Gửi đề xuất chi tiêu gia đình thành công!",
+      "successApprove": "Đã phê duyệt đề xuất! Khoản chi tiêu đã được thêm vào ví gia đình.",
+      "successReject": "Đã từ chối đề xuất chi tiêu.",
+      "successResubmit": "Đã cập nhật và gửi lại đề xuất thành công!"
+    }
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "proposals": {
+    "title": "Family Expense Proposals & Approvals",
+    "createBtn": "New Proposal",
+    "table": {
+      "title": "Proposal Title",
+      "amount": "Proposed Amount",
+      "proposer": "Proposer",
+      "approver": "Approver",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "pending": "Pending Review",
+      "approved": "Approved",
+      "rejected": "Rejected"
+    },
+    "steps": {
+      "submit": "Submit",
+      "review": "Review",
+      "result": "Result"
+    },
+    "actions": {
+      "approve": "Approve",
+      "reject": "Reject",
+      "resubmit": "Edit & Resubmit"
+    },
+    "modal": {
+      "createTitle": "Create New Expense Proposal",
+      "editTitle": "Edit & Resubmit Proposal",
+      "titleLabel": "Expense Title",
+      "titlePlaceholder": "e.g. Buy breast pump for baby",
+      "amountLabel": "Amount (VND)",
+      "categoryLabel": "Expense Category",
+      "approverLabel": "Approving Member",
+      "approverPlaceholder": "Select member to review",
+      "rejectTitle": "Reject Expense Proposal",
+      "rejectReasonLabel": "Reason for Rejection",
+      "rejectReasonPlaceholder": "Enter reason for rejection...",
+      "successCreate": "Expense proposal submitted successfully!",
+      "successApprove": "Proposal approved! Expense added to family vault.",
+      "successReject": "Expense proposal rejected.",
+      "successResubmit": "Proposal updated and resubmitted successfully!"
+    }
+  }
+}

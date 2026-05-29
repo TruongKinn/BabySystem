@@ -12,6 +12,7 @@ import com.mom.notification.event.NotificationRequestedPayload;
 import com.mom.notification.premium.PremiumFeatures;
 import com.mom.notification.repository.NotificationRepository;
 import com.mom.common.security.DataIsolationUtil;
+import com.mom.common.context.UserContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -75,6 +76,18 @@ public class NotificationService {
     }
 
     public List<NotificationResponse> getNotifications(Long familyId, Long userId, NotificationStatus status) {
+        if (userId != null && userId.equals(UserContext.getUserId())) {
+            List<Long> myFamilyIds = UserContext.getFamilyIds();
+            if (myFamilyIds != null && !myFamilyIds.isEmpty()) {
+                List<NotificationEntity> entities = notificationRepository.findByUserIdOrderByCreatedAtDesc(userId);
+                return entities.stream()
+                        .filter(entity -> myFamilyIds.contains(entity.getFamilyId()))
+                        .filter(entity -> status == null || entity.getStatus() == status)
+                        .map(this::toResponse)
+                        .toList();
+            }
+        }
+
         DataIsolationUtil.validateFamilyAccess(familyId);
 
         List<NotificationEntity> entities = userId == null
@@ -97,6 +110,17 @@ public class NotificationService {
     }
 
     public NotificationUnreadCountResponse getUnreadCount(Long familyId, Long userId) {
+        if (userId != null && userId.equals(UserContext.getUserId())) {
+            List<Long> myFamilyIds = UserContext.getFamilyIds();
+            if (myFamilyIds != null && !myFamilyIds.isEmpty()) {
+                long count = notificationRepository.findByUserIdOrderByCreatedAtDesc(userId).stream()
+                        .filter(entity -> myFamilyIds.contains(entity.getFamilyId()))
+                        .filter(entity -> entity.getReadAt() == null)
+                        .count();
+                return new NotificationUnreadCountResponse(familyId, userId, count);
+            }
+        }
+
         DataIsolationUtil.validateFamilyAccess(familyId);
 
         long count = userId == null

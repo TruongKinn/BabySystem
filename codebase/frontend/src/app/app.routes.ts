@@ -15,6 +15,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { ExpensesComponent } from './expenses/expenses.component';
 import { FamilyComponent } from './family/family.component';
 import { InsightsComponent } from './insights/insights.component';
+import { JourneyComponent } from './journey/journey.component';
 import { MealsComponent } from './meals/meals.component';
 import { ProfileComponent } from './profile/profile.component';
 import { SettingsComponent } from './settings/settings.component';
@@ -39,6 +40,7 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'baby', component: BabyComponent },
+      { path: 'journey', component: JourneyComponent },
       { path: 'meals', component: MealsComponent },
       { path: 'expenses', component: ExpensesComponent },
       { path: 'tasks', component: TasksComponent },
@@ -74,6 +76,7 @@ export const routes: Routes = [
 
   { path: 'dashboard', redirectTo: 'app/dashboard', pathMatch: 'full' },
   { path: 'baby', redirectTo: 'app/baby', pathMatch: 'full' },
+  { path: 'journey', redirectTo: 'app/journey', pathMatch: 'full' },
   { path: 'meals', redirectTo: 'app/meals', pathMatch: 'full' },
   { path: 'expenses', redirectTo: 'app/expenses', pathMatch: 'full' },
   { path: 'tasks', redirectTo: 'app/tasks', pathMatch: 'full' },

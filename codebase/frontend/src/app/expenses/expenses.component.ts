@@ -15,8 +15,9 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
-import { ExchangeRateApi, ExpenseApi, ExpenseBudgetApi, ExpenseCategoryApi, ExpenseCategoryReportApi, ExpenseCategoryReportItemApi, ExpenseDailySummaryApi, ExpenseSummaryApi, FileMetadata, SuperAppCommandService } from '../core/services/super-app-command.service';
+import { ExchangeRateApi, ExpenseApi, ExpenseBudgetApi, ExpenseCategoryApi, ExpenseCategoryReportApi, ExpenseCategoryReportItemApi, ExpenseDailySummaryApi, ExpenseSummaryApi, ExpenseProposalApi, FamilyMemberProfile, FileMetadata, SuperAppCommandService } from '../core/services/super-app-command.service';
 import { UserPreferencesService } from '../core/services/user-preferences.service';
 import { I18nService } from '../i18n/i18n.service';
 
@@ -29,6 +30,8 @@ interface ExpenseRecord {
   note: string | null;
   spentAt: string;
 }
+
+export type ExpenseProposal = ExpenseProposalApi;
 
 interface CategoryInsight {
   categoryId: number;
@@ -67,7 +70,8 @@ type ExpenseSortMode = 'NEWEST' | 'OLDEST' | 'HIGHEST' | 'LOWEST' | 'CATEGORY';
     NzToolTipModule,
     NzAutocompleteModule,
     NzSelectModule,
-    NzDatePickerModule
+    NzDatePickerModule,
+    NzStepsModule
   ],
   templateUrl: './expenses.component.html',
   styleUrl: './expenses.component.css'
@@ -132,6 +136,32 @@ export class ExpensesComponent implements OnInit {
   isLoadingViewer = false;
   private viewerObjectUrl: string | null = null;
   private viewerRequest: Subscription | null = null;
+
+  // --- Family Expense Proposals ---
+  isProposalModalVisible = false;
+  isRejectModalVisible = false;
+  isEditProposalModalVisible = false;
+  selectedProposal: ExpenseProposal | null = null;
+  rejectReasonText = '';
+
+  readonly proposalForm = this.fb.group({
+    title: ['', [Validators.required, Validators.maxLength(200)]],
+    amount: [null as number | null, [Validators.required, Validators.min(1)]],
+    categoryName: ['', [Validators.required]],
+    approver: ['', [Validators.required]]
+  });
+
+  readonly editProposalForm = this.fb.group({
+    id: [null as number | null],
+    title: ['', [Validators.required, Validators.maxLength(200)]],
+    amount: [null as number | null, [Validators.required, Validators.min(1)]],
+    categoryName: ['', [Validators.required]],
+    approver: ['', [Validators.required]]
+  });
+
+  expenseProposals: ExpenseProposal[] = [];
+  familyMembers: FamilyMemberProfile[] = [];
+  currentUserDisplayName = 'Mẹ (Nguyễn An)';
 
   readonly createExpenseForm = this.fb.group({
     amount: [null as number | null, [Validators.required, Validators.min(1)]],
@@ -256,15 +286,37 @@ export class ExpensesComponent implements OnInit {
       daily: this.command.getExpenseDailySummary().pipe(catchError(() => of(this.emptyDailySummary()))),
       report: this.command.getExpenseCategoryReport(month).pipe(catchError(() => of(this.emptyCategoryReport(month)))),
       budgets: this.command.getExpenseBudgets().pipe(catchError(() => of([] as ExpenseBudgetApi[]))),
-      categories: this.command.getExpenseCategories().pipe(catchError(() => of([] as ExpenseCategoryApi[])))
+      categories: this.command.getExpenseCategories().pipe(catchError(() => of([] as ExpenseCategoryApi[]))),
+      proposals: this.command.getExpenseProposals().pipe(catchError(() => of([] as ExpenseProposalApi[]))),
+      members: this.command.getFamilyMembersDetailed().pipe(catchError(() => of([] as FamilyMemberProfile[]))),
+      profile: this.command.getProfile().pipe(catchError(() => of(null as any)))
     })
       .pipe(finalize(() => {
         this.loading = false;
       }))
       .subscribe({
-        next: ({ expenses, summary, daily, report, budgets, categories }) => {
+        next: ({ expenses, summary, daily, report, budgets, categories, proposals, members, profile }) => {
           this.expenseRecords = expenses.map((item) => this.toExpenseRecord(item));
           this.allBudgets = budgets;
+          this.expenseProposals = proposals;
+          this.familyMembers = members;
+
+          if (profile && profile.displayName) {
+            const matchedMember = members.find(m => m.userId === profile.userId);
+            if (matchedMember) {
+              const roleMap: Record<string, string> = {
+                'MOM': 'Mẹ',
+                'DAD': 'Bố',
+                'GRANDMA': 'Bà',
+                'CAREGIVER': 'Người giúp việc',
+                'ADMIN': 'Quản trị viên'
+              };
+              const roleText = roleMap[matchedMember.role] || matchedMember.role;
+              this.currentUserDisplayName = `${roleText} (${profile.displayName})`;
+            } else {
+              this.currentUserDisplayName = profile.displayName;
+            }
+          }
 
           const summaryTotal = this.toNumber(summary.totalAmount);
           const fallbackTotal = this.expenseRecords.reduce((total, item) => total + item.amount, 0);
@@ -929,6 +981,192 @@ export class ExpensesComponent implements OnInit {
     if (this.viewerObjectUrl) {
       URL.revokeObjectURL(this.viewerObjectUrl);
       this.viewerObjectUrl = null;
+    }
+  }
+
+  openProposalModal(): void {
+    this.isProposalModalVisible = true;
+    this.proposalForm.reset({
+      title: '',
+      amount: null,
+      categoryName: '',
+      approver: ''
+    });
+  }
+
+  closeProposalModal(): void {
+    this.isProposalModalVisible = false;
+  }
+
+  submitProposal(): void {
+    if (this.proposalForm.invalid) {
+      this.proposalForm.markAllAsTouched();
+      return;
+    }
+
+    const value = this.proposalForm.value;
+    this.isSubmitting = true;
+    this.command.createExpenseProposal({
+      title: value.title ?? '',
+      amount: Number(value.amount),
+      categoryName: value.categoryName ?? '',
+      proposedBy: this.currentUserDisplayName,
+      approver: value.approver ?? ''
+    }).subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.closeProposalModal();
+        this.loadExpenseWorkspace();
+        this.notification.success(
+          this.i18n.translate('momApp.common.success'),
+          this.i18n.translate('app.expenses.proposals.modal.successCreate')
+        );
+
+        // Bắn thông báo cho người duyệt vào quả chuông
+        const selectedMember = this.familyMembers.find(m => {
+          const key = `${m.role === 'MOM' ? 'Mẹ' : (m.role === 'DAD' ? 'Bố' : (m.role === 'GRANDMA' ? 'Bà' : (m.role === 'CAREGIVER' ? 'Người giúp việc' : 'Thành viên')))} (${m.displayName})`;
+          return key === value.approver;
+        });
+        const approverUserId = selectedMember ? selectedMember.userId : null;
+        this.command.createNotification({
+          userId: approverUserId,
+          title: 'Đề xuất chi tiêu mới cần duyệt 💰',
+          message: `${this.currentUserDisplayName} đã gửi một đề xuất chi tiêu mới: "${value.title}" với số tiền là ${Number(value.amount).toLocaleString('vi-VN')} VND. Vui lòng vào xem và phê duyệt!`,
+          type: 'EXPENSE'
+        }).subscribe({
+          error: (e) => console.error('Failed to send proposal notification', e)
+        });
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        this.notification.error(
+          this.i18n.translate('common.errorTitle'),
+          err?.message || 'Không thể gửi đề xuất chi tiêu'
+        );
+      }
+    });
+  }
+
+  approveProposal(proposal: ExpenseProposal): void {
+    this.command.approveExpenseProposal(proposal.id, this.currentUserDisplayName).subscribe({
+      next: () => {
+        this.loadExpenseWorkspace();
+        this.notification.success(
+          this.i18n.translate('momApp.common.success'),
+          this.i18n.translate('app.expenses.proposals.modal.successApprove')
+        );
+      },
+      error: (err) => {
+        this.notification.error(
+          this.i18n.translate('common.errorTitle'),
+          err?.message || 'Không thể duyệt đề xuất'
+        );
+      }
+    });
+  }
+
+  openRejectModal(proposal: ExpenseProposal): void {
+    this.selectedProposal = proposal;
+    this.rejectReasonText = '';
+    this.isRejectModalVisible = true;
+  }
+
+  closeRejectModal(): void {
+    this.isRejectModalVisible = false;
+    this.selectedProposal = null;
+    this.rejectReasonText = '';
+  }
+
+  submitReject(): void {
+    if (!this.rejectReasonText.trim()) {
+      this.notification.warning('Cảnh báo', 'Vui lòng nhập lý do từ chối');
+      return;
+    }
+
+    if (this.selectedProposal) {
+      this.command.rejectExpenseProposal(this.selectedProposal.id, this.rejectReasonText, this.currentUserDisplayName).subscribe({
+        next: () => {
+          this.closeRejectModal();
+          this.loadExpenseWorkspace();
+          this.notification.success(
+            this.i18n.translate('momApp.common.success'),
+            this.i18n.translate('app.expenses.proposals.modal.successReject')
+          );
+        },
+        error: (err) => {
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            err?.message || 'Không thể từ chối đề xuất'
+          );
+        }
+      });
+    }
+  }
+
+  openEditProposalModal(proposal: ExpenseProposal): void {
+    this.selectedProposal = proposal;
+    this.editProposalForm.reset({
+      id: proposal.id,
+      title: proposal.title,
+      amount: proposal.amount,
+      categoryName: proposal.categoryName,
+      approver: proposal.approver
+    });
+    this.isEditProposalModalVisible = true;
+  }
+
+  closeEditProposalModal(): void {
+    this.isEditProposalModalVisible = false;
+    this.selectedProposal = null;
+  }
+
+  submitEditProposal(): void {
+    if (this.editProposalForm.invalid) {
+      this.editProposalForm.markAllAsTouched();
+      return;
+    }
+
+    const value = this.editProposalForm.value;
+    if (value.id) {
+      this.isSubmitting = true;
+      this.command.resubmitExpenseProposal(value.id, {
+        title: value.title ?? '',
+        amount: Number(value.amount),
+        categoryName: value.categoryName ?? '',
+        approver: value.approver ?? ''
+      }, this.currentUserDisplayName).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.closeEditProposalModal();
+          this.loadExpenseWorkspace();
+          this.notification.success(
+            this.i18n.translate('momApp.common.success'),
+            this.i18n.translate('app.expenses.proposals.modal.successResubmit')
+          );
+
+          // Bắn thông báo cho người duyệt khi đề xuất được gửi lại
+          const selectedMember = this.familyMembers.find(m => {
+            const key = `${m.role === 'MOM' ? 'Mẹ' : (m.role === 'DAD' ? 'Bố' : (m.role === 'GRANDMA' ? 'Bà' : (m.role === 'CAREGIVER' ? 'Người giúp việc' : 'Thành viên')))} (${m.displayName})`;
+            return key === value.approver;
+          });
+          const approverUserId = selectedMember ? selectedMember.userId : null;
+          this.command.createNotification({
+            userId: approverUserId,
+            title: 'Đề xuất chi tiêu được gửi lại 🔄',
+            message: `${this.currentUserDisplayName} đã chỉnh sửa và gửi lại đề xuất chi tiêu: "${value.title}" với số tiền là ${Number(value.amount).toLocaleString('vi-VN')} VND. Vui lòng vào phê duyệt!`,
+            type: 'EXPENSE'
+          }).subscribe({
+            error: (e) => console.error('Failed to send proposal notification', e)
+          });
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            err?.message || 'Không thể gửi lại đề xuất'
+          );
+        }
+      });
     }
   }
 

@@ -21,9 +21,17 @@ import com.mom.expense.event.ExpenseEventPublisher;
 import com.mom.expense.repository.BudgetRepository;
 import com.mom.expense.repository.ExpenseCategoryRepository;
 import com.mom.expense.repository.ExpenseRepository;
+import com.mom.expense.repository.ExpenseProposalRepository;
+import com.mom.expense.domain.ExpenseProposalEntity;
+import com.mom.expense.controller.dto.CreateProposalRequest;
+import com.mom.expense.controller.dto.RejectProposalRequest;
+import com.mom.expense.controller.dto.ResubmitProposalRequest;
+import com.mom.expense.controller.dto.ProposalResponse;
 import com.mom.common.exception.ResourceNotFoundException;
 import com.mom.common.utils.MonthUtils;
 import com.mom.common.security.DataIsolationUtil;
+import com.mom.common.context.UserContext;
+import org.springframework.security.access.AccessDeniedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -48,6 +56,7 @@ public class ExpenseService {
     private final ExpenseCategoryRepository expenseCategoryRepository;
     private final BudgetRepository budgetRepository;
     private final ExpenseRepository expenseRepository;
+    private final ExpenseProposalRepository expenseProposalRepository;
     private final ExpenseEventPublisher expenseEventPublisher;
 
     @Transactional
@@ -445,5 +454,137 @@ public class ExpenseService {
         }
 
         return new BatchImportResponse(success, failed, errors);
+    }
+
+    public List<ProposalResponse> getProposals(Long familyId) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        return expenseProposalRepository.findByFamilyIdOrderByCreatedAtDesc(familyId).stream()
+                .map(this::toProposalResponse)
+                .toList();
+    }
+
+    @Transactional
+    public ProposalResponse createProposal(CreateProposalRequest request) {
+        DataIsolationUtil.validateFamilyAccess(request.familyId());
+
+        if (request.proposedBy().trim().equalsIgnoreCase(request.approver().trim())) {
+            throw new IllegalArgumentException("Người đề xuất không được trùng với người phê duyệt!");
+        }
+        
+        ExpenseProposalEntity proposal = new ExpenseProposalEntity();
+        proposal.setFamilyId(request.familyId());
+        proposal.setTitle(request.title().trim());
+        proposal.setAmount(request.amount());
+        proposal.setCategoryName(request.categoryName().trim());
+        proposal.setProposedBy(request.proposedBy().trim());
+        proposal.setApprover(request.approver().trim());
+        proposal.setStatus("PENDING");
+        proposal.setCurrentStep(1);
+
+        return toProposalResponse(expenseProposalRepository.save(proposal));
+    }
+
+    @Transactional
+    @CacheEvict(value = "expense-summary", allEntries = true)
+    public ProposalResponse approveProposal(Long id, String approver) {
+        ExpenseProposalEntity proposal = expenseProposalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Proposal not found"));
+        
+        DataIsolationUtil.validateFamilyAccess(proposal.getFamilyId());
+
+        if (!UserContext.isAdmin()) {
+            if (approver == null || !proposal.getApprover().trim().equalsIgnoreCase(approver.trim())) {
+                throw new AccessDeniedException("Bạn không có quyền phê duyệt đề xuất này! Người duyệt được chỉ định là: " + proposal.getApprover());
+            }
+        }
+        
+        proposal.setStatus("APPROVED");
+        proposal.setCurrentStep(2);
+        proposal.setRejectReason(null);
+        ExpenseProposalEntity savedProposal = expenseProposalRepository.save(proposal);
+
+        // Tự động tạo một khoản chi tiêu thật tương ứng
+        // Tìm hoặc tạo category có tên tương ứng
+        ExpenseCategoryEntity category = expenseCategoryRepository.findByFamilyIdOrderByNameAsc(proposal.getFamilyId()).stream()
+                .filter(c -> c.getName().equalsIgnoreCase(proposal.getCategoryName()))
+                .findFirst()
+                .orElseGet(() -> {
+                    ExpenseCategoryEntity newCat = new ExpenseCategoryEntity();
+                    newCat.setFamilyId(proposal.getFamilyId());
+                    newCat.setName(proposal.getCategoryName());
+                    newCat.setColorCode("#0F766E"); // default teal
+                    newCat.setDefaultCategory(false);
+                    return expenseCategoryRepository.save(newCat);
+                });
+
+        ExpenseEntity expense = new ExpenseEntity();
+        expense.setFamilyId(proposal.getFamilyId());
+        expense.setCategoryId(category.getId());
+        expense.setAmount(proposal.getAmount());
+        expense.setCurrency("VND");
+        expense.setNote("[Đề xuất đã duyệt] " + proposal.getTitle());
+        expense.setSpentAt(OffsetDateTime.now());
+        expenseRepository.save(expense);
+
+        return toProposalResponse(savedProposal);
+    }
+
+    @Transactional
+    public ProposalResponse rejectProposal(Long id, RejectProposalRequest request, String approver) {
+        ExpenseProposalEntity proposal = expenseProposalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Proposal not found"));
+        
+        DataIsolationUtil.validateFamilyAccess(proposal.getFamilyId());
+
+        if (!UserContext.isAdmin()) {
+            if (approver == null || !proposal.getApprover().trim().equalsIgnoreCase(approver.trim())) {
+                throw new AccessDeniedException("Bạn không có quyền từ chối đề xuất này! Người duyệt được chỉ định là: " + proposal.getApprover());
+            }
+        }
+        
+        proposal.setStatus("REJECTED");
+        proposal.setCurrentStep(2);
+        proposal.setRejectReason(request.rejectReason().trim());
+        
+        return toProposalResponse(expenseProposalRepository.save(proposal));
+    }
+
+    @Transactional
+    public ProposalResponse resubmitProposal(Long id, ResubmitProposalRequest request, String proposer) {
+        ExpenseProposalEntity proposal = expenseProposalRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Proposal not found"));
+        
+        DataIsolationUtil.validateFamilyAccess(proposal.getFamilyId());
+
+        if (proposer == null || !proposal.getProposedBy().trim().equalsIgnoreCase(proposer.trim())) {
+            throw new AccessDeniedException("Bạn không có quyền gửi lại đề xuất này! Chỉ người tạo ban đầu mới có quyền chỉnh sửa.");
+        }
+        
+        proposal.setTitle(request.title().trim());
+        proposal.setAmount(request.amount());
+        proposal.setCategoryName(request.categoryName().trim());
+        proposal.setApprover(request.approver().trim());
+        proposal.setStatus("PENDING");
+        proposal.setCurrentStep(1);
+        proposal.setRejectReason(null);
+        
+        return toProposalResponse(expenseProposalRepository.save(proposal));
+    }
+
+    private ProposalResponse toProposalResponse(ExpenseProposalEntity proposal) {
+        return new ProposalResponse(
+                proposal.getId(),
+                proposal.getFamilyId(),
+                proposal.getTitle(),
+                proposal.getAmount(),
+                proposal.getCategoryName(),
+                proposal.getProposedBy(),
+                proposal.getApprover(),
+                proposal.getStatus(),
+                proposal.getRejectReason(),
+                proposal.getCurrentStep(),
+                proposal.getCreatedAt(),
+                proposal.getUpdatedAt()
+        );
     }
 }

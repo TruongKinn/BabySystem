@@ -47,6 +47,7 @@
         "dashboard": "Bảng điều khiển",
         "familyCare": "Chăm sóc gia đình",
         "baby": "Em bé",
+        "journey": "Journey+",
         "meals": "Bữa ăn",
         "tasks": "Công việc",
         "finance": "Tài chính",
@@ -565,6 +566,25 @@
             "note": "Ghi chú",
             "noNote": "Không có ghi chú",
             "empty": "Chưa có phát sinh giao dịch chi tiêu nào trong tháng."
+          },
+          "proposals": {
+            "title": "Đề xuất chi tiêu đang chờ duyệt",
+            "loading": "Đang tải các đề xuất chi tiêu...",
+            "assignedApprover": "Người duyệt được chỉ định: {{name}}",
+            "actions": {
+              "approve": "Phê duyệt",
+              "reject": "Từ chối"
+            },
+            "rejectForm": {
+              "title": "Lý do từ chối đề xuất",
+              "placeholder": "Vui lòng nhập lý do từ chối (ví dụ: Vượt ngân sách cấp phép...)",
+              "confirm": "Xác nhận từ chối",
+              "cancel": "Hủy"
+            },
+            "empty": {
+              "title": "Tuyệt vời! Không có đề xuất nào đang chờ duyệt",
+              "subtitle": "Hộ gia đình này hiện không có khoản chi đề xuất nào cần bạn xử lý."
+            }
           }
         },
         "memberCount": "{{count}} người",
@@ -580,7 +600,10 @@
           "inspect": "Chi tiết"
         },
         "messages": {
-          "loadFailed": "Không thể tải dữ liệu tài chính gia đình"
+          "loadFailed": "Không thể tải dữ liệu tài chính gia đình",
+          "approveSuccess": "Đã phê duyệt đề xuất chi tiêu thành công",
+          "rejectSuccess": "Đã từ chối đề xuất chi tiêu thành công",
+          "rejectReasonRequired": "Vui lòng nhập lý do từ chối"
         }
       },
       "exportPasswords": {
@@ -1348,6 +1371,28 @@
           "deleteSuccess": "Xóa ảnh thành công.",
           "deleteFailed": "Không thể xóa ảnh."
         }
+      },
+      "comments": {
+        "btnTitle": "Bình luận",
+        "empty": "Chưa có bình luận nào. Hãy để lại bình luận đầu tiên!",
+        "placeholder": "Viết bình luận của bạn... (Gõ @ để nhắc tên thành viên)",
+        "submit": "Gửi",
+        "messages": {
+          "createFailed": "Không thể gửi bình luận",
+          "deleteSuccess": "Đã xóa bình luận thành công",
+          "deleteFailed": "Không thể xóa bình luận"
+        },
+        "reply": "Trả lời",
+        "replyPlaceholder": "Viết câu trả lời của bạn... (Gõ @ để nhắc tên thành viên)",
+        "delete": "Xóa bình luận",
+        "reactions": {
+          "like": "Thích",
+          "love": "Yêu thích",
+          "haha": "Haha",
+          "wow": "Ngạc nhiên",
+          "sad": "Buồn",
+          "angry": "Phẫn nộ"
+        }
       }
     },
     "family": {
@@ -1581,6 +1626,7 @@
           "ai_care_assistant": "Trợ lý chăm sóc AI",
           "premium_reports": "Báo cáo Premium",
           "family_collaboration_plus": "Cộng tác gia đình Plus",
+          "baby_journey_plus": "Baby Journey+",
           "medical_vault_export": "Xuất hồ sơ y tế",
           "unlimited_memory": "Bộ nhớ không giới hạn"
         }
@@ -1792,33 +1838,329 @@
         "registerSuccessDesc": "Tài khoản của bạn đã được tạo! Đang chuyển hướng về trang đăng nhập...",
         "registerFailedTitle": "Đăng ký thất bại",
         "registerFailedDesc": "Không thể tạo tài khoản. Vui lòng kiểm tra lại thông tin."
+      },
+      "steps": {
+        "account": "Tài khoản",
+        "personal": "Cá nhân",
+        "confirm": "Xác nhận",
+        "next": "Tiếp tục",
+        "prev": "Quay lại"
+      }
+    },
+    "expenses": {
+      "proposals": {
+        "title": "Đề xuất & Phê duyệt Chi tiêu Gia đình",
+        "createBtn": "Tạo đề xuất mới",
+        "table": {
+          "title": "Nội dung đề xuất",
+          "amount": "Số tiền đề xuất",
+          "proposer": "Người đề xuất",
+          "approver": "Người phê duyệt",
+          "status": "Trạng thái",
+          "actions": "Hành động"
+        },
+        "status": {
+          "pending": "Chờ phê duyệt",
+          "approved": "Đã duyệt",
+          "rejected": "Bị từ chối"
+        },
+        "steps": {
+          "submit": "Gửi đề xuất",
+          "review": "Xem xét",
+          "result": "Kết quả"
+        },
+        "actions": {
+          "approve": "Duyệt",
+          "reject": "Từ chối",
+          "resubmit": "Sửa & Gửi lại"
+        },
+        "modal": {
+          "createTitle": "Tạo đề xuất chi tiêu mới",
+          "editTitle": "Chỉnh sửa & Gửi lại đề xuất",
+          "titleLabel": "Tên khoản chi tiêu",
+          "titlePlaceholder": "Ví dụ: Mua máy hút sữa cho bé",
+          "amountLabel": "Số tiền (VND)",
+          "categoryLabel": "Danh mục chi tiêu",
+          "approverLabel": "Thành viên phê duyệt",
+          "approverPlaceholder": "Chọn thành viên duyệt đề xuất",
+          "rejectTitle": "Từ chối đề xuất chi tiêu",
+          "rejectReasonLabel": "Lý do từ chối đề xuất",
+          "rejectReasonPlaceholder": "Nhập lý do từ chối chi tiết...",
+          "successCreate": "Gửi đề xuất chi tiêu gia đình thành công!",
+          "successApprove": "Đã phê duyệt đề xuất! Khoản chi tiêu đã được thêm vào ví gia đình.",
+          "successReject": "Đã từ chối đề xuất chi tiêu.",
+          "successResubmit": "Đã cập nhật và gửi lại đề xuất thành công!"
+        }
+      }
+    },
+    "journey": {
+      "hero": {
+        "kicker": "Baby Journey+ Premium",
+        "title": "Memory DNA",
+        "description": "Biến nhật ký chăm sóc, ảnh, mốc tăng trưởng và lời nhắn gia đình thành một hành trình sống của bé.",
+        "careRhythm": "Care Rhythm",
+        "growthStory": "Growth Story",
+        "futureCapsules": "Future Capsules",
+        "aiCurator": "AI Curator"
+      },
+      "score": {
+        "label": "Memory DNA Score",
+        "grade": {
+          "great": "Tuyệt vời",
+          "good": "Đang phát triển",
+          "start": "Bắt đầu"
+        }
+      },
+      "toolbar": {
+        "babySelectPlaceholder": "Chọn hồ sơ em bé",
+        "refresh": "Làm mới",
+        "timeCapsule": "Time Capsule",
+        "addMilestone": "Thêm cột mốc"
+      },
+      "loading": "Đang tải hành trình của bé...",
+      "lock": {
+        "kicker": "Premium signature feature",
+        "title": "Baby Journey+ đang bị khóa",
+        "description": "Đây là tính năng thương hiệu của BabySystem: AI Curator tự động phát hiện khoảnh khắc đáng nhớ, tạo Living Timeline, Time Capsule và Monthly Storybook cho từng bé.",
+        "unlock": "Mở khóa Premium",
+        "features": {
+          "aiCurator": "AI Memory Curator",
+          "timeline": "Dòng thời gian sống",
+          "storybook": "Storybook tháng",
+          "privacy": "Quyền riêng tư thông minh"
+        }
+      },
+      "empty": {
+        "noBaby": "Cần tạo hồ sơ em bé trước khi dùng Baby Journey+.",
+        "noMilestone": "Chưa có cột mốc nào trong Journey.",
+        "noSuggestion": "Chưa có gợi ý nào đủ mạnh để lưu.",
+        "noCapsule": "Chưa có Time Capsule nào.",
+        "noStorybook": "Tháng này chưa có dữ liệu để tạo storybook."
+      },
+      "tabs": {
+        "timeline": "Living Timeline",
+        "aiCurator": "AI Curator",
+        "timeCapsule": "Time Capsule",
+        "storybook": "Storybook"
+      },
+      "timeline": {
+        "title": "Living Timeline",
+        "subtitle": "Dòng ký ức sống gồm đủ dữ liệu chăm sóc, mốc sức khỏe, lời nhắn và capsule của gia đình.",
+        "pendingSuggestions": "AI Curator đang có gợi ý mới"
+      },
+      "aiCurator": {
+        "title": "AI Memory Curator",
+        "subtitle": "Gợi ý khoảnh khắc nên lưu từ dữ liệu chăm sóc, tăng trưởng, vaccine và gallery.",
+        "rescan": "Quét lại",
+        "confidence": "Độ tự tin",
+        "save": "Lưu vào Journey",
+        "saved": "Đã lưu"
+      },
+      "capsule": {
+        "title": "Future Capsules",
+        "subtitle": "Lời nhắn riêng tư được khóa đến sinh nhật, ngày đầu đi học hoặc một ngày trong tương lai.",
+        "lockedCount": "đang khóa",
+        "create": "Tạo capsule",
+        "status": {
+          "locked": "Đang khóa",
+          "open": "Đã mở"
+        },
+        "openAt": "Mở vào",
+        "openedAt": "Đã mở"
+      },
+      "storybook": {
+        "subtitle": "Bản tóm tắt tháng tự động gom các lớp Memory DNA thành một chương ký ức.",
+        "kicker": "Monthly Memory Storybook",
+        "stats": {
+          "milestones": "cột mốc",
+          "aiSuggestions": "gợi ý AI",
+          "capsules": "capsule"
+        }
+      },
+      "modal": {
+        "memory": {
+          "title": "Thêm cột mốc vào Memory DNA",
+          "subtitle": "Ghi lại khoảnh khắc đáng nhớ của bé",
+          "form": {
+            "title": "Tiêu đề",
+            "titlePlaceholder": "Ví dụ: Lần đầu bé đứng dậy",
+            "type": "Lớp Memory DNA",
+            "happenedAt": "Thời điểm",
+            "privacy": "Quyền riêng tư",
+            "story": "Câu chuyện",
+            "storyPlaceholder": "Viết điều gia đình muốn nhớ về khoảnh khắc này...",
+            "submit": "Lưu cột mốc"
+          }
+        },
+        "capsule": {
+          "title": "Tạo Time Capsule",
+          "subtitle": "Lời nhắn được khóa đến một ngày trong tương lai",
+          "form": {
+            "title": "Tiêu đề",
+            "titlePlaceholder": "Ví dụ: Thư gửi bé năm 1 tuổi",
+            "recipient": "Người nhận",
+            "recipientPlaceholder": "Tên bé hoặc người nhận",
+            "openAt": "Ngày mở",
+            "privacy": "Quyền riêng tư",
+            "message": "Lời nhắn tương lai",
+            "messagePlaceholder": "Viết lời nhắn mà gia đình muốn bé mở trong tương lai...",
+            "submit": "Khóa capsule"
+          }
+        },
+        "cancel": "Hủy"
+      },
+      "types": {
+        "care": "Nhịp chăm sóc",
+        "growth": "Hành trình lớn khôn",
+        "health": "Mốc sức khỏe",
+        "family": "Lời nhắn gia đình",
+        "visual": "Ký ức hình ảnh",
+        "capsule": "Time Capsule"
+      },
+      "privacy": {
+        "family": "Gia đình",
+        "parents": "Chỉ ba mẹ",
+        "private": "Riêng tư"
+      },
+      "sources": {
+        "ai": "AI Curator",
+        "system": "BabySystem",
+        "capsule": "Time Capsule",
+        "family": "Gia đình"
+      },
+      "notifications": {
+        "chooseBaby": "Hãy chọn hồ sơ em bé trước.",
+        "saveSuccess": "Đã lưu cột mốc vào Memory DNA.",
+        "futureDateRequired": "Ngày mở capsule phải nằm trong tương lai.",
+        "capsuleSuccess": "Đã khóa Time Capsule cho tương lai.",
+        "aiSuggestionSuccess": "Khoảnh khắc này đã được đưa vào Living Timeline.",
+        "deleteSuccess": "Đã xóa cột mốc khỏi Journey.",
+        "premiumWarning": "Cần bật Baby Journey+ trong Admin Premium để sử dụng tính năng này."
+      },
+      "systemEvents": {
+        "care": {
+          "title": "Nhịp chăm sóc hôm nay",
+          "story": "Hôm nay có {{feedings}} lần ăn, {{diaperChanges}} lần thay tã và {{sleepHours}} giờ ngủ. Đây là lớp Care Rhythm trong Memory DNA."
+        },
+        "growth": {
+          "title": "Cập nhật Growth Story",
+          "story": "Cân nặng {{weightKg}}kg, chiều cao {{heightCm}}cm, vòng đầu {{headCircumferenceCm}}cm."
+        },
+        "health": {
+          "title": "Mốc sức khỏe: {{vaccineName}}",
+          "story": "Lịch tiêm dự kiến vào {{dueDate}}. Timeline sẽ giữ mốc này như một Health Signal."
+        },
+        "visual": {
+          "title": "Ảnh mới trong Visual Memories",
+          "story": "{{fileName}} vừa được thêm vào thư viện. AI Curator có thể biến ảnh này thành một khoảnh khắc đáng nhớ."
+        }
+      },
+      "suggestions": {
+        "care": {
+          "title": "Một ngày chăm sóc đầy đặn",
+          "detail": "Gia đình đã ghi nhận {{feedings}} lần ăn, {{diaperChanges}} lần thay tã và {{sleepHours}} giờ ngủ.",
+          "reason": "Ngày có đủ tín hiệu chăm sóc để lưu thành ký ức về nhịp sinh hoạt."
+        },
+        "growth": {
+          "title": "Cột mốc tăng trưởng mới",
+          "detail": "Lần đo gần nhất: {{weightKg}}kg và {{heightCm}}cm.{{deltaWeight}}",
+          "deltaWeight": " Cân nặng thay đổi {{deltaWeightKg}}kg.",
+          "reason": "Mỗi chỉ số tăng trưởng đều là một chương trong Growth Story."
+        },
+        "health": {
+          "title": "Chuẩn bị {{vaccineName}}",
+          "detail": "Ngày hẹn: {{dueDate}}. Có thể thêm lời nhắc và cảm xúc của ba mẹ vào Journey.",
+          "reason": "Mốc y tế quan trọng nên được giữ trong timeline riêng của bé."
+        },
+        "visual": {
+          "title": "Ảnh mới có thể thành ký ức",
+          "detail": "{{fileName}} có thể được lưu như một Visual Memory của tháng này.",
+          "reason": "Ảnh mới gần với ngày chăm sóc thường là đầu mối tốt để tạo storybook."
+        },
+        "family": {
+          "title": "Thêm góc nhìn của gia đình",
+          "detail": "Mỗi thành viên có thể để lại một lời nhắn ngắn để Timeline không chỉ có số liệu mà có cả cảm xúc.",
+          "reason": "Family Voices là lớp làm BabySystem khác với các app tracking thông thường."
+        }
+      },
+      "dnaLayers": {
+        "care": {
+          "meta": "{{count}} tín hiệu chăm sóc gần đây"
+        },
+        "growth": {
+          "meta": "{{count}} lần đo phát triển"
+        },
+        "voice": {
+          "meta": "{{count}} lời nhắn đã lưu"
+        },
+        "visual": {
+          "meta": "{{count}} ảnh hoặc ký ức hình ảnh"
+        },
+        "capsule": {
+          "meta": "{{count}} lời nhắn cho tương lai"
+        }
+      },
+      "displayStory": {
+        "lockedCapsule": "Capsule này sẽ mở vào {{openAt}} cho {{recipient}}."
+      },
+      "errors": {
+        "loadBabies": "Không thể tải danh sách em bé."
       }
     }
   },
   "auth": {
     "login": {
       "card": {
-        "eyebrow": "Authentication",
+        "eyebrow": "BabySystem",
         "title": "Đăng nhập",
-        "subtitle": "Chọn một trong hai cách đăng nhập bên dưới."
+        "subtitle": "Chọn cách xác thực phù hợp với tài khoản của bạn."
       },
       "hero": {
-        "title": "Đăng nhập một nơi, dùng hai phương thức",
-        "subtitle": "Chọn <strong>Bearer token</strong> để đăng nhập bằng tài khoản hệ thống, hoặc chuyển sang <strong>Keycloak</strong> nếu bạn dùng SSO tập trung.",
-        "point1": "Tài khoản nội bộ + 2FA",
-        "point2": "SSO qua Keycloak",
-        "point3": "Token được lưu đồng nhất",
-        "badge": "Nền tảng Logistics"
+        "title": "Đăng nhập BabySystem",
+        "subtitle": "Một tài khoản cho đúng cổng làm việc: gia đình dùng User Portal, quản trị dùng Admin Portal.",
+        "point1": "Theo dõi việc gia đình",
+        "point2": "Quản lý quyền truy cập",
+        "point3": "Bảo mật bằng 2FA",
+        "badge": "BabySystem"
       },
       "portal": {
-        "adminHint": "Admin Portal - quản lý tài khoản người dùng và vận hành hệ thống",
-        "userHint": "User Portal - dành cho thành viên gia đình sử dụng ứng dụng",
-        "switchToAdmin": "Đăng nhập vào Admin Portal",
-        "switchToUser": "Đăng nhập vào User Portal"
+        "adminHint": "Dành cho quản trị viên quản lý tài khoản, quyền và vận hành hệ thống.",
+        "userHint": "Dành cho thành viên gia đình sử dụng ứng dụng hằng ngày.",
+        "switchToAdmin": "Đăng nhập Admin Portal",
+        "switchToUser": "Đăng nhập User Portal",
+        "currentLabel": "Cổng hiện tại",
+        "userName": "User Portal",
+        "adminName": "Admin Portal",
+        "userBadge": "User Portal",
+        "adminBadge": "Admin Portal",
+        "userTitle": "User Portal dùng để quản lý việc gia đình hằng ngày",
+        "userDescription": "Đây là khu vực /app cho thành viên gia đình: theo dõi bé, bữa ăn, chi tiêu, việc cần làm, mua sắm, tài liệu và insight.",
+        "adminTitle": "Admin Portal dùng để vận hành và kiểm soát hệ thống",
+        "adminDescription": "Đây là khu vực /admin cho Owner/Admin: quản lý người dùng, gia đình, gói premium, tài chính, quyền và API.",
+        "afterLoginTitle": "Không gian sau đăng nhập",
+        "userOutcome1": "Lịch chăm sóc bé, bữa ăn và nhiệm vụ",
+        "userOutcome2": "Mua sắm, chi tiêu và tài liệu gia đình",
+        "userOutcome3": "Insight để xem nhanh xu hướng trong nhà",
+        "adminOutcome1": "Người dùng, vai trò và gia đình",
+        "adminOutcome2": "Quyền truy cập, 2FA và API permission",
+        "adminOutcome3": "Premium, tài chính và nhật ký vận hành",
+        "userFeature1": "Baby care",
+        "userFeature2": "Expenses",
+        "userFeature3": "Documents",
+        "userFeature4": "Notifications",
+        "adminFeature1": "Users",
+        "adminFeature2": "Families",
+        "adminFeature3": "Permissions",
+        "adminFeature4": "Audit",
+        "switchToAdminHint": "Dành cho Owner/Admin vận hành hệ thống",
+        "switchToUserHint": "Dành cho thành viên gia đình dùng app",
+        "adminAccessNote": "Tài khoản admin được cấp bởi Owner hoặc quản trị viên. Người dùng gia đình nên quay lại User Portal."
       },
       "switch": {
-        "bearer": "Bearer token",
-        "keycloak": "Keycloak"
+        "bearer": "Tài khoản hệ thống",
+        "keycloak": "Keycloak SSO",
+        "bearerHint": "Nhanh cho tài khoản nội bộ",
+        "keycloakHint": "Dùng định danh tập trung"
       },
       "form": {
         "usernameLabel": "Tên đăng nhập",
@@ -1836,30 +2178,39 @@
         "captchaRefresh": "Nhấn để đổi mã khác",
         "remember": "Ghi nhớ",
         "forgotPassword": "Quên mật khẩu?",
-        "submitBearer": "Đăng nhập bằng Bearer token",
+        "submitBearer": "Đăng nhập",
         "twoFactorHelp": "Mã 2FA lấy ở đâu?",
         "register": "Đăng ký tài khoản",
         "note": "Hệ thống sẽ tự bật OTP hoặc CAPTCHA khi cần.",
         "setupTwoFactor": "Thiết lập 2FA",
-        "setupHint": "Nếu đã đăng nhập, nút này mở trang quét QR ngay."
+        "setupHint": "Nếu đã đăng nhập, nút này mở trang quét QR ngay.",
+        "registerPrompt": "Chưa có tài khoản?",
+        "registerCta": "Đăng ký User Portal",
+        "dividerEmail": "hoặc đăng nhập bằng tài khoản"
       },
       "keycloak": {
-        "description": "Dùng SSO để chuyển sang Keycloak, sau đó hệ thống đổi token thành session nội bộ cho gateway và các service phía sau.",
+        "description": "Dùng SSO nếu tổ chức đã quản lý tài khoản qua Keycloak. Sau xác thực, hệ thống đổi token thành session nội bộ cho gateway và các service.",
         "bullet1": "Phù hợp khi đã có tài khoản tập trung.",
         "bullet2": "Không cần nhập lại mật khẩu nội bộ.",
-        "bullet3": "Token cuối cùng vẫn được hệ thống lưu đồng nhất.",
-        "submit": "Đăng nhập với Keycloak",
+        "bullet3": "Session cuối cùng vẫn đi qua cơ chế quyền của BabySystem.",
+        "submit": "Tiếp tục với Keycloak",
         "title": "Đăng nhập bằng Keycloak"
       },
       "twoFactorModal": {
         "title": "Hướng dẫn lấy mã 2FA",
-        "description": "Mã 2FA không phải do hệ thống tự sinh ở màn login. Bạn phải bật 2FA trước trong trang <strong>Thiết lập 2FA</strong> sau khi đã đăng nhập.",
-        "step1": "Đăng nhập vào hệ thống.",
+        "description": "Mã 2FA không được sinh ở màn login. Bạn cần bật 2FA trước trong trang <strong>Thiết lập 2FA</strong> sau khi đã đăng nhập.",
+        "step1": "Đăng nhập bằng mật khẩu",
         "step2": "Mở menu <strong>Thiết lập 2FA</strong> hoặc vào route <code>/2fa-setup</code>.",
-        "step3": "Quét QR bằng Google Authenticator hoặc ứng dụng OTP tương tự.",
-        "step4": "Ứng dụng sẽ sinh mã 6 số thay đổi mỗi 30 giây.",
-        "step5": "Khi lần sau hệ thống yêu cầu OTP, nhập đúng mã 6 số vào ô đăng nhập.",
-        "info": "Nếu tài khoản chưa bật 2FA, bạn không cần nhập OTP."
+        "step3": "Quét mã QR",
+        "step4": "Lấy mã 6 số",
+        "step5": "Nhập OTP khi được yêu cầu",
+        "info": "Nếu tài khoản chưa bật 2FA, bạn không cần nhập OTP.",
+        "step1Desc": "Dùng tài khoản nội bộ bình thường để vào hệ thống lần đầu.",
+        "step2Title": "Bật 2FA trong hồ sơ",
+        "step3Desc": "Dùng Google Authenticator, Microsoft Authenticator hoặc ứng dụng OTP tương thích.",
+        "step4Desc": "Ứng dụng OTP sẽ sinh mã mới sau mỗi 30 giây.",
+        "step5Desc": "Ở các lần đăng nhập sau, điền mã 6 số để hoàn tất xác thực.",
+        "close": "Đã hiểu"
       },
       "forceChangeModal": {
         "title": "Đổi mật khẩu tạm",
@@ -1910,11 +2261,21 @@
       "themeToggleAria": "Chuyển giao diện",
       "forgotPasswordModal": {
         "title": "Quên mật khẩu",
-        "description": "Nhập tên đăng nhập hoặc địa chỉ email đã đăng ký. Hệ thống sẽ tạo mật khẩu tạm thời và gửi về địa chỉ email của bạn.",
+        "description": "Nhập tên đăng nhập hoặc địa chỉ email đã đăng ký. Hệ thống sẽ tạo mật khẩu tạm thời và gửi về email của bạn.",
         "usernameOrEmailLabel": "Tên đăng nhập hoặc Email",
         "usernameOrEmailPlaceholder": "Nhập username hoặc email của bạn",
         "usernameOrEmailError": "Vui lòng nhập tên đăng nhập hoặc email",
-        "confirm": "Gửi yêu cầu"
+        "confirm": "Gửi yêu cầu",
+        "info": "Mật khẩu tạm thời sẽ được gửi đến email đã đăng ký trong vòng vài giây."
+      },
+      "actions": {
+        "close": "Đóng"
+      },
+      "social": {
+        "google": "Google",
+        "github": "GitHub",
+        "facebook": "Facebook",
+        "soon": "Sắp có"
       }
     }
   }

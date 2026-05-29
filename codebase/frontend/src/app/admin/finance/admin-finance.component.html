@@ -297,6 +297,86 @@
         </div>
       </div>
 
+      <!-- Pending Expense Proposals Section (Admin Approval Area) -->
+      <div style="margin-bottom: 24px;">
+        <div class="drawer-section-title" style="border-left-color: #f59e0b;">
+          <span nz-icon nzType="solution" style="color: #f59e0b; margin-right: 8px;"></span>
+          {{ 'momApp.admin.finance.drawer.proposals.title' | translate }}
+          <nz-tag *ngIf="pendingProposals.length > 0" nzColor="orange" style="border-radius: 6px; font-weight: 700; margin-left: 8px;">
+            {{ pendingProposals.length }}
+          </nz-tag>
+        </div>
+
+        <div *ngIf="loadingProposals" style="text-align: center; padding: 24px; background: #ffffff; border: 1px solid #f1f5f9; border-radius: 12px;">
+          <nz-spin nzSimple [nzTip]="'momApp.admin.finance.drawer.proposals.loading' | translate"></nz-spin>
+        </div>
+
+        <div *ngIf="!loadingProposals">
+          <div *ngIf="pendingProposals.length > 0" class="admin-proposals-list">
+            <div *ngFor="let proposal of pendingProposals" class="admin-proposal-card animate-fade-in">
+              <div class="admin-proposal-header">
+                <div class="admin-proposal-meta">
+                  <span class="admin-proposal-proposer">
+                    <nz-avatar nzSize="small" nzIcon="user" style="background-color: #f59e0b; margin-right: 6px;"></nz-avatar>
+                    <strong>{{ proposal.proposedBy }}</strong>
+                  </span>
+                  <span class="admin-proposal-date">{{ proposal.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                </div>
+                <nz-tag nzColor="blue" style="font-weight: 700; border-radius: 6px;">{{ proposal.categoryName }}</nz-tag>
+              </div>
+
+              <div class="admin-proposal-body">
+                <div class="admin-proposal-info">
+                  <div class="admin-proposal-name">{{ proposal.title }}</div>
+                  <div class="admin-proposal-approver-info">
+                    {{ 'momApp.admin.finance.drawer.proposals.assignedApprover' | translate: { name: proposal.approver } }}
+                  </div>
+                </div>
+                <div class="admin-proposal-amount">{{ formatCurrency(proposal.amount) }}</div>
+              </div>
+
+              <!-- Action buttons -->
+              <div class="admin-proposal-actions" *ngIf="rejectingProposalId !== proposal.id">
+                <button class="admin-btn-approve" (click)="approveProposal(proposal.id)">
+                  <span nz-icon nzType="check-circle" nzTheme="outline"></span>
+                  {{ 'momApp.admin.finance.drawer.proposals.actions.approve' | translate }}
+                </button>
+                <button class="admin-btn-reject" (click)="startReject(proposal.id)">
+                  <span nz-icon nzType="close-circle" nzTheme="outline"></span>
+                  {{ 'momApp.admin.finance.drawer.proposals.actions.reject' | translate }}
+                </button>
+              </div>
+
+              <!-- Quick reject reason form -->
+              <div class="admin-proposal-reject-form animate-fade-in" *ngIf="rejectingProposalId === proposal.id">
+                <div class="reject-form-title">{{ 'momApp.admin.finance.drawer.proposals.rejectForm.title' | translate }}</div>
+                <textarea 
+                  nz-input 
+                  [placeholder]="'momApp.admin.finance.drawer.proposals.rejectForm.placeholder' | translate" 
+                  [(ngModel)]="rejectReason"
+                  [nzAutosize]="{ minRows: 2, maxRows: 3 }"
+                  class="reject-textarea"
+                ></textarea>
+                <div class="reject-form-buttons">
+                  <button nz-button nzType="primary" nzDanger (click)="rejectProposal(proposal.id)" [disabled]="!rejectReason.trim()" style="border-radius: 8px; font-weight: 600;">
+                    {{ 'momApp.admin.finance.drawer.proposals.rejectForm.confirm' | translate }}
+                  </button>
+                  <button nz-button nzType="default" (click)="cancelReject()" style="border-radius: 8px; font-weight: 600;">
+                    {{ 'momApp.admin.finance.drawer.proposals.rejectForm.cancel' | translate }}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div *ngIf="pendingProposals.length === 0" class="admin-proposals-empty">
+            <span nz-icon nzType="check-square" class="proposals-empty-icon"></span>
+            <div class="proposals-empty-title">{{ 'momApp.admin.finance.drawer.proposals.empty.title' | translate }}</div>
+            <div class="proposals-empty-subtitle">{{ 'momApp.admin.finance.drawer.proposals.empty.subtitle' | translate }}</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Expense Details List Section -->
       <div>
         <div class="drawer-section-title">

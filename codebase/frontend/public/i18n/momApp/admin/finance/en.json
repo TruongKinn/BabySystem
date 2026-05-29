@@ -1,0 +1,28 @@
+{
+  "drawer": {
+    "proposals": {
+      "title": "Pending Expense Proposals",
+      "loading": "Loading expense proposals...",
+      "assignedApprover": "Assigned approver: {{name}}",
+      "actions": {
+        "approve": "Approve",
+        "reject": "Reject"
+      },
+      "rejectForm": {
+        "title": "Reason for rejecting proposal",
+        "placeholder": "Please enter a reason for rejection (e.g. Budget exceeded...)",
+        "confirm": "Confirm Reject",
+        "cancel": "Cancel"
+      },
+      "empty": {
+        "title": "Awesome! No pending proposals",
+        "subtitle": "This household currently has no expense proposals requiring your action."
+      }
+    }
+  },
+  "messages": {
+    "approveSuccess": "Expense proposal approved successfully",
+    "rejectSuccess": "Expense proposal rejected successfully",
+    "rejectReasonRequired": "Please enter a reason for rejection"
+  }
+}

@@ -47,6 +47,7 @@
         "dashboard": "仪表板",
         "familyCare": "家庭护理",
         "baby": "宝贝",
+        "journey": "Journey+",
         "meals": "膳食",
         "tasks": "任务",
         "finance": "金融",
@@ -1583,6 +1584,7 @@
           "ai_care_assistant": "人工智能护理助手",
           "premium_reports": "高级报告",
           "family_collaboration_plus": "家庭协作增强版",
+          "baby_journey_plus": "Baby Journey+",
           "medical_vault_export": "医疗库导出",
           "unlimited_memory": "无限内存"
         }
@@ -1750,32 +1752,320 @@
         "githubVerifyFailed": "无法向系统验证 GitHub 账号。请重试。",
         "socialSuccess": "社交账号关联并登录成功！"
       }
+    },
+    "register": {
+      "hero": {
+        "title": "与您的家人一同开启旅程",
+        "subtitle": "注册内部账户，享受平台为您带来的数字化家庭支出管理、餐食计划、日常活动及宝宝成长记录服务。",
+        "point1": "便捷的家庭支出管理",
+        "point2": "合理规划餐食并追踪宝宝健康状况",
+        "point3": "通过 2FA 确保数据的绝对安全"
+      },
+      "card": {
+        "title": "注册账号",
+        "subtitle": "请在下方填写完整信息以创建新账号。"
+      },
+      "form": {
+        "usernameLabel": "用户名",
+        "usernamePlaceholder": "请输入用户名 (连续，无空格/特殊字符)",
+        "usernameError": "用户名长度不能少于 3 个字符",
+        "emailLabel": "电子邮件",
+        "emailPlaceholder": "email@example.com",
+        "emailError": "请输入有效的电子邮件地址",
+        "passwordLabel": "密码",
+        "passwordPlaceholder": "••••••••",
+        "passwordError": "密码长度不能少于 6 个字符",
+        "confirmPasswordLabel": "确认密码",
+        "confirmPasswordPlaceholder": "请再次输入密码",
+        "confirmPasswordError": "请确认您的密码",
+        "confirmPasswordMismatch": "两次输入的密码不一致",
+        "firstNameLabel": "名字",
+        "firstNamePlaceholder": "输入您的名字 (例如: 伟)",
+        "firstNameError": "请输入您的名字",
+        "lastNameLabel": "姓氏",
+        "lastNamePlaceholder": "输入您的姓氏 (包含辈分/中间名)",
+        "lastNameError": "请输入您的姓氏",
+        "phoneLabel": "电话号码",
+        "phonePlaceholder": "09xxxxxxxx",
+        "phoneError": "请输入有效的电话号码",
+        "submit": "注册账号",
+        "loginLink": "已有账号？立即登录"
+      },
+      "messages": {
+        "registerSuccessTitle": "注册成功",
+        "registerSuccessDesc": "您的账号已创建！正在跳转至登录页面...",
+        "registerFailedTitle": "注册失败",
+        "registerFailedDesc": "无法创建账号。请检查您输入的信息。"
+      }
+    },
+    "journey": {
+      "hero": {
+        "kicker": "宝贝时光+ 尊享版",
+        "title": "记忆 DNA",
+        "description": "将每日的护理记录、照片、成长里程碑以及家人的心声，转化为宝宝生动的生活成长轨迹。",
+        "careRhythm": "护理节奏",
+        "growthStory": "成长故事",
+        "futureCapsules": "时光胶囊",
+        "aiCurator": "AI 策展人"
+      },
+      "score": {
+        "label": "记忆DNA得分",
+        "grade": {
+          "great": "极好",
+          "good": "成长中",
+          "start": "开始"
+        }
+      },
+      "toolbar": {
+        "babySelectPlaceholder": "选择宝宝档案",
+        "refresh": "刷新",
+        "timeCapsule": "时光胶囊",
+        "addMilestone": "添加里程碑"
+      },
+      "loading": "正在加载宝宝的成长时光...",
+      "lock": {
+        "kicker": "高级版专属功能",
+        "title": "宝贝时光+ 已被锁定",
+        "description": "这是 BabySystem 的招牌功能：AI 策展人自动检测值得纪念的瞬间，为每个宝宝创建动态时间线、时光胶囊以及月度回忆册。",
+        "unlock": "解锁高级版",
+        "features": {
+          "aiCurator": "AI 记忆策展人",
+          "timeline": "动态时间线",
+          "storybook": "月度回忆册",
+          "privacy": "智能隐私保护"
+        }
+      },
+      "empty": {
+        "noBaby": "在使用宝贝时光+ 之前，请先创建宝宝档案。",
+        "noMilestone": "时光轨迹中尚无里程碑。",
+        "noSuggestion": "目前还没有足够强烈的建议值得保存。",
+        "noCapsule": "目前还没有时光胶囊。",
+        "noStorybook": "本月还没有足够的数据来生成回忆册。"
+      },
+      "tabs": {
+        "timeline": "动态时间线",
+        "aiCurator": "AI 策展人",
+        "timeCapsule": "时光胶囊",
+        "storybook": "月度回忆册"
+      },
+      "timeline": {
+        "title": "动态时间线",
+        "subtitle": "一段融合了护理记录、健康信号、家人心声以及时光胶囊的鲜活记忆流动。",
+        "pendingSuggestions": "AI 策展人有新的建议"
+      },
+      "aiCurator": {
+        "title": "AI 记忆策展人",
+        "subtitle": "根据护理、成长、疫苗和相册数据，推荐值得保存的精彩瞬间。",
+        "rescan": "重新扫描",
+        "confidence": "可信度",
+        "save": "保存到时光",
+        "saved": "已保存"
+      },
+      "capsule": {
+        "title": "时光胶囊",
+        "subtitle": "寄往未来的私人信件，锁定至生日、入学日或未来的某一天开启。",
+        "lockedCount": "个锁定中",
+        "create": "创建胶囊",
+        "status": {
+          "locked": "锁定中",
+          "open": "已开启"
+        },
+        "openAt": "开启时间",
+        "openedAt": "已开启"
+      },
+      "storybook": {
+        "subtitle": "月度摘要，自动将多层记忆 DNA 整合为一章成长回忆录。",
+        "kicker": "月度记忆回忆册",
+        "stats": {
+          "milestones": "个里程碑",
+          "aiSuggestions": "条 AI 建议",
+          "capsules": "个时光胶囊"
+        }
+      },
+      "modal": {
+        "memory": {
+          "title": "添加里程碑到记忆 DNA",
+          "subtitle": "记录宝宝的难忘瞬间",
+          "form": {
+            "title": "标题",
+            "titlePlaceholder": "例如：宝宝第一次站起来",
+            "type": "记忆 DNA 图层",
+            "happenedAt": "时间",
+            "privacy": "隐私设置",
+            "story": "成长故事",
+            "storyPlaceholder": "写下家人想要留存的温馨回忆...",
+            "submit": "保存里程碑"
+          }
+        },
+        "capsule": {
+          "title": "创建时光胶囊",
+          "subtitle": "封存至未来某一天开启的寄语",
+          "form": {
+            "title": "标题",
+            "titlePlaceholder": "例如：写给宝宝1岁时的信",
+            "recipient": "收信人",
+            "recipientPlaceholder": "宝宝的姓名或收信人",
+            "openAt": "开启日期",
+            "privacy": "隐私设置",
+            "message": "致未来的寄语",
+            "messagePlaceholder": "写下您希望宝宝在未来开启的话语...",
+            "submit": "封存胶囊"
+          }
+        },
+        "cancel": "取消"
+      },
+      "types": {
+        "care": "护理节奏",
+        "growth": "成长故事",
+        "health": "健康信号",
+        "family": "家人心声",
+        "visual": "视觉记忆",
+        "capsule": "时光胶囊"
+      },
+      "privacy": {
+        "family": "全家共享",
+        "parents": "仅限父母",
+        "private": "私密"
+      },
+      "sources": {
+        "ai": "AI 策展人",
+        "system": "BabySystem",
+        "capsule": "时光胶囊",
+        "family": "家人心声"
+      },
+      "notifications": {
+        "chooseBaby": "请先选择宝宝档案。",
+        "saveSuccess": "里程碑已保存至记忆 DNA。",
+        "futureDateRequired": "开启日期必须是未来的时间。",
+        "capsuleSuccess": "时光胶囊已封存，静待未来开启。",
+        "aiSuggestionSuccess": "精彩瞬间已添加至动态时间线。",
+        "deleteSuccess": "里程碑已从时光轨迹中移除。",
+        "premiumWarning": "请在高级版设置中启用宝贝时光+ 以使用此功能。"
+      },
+      "systemEvents": {
+        "care": {
+          "title": "今日护理节奏",
+          "story": "今天记录了喂奶{{feedings}}次，换尿布{{diaperChanges}}次，睡眠{{sleepHours}}小时。这是记忆 DNA 中的护理节奏图层。"
+        },
+        "growth": {
+          "title": "更新了成长故事",
+          "story": "体重{{weightKg}}kg，身高{{heightCm}}cm，头围{{headCircumferenceCm}}cm。"
+        },
+        "health": {
+          "title": "健康里程碑：{{vaccineName}}",
+          "story": "预计于{{dueDate}}接种疫苗。时间线会将此作为健康信号留存。"
+        },
+        "visual": {
+          "title": "视觉记忆新增照片",
+          "story": "{{fileName}} 已添加至相册。AI 策展人可以将它转化为一段令人难忘的回忆瞬间。"
+        }
+      },
+      "suggestions": {
+        "care": {
+          "title": "充实的一天护理",
+          "detail": "家人记录了喂奶{{feedings}}次，换尿布{{diaperChanges}}次，睡眠{{sleepHours}}小时。",
+          "reason": "今天有足够的护理记录，适合保存为生活作息的记忆片段。"
+        },
+        "growth": {
+          "title": "新增成长里程碑",
+          "detail": "最新测量值：体重{{weightKg}}kg，身高{{heightCm}}cm。{{deltaWeight}}",
+          "deltaWeight": " 体重变化了{{deltaWeightKg}}kg。",
+          "reason": "每一个成长指标都是成长故事中的精彩章节。"
+        },
+        "health": {
+          "title": "准备接种 {{vaccineName}}",
+          "detail": "预约日期：{{dueDate}}。您可以在时光轨迹中添加提醒或父母的真实感受。",
+          "reason": "重要的医疗健康里程碑应当保存在宝宝专属的时间线中。"
+        },
+        "visual": {
+          "title": "新照片可转化为回忆",
+          "detail": "{{fileName}} 可以保存为本月的视觉记忆。",
+          "reason": "临近护理日的新照片，是创作月度回忆册的极佳线索。"
+        },
+        "family": {
+          "title": "添加家人的视角",
+          "detail": "每个家庭成员都可以留下一句简短的寄语，让时间线不仅充满数据，更有温情。",
+          "reason": "家人心声是让 BabySystem 区别于普通记录工具的温情所在。"
+        }
+      },
+      "dnaLayers": {
+        "care": {
+          "meta": "最近有{{count}}条护理信号"
+        },
+        "growth": {
+          "meta": "累计{{count}}次成长测量"
+        },
+        "voice": {
+          "meta": "已保存{{count}}条留言心声"
+        },
+        "visual": {
+          "meta": "累计{{count}}张照片或视觉记忆"
+        },
+        "capsule": {
+          "meta": "已封存{{count}}条致未来的寄语"
+        }
+      },
+      "displayStory": {
+        "lockedCapsule": "此时光胶囊将于 {{openAt}} 开启，收信人：{{recipient}}。"
+      },
+      "errors": {
+        "loadBabies": "无法加载宝宝档案。"
+      }
     }
   },
   "auth": {
     "login": {
       "card": {
-        "eyebrow": "认证",
+        "eyebrow": "BabySystem",
         "title": "登录",
-        "subtitle": "选择以下一种登录方式。"
+        "subtitle": "选择适合您账号的认证方式。"
       },
       "hero": {
-        "title": "一处登录，双重认证方式",
-        "subtitle": "使用 <strong>Bearer token</strong> 登录平台账户，或者在使用集中式 SSO 时切换至 <strong>Keycloak</strong>。",
-        "point1": "内部账号 + 2FA",
-        "point2": "通过 Keycloak 进行 SSO",
-        "point3": "统一保存 Token",
-        "badge": "物流平台"
+        "title": "登录 BabySystem",
+        "subtitle": "一个账号进入正确的工作区：家庭成员使用 User Portal，运营管理员使用 Admin Portal。",
+        "point1": "家庭事务管理",
+        "point2": "访问权限控制",
+        "point3": "2FA 安全保护",
+        "badge": "BabySystem"
       },
       "portal": {
-        "adminHint": "管理门户 - 管理用户账户及系统运维",
-        "userHint": "用户门户 - 供使用应用的家庭成员使用",
-        "switchToAdmin": "登录管理员门户",
-        "switchToUser": "登录家庭门户"
+        "adminHint": "适合管理账号、权限和系统运营的管理员。",
+        "userHint": "适合日常使用应用的家庭成员。",
+        "switchToAdmin": "登录 Admin Portal",
+        "switchToUser": "登录 User Portal",
+        "currentLabel": "当前门户",
+        "userName": "User Portal",
+        "adminName": "Admin Portal",
+        "userBadge": "User Portal",
+        "adminBadge": "Admin Portal",
+        "userTitle": "User Portal 用于日常家庭管理",
+        "userDescription": "这里是面向家庭成员的 /app 工作区：育儿、餐食、支出、任务、购物、文档和洞察。",
+        "adminTitle": "Admin Portal 用于系统运营和控制",
+        "adminDescription": "这里是面向 Owner/Admin 的 /admin 工作区：用户、家庭、高级功能、财务、权限和 API。",
+        "afterLoginTitle": "登录后的工作区",
+        "userOutcome1": "育儿、餐食计划和任务",
+        "userOutcome2": "购物、支出和家庭文档",
+        "userOutcome3": "快速查看家庭趋势洞察",
+        "adminOutcome1": "用户、角色和家庭",
+        "adminOutcome2": "访问控制、2FA 和 API 权限",
+        "adminOutcome3": "高级功能、财务和运营日志",
+        "userFeature1": "育儿",
+        "userFeature2": "支出",
+        "userFeature3": "文档",
+        "userFeature4": "通知",
+        "adminFeature1": "用户",
+        "adminFeature2": "家庭",
+        "adminFeature3": "权限",
+        "adminFeature4": "审计",
+        "switchToAdminHint": "供 Owner/Admin 运营系统使用",
+        "switchToUserHint": "供家庭成员使用应用",
+        "adminAccessNote": "管理员账号由 Owner 或管理员授予。家庭用户应返回 User Portal。"
       },
       "switch": {
-        "bearer": "Bearer token",
-        "keycloak": "Keycloak"
+        "bearer": "系统账号",
+        "keycloak": "Keycloak SSO",
+        "bearerHint": "适合内部账号快速登录",
+        "keycloakHint": "使用集中身份认证"
       },
       "form": {
         "usernameLabel": "用户名",
@@ -1793,30 +2083,39 @@
         "captchaRefresh": "点击更换验证码",
         "remember": "记住登录状态",
         "forgotPassword": "忘记密码？",
-        "submitBearer": "使用 Bearer token 登录",
+        "submitBearer": "登录",
         "twoFactorHelp": "如何获取 2FA 验证码？",
         "register": "注册账号",
         "note": "系统会根据需要自动启用 OTP 或 CAPTCHA。",
         "setupTwoFactor": "设置 2FA",
-        "setupHint": "如果您已登录，点击此按钮可直接打开 QR 二维码设置页面。"
+        "setupHint": "如果您已登录，点击此按钮可直接打开 QR 二维码设置页面。",
+        "registerPrompt": "还没有账号？",
+        "registerCta": "创建 User Portal 账号",
+        "dividerEmail": "或使用账号登录"
       },
       "keycloak": {
-        "description": "使用 SSO 登录 Keycloak，随后系统会将 Token 转换为网关及下游服务的内部 Session。",
+        "description": "当组织通过 Keycloak 管理身份时使用 SSO。认证后，系统会将其转换为网关和服务使用的内部会话。",
         "bullet1": "适用于已有集中式账号的情况。",
         "bullet2": "无需重复输入内部密码。",
-        "bullet3": "最终 Token 仍由系统统一保存。",
-        "submit": "使用 Keycloak 登录",
+        "bullet3": "最终会话仍遵循 BabySystem 的权限规则。",
+        "submit": "继续使用 Keycloak",
         "title": "使用 Keycloak 登录"
       },
       "twoFactorModal": {
         "title": "如何获取 2FA 验证码",
-        "description": "2FA 验证码并非由登录界面自动生成。您必须在登录后，在<strong>设置 2FA</strong> 页面中启用 2FA。",
-        "step1": "登录系统。",
-        "step2": "打开 <strong>设置 2FA</strong> 菜单或访问 <code>/2fa-setup</code> 路由。",
-        "step3": "使用 Google Authenticator 或其他兼容 of OTP 应用扫描 QR 二维码。",
-        "step4": "应用将生成每 30 秒更改一次的 6 位数验证码。",
-        "step5": "下次系统要求输入 OTP 时，在登录表单中输入正确的 6 位数验证码。",
-        "info": "如果账户未启用 2FA，则无需输入 OTP。"
+        "description": "2FA 验证码不会在登录界面生成。您需要登录后先在<strong>设置 2FA</strong>中启用 2FA。",
+        "step1": "使用密码登录",
+        "step2": "打开 <strong>设置 2FA</strong> 菜单或访问 <code>/2fa-setup</code>。",
+        "step3": "扫描 QR 二维码",
+        "step4": "获取 6 位验证码",
+        "step5": "系统要求时输入 OTP",
+        "info": "如果账户未启用 2FA，则无需输入 OTP。",
+        "step1Desc": "首次使用内部账号正常登录系统。",
+        "step2Title": "在个人资料中启用 2FA",
+        "step3Desc": "使用 Google Authenticator、Microsoft Authenticator 或其他兼容 OTP 应用。",
+        "step4Desc": "OTP 应用每 30 秒生成新的验证码。",
+        "step5Desc": "之后登录时，输入 6 位验证码即可完成验证。",
+        "close": "明白了"
       },
       "forceChangeModal": {
         "title": "修改临时密码",
@@ -1838,8 +2137,8 @@
         "reqSpecial": "包含特殊字符"
       },
       "messages": {
-        "googleVerifyFailed": "无法向系统验证 Google 账号。请重试。",
-        "githubVerifyFailed": "无法向系统验证 GitHub 账号。请重试。",
+        "googleVerifyFailed": "无法验证 Google 账号。请重试。",
+        "githubVerifyFailed": "无法验证 GitHub 账号。请重试。",
         "socialSuccess": "社交账号关联并登录成功！",
         "captchaLoadFailed": "无法加载 CAPTCHA: {{message}}",
         "loginFailedTitle": "登录失败",
@@ -1858,9 +2157,31 @@
         "forceChangeSuccessDesc": "密码已成功更新。正在重新登录...",
         "forceChangeFailed": "无法更改密码。请检查输入的信息。",
         "forceChangeRequiredTitle": "需要更新密码",
-        "forceChangeRequiredDesc": "在继续之前，您必须修改临时密码。"
+        "forceChangeRequiredDesc": "在继续之前，您必须修改临时密码。",
+        "forgotPasswordSuccessTitle": "请求成功",
+        "forgotPasswordSuccessDesc": "临时密码已发送到您的邮箱，请检查收件箱。",
+        "forgotPasswordFailedTitle": "请求失败",
+        "forgotPasswordFailedDesc": "无法发送密码重置请求。请重试。"
       },
-      "themeToggleAria": "切换主题"
+      "themeToggleAria": "切换主题",
+      "forgotPasswordModal": {
+        "title": "忘记密码？",
+        "description": "请输入已注册的用户名或邮箱地址。系统会生成临时密码并发送到您的邮箱。",
+        "usernameOrEmailLabel": "用户名或电子邮件",
+        "usernameOrEmailPlaceholder": "输入用户名或电子邮件",
+        "usernameOrEmailError": "请输入用户名或电子邮件",
+        "confirm": "发送请求",
+        "info": "临时密码将在几秒内发送到注册邮箱。"
+      },
+      "actions": {
+        "close": "关闭"
+      },
+      "social": {
+        "google": "Google",
+        "github": "GitHub",
+        "facebook": "Facebook",
+        "soon": "即将"
+      }
     }
   }
 }

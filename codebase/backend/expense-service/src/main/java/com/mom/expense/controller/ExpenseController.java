@@ -13,6 +13,10 @@ import com.mom.expense.controller.dto.UpdateBudgetRequest;
 import com.mom.expense.controller.dto.UpdateExpenseRequest;
 import com.mom.expense.controller.dto.BatchImportExpensesRequest;
 import com.mom.expense.controller.dto.BatchImportResponse;
+import com.mom.expense.controller.dto.CreateProposalRequest;
+import com.mom.expense.controller.dto.RejectProposalRequest;
+import com.mom.expense.controller.dto.ResubmitProposalRequest;
+import com.mom.expense.controller.dto.ProposalResponse;
 import com.mom.common.dto.ApiResponse;
 import com.mom.expense.service.ExpenseService;
 import jakarta.validation.Valid;
@@ -133,5 +137,41 @@ public class ExpenseController {
     @PostMapping("/expenses/batch")
     public ApiResponse<BatchImportResponse> importExpensesBatch(@Valid @RequestBody BatchImportExpensesRequest request) {
         return ApiResponse.ok("Expenses batch imported", expenseService.importExpensesBatch(request));
+    }
+
+    @GetMapping("/proposals")
+    public ApiResponse<List<ProposalResponse>> getProposals(@RequestParam("familyId") Long familyId) {
+        return ApiResponse.ok("Success", expenseService.getProposals(familyId));
+    }
+
+    @PostMapping("/proposals")
+    public ApiResponse<ProposalResponse> createProposal(@Valid @RequestBody CreateProposalRequest request) {
+        return ApiResponse.ok("Proposal created", expenseService.createProposal(request));
+    }
+
+    @PutMapping("/proposals/{id}/approve")
+    public ApiResponse<ProposalResponse> approveProposal(
+            @PathVariable("id") Long id,
+            @RequestParam("approver") String approver
+    ) {
+        return ApiResponse.ok("Proposal approved", expenseService.approveProposal(id, approver));
+    }
+
+    @PutMapping("/proposals/{id}/reject")
+    public ApiResponse<ProposalResponse> rejectProposal(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody RejectProposalRequest request,
+            @RequestParam("approver") String approver
+    ) {
+        return ApiResponse.ok("Proposal rejected", expenseService.rejectProposal(id, request, approver));
+    }
+
+    @PutMapping("/proposals/{id}/resubmit")
+    public ApiResponse<ProposalResponse> resubmitProposal(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody ResubmitProposalRequest request,
+            @RequestParam("proposer") String proposer
+    ) {
+        return ApiResponse.ok("Proposal resubmitted", expenseService.resubmitProposal(id, request, proposer));
     }
 }

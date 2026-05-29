@@ -47,6 +47,7 @@
         "dashboard": "Dashboard",
         "familyCare": "Family Care",
         "baby": "Baby",
+        "journey": "Journey+",
         "meals": "Meals",
         "tasks": "Tasks",
         "finance": "Finance",
@@ -565,6 +566,25 @@
             "note": "Note",
             "noNote": "No note",
             "empty": "No spending transactions recorded yet in the month."
+          },
+          "proposals": {
+            "title": "Pending Expense Proposals",
+            "loading": "Loading expense proposals...",
+            "assignedApprover": "Assigned approver: {{name}}",
+            "actions": {
+              "approve": "Approve",
+              "reject": "Reject"
+            },
+            "rejectForm": {
+              "title": "Reason for rejecting proposal",
+              "placeholder": "Please enter a reason for rejection (e.g. Budget exceeded...)",
+              "confirm": "Confirm Reject",
+              "cancel": "Cancel"
+            },
+            "empty": {
+              "title": "Awesome! No pending proposals",
+              "subtitle": "This household currently has no expense proposals requiring your action."
+            }
           }
         },
         "memberCount": "{{count}} people",
@@ -580,7 +600,10 @@
           "inspect": "Details"
         },
         "messages": {
-          "loadFailed": "Unable to load financial data."
+          "loadFailed": "Unable to load financial data.",
+          "approveSuccess": "Expense proposal approved successfully",
+          "rejectSuccess": "Expense proposal rejected successfully",
+          "rejectReasonRequired": "Please enter a reason for rejection"
         }
       },
       "exportPasswords": {
@@ -1350,6 +1373,28 @@
           "deleteSuccess": "Photo deleted successfully.",
           "deleteFailed": "Unable to delete photo."
         }
+      },
+      "comments": {
+        "btnTitle": "Comment",
+        "empty": "No comments yet. Write the first comment!",
+        "placeholder": "Write a comment... (Type @ to mention family members)",
+        "submit": "Send",
+        "messages": {
+          "createFailed": "Failed to send comment",
+          "deleteSuccess": "Comment deleted successfully",
+          "deleteFailed": "Failed to delete comment"
+        },
+        "reply": "Reply",
+        "replyPlaceholder": "Write a reply... (Type @ to mention family members)",
+        "delete": "Delete comment",
+        "reactions": {
+          "like": "Like",
+          "love": "Love",
+          "haha": "Haha",
+          "wow": "Wow",
+          "sad": "Sad",
+          "angry": "Angry"
+        }
       }
     },
     "family": {
@@ -1583,6 +1628,7 @@
           "ai_care_assistant": "AI Care Assistant",
           "premium_reports": "Premium Reports",
           "family_collaboration_plus": "Family Collaboration Plus",
+          "baby_journey_plus": "Baby Journey+",
           "medical_vault_export": "Medical Vault Export",
           "unlimited_memory": "Unlimited Memory"
         }
@@ -1794,33 +1840,329 @@
         "registerSuccessDesc": "Your account has been created! Redirecting to login page...",
         "registerFailedTitle": "Registration failed",
         "registerFailedDesc": "Unable to create account. Please verify your input."
+      },
+      "steps": {
+        "account": "Account",
+        "personal": "Personal",
+        "confirm": "Confirmation",
+        "next": "Next",
+        "prev": "Back"
+      }
+    },
+    "expenses": {
+      "proposals": {
+        "title": "Family Expense Proposals & Approvals",
+        "createBtn": "New Proposal",
+        "table": {
+          "title": "Proposal Title",
+          "amount": "Proposed Amount",
+          "proposer": "Proposer",
+          "approver": "Approver",
+          "status": "Status",
+          "actions": "Actions"
+        },
+        "status": {
+          "pending": "Pending Review",
+          "approved": "Approved",
+          "rejected": "Rejected"
+        },
+        "steps": {
+          "submit": "Submit",
+          "review": "Review",
+          "result": "Result"
+        },
+        "actions": {
+          "approve": "Approve",
+          "reject": "Reject",
+          "resubmit": "Edit & Resubmit"
+        },
+        "modal": {
+          "createTitle": "Create New Expense Proposal",
+          "editTitle": "Edit & Resubmit Proposal",
+          "titleLabel": "Expense Title",
+          "titlePlaceholder": "e.g. Buy breast pump for baby",
+          "amountLabel": "Amount (VND)",
+          "categoryLabel": "Expense Category",
+          "approverLabel": "Approving Member",
+          "approverPlaceholder": "Select member to review",
+          "rejectTitle": "Reject Expense Proposal",
+          "rejectReasonLabel": "Reason for Rejection",
+          "rejectReasonPlaceholder": "Enter reason for rejection...",
+          "successCreate": "Expense proposal submitted successfully!",
+          "successApprove": "Proposal approved! Expense added to family vault.",
+          "successReject": "Expense proposal rejected.",
+          "successResubmit": "Proposal updated and resubmitted successfully!"
+        }
+      }
+    },
+    "journey": {
+      "hero": {
+        "kicker": "Baby Journey+ Premium",
+        "title": "Memory DNA",
+        "description": "Transform daily care logs, photos, growth milestones, and family voices into a living journey of your baby.",
+        "careRhythm": "Care Rhythm",
+        "growthStory": "Growth Story",
+        "futureCapsules": "Future Capsules",
+        "aiCurator": "AI Curator"
+      },
+      "score": {
+        "label": "Memory DNA Score",
+        "grade": {
+          "great": "Great",
+          "good": "Developing",
+          "start": "Starting"
+        }
+      },
+      "toolbar": {
+        "babySelectPlaceholder": "Select baby profile",
+        "refresh": "Refresh",
+        "timeCapsule": "Time Capsule",
+        "addMilestone": "Add Milestone"
+      },
+      "loading": "Loading baby's journey...",
+      "lock": {
+        "kicker": "Premium signature feature",
+        "title": "Baby Journey+ is locked",
+        "description": "This is a signature feature of BabySystem: AI Curator automatically detects memorable moments, creating a Living Timeline, Time Capsule, and Monthly Storybook for each baby.",
+        "unlock": "Unlock Premium",
+        "features": {
+          "aiCurator": "AI Memory Curator",
+          "timeline": "Living Timeline",
+          "storybook": "Monthly Storybook",
+          "privacy": "Smart Privacy"
+        }
+      },
+      "empty": {
+        "noBaby": "Please create a baby profile before using Baby Journey+.",
+        "noMilestone": "No milestones in the Journey yet.",
+        "noSuggestion": "No strong suggestions to save yet.",
+        "noCapsule": "No Time Capsules yet.",
+        "noStorybook": "No data this month to generate a storybook."
+      },
+      "tabs": {
+        "timeline": "Living Timeline",
+        "aiCurator": "AI Curator",
+        "timeCapsule": "Time Capsule",
+        "storybook": "Storybook"
+      },
+      "timeline": {
+        "title": "Living Timeline",
+        "subtitle": "A living flow of memories including care logs, health signals, family voices, and future capsules.",
+        "pendingSuggestions": "AI Curator has new suggestions"
+      },
+      "aiCurator": {
+        "title": "AI Memory Curator",
+        "subtitle": "Suggested moments to save from care, growth, vaccine, and gallery data.",
+        "rescan": "Rescan",
+        "confidence": "Confidence",
+        "save": "Save to Journey",
+        "saved": "Saved"
+      },
+      "capsule": {
+        "title": "Future Capsules",
+        "subtitle": "Private messages locked until birthdays, first day of school, or a future date.",
+        "lockedCount": "locked",
+        "create": "Create Capsule",
+        "status": {
+          "locked": "Locked",
+          "open": "Opened"
+        },
+        "openAt": "Opens on",
+        "openedAt": "Opened"
+      },
+      "storybook": {
+        "subtitle": "Monthly summary automatically bundling Memory DNA layers into a chapter of memories.",
+        "kicker": "Monthly Memory Storybook",
+        "stats": {
+          "milestones": "milestones",
+          "aiSuggestions": "AI suggestions",
+          "capsules": "capsules"
+        }
+      },
+      "modal": {
+        "memory": {
+          "title": "Add Milestone to Memory DNA",
+          "subtitle": "Record a memorable moment of your baby",
+          "form": {
+            "title": "Title",
+            "titlePlaceholder": "e.g., Baby stood up for the first time",
+            "type": "Memory DNA Layer",
+            "happenedAt": "Time",
+            "privacy": "Privacy",
+            "story": "Story",
+            "storyPlaceholder": "Write down what your family wants to remember...",
+            "submit": "Save Milestone"
+          }
+        },
+        "capsule": {
+          "title": "Create Time Capsule",
+          "subtitle": "A message locked until a future date",
+          "form": {
+            "title": "Title",
+            "titlePlaceholder": "e.g., Letter to baby at age 1",
+            "recipient": "Recipient",
+            "recipientPlaceholder": "Baby's name or recipient",
+            "openAt": "Unlock Date",
+            "privacy": "Privacy",
+            "message": "Future Message",
+            "messagePlaceholder": "Write the message you want the baby to open in the future...",
+            "submit": "Lock Capsule"
+          }
+        },
+        "cancel": "Cancel"
+      },
+      "types": {
+        "care": "Care Rhythm",
+        "growth": "Growth Story",
+        "health": "Health Signal",
+        "family": "Family Voice",
+        "visual": "Visual Memory",
+        "capsule": "Time Capsule"
+      },
+      "privacy": {
+        "family": "Family",
+        "parents": "Parents Only",
+        "private": "Private"
+      },
+      "sources": {
+        "ai": "AI Curator",
+        "system": "BabySystem",
+        "capsule": "Time Capsule",
+        "family": "Family"
+      },
+      "notifications": {
+        "chooseBaby": "Please select a baby profile first.",
+        "saveSuccess": "Milestone saved to Memory DNA.",
+        "futureDateRequired": "Unlock date must be in the future.",
+        "capsuleSuccess": "Time Capsule locked for the future.",
+        "aiSuggestionSuccess": "Moment added to the Living Timeline.",
+        "deleteSuccess": "Milestone removed from Journey.",
+        "premiumWarning": "Please enable Baby Journey+ in Premium Settings to use this feature."
+      },
+      "systemEvents": {
+        "care": {
+          "title": "Today's Care Rhythm",
+          "story": "Today recorded {{feedings}} feeds, {{diaperChanges}} diaper changes, and {{sleepHours}}h sleep. This is the Care Rhythm layer in Memory DNA."
+        },
+        "growth": {
+          "title": "Growth Story Updated",
+          "story": "Weight {{weightKg}}kg, height {{heightCm}}cm, head circumference {{headCircumferenceCm}}cm."
+        },
+        "health": {
+          "title": "Health Milestone: {{vaccineName}}",
+          "story": "Scheduled vaccination on {{dueDate}}. The timeline keeps this as a Health Signal."
+        },
+        "visual": {
+          "title": "New Photo in Visual Memories",
+          "story": "{{fileName}} was added to the gallery. AI Curator can turn this into a memorable moment."
+        }
+      },
+      "suggestions": {
+        "care": {
+          "title": "A Day Filled with Care",
+          "detail": "Family logged {{feedings}} feeds, {{diaperChanges}} diaper changes, and {{sleepHours}}h sleep.",
+          "reason": "Day has sufficient care logs to be saved as a rhythm of life memory."
+        },
+        "growth": {
+          "title": "New Growth Milestone",
+          "detail": "Latest measurement: {{weightKg}}kg and {{heightCm}}cm.{{deltaWeight}}",
+          "deltaWeight": " Weight changed by {{deltaWeightKg}}kg.",
+          "reason": "Every growth index is a chapter in the Growth Story."
+        },
+        "health": {
+          "title": "Prepare for {{vaccineName}}",
+          "detail": "Appointment: {{dueDate}}. You can add reminders and parents' emotions to the Journey.",
+          "reason": "Important medical milestone should be kept in baby's dedicated timeline."
+        },
+        "visual": {
+          "title": "New Photo Could Be a Memory",
+          "detail": "{{fileName}} can be saved as a Visual Memory for this month.",
+          "reason": "New photos close to care days are great clues to create a storybook."
+        },
+        "family": {
+          "title": "Add Family's Perspective",
+          "detail": "Each member can leave a short note so that the Timeline contains both data and emotions.",
+          "reason": "Family Voices is the layer that distinguishes BabySystem from typical tracking apps."
+        }
+      },
+      "dnaLayers": {
+        "care": {
+          "meta": "{{count}} recent care signals"
+        },
+        "growth": {
+          "meta": "{{count}} growth measurements"
+        },
+        "voice": {
+          "meta": "{{count}} saved messages"
+        },
+        "visual": {
+          "meta": "{{count}} photos or visual memories"
+        },
+        "capsule": {
+          "meta": "{{count}} messages for the future"
+        }
+      },
+      "displayStory": {
+        "lockedCapsule": "This Capsule will unlock on {{openAt}} for {{recipient}}."
+      },
+      "errors": {
+        "loadBabies": "Unable to load baby profiles."
       }
     }
   },
   "auth": {
     "login": {
       "card": {
-        "eyebrow": "Authentication",
+        "eyebrow": "BabySystem",
         "title": "Sign in",
-        "subtitle": "Choose one of the sign-in methods below."
+        "subtitle": "Choose the authentication method that matches your account."
       },
       "hero": {
-        "title": "One login, two authentication methods",
-        "subtitle": "Use <strong>Bearer token</strong> to sign in with your platform account, or switch to <strong>Keycloak</strong> if you use centralized SSO.",
-        "point1": "Internal account + 2FA",
-        "point2": "SSO via Keycloak",
-        "point3": "Unified token storage",
-        "badge": "Logistics Platform"
+        "title": "Sign in to BabySystem",
+        "subtitle": "One account, routed to the right workspace: families use User Portal, operators use Admin Portal.",
+        "point1": "Family operations",
+        "point2": "Access control",
+        "point3": "2FA protection",
+        "badge": "BabySystem"
       },
       "portal": {
-        "adminHint": "Admin Portal - manage user accounts and system operations",
-        "userHint": "User Portal - for family members using the app",
+        "adminHint": "For administrators managing accounts, permissions, and system operations.",
+        "userHint": "For family members using the app day to day.",
         "switchToAdmin": "Sign in to Admin Portal",
-        "switchToUser": "Sign in to User Portal"
+        "switchToUser": "Sign in to User Portal",
+        "currentLabel": "Current portal",
+        "userName": "User Portal",
+        "adminName": "Admin Portal",
+        "userBadge": "User Portal",
+        "adminBadge": "Admin Portal",
+        "userTitle": "User Portal is for daily family management",
+        "userDescription": "This is the /app workspace for family members: baby care, meals, expenses, tasks, shopping, documents, and insights.",
+        "adminTitle": "Admin Portal is for system operations and control",
+        "adminDescription": "This is the /admin workspace for Owners/Admins: users, families, premium, finance, permissions, and APIs.",
+        "afterLoginTitle": "Workspace after sign-in",
+        "userOutcome1": "Baby care, meal plans, and tasks",
+        "userOutcome2": "Shopping, expenses, and family documents",
+        "userOutcome3": "Insights for quick household trends",
+        "adminOutcome1": "Users, roles, and families",
+        "adminOutcome2": "Access control, 2FA, and API permissions",
+        "adminOutcome3": "Premium, finance, and operational logs",
+        "userFeature1": "Baby care",
+        "userFeature2": "Expenses",
+        "userFeature3": "Documents",
+        "userFeature4": "Notifications",
+        "adminFeature1": "Users",
+        "adminFeature2": "Families",
+        "adminFeature3": "Permissions",
+        "adminFeature4": "Audit",
+        "switchToAdminHint": "For Owners/Admins operating the system",
+        "switchToUserHint": "For family members using the app",
+        "adminAccessNote": "Admin accounts are granted by an Owner or administrator. Family users should return to User Portal."
       },
       "switch": {
-        "bearer": "Bearer token",
-        "keycloak": "Keycloak"
+        "bearer": "System account",
+        "keycloak": "Keycloak SSO",
+        "bearerHint": "Fast for internal accounts",
+        "keycloakHint": "Use centralized identity"
       },
       "form": {
         "usernameLabel": "Username",
@@ -1838,30 +2180,39 @@
         "captchaRefresh": "Click to refresh code",
         "remember": "Remember me",
         "forgotPassword": "Forgot password?",
-        "submitBearer": "Sign in with Bearer token",
+        "submitBearer": "Sign in",
         "twoFactorHelp": "Where can I get the 2FA code?",
         "register": "Create account",
         "note": "OTP or CAPTCHA will be enabled automatically when required.",
         "setupTwoFactor": "Set up 2FA",
-        "setupHint": "If you are signed in, this opens the QR setup page directly."
+        "setupHint": "If you are signed in, this opens the QR setup page directly.",
+        "registerPrompt": "Need an account?",
+        "registerCta": "Create User Portal account",
+        "dividerEmail": "or sign in with account"
       },
       "keycloak": {
-        "description": "Use SSO to authenticate in Keycloak, then the system exchanges it into an internal session for gateway and downstream services.",
+        "description": "Use SSO when your organization manages identity in Keycloak. After verification, the system exchanges it into an internal session for gateway and services.",
         "bullet1": "Best for centralized identity accounts.",
         "bullet2": "No need to re-enter internal password.",
-        "bullet3": "Final token is still stored consistently.",
-        "submit": "Sign in with Keycloak",
+        "bullet3": "The final session still follows BabySystem permission rules.",
+        "submit": "Continue with Keycloak",
         "title": "Sign in with Keycloak"
       },
       "twoFactorModal": {
         "title": "How to get 2FA code",
         "description": "The 2FA code is not generated on the login screen. You must enable 2FA first in <strong>2FA Setup</strong> after signing in.",
-        "step1": "Sign in to the system.",
+        "step1": "Sign in with password",
         "step2": "Open <strong>2FA Setup</strong> menu or go to <code>/2fa-setup</code>.",
-        "step3": "Scan QR with Google Authenticator or a compatible OTP app.",
-        "step4": "The app generates a new 6-digit code every 30 seconds.",
-        "step5": "When OTP is required later, enter that 6-digit code in login form.",
-        "info": "If your account has not enabled 2FA, OTP is not required."
+        "step3": "Scan the QR code",
+        "step4": "Get the 6-digit code",
+        "step5": "Enter OTP when prompted",
+        "info": "If your account has not enabled 2FA, OTP is not required.",
+        "step1Desc": "Use your internal account normally for the first sign-in.",
+        "step2Title": "Enable 2FA in profile",
+        "step3Desc": "Use Google Authenticator, Microsoft Authenticator, or another compatible OTP app.",
+        "step4Desc": "The OTP app generates a fresh code every 30 seconds.",
+        "step5Desc": "On later sign-ins, enter the 6-digit code to complete verification.",
+        "close": "Got it"
       },
       "forceChangeModal": {
         "title": "Change temporary password",
@@ -1883,9 +2234,9 @@
         "reqSpecial": "1 special character"
       },
       "messages": {
-        "googleVerifyFailed": "Failed to verify Google account with the system. Please try again.",
-        "githubVerifyFailed": "Failed to verify GitHub account with the system. Please try again.",
-        "socialSuccess": "Successfully linked and logged in with your social account!",
+        "googleVerifyFailed": "Unable to verify Google account with the system. Please try again.",
+        "githubVerifyFailed": "Unable to verify GitHub account with the system. Please try again.",
+        "socialSuccess": "Social account linked and signed in successfully!",
         "captchaLoadFailed": "Unable to load CAPTCHA: {{message}}",
         "loginFailedTitle": "Login failed",
         "loginSuccessTitle": "Login successful",
@@ -1911,12 +2262,22 @@
       },
       "themeToggleAria": "Switch theme",
       "forgotPasswordModal": {
-        "title": "Forgot Password",
+        "title": "Forgot password",
         "description": "Enter your registered username or email address. The system will generate a temporary password and send it to your email address.",
         "usernameOrEmailLabel": "Username or Email",
         "usernameOrEmailPlaceholder": "Enter your username or email",
         "usernameOrEmailError": "Please enter username or email",
-        "confirm": "Submit request"
+        "confirm": "Submit request",
+        "info": "A temporary password will be sent to your registered email within a few seconds."
+      },
+      "actions": {
+        "close": "Close"
+      },
+      "social": {
+        "google": "Google",
+        "github": "GitHub",
+        "facebook": "Facebook",
+        "soon": "Soon"
       }
     }
   }

@@ -10,6 +10,7 @@ import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { I18nService } from '../../i18n/i18n.service';
 import { SUPPORTED_LANGUAGES, LanguageOption } from '../../i18n/i18n.constants';
 import { LanguageCode } from '../../i18n/language.model';
@@ -30,6 +31,7 @@ import { PasswordStrengthComponent } from '../../shared/components/password-stre
     NzAlertModule,
     NzIconModule,
     NzToolTipModule,
+    NzStepsModule,
     PasswordStrengthComponent
   ],
   templateUrl: './register.component.html',
@@ -41,6 +43,7 @@ export class RegisterComponent implements OnInit {
   confirmPasswordVisible = false;
   isLoading = false;
   errorMsg = '';
+  currentStep = 0;
 
   supportedLanguages = SUPPORTED_LANGUAGES;
   isLangDropdownOpen = false;
@@ -73,6 +76,59 @@ export class RegisterComponent implements OnInit {
   @HostListener('document:click')
   onDocumentClick(): void {
     this.isLangDropdownOpen = false;
+  }
+
+  nextStep(): void {
+    if (this.currentStep === 0) {
+      // Validate Step 1: username, email, password, confirmPassword
+      const step1Fields = ['username', 'email', 'password', 'confirmPassword'];
+      let isStep1Valid = true;
+      step1Fields.forEach(field => {
+        const control = this.registerForm.get(field);
+        if (control) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+          if (control.invalid) {
+            isStep1Valid = false;
+          }
+        }
+      });
+      // Check password mismatch
+      if (this.registerForm.errors?.['mismatch']) {
+        isStep1Valid = false;
+        // Mark confirmPassword as dirty to show the mismatch error
+        this.registerForm.get('confirmPassword')?.markAsDirty();
+        this.registerForm.get('confirmPassword')?.updateValueAndValidity({ onlySelf: true });
+      }
+
+      if (isStep1Valid) {
+        this.currentStep = 1;
+      }
+    } else if (this.currentStep === 1) {
+      // Validate Step 2: lastName, firstName, phone
+      const step2Fields = ['lastName', 'firstName', 'phone'];
+      let isStep2Valid = true;
+      step2Fields.forEach(field => {
+        const control = this.registerForm.get(field);
+        if (control) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+          if (control.invalid) {
+            isStep2Valid = false;
+          }
+        }
+      });
+
+      if (isStep2Valid) {
+        this.currentStep = 2;
+      }
+    }
+  }
+
+  prevStep(): void {
+    if (this.currentStep > 0) {
+      this.currentStep--;
+    }
   }
 
   constructor(
@@ -119,6 +175,11 @@ export class RegisterComponent implements OnInit {
         control.markAsDirty();
         control.updateValueAndValidity({ onlySelf: true });
       });
+      return;
+    }
+
+    if (this.currentStep !== 2) {
+      this.nextStep();
       return;
     }
 

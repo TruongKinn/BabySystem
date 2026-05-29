@@ -1,0 +1,214 @@
+{
+  "hero": {
+    "kicker": "Baby Journey+ Premium",
+    "title": "Memory DNA",
+    "description": "Biến nhật ký chăm sóc, ảnh, mốc tăng trưởng và lời nhắn gia đình thành một hành trình sống của bé.",
+    "careRhythm": "Nhịp chăm sóc",
+    "growthStory": "Hành trình lớn khôn",
+    "futureCapsules": "Hộp thư tương lai",
+    "aiCurator": "AI Curator"
+  },
+  "score": {
+    "label": "Điểm Memory DNA",
+    "grade": {
+      "great": "Tuyệt vời",
+      "good": "Đang phát triển",
+      "start": "Bắt đầu"
+    }
+  },
+  "toolbar": {
+    "babySelectPlaceholder": "Chọn hồ sơ em bé",
+    "refresh": "Làm mới",
+    "timeCapsule": "Hộp thư tương lai",
+    "addMilestone": "Thêm cột mốc"
+  },
+  "loading": "Đang tải hành trình của bé...",
+  "lock": {
+    "kicker": "Premium signature feature",
+    "title": "Baby Journey+ đang bị khóa",
+    "description": "Đây là tính năng thương hiệu của BabySystem: AI Curator tự động phát hiện khoảnh khắc đáng nhớ, tạo Dòng thời gian sống, Hộp thư tương lai và Storybook tháng cho từng bé.",
+    "unlock": "Mở khóa Premium",
+    "features": {
+      "aiCurator": "AI Memory Curator",
+      "timeline": "Dòng thời gian sống",
+      "storybook": "Storybook tháng",
+      "privacy": "Quyền riêng tư thông minh"
+    }
+  },
+  "empty": {
+    "noBaby": "Cần tạo hồ sơ em bé trước khi dùng Baby Journey+.",
+    "noMilestone": "Chưa có cột mốc nào trong Journey.",
+    "noSuggestion": "Chưa có gợi ý nào đủ mạnh để lưu.",
+    "noCapsule": "Chưa có Time Capsule nào.",
+    "noStorybook": "Tháng này chưa có dữ liệu để tạo storybook."
+  },
+  "tabs": {
+    "timeline": "Dòng thời gian sống",
+    "aiCurator": "AI Curator",
+    "timeCapsule": "Hộp thư tương lai",
+    "storybook": "Storybook tháng"
+  },
+  "timeline": {
+    "title": "Dòng thời gian sống",
+    "subtitle": "Dòng ký ức sống gồm đủ dữ liệu chăm sóc, mốc sức khỏe, lời nhắn và capsule của gia đình.",
+    "pendingSuggestions": "AI Curator đang có gợi ý mới"
+  },
+  "aiCurator": {
+    "title": "AI Memory Curator",
+    "subtitle": "Gợi ý khoảnh khắc nên lưu từ dữ liệu chăm sóc, tăng trưởng, vaccine và gallery.",
+    "rescan": "Quét lại",
+    "confidence": "Độ tự tin",
+    "save": "Lưu vào Journey",
+    "saved": "Đã lưu"
+  },
+  "capsule": {
+    "title": "Future Capsules",
+    "subtitle": "Lời nhắn riêng tư được khóa đến sinh nhật, ngày đầu đi học hoặc một ngày trong tương lai.",
+    "lockedCount": "đang khóa",
+    "create": "Tạo capsule",
+    "status": {
+      "locked": "Đang khóa",
+      "open": "Đã mở"
+    },
+    "openAt": "Mở vào",
+    "openedAt": "Đã mở"
+  },
+  "storybook": {
+    "subtitle": "Bản tóm tắt tháng tự động gom các lớp Memory DNA thành một chương ký ức.",
+    "kicker": "Monthly Memory Storybook",
+    "stats": {
+      "milestones": "cột mốc",
+      "aiSuggestions": "gợi ý AI",
+      "capsules": "capsule"
+    }
+  },
+  "modal": {
+    "memory": {
+      "title": "Thêm cột mốc vào Memory DNA",
+      "subtitle": "Ghi lại khoảnh khắc đáng nhớ của bé",
+      "form": {
+        "title": "Tiêu đề",
+        "titlePlaceholder": "Ví dụ: Lần đầu bé đứng dậy",
+        "type": "Lớp Memory DNA",
+        "happenedAt": "Thời điểm",
+        "privacy": "Quyền riêng tư",
+        "story": "Câu chuyện",
+        "storyPlaceholder": "Viết điều gia đình muốn nhớ về khoảnh khắc này...",
+        "submit": "Lưu cột mốc"
+      }
+    },
+    "capsule": {
+      "title": "Tạo Time Capsule",
+      "subtitle": "Lời nhắn được khóa đến một ngày trong tương lai",
+      "form": {
+        "title": "Tiêu đề",
+        "titlePlaceholder": "Ví dụ: Thư gửi bé năm 1 tuổi",
+        "recipient": "Người nhận",
+        "recipientPlaceholder": "Tên bé hoặc người nhận",
+        "openAt": "Ngày mở",
+        "privacy": "Quyền riêng tư",
+        "message": "Lời nhắn tương lai",
+        "messagePlaceholder": "Viết lời nhắn mà gia đình muốn bé mở trong tương lai...",
+        "submit": "Khóa capsule"
+      }
+    },
+    "cancel": "Hủy"
+  },
+  "types": {
+    "care": "Nhịp chăm sóc",
+    "growth": "Hành trình lớn khôn",
+    "health": "Mốc sức khỏe",
+    "family": "Lời nhắn gia đình",
+    "visual": "Ký ức hình ảnh",
+    "capsule": "Hộp thư tương lai"
+  },
+  "privacy": {
+    "family": "Gia đình",
+    "parents": "Chỉ ba mẹ",
+    "private": "Riêng tư"
+  },
+  "sources": {
+    "ai": "AI Curator",
+    "system": "BabySystem",
+    "capsule": "Hộp thư tương lai",
+    "family": "Gia đình"
+  },
+  "notifications": {
+    "chooseBaby": "Hãy chọn hồ sơ em bé trước.",
+    "saveSuccess": "Đã lưu cột mốc vào Memory DNA.",
+    "futureDateRequired": "Ngày mở capsule phải nằm trong tương lai.",
+    "capsuleSuccess": "Đã khóa Time Capsule cho tương lai.",
+    "aiSuggestionSuccess": "Khoảnh khắc này đã được đưa vào Living Timeline.",
+    "deleteSuccess": "Đã xóa cột mốc khỏi Journey.",
+    "premiumWarning": "Cần bật Baby Journey+ trong Admin Premium để sử dụng tính năng này."
+  },
+  "systemEvents": {
+    "care": {
+      "title": "Nhịp chăm sóc hôm nay",
+      "story": "Hôm nay có {{feedings}} lần ăn, {{diaperChanges}} lần thay tã và {{sleepHours}} giờ ngủ. Đây là lớp Care Rhythm trong Memory DNA."
+    },
+    "growth": {
+      "title": "Cập nhật Growth Story",
+      "story": "Cân nặng {{weightKg}}kg, chiều cao {{heightCm}}cm, vòng đầu {{headCircumferenceCm}}cm."
+    },
+    "health": {
+      "title": "Mốc sức khỏe: {{vaccineName}}",
+      "story": "Lịch tiêm dự kiến vào {{dueDate}}. Timeline sẽ giữ mốc này như một Health Signal."
+    },
+    "visual": {
+      "title": "Ảnh mới trong Visual Memories",
+      "story": "{{fileName}} vừa được thêm vào thư viện. AI Curator có thể biến ảnh này thành một khoảnh khắc đáng nhớ."
+    }
+  },
+  "suggestions": {
+    "care": {
+      "title": "Một ngày chăm sóc đầy đặn",
+      "detail": "Gia đình đã ghi nhận {{feedings}} lần ăn, {{diaperChanges}} lần thay tã và {{sleepHours}} giờ ngủ.",
+      "reason": "Ngày có đủ tín hiệu chăm sóc để lưu thành ký ức về nhịp sinh hoạt."
+    },
+    "growth": {
+      "title": "Cột mốc tăng trưởng mới",
+      "detail": "Lần đo gần nhất: {{weightKg}}kg và {{heightCm}}cm.{{deltaWeight}}",
+      "deltaWeight": " Cân nặng thay đổi {{deltaWeightKg}}kg.",
+      "reason": "Mỗi chỉ số tăng trưởng đều là một chương trong Growth Story."
+    },
+    "health": {
+      "title": "Chuẩn bị {{vaccineName}}",
+      "detail": "Ngày hẹn: {{dueDate}}. Có thể thêm lời nhắc và cảm xúc của ba mẹ vào Journey.",
+      "reason": "Mốc y tế quan trọng nên được giữ trong timeline riêng của bé."
+    },
+    "visual": {
+      "title": "Ảnh mới có thể thành ký ức",
+      "detail": "{{fileName}} có thể được lưu như một Visual Memory của tháng này.",
+      "reason": "Ảnh mới gần với ngày chăm sóc thường là đầu mối tốt để tạo storybook."
+    },
+    "family": {
+      "title": "Thêm góc nhìn của gia đình",
+      "detail": "Mỗi thành viên có thể để lại một lời nhắn ngắn để Timeline không chỉ có số liệu mà có cả cảm xúc.",
+      "reason": "Family Voices là lớp làm BabySystem khác với các app tracking thông thường."
+    }
+  },
+  "dnaLayers": {
+    "care": {
+      "meta": "{{count}} tín hiệu chăm sóc gần đây"
+    },
+    "growth": {
+      "meta": "{{count}} lần đo phát triển"
+    },
+    "voice": {
+      "meta": "{{count}} lời nhắn đã lưu"
+    },
+    "visual": {
+      "meta": "{{count}} ảnh hoặc ký ức hình ảnh"
+    },
+    "capsule": {
+      "meta": "{{count}} lời nhắn cho tương lai"
+    }
+  },
+  "displayStory": {
+    "lockedCapsule": "Capsule này sẽ mở vào {{openAt}} cho {{recipient}}."
+  },
+  "errors": {
+    "loadBabies": "Không thể tải danh sách em bé."
+  }
+}

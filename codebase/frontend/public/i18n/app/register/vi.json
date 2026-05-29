@@ -41,5 +41,12 @@
     "registerSuccessDesc": "Tài khoản của bạn đã được tạo! Đang chuyển hướng về trang đăng nhập...",
     "registerFailedTitle": "Đăng ký thất bại",
     "registerFailedDesc": "Không thể tạo tài khoản. Vui lòng kiểm tra lại thông tin."
+  },
+  "steps": {
+    "account": "Tài khoản",
+    "personal": "Cá nhân",
+    "confirm": "Xác nhận",
+    "next": "Tiếp tục",
+    "prev": "Quay lại"
   }
 }

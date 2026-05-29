@@ -47,6 +47,7 @@
         "dashboard": "ダッシュボード",
         "familyCare": "ファミリーケア",
         "baby": "赤ちゃん",
+        "journey": "Journey+",
         "meals": "食事",
         "tasks": "タスク",
         "finance": "財務",
@@ -1583,6 +1584,7 @@
           "ai_care_assistant": "AIケアアシスタント",
           "premium_reports": "プレミアム レポート",
           "family_collaboration_plus": "ファミリー コラボレーション プラス",
+          "baby_journey_plus": "Baby Journey+",
           "medical_vault_export": "医療保管庫のエクスポート",
           "unlimited_memory": "無制限のメモリ"
         }
@@ -1750,32 +1752,320 @@
         "githubVerifyFailed": "GitHubアカウントをシステムで検証できませんでした。もう一度お試しください。",
         "socialSuccess": "ソーシャルアカウントとの連携およびログインに成功しました！"
       }
+    },
+    "register": {
+      "hero": {
+        "title": "家族と一緒に旅を始めましょう",
+        "subtitle": "社内アカウントを登録し、支出、食事、活動、赤ちゃんの成長記録をデジタル化するためのプラットフォームを活用してください。",
+        "point1": "便利な家族支出管理",
+        "point2": "食事のスケジュール調整＆赤ちゃんの健康管理",
+        "point3": "2FAによる絶対的なデータセキュリティ"
+      },
+      "card": {
+        "title": "アカウント登録",
+        "subtitle": "新しいアカウントを作成するために、以下の情報を入力してください。"
+      },
+      "form": {
+        "usernameLabel": "ユーザー名",
+        "usernamePlaceholder": "ユーザー名を入力してください (スペースなし、小文字)",
+        "usernameError": "ユーザー名は3文字以上である必要があります",
+        "emailLabel": "メールアドレス",
+        "emailPlaceholder": "email@example.com",
+        "emailError": "有効なメールアドレスを入力してください",
+        "passwordLabel": "パスワード",
+        "passwordPlaceholder": "••••••••",
+        "passwordError": "パスワードは6文字以上にする必要があります",
+        "confirmPasswordLabel": "パスワードの確認",
+        "confirmPasswordPlaceholder": "パスワードを再入力",
+        "confirmPasswordError": "パスワードを再度入力してください",
+        "confirmPasswordMismatch": "確認用パスワードが一致しません",
+        "firstNameLabel": "名",
+        "firstNamePlaceholder": "名前を入力 (例: 太郎)",
+        "firstNameError": "名前を入力してください",
+        "lastNameLabel": "姓",
+        "lastNamePlaceholder": "苗字を入力",
+        "lastNameError": "苗字を入力してください",
+        "phoneLabel": "電話番号",
+        "phonePlaceholder": "09xxxxxxxx",
+        "phoneError": "有効な電話番号を入力してください",
+        "submit": "アカウントを登録",
+        "loginLink": "すでにアカウントをお持ちですか？ ログイン"
+      },
+      "messages": {
+        "registerSuccessTitle": "登録成功",
+        "registerSuccessDesc": "アカウントが作成されました！ログイン画面にリダイレクトしています...",
+        "registerFailedTitle": "登録失敗",
+        "registerFailedDesc": "アカウントを作成できませんでした。入力内容を確認してください。"
+      }
+    },
+    "journey": {
+      "hero": {
+        "kicker": "ベビージャーニー+ プレミアム",
+        "title": "メモリー DNA",
+        "description": "毎日のケア記録、写真、成長の節目、実家の声などを、赤ちゃんの生き生きとした成長の軌跡に変えて保存します。",
+        "careRhythm": "ケアリズム",
+        "growthStory": "成長ストーリー",
+        "futureCapsules": "タイムカプセル",
+        "aiCurator": "AIキュレーター"
+      },
+      "score": {
+        "label": "メモリーDNAスコア",
+        "grade": {
+          "great": "素晴らしい",
+          "good": "成長中",
+          "start": "スタート"
+        }
+      },
+      "toolbar": {
+        "babySelectPlaceholder": "赤ちゃんのプロフィールを選択",
+        "refresh": "更新",
+        "timeCapsule": "タイムカプセル",
+        "addMilestone": "マイルストーンを追加"
+      },
+      "loading": "赤ちゃんのジャーニーを読み込み中...",
+      "lock": {
+        "kicker": "プレミアム限定機能",
+        "title": "ベビージャーニー+ はロックされています",
+        "description": "これはBabySystemのシグネチャー機能です。AIキュレーターが思い出の瞬間を自動的に検出し、お子様ごとのリビングタイムライン、タイムカプセル、月間ストーリーブックを作成します。",
+        "unlock": "プレミアムをアンロック",
+        "features": {
+          "aiCurator": "AIメモリキュレーター",
+          "timeline": "リビングタイムライン",
+          "storybook": "月間ストーリーブック",
+          "privacy": "スマートプライバシー"
+        }
+      },
+      "empty": {
+        "noBaby": "ベビージャーニー+ を利用するには、まず赤ちゃんのプロフィールを作成してください。",
+        "noMilestone": "ジャーニーにマイルストーンがまだありません。",
+        "noSuggestion": "保存する推奨される瞬間がまだありません。",
+        "noCapsule": "タイムカプセルがまだありません。",
+        "noStorybook": "今月はストーリーブックを生成するデータがありません。"
+      },
+      "tabs": {
+        "timeline": "リビングタイムライン",
+        "aiCurator": "AIキュレーター",
+        "timeCapsule": "タイムカプセル",
+        "storybook": "ストーリーブック"
+      },
+      "timeline": {
+        "title": "リビングタイムライン",
+        "subtitle": "ケア記録、健康の兆候、家族の声、タイムカプセルを含む思い出の生きた流れ。",
+        "pendingSuggestions": "AIキュレーターに新しい提案があります"
+      },
+      "aiCurator": {
+        "title": "AIメモリーキュレーター",
+        "subtitle": "ケア、成長、ワクチン、ギャラリーのデータから思い出に残る瞬間を提案します。",
+        "rescan": "再スキャン",
+        "confidence": "信頼度",
+        "save": "ジャーニーに保存",
+        "saved": "保存済み"
+      },
+      "capsule": {
+        "title": "タイムカプセル",
+        "subtitle": "誕生日、入学式、または将来の特定の日までロックされたプライベートメッセージ。",
+        "lockedCount": "ロック中",
+        "create": "カプセルを作成",
+        "status": {
+          "locked": "ロック中",
+          "open": "開封済み"
+        },
+        "openAt": "開封日",
+        "openedAt": "開封済み"
+      },
+      "storybook": {
+        "subtitle": "メモリーDNAレイヤーを自動的にまとめて1つの思い出の章にする月間サマリー。",
+        "kicker": "月間メモリーストーリーブック",
+        "stats": {
+          "milestones": "マイルストーン",
+          "aiSuggestions": "AI提案",
+          "capsules": "カプセル"
+        }
+      },
+      "modal": {
+        "memory": {
+          "title": "メモリーDNAにマイルストーンを追加",
+          "subtitle": "赤ちゃんの思い出の瞬間を記録する",
+          "form": {
+            "title": "タイトル",
+            "titlePlaceholder": "例: 赤ちゃんが初めて立ち上がった",
+            "type": "メモリーDNAレイヤー",
+            "happenedAt": "時間",
+            "privacy": "プライバシー",
+            "story": "ストーリー",
+            "storyPlaceholder": "家族が覚えておきたいことを書き留めてください...",
+            "submit": "マイルストーンを保存"
+          }
+        },
+        "capsule": {
+          "title": "タイムカプセルを作成",
+          "subtitle": "将来の特定の日までロックされるメッセージ",
+          "form": {
+            "title": "タイトル",
+            "titlePlaceholder": "例: 1歳の赤ちゃんへの手紙",
+            "recipient": "受取人",
+            "recipientPlaceholder": "赤ちゃんの名前または受取人",
+            "openAt": "アンロック日",
+            "privacy": "プライバシー",
+            "message": "将来へのメッセージ",
+            "messagePlaceholder": "赤ちゃんが将来開けるメッセージを書いてください...",
+            "submit": "カプセルをロック"
+          }
+        },
+        "cancel": "キャンセル"
+      },
+      "types": {
+        "care": "ケアリズム",
+        "growth": "成長ストーリー",
+        "health": "健康シグナル",
+        "family": "家族の声",
+        "visual": "ビジュアルメモリー",
+        "capsule": "タイムカプセル"
+      },
+      "privacy": {
+        "family": "家族全員",
+        "parents": "両親のみ",
+        "private": "非公開"
+      },
+      "sources": {
+        "ai": "AIキュレーター",
+        "system": "BabySystem",
+        "capsule": "タイムカプセル",
+        "family": "家族の声"
+      },
+      "notifications": {
+        "chooseBaby": "先に赤ちゃんのプロフィールを選択してください。",
+        "saveSuccess": "マイルストーンがメモリーDNAに保存されました。",
+        "futureDateRequired": "ロック解除日は将来の日付である必要があります。",
+        "capsuleSuccess": "タイムカプセルが将来に向けてロックされました。",
+        "aiSuggestionSuccess": "瞬間がリビングタイムラインに追加されました。",
+        "deleteSuccess": "マイルストーンがジャーニーから削除されました。",
+        "premiumWarning": "この機能を使用するには、プレミアム設定でベビージャーニー+を有効にしてください。"
+      },
+      "systemEvents": {
+        "care": {
+          "title": "今日のケアリズム",
+          "story": "今日は授乳{{feedings}}回、オムツ替え{{diaperChanges}}回、睡眠{{sleepHours}}時間を記録しました。これはメモリーDNAのケアリズムレイヤーです。"
+        },
+        "growth": {
+          "title": "成長ストーリーを更新",
+          "story": "体重{{weightKg}}kg、身長{{heightCm}}cm、頭囲{{headCircumferenceCm}}cm。"
+        },
+        "health": {
+          "title": "健康マイルストーン: {{vaccineName}}",
+          "story": "{{dueDate}}に予防接種を予定しています。タイムラインはこれを健康シグナルとして保存します。"
+        },
+        "visual": {
+          "title": "ビジュアルメモリーに新しい写真",
+          "story": "ギャラリーに{{fileName}}が追加されました。AIキュレーターがこれを思い出の瞬間に変えることができます。"
+        }
+      },
+      "suggestions": {
+        "care": {
+          "title": "ケアに満ちた一日",
+          "detail": "家族が授乳{{feedings}}回、オムツ替え{{diaperChanges}}回、睡眠{{sleepHours}}時間を記録しました。",
+          "reason": "生活リズムの思い出として保存するのに十分なケア記録があります。"
+        },
+        "growth": {
+          "title": "新しい成長マイルストーン",
+          "detail": "最新の測定値: 体重{{weightKg}}kg、身長{{heightCm}}cm。{{deltaWeight}}",
+          "deltaWeight": " 体重が{{deltaWeightKg}}kg変化しました。",
+          "reason": "すべての成長指数は、成長ストーリーの1つの章です。"
+        },
+        "health": {
+          "title": "{{vaccineName}}の準備",
+          "detail": "予約日: {{dueDate}}。タイムラインにリマインダーや両親の気持ちを追加できます。",
+          "reason": "重要な健康のマイルストーンは、赤ちゃんの専用タイムラインに保存されるべきです。"
+        },
+        "visual": {
+          "title": "新しい写真が思い出になるかも",
+          "detail": "{{fileName}}は今月のビジュアルメモリーとして保存できます。",
+          "reason": "ケア日に近い新しい写真は、ストーリーブックを作成するための素晴らしい手がかりです。"
+        },
+        "family": {
+          "title": "家族の視点を追加",
+          "detail": "各メンバーが短いメッセージを残すことで、タイムラインにデータだけでなく感情も加わります。",
+          "reason": "家族の声は、BabySystemを通常のトラッキングアプリと区別する要素です。"
+        }
+      },
+      "dnaLayers": {
+        "care": {
+          "meta": "最近のケアシグナル{{count}}件"
+        },
+        "growth": {
+          "meta": "成長測定{{count}}回"
+        },
+        "voice": {
+          "meta": "保存されたメッセージ{{count}}件"
+        },
+        "visual": {
+          "meta": "写真またはビジュアルメモリー{{count}}件"
+        },
+        "capsule": {
+          "meta": "将来へのメッセージ{{count}}件"
+        }
+      },
+      "displayStory": {
+        "lockedCapsule": "このタイムカプセルは{{openAt}}に{{recipient}}向けにロック解除されます。"
+      },
+      "errors": {
+        "loadBabies": "赤ちゃんのプロフィールを読み込めません。"
+      }
     }
   },
   "auth": {
     "login": {
       "card": {
-        "eyebrow": "認証",
+        "eyebrow": "BabySystem",
         "title": "ログイン",
-        "subtitle": "以下のログイン方法のいずれかを選択してください。"
+        "subtitle": "アカウントに合った認証方法を選択してください。"
       },
       "hero": {
-        "title": "1つのログイン、2つの認証方法",
-        "subtitle": "プラットフォームアカウントでログインするには <strong>Bearerトークン</strong> を使用し、集中SSOを使用する場合は <strong>Keycloak</strong> に切り替えます。",
-        "point1": "社内アカウント + 2FA",
-        "point2": "KeycloakによるSSO",
-        "point3": "トークンは一貫して保存されます",
-        "badge": "物流プラットフォーム"
+        "title": "BabySystemにログイン",
+        "subtitle": "1つのアカウントを適切なワークスペースへ案内します。家族はUser Portal、運用担当者はAdmin Portalを使用します。",
+        "point1": "家庭の予定管理",
+        "point2": "アクセス制御",
+        "point3": "2FA保護",
+        "badge": "BabySystem"
       },
       "portal": {
-        "adminHint": "管理者ポータル - ユーザーアカウント管理およびシステム運用",
-        "userHint": "ユーザーポータル - アプリを使用する家族メンバー用",
-        "switchToAdmin": "管理者ポータルにログイン",
-        "switchToUser": "ユーザーポータルにログイン"
+        "adminHint": "アカウント、権限、システム運用を管理する管理者向けです。",
+        "userHint": "日常的にアプリを使う家族メンバー向けです。",
+        "switchToAdmin": "Admin Portalにログイン",
+        "switchToUser": "User Portalにログイン",
+        "currentLabel": "現在のポータル",
+        "userName": "User Portal",
+        "adminName": "Admin Portal",
+        "userBadge": "User Portal",
+        "adminBadge": "Admin Portal",
+        "userTitle": "User Portalは日々の家庭管理に使います",
+        "userDescription": "これは家族メンバー向けの/appワークスペースです。育児、食事、支出、タスク、買い物、資料、インサイトを扱います。",
+        "adminTitle": "Admin Portalはシステム運用と管理に使います",
+        "adminDescription": "これはOwner/Admin向けの/adminワークスペースです。ユーザー、家族、プレミアム、財務、権限、APIを管理します。",
+        "afterLoginTitle": "ログイン後のワークスペース",
+        "userOutcome1": "育児、食事計画、タスク",
+        "userOutcome2": "買い物、支出、家族資料",
+        "userOutcome3": "家庭の傾向をすばやく把握",
+        "adminOutcome1": "ユーザー、ロール、家族",
+        "adminOutcome2": "アクセス制御、2FA、API権限",
+        "adminOutcome3": "プレミアム、財務、運用ログ",
+        "userFeature1": "育児",
+        "userFeature2": "支出",
+        "userFeature3": "資料",
+        "userFeature4": "通知",
+        "adminFeature1": "ユーザー",
+        "adminFeature2": "家族",
+        "adminFeature3": "権限",
+        "adminFeature4": "監査",
+        "switchToAdminHint": "システム運用担当のOwner/Admin向け",
+        "switchToUserHint": "アプリを使う家族メンバー向け",
+        "adminAccessNote": "管理者アカウントはOwnerまたは管理者から付与されます。家族ユーザーはUser Portalへ戻ってください。"
       },
       "switch": {
-        "bearer": "Bearerトークン",
-        "keycloak": "Keycloak"
+        "bearer": "システムアカウント",
+        "keycloak": "Keycloak SSO",
+        "bearerHint": "内部アカウント向け",
+        "keycloakHint": "集中IDを使用"
       },
       "form": {
         "usernameLabel": "ユーザー名",
@@ -1793,30 +2083,39 @@
         "captchaRefresh": "クリックしてコードを変更",
         "remember": "ログイン状態を保持する",
         "forgotPassword": "パスワードをお忘れですか？",
-        "submitBearer": "Bearerトークンでログイン",
+        "submitBearer": "ログイン",
         "twoFactorHelp": "2FAコードはどこで取得できますか？",
         "register": "アカウント登録",
         "note": "必要に応じて、システムはOTPまたはCAPTCHAを自動的に有効にします。",
         "setupTwoFactor": "2FAのセットアップ",
-        "setupHint": "ログインしている場合、このボタンは直接QRセットアップページを開きます。"
+        "setupHint": "ログインしている場合、このボタンは直接QRセットアップページを開きます。",
+        "registerPrompt": "アカウントが必要ですか？",
+        "registerCta": "User Portalアカウントを作成",
+        "dividerEmail": "またはアカウントでログイン"
       },
       "keycloak": {
-        "description": "SSOを使用してKeycloakに切り替えた後、システムはトークンをゲートウェイおよびダウンストリームサービス用の内部セッションに交換します。",
-        "bullet1": "集中管理されたIDアカウントがある場合に最適です。",
-        "bullet2": "社内パスワードを再入力する必要はありません。",
-        "bullet3": "最終的なトークンはシステムによって一貫して保存されます。",
-        "submit": "Keycloakでログイン",
+        "description": "組織がKeycloakでIDを管理している場合はSSOを使用します。認証後、システムはゲートウェイとサービス用の内部セッションに交換します。",
+        "bullet1": "集中管理されたIDアカウントに適しています。",
+        "bullet2": "内部パスワードを再入力する必要はありません。",
+        "bullet3": "最終セッションはBabySystemの権限ルールに従います。",
+        "submit": "Keycloakで続行",
         "title": "Keycloakでログイン"
       },
       "twoFactorModal": {
         "title": "2FAコードの取得手順",
-        "description": "2FAコードはログイン画面で自動生成されません。ログイン後、<strong>2FAセットアップ</strong>ページで2FAを有効にする必要があります。",
-        "step1": "システムにログインします。",
-        "step2": "<strong>2FAセットアップ</strong>メニューを開くか、<code>/2fa-setup</code>ルートにアクセスします。",
-        "step3": "Google Authenticatorまたは互換性のあるOTPアプリでQRコードをスキャンします。",
-        "step4": "アプリは30秒ごとに変わる6桁のコードを生成します。",
-        "step5": "次回システムからOTPが要求されたら、ログインフォームに正しい6桁のコードを入力します。",
-        "info": "アカウントで2FAを有効にしていない場合、OTPは不要です。"
+        "description": "2FAコードはログイン画面で自動生成されません。ログイン後、<strong>2FAセットアップ</strong>で2FAを有効にする必要があります。",
+        "step1": "パスワードでログイン",
+        "step2": "<strong>2FAセットアップ</strong>メニューを開くか、<code>/2fa-setup</code>にアクセスします。",
+        "step3": "QRコードをスキャン",
+        "step4": "6桁コードを取得",
+        "step5": "要求されたらOTPを入力",
+        "info": "アカウントで2FAを有効にしていない場合、OTPは不要です。",
+        "step1Desc": "最初は内部アカウントで通常どおりログインします。",
+        "step2Title": "プロフィールで2FAを有効化",
+        "step3Desc": "Google Authenticator、Microsoft Authenticator、または互換OTPアプリを使用します。",
+        "step4Desc": "OTPアプリは30秒ごとに新しいコードを生成します。",
+        "step5Desc": "次回以降のログインでは、6桁のコードを入力して認証を完了します。",
+        "close": "了解"
       },
       "forceChangeModal": {
         "title": "一時パスワードの変更",
@@ -1838,9 +2137,9 @@
         "reqSpecial": "特殊文字1文字以上"
       },
       "messages": {
-        "googleVerifyFailed": "Googleアカウントをシステムで検証できませんでした。もう一度お試しください。",
-        "githubVerifyFailed": "GitHubアカウントをシステムで検証できませんでした。もう一度お試しください。",
-        "socialSuccess": "ソーシャルアカウントとの連携およびログインに成功しました！",
+        "googleVerifyFailed": "Googleアカウントを検証できませんでした。もう一度お試しください。",
+        "githubVerifyFailed": "GitHubアカウントを検証できませんでした。もう一度お試しください。",
+        "socialSuccess": "ソーシャルアカウントの連携とログインに成功しました！",
         "captchaLoadFailed": "CAPTCHAの読み込みに失敗しました: {{message}}",
         "loginFailedTitle": "ログイン失敗",
         "loginSuccessTitle": "ログイン成功",
@@ -1851,16 +2150,38 @@
         "captchaRequiredSimple": "CAPTCHA検証を完了してください。",
         "captchaInvalid": "無効なCAPTCHAコードです。もう一度入力してください。",
         "twoFactorRequiredTitle": "2段階認証が必要です",
-        "twoFactorRequiredDesc": "このアカウントは2FAが有効になっています。AuthenticatorアプリからOTPコードを入力してください。",
-        "loginFailedFallback": "ログインに失敗しました。アカウント資格情報を確認してください。",
+        "twoFactorRequiredDesc": "このアカウントは2FAが有効です。AuthenticatorアプリからOTPコードを入力してください。",
+        "loginFailedFallback": "ログインに失敗しました。アカウント情報を確認してください。",
         "forceChangeMissingContext": "ユーザー名または一時パスワードが不足しています。もう一度ログインしてください。",
-        "forceChangeSuccessTitle": "パスワードの変更完了",
-        "forceChangeSuccessDesc": "パスワードが正常に更新されました。再ログインしています...",
+        "forceChangeSuccessTitle": "パスワードを変更しました",
+        "forceChangeSuccessDesc": "パスワードが更新されました。再ログインしています...",
         "forceChangeFailed": "パスワードを変更できません。入力内容を確認してください。",
-        "forceChangeRequiredTitle": "パスワードの更新が必要です",
-        "forceChangeRequiredDesc": "続行する前に一時パスワードを変更する必要があります。"
+        "forceChangeRequiredTitle": "パスワード更新が必要です",
+        "forceChangeRequiredDesc": "続行する前に一時パスワードを変更する必要があります。",
+        "forgotPasswordSuccessTitle": "リクエスト成功",
+        "forgotPasswordSuccessDesc": "一時パスワードをメールに送信しました。受信箱を確認してください。",
+        "forgotPasswordFailedTitle": "リクエスト失敗",
+        "forgotPasswordFailedDesc": "パスワードリセット要求を送信できません。もう一度お試しください。"
       },
-      "themeToggleAria": "テーマ切り替え"
+      "themeToggleAria": "テーマ切り替え",
+      "forgotPasswordModal": {
+        "title": "パスワードをお忘れですか？",
+        "description": "登録済みのユーザー名またはメールアドレスを入力してください。システムが一時パスワードを生成して送信します。",
+        "usernameOrEmailLabel": "ユーザー名またはメールアドレス",
+        "usernameOrEmailPlaceholder": "ユーザー名またはメールアドレスを入力",
+        "usernameOrEmailError": "ユーザー名またはメールアドレスを入力してください",
+        "confirm": "リクエスト送信",
+        "info": "一時パスワードは数秒以内に登録済みメールへ送信されます。"
+      },
+      "actions": {
+        "close": "閉じる"
+      },
+      "social": {
+        "google": "Google",
+        "github": "GitHub",
+        "facebook": "Facebook",
+        "soon": "近日"
+      }
     }
   }
 }

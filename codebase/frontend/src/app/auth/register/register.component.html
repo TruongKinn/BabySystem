@@ -111,107 +111,202 @@
           (ngSubmit)="submitForm()"
           class="login-form"
         >
-          <!-- Row: Họ và Tên -->
-          <div class="form-row-2col">
+          <!-- NzSteps Component -->
+          <nz-steps [nzCurrent]="currentStep" nzSize="small" class="register-steps">
+            <nz-step [nzTitle]="'app.register.steps.account' | translate"></nz-step>
+            <nz-step [nzTitle]="'app.register.steps.personal' | translate"></nz-step>
+            <nz-step [nzTitle]="'app.register.steps.confirm' | translate"></nz-step>
+          </nz-steps>
+
+          <!-- Step 1: Account Information -->
+          <div *ngIf="currentStep === 0" class="step-content animated-step">
+            <!-- Tên đăng nhập -->
             <nz-form-item>
-              <nz-form-label [nzNoColon]="true">{{ 'app.register.form.lastNameLabel' | translate }}</nz-form-label>
-              <nz-form-control [nzErrorTip]="'app.register.form.lastNameError' | translate">
-                <input nz-input formControlName="lastName" [placeholder]="'app.register.form.lastNamePlaceholder' | translate" id="inputLastName" />
+              <nz-form-label [nzNoColon]="true">{{ 'app.register.form.usernameLabel' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="'app.register.form.usernameError' | translate">
+                <input nz-input formControlName="username" [placeholder]="'app.register.form.usernamePlaceholder' | translate" id="inputRegUsername" />
               </nz-form-control>
             </nz-form-item>
 
+            <!-- Email -->
             <nz-form-item>
-              <nz-form-label [nzNoColon]="true">{{ 'app.register.form.firstNameLabel' | translate }}</nz-form-label>
-              <nz-form-control [nzErrorTip]="'app.register.form.firstNameError' | translate">
-                <input nz-input formControlName="firstName" [placeholder]="'app.register.form.firstNamePlaceholder' | translate" id="inputFirstName" />
+              <nz-form-label [nzNoColon]="true">{{ 'app.register.form.emailLabel' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="'app.register.form.emailError' | translate">
+                <input nz-input type="email" formControlName="email" [placeholder]="'app.register.form.emailPlaceholder' | translate" id="inputRegEmail" />
+              </nz-form-control>
+            </nz-form-item>
+
+            <!-- Mật khẩu -->
+            <nz-form-item>
+              <nz-form-label [nzNoColon]="true">{{ 'app.register.form.passwordLabel' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="'app.register.form.passwordError' | translate">
+                <nz-input-group [nzSuffix]="pwdToggle">
+                  <input
+                    [type]="passwordVisible ? 'text' : 'password'"
+                    nz-input
+                    formControlName="password"
+                    [placeholder]="'app.register.form.passwordPlaceholder' | translate"
+                    id="inputRegPassword"
+                  />
+                </nz-input-group>
+                <ng-template #pwdToggle>
+                  <span
+                    nz-icon
+                    [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
+                    class="password-toggle"
+                    (click)="passwordVisible = !passwordVisible"
+                  ></span>
+                </ng-template>
+                <app-password-strength [password]="registerForm.get('password')?.value"></app-password-strength>
+              </nz-form-control>
+            </nz-form-item>
+
+            <!-- Xác nhận mật khẩu -->
+            <nz-form-item>
+              <nz-form-label [nzNoColon]="true">{{ 'app.register.form.confirmPasswordLabel' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="confirmPwdTip">
+                <nz-input-group [nzSuffix]="confirmPwdToggle">
+                  <input
+                    [type]="confirmPasswordVisible ? 'text' : 'password'"
+                    nz-input
+                    formControlName="confirmPassword"
+                    [placeholder]="'app.register.form.confirmPasswordPlaceholder' | translate"
+                    id="inputRegConfirmPassword"
+                  />
+                </nz-input-group>
+                <ng-template #confirmPwdToggle>
+                  <span
+                    nz-icon
+                    [nzType]="confirmPasswordVisible ? 'eye-invisible' : 'eye'"
+                    class="password-toggle"
+                    (click)="confirmPasswordVisible = !confirmPasswordVisible"
+                  ></span>
+                </ng-template>
+                <ng-template #confirmPwdTip>
+                  <span *ngIf="registerForm.errors?.['mismatch']; else requiredConfirm">
+                    {{ 'app.register.form.confirmPasswordMismatch' | translate }}
+                  </span>
+                  <ng-template #requiredConfirm>
+                    {{ 'app.register.form.confirmPasswordError' | translate }}
+                  </ng-template>
+                </ng-template>
               </nz-form-control>
             </nz-form-item>
           </div>
 
-          <!-- Tên đăng nhập -->
-          <nz-form-item>
-            <nz-form-label [nzNoColon]="true">{{ 'app.register.form.usernameLabel' | translate }}</nz-form-label>
-            <nz-form-control [nzErrorTip]="'app.register.form.usernameError' | translate">
-              <input nz-input formControlName="username" [placeholder]="'app.register.form.usernamePlaceholder' | translate" id="inputRegUsername" />
-            </nz-form-control>
-          </nz-form-item>
+          <!-- Step 2: Personal Information -->
+          <div *ngIf="currentStep === 1" class="step-content animated-step">
+            <!-- Row: Họ và Tên -->
+            <div class="form-row-2col">
+              <nz-form-item>
+                <nz-form-label [nzNoColon]="true">{{ 'app.register.form.lastNameLabel' | translate }}</nz-form-label>
+                <nz-form-control [nzErrorTip]="'app.register.form.lastNameError' | translate">
+                  <input nz-input formControlName="lastName" [placeholder]="'app.register.form.lastNamePlaceholder' | translate" id="inputLastName" />
+                </nz-form-control>
+              </nz-form-item>
 
-          <!-- Email -->
-          <nz-form-item>
-            <nz-form-label [nzNoColon]="true">{{ 'app.register.form.emailLabel' | translate }}</nz-form-label>
-            <nz-form-control [nzErrorTip]="'app.register.form.emailError' | translate">
-              <input nz-input type="email" formControlName="email" [placeholder]="'app.register.form.emailPlaceholder' | translate" id="inputRegEmail" />
-            </nz-form-control>
-          </nz-form-item>
+              <nz-form-item>
+                <nz-form-label [nzNoColon]="true">{{ 'app.register.form.firstNameLabel' | translate }}</nz-form-label>
+                <nz-form-control [nzErrorTip]="'app.register.form.firstNameError' | translate">
+                  <input nz-input formControlName="firstName" [placeholder]="'app.register.form.firstNamePlaceholder' | translate" id="inputFirstName" />
+                </nz-form-control>
+              </nz-form-item>
+            </div>
 
-          <!-- Điện thoại (Tùy chọn) -->
-          <nz-form-item>
-            <nz-form-label [nzNoColon]="true">{{ 'app.register.form.phoneLabel' | translate }}</nz-form-label>
-            <nz-form-control [nzErrorTip]="'app.register.form.phoneError' | translate">
-              <input nz-input formControlName="phone" [placeholder]="'app.register.form.phonePlaceholder' | translate" id="inputRegPhone" />
-            </nz-form-control>
-          </nz-form-item>
+            <!-- Điện thoại (Tùy chọn) -->
+            <nz-form-item>
+              <nz-form-label [nzNoColon]="true">{{ 'app.register.form.phoneLabel' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="'app.register.form.phoneError' | translate">
+                <input nz-input formControlName="phone" [placeholder]="'app.register.form.phonePlaceholder' | translate" id="inputRegPhone" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
 
-          <!-- Mật khẩu -->
-          <nz-form-item>
-            <nz-form-label [nzNoColon]="true">{{ 'app.register.form.passwordLabel' | translate }}</nz-form-label>
-            <nz-form-control [nzErrorTip]="'app.register.form.passwordError' | translate">
-              <nz-input-group [nzSuffix]="pwdToggle">
-                <input
-                  [type]="passwordVisible ? 'text' : 'password'"
-                  nz-input
-                  formControlName="password"
-                  [placeholder]="'app.register.form.passwordPlaceholder' | translate"
-                  id="inputRegPassword"
-                />
-              </nz-input-group>
-              <ng-template #pwdToggle>
-                <span
-                  nz-icon
-                  [nzType]="passwordVisible ? 'eye-invisible' : 'eye'"
-                  class="password-toggle"
-                  (click)="passwordVisible = !passwordVisible"
-                ></span>
-              </ng-template>
-              <app-password-strength [password]="registerForm.get('password')?.value"></app-password-strength>
-            </nz-form-control>
-          </nz-form-item>
+          <!-- Step 3: Confirmation Summary -->
+          <div *ngIf="currentStep === 2" class="step-content animated-step">
+            <div class="confirm-summary">
+              <div class="summary-intro">
+                <span class="summary-check-icon" nz-icon nzType="safety-certificate" nzTheme="twotone" [nzTwotoneColor]="'#0f766e'"></span>
+                <h4>{{ 'app.register.card.subtitle' | translate }}</h4>
+              </div>
 
-          <!-- Xác nhận mật khẩu -->
-          <nz-form-item>
-            <nz-form-label [nzNoColon]="true">{{ 'app.register.form.confirmPasswordLabel' | translate }}</nz-form-label>
-            <nz-form-control [nzErrorTip]="confirmPwdTip">
-              <nz-input-group [nzSuffix]="confirmPwdToggle">
-                <input
-                  [type]="confirmPasswordVisible ? 'text' : 'password'"
-                  nz-input
-                  formControlName="confirmPassword"
-                  [placeholder]="'app.register.form.confirmPasswordPlaceholder' | translate"
-                  id="inputRegConfirmPassword"
-                />
-              </nz-input-group>
-              <ng-template #confirmPwdToggle>
-                <span
-                  nz-icon
-                  [nzType]="confirmPasswordVisible ? 'eye-invisible' : 'eye'"
-                  class="password-toggle"
-                  (click)="confirmPasswordVisible = !confirmPasswordVisible"
-                ></span>
-              </ng-template>
-              <ng-template #confirmPwdTip>
-                <span *ngIf="registerForm.errors?.['mismatch']; else requiredConfirm">
-                  {{ 'app.register.form.confirmPasswordMismatch' | translate }}
-                </span>
-                <ng-template #requiredConfirm>
-                  {{ 'app.register.form.confirmPasswordError' | translate }}
-                </ng-template>
-              </ng-template>
-            </nz-form-control>
-          </nz-form-item>
+              <!-- Account Summary -->
+              <div class="summary-card">
+                <div class="summary-card-header">
+                  <span nz-icon nzType="user" class="summary-card-icon"></span>
+                  <h5>{{ 'app.register.steps.account' | translate }}</h5>
+                </div>
+                <div class="summary-card-body">
+                  <div class="summary-card-row">
+                    <span class="row-label">{{ 'app.register.form.usernameLabel' | translate }}</span>
+                    <span class="row-val font-semibold">{{ registerForm.get('username')?.value }}</span>
+                  </div>
+                  <div class="summary-card-row">
+                    <span class="row-label">{{ 'app.register.form.emailLabel' | translate }}</span>
+                    <span class="row-val text-muted">{{ registerForm.get('email')?.value }}</span>
+                  </div>
+                </div>
+              </div>
 
-          <button nz-button nzType="primary" nzBlock class="submit-btn" [nzLoading]="isLoading" [disabled]="!registerForm.valid" id="btnSubmitRegister">
-            {{ 'app.register.form.submit' | translate }}
-          </button>
+              <!-- Personal Summary -->
+              <div class="summary-card">
+                <div class="summary-card-header">
+                  <span nz-icon nzType="profile" class="summary-card-icon"></span>
+                  <h5>{{ 'app.register.steps.personal' | translate }}</h5>
+                </div>
+                <div class="summary-card-body">
+                  <div class="summary-card-row">
+                    <span class="row-label">{{ 'app.register.form.lastNameLabel' | translate }} & {{ 'app.register.form.firstNameLabel' | translate }}</span>
+                    <span class="row-val font-semibold">{{ registerForm.get('lastName')?.value }} {{ registerForm.get('firstName')?.value }}</span>
+                  </div>
+                  <div class="summary-card-row" *ngIf="registerForm.get('phone')?.value">
+                    <span class="row-label">{{ 'app.register.form.phoneLabel' | translate }}</span>
+                    <span class="row-val text-muted">{{ registerForm.get('phone')?.value }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step Navigation Buttons -->
+          <div class="step-actions">
+            <button
+              *ngIf="currentStep > 0"
+              type="button"
+              nz-button
+              nzType="default"
+              (click)="prevStep()"
+              class="prev-btn"
+            >
+              <span nz-icon nzType="arrow-left"></span>
+              {{ 'app.register.steps.prev' | translate }}
+            </button>
+
+            <button
+              *ngIf="currentStep < 2"
+              type="button"
+              nz-button
+              nzType="primary"
+              (click)="nextStep()"
+              class="next-btn"
+            >
+              {{ 'app.register.steps.next' | translate }}
+              <span nz-icon nzType="arrow-right"></span>
+            </button>
+
+            <button
+              *ngIf="currentStep === 2"
+              nz-button
+              nzType="primary"
+              nzBlock
+              class="submit-btn"
+              [nzLoading]="isLoading"
+              [disabled]="!registerForm.valid"
+              id="btnSubmitRegister"
+            >
+              {{ 'app.register.form.submit' | translate }}
+            </button>
+          </div>
         </form>
 
         <div class="register-link">

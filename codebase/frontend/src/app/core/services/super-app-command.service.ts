@@ -236,6 +236,21 @@ export interface ExpenseBudgetApi {
   limitAmount: number;
 }
 
+export interface ExpenseProposalApi {
+  id: number;
+  familyId: number;
+  title: string;
+  amount: number;
+  categoryName: string;
+  proposedBy: string;
+  approver: string;
+  status: string;
+  rejectReason: string | null;
+  currentStep: number;
+  createdAt: string;
+  updatedAt: string | null;
+}
+
 export interface ExchangeRateApi {
   currency: string;
   buyRate: number | null;
@@ -351,6 +366,22 @@ export interface BatchImportResponse {
   successCount: number;
   failedCount: number;
   errors: { index: number; reason: string }[];
+}
+
+export interface JourneyEventApi {
+  id: string;
+  babyId: number;
+  title: string;
+  story: string | null;
+  happenedAt: string;
+  type: 'CARE' | 'GROWTH' | 'HEALTH' | 'FAMILY' | 'MEMORY' | 'CAPSULE';
+  privacy: 'FAMILY' | 'PARENTS' | 'PRIVATE';
+  source: 'SYSTEM' | 'MANUAL' | 'AI' | 'CAPSULE';
+  sourceRef: string | null;
+  capsuleOpenAt: string | null;
+  recipient: string | null;
+  createdAt: string;
+  createdBy: string | null;
 }
 
 @Injectable({
@@ -682,6 +713,96 @@ export class SuperAppCommandService {
   updateExpenseBudget(budgetId: number, input: { limitAmount: number }): Observable<void> {
     return this.put<void>(`/expense/budgets/${budgetId}`, {
       limitAmount: input.limitAmount
+    }).pipe(map(() => undefined));
+  }
+
+  getExpenseProposals(): Observable<ExpenseProposalApi[]> {
+    const params = new HttpParams().set('familyId', String(this.getFamilyId()));
+    return this.get<ExpenseProposalApi[]>('/expense/proposals', params);
+  }
+
+  createExpenseProposal(input: {
+    title: string;
+    amount: number;
+    categoryName: string;
+    proposedBy: string;
+    approver: string;
+  }): Observable<ExpenseProposalApi> {
+    const familyId = this.getFamilyId();
+    return this.post<ExpenseProposalApi>('/expense/proposals', {
+      familyId,
+      title: input.title,
+      amount: input.amount,
+      categoryName: input.categoryName,
+      proposedBy: input.proposedBy,
+      approver: input.approver
+    });
+  }
+
+  approveExpenseProposal(proposalId: number, approver: string): Observable<ExpenseProposalApi> {
+    const params = new HttpParams().set('approver', approver);
+    return this.http.put<ApiEnvelope<ExpenseProposalApi>>(`${this.apiBase}/expense/proposals/${proposalId}/approve`, {}, { params }).pipe(
+      map(resp => {
+        if (!resp.success) throw new Error(resp.message || 'API error');
+        return resp.data;
+      }),
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  rejectExpenseProposal(proposalId: number, rejectReason: string, approver: string): Observable<ExpenseProposalApi> {
+    const params = new HttpParams().set('approver', approver);
+    return this.http.put<ApiEnvelope<ExpenseProposalApi>>(`${this.apiBase}/expense/proposals/${proposalId}/reject`, {
+      rejectReason
+    }, { params }).pipe(
+      map(resp => {
+        if (!resp.success) throw new Error(resp.message || 'API error');
+        return resp.data;
+      }),
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  resubmitExpenseProposal(
+    proposalId: number,
+    input: {
+      title: string;
+      amount: number;
+      categoryName: string;
+      approver: string;
+    },
+    proposer: string
+  ): Observable<ExpenseProposalApi> {
+    const params = new HttpParams().set('proposer', proposer);
+    return this.http.put<ApiEnvelope<ExpenseProposalApi>>(`${this.apiBase}/expense/proposals/${proposalId}/resubmit`, {
+      title: input.title,
+      amount: input.amount,
+      categoryName: input.categoryName,
+      approver: input.approver
+    }, { params }).pipe(
+      map(resp => {
+        if (!resp.success) throw new Error(resp.message || 'API error');
+        return resp.data;
+      }),
+      catchError(this.handleError.bind(this))
+    );
+  }
+
+  createNotification(input: {
+    userId: number | null;
+    title: string;
+    message: string;
+    type?: string;
+  }): Observable<void> {
+    const familyId = this.getFamilyId();
+    return this.post<void>('/notification/api/notifications', {
+      familyId,
+      userId: input.userId,
+      channel: 'PUSH',
+      type: input.type ?? 'SYSTEM',
+      title: input.title,
+      message: input.message,
+      scheduledAt: new Date().toISOString()
     }).pipe(map(() => undefined));
   }
 
@@ -1530,5 +1651,25 @@ export class SuperAppCommandService {
       familyId: this.getFamilyId(),
       babies: babies
     });
+  }
+
+  createJourneyEvent(babyId: number, event: JourneyEventApi): Observable<JourneyEventApi> {
+    return this.post<JourneyEventApi>(`/baby/babies/${babyId}/journey-events`, event);
+  }
+
+  getJourneyEvents(babyId: number): Observable<JourneyEventApi[]> {
+    return this.get<JourneyEventApi[]>(`/baby/babies/${babyId}/journey-events`).pipe(
+      map((items) => items ?? []),
+      catchError(() => of([]))
+    );
+  }
+
+  deleteJourneyEvent(babyId: number, eventId: string): Observable<void> {
+    return this.http
+      .delete<ApiEnvelope<unknown>>(`${this.apiBase}/baby/babies/${babyId}/journey-events/${eventId}`)
+      .pipe(
+        map(() => undefined),
+        catchError(this.handleError)
+      );
   }
 }

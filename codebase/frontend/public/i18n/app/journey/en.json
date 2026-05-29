@@ -1,0 +1,214 @@
+{
+  "hero": {
+    "kicker": "Baby Journey+ Premium",
+    "title": "Memory DNA",
+    "description": "Transform daily care logs, photos, growth milestones, and family voices into a living journey of your baby.",
+    "careRhythm": "Care Rhythm",
+    "growthStory": "Growth Story",
+    "futureCapsules": "Future Capsules",
+    "aiCurator": "AI Curator"
+  },
+  "score": {
+    "label": "Memory DNA Score",
+    "grade": {
+      "great": "Great",
+      "good": "Developing",
+      "start": "Starting"
+    }
+  },
+  "toolbar": {
+    "babySelectPlaceholder": "Select baby profile",
+    "refresh": "Refresh",
+    "timeCapsule": "Time Capsule",
+    "addMilestone": "Add Milestone"
+  },
+  "loading": "Loading baby's journey...",
+  "lock": {
+    "kicker": "Premium signature feature",
+    "title": "Baby Journey+ is locked",
+    "description": "This is a signature feature of BabySystem: AI Curator automatically detects memorable moments, creating a Living Timeline, Time Capsule, and Monthly Storybook for each baby.",
+    "unlock": "Unlock Premium",
+    "features": {
+      "aiCurator": "AI Memory Curator",
+      "timeline": "Living Timeline",
+      "storybook": "Monthly Storybook",
+      "privacy": "Smart Privacy"
+    }
+  },
+  "empty": {
+    "noBaby": "Please create a baby profile before using Baby Journey+.",
+    "noMilestone": "No milestones in the Journey yet.",
+    "noSuggestion": "No strong suggestions to save yet.",
+    "noCapsule": "No Time Capsules yet.",
+    "noStorybook": "No data this month to generate a storybook."
+  },
+  "tabs": {
+    "timeline": "Living Timeline",
+    "aiCurator": "AI Curator",
+    "timeCapsule": "Time Capsule",
+    "storybook": "Storybook"
+  },
+  "timeline": {
+    "title": "Living Timeline",
+    "subtitle": "A living flow of memories including care logs, health signals, family voices, and future capsules.",
+    "pendingSuggestions": "AI Curator has new suggestions"
+  },
+  "aiCurator": {
+    "title": "AI Memory Curator",
+    "subtitle": "Suggested moments to save from care, growth, vaccine, and gallery data.",
+    "rescan": "Rescan",
+    "confidence": "Confidence",
+    "save": "Save to Journey",
+    "saved": "Saved"
+  },
+  "capsule": {
+    "title": "Future Capsules",
+    "subtitle": "Private messages locked until birthdays, first day of school, or a future date.",
+    "lockedCount": "locked",
+    "create": "Create Capsule",
+    "status": {
+      "locked": "Locked",
+      "open": "Opened"
+    },
+    "openAt": "Opens on",
+    "openedAt": "Opened"
+  },
+  "storybook": {
+    "subtitle": "Monthly summary automatically bundling Memory DNA layers into a chapter of memories.",
+    "kicker": "Monthly Memory Storybook",
+    "stats": {
+      "milestones": "milestones",
+      "aiSuggestions": "AI suggestions",
+      "capsules": "capsules"
+    }
+  },
+  "modal": {
+    "memory": {
+      "title": "Add Milestone to Memory DNA",
+      "subtitle": "Record a memorable moment of your baby",
+      "form": {
+        "title": "Title",
+        "titlePlaceholder": "e.g., Baby stood up for the first time",
+        "type": "Memory DNA Layer",
+        "happenedAt": "Time",
+        "privacy": "Privacy",
+        "story": "Story",
+        "storyPlaceholder": "Write down what your family wants to remember...",
+        "submit": "Save Milestone"
+      }
+    },
+    "capsule": {
+      "title": "Create Time Capsule",
+      "subtitle": "A message locked until a future date",
+      "form": {
+        "title": "Title",
+        "titlePlaceholder": "e.g., Letter to baby at age 1",
+        "recipient": "Recipient",
+        "recipientPlaceholder": "Baby's name or recipient",
+        "openAt": "Unlock Date",
+        "privacy": "Privacy",
+        "message": "Future Message",
+        "messagePlaceholder": "Write the message you want the baby to open in the future...",
+        "submit": "Lock Capsule"
+      }
+    },
+    "cancel": "Cancel"
+  },
+  "types": {
+    "care": "Care Rhythm",
+    "growth": "Growth Story",
+    "health": "Health Signal",
+    "family": "Family Voice",
+    "visual": "Visual Memory",
+    "capsule": "Time Capsule"
+  },
+  "privacy": {
+    "family": "Family",
+    "parents": "Parents Only",
+    "private": "Private"
+  },
+  "sources": {
+    "ai": "AI Curator",
+    "system": "BabySystem",
+    "capsule": "Time Capsule",
+    "family": "Family"
+  },
+  "notifications": {
+    "chooseBaby": "Please select a baby profile first.",
+    "saveSuccess": "Milestone saved to Memory DNA.",
+    "futureDateRequired": "Unlock date must be in the future.",
+    "capsuleSuccess": "Time Capsule locked for the future.",
+    "aiSuggestionSuccess": "Moment added to the Living Timeline.",
+    "deleteSuccess": "Milestone removed from Journey.",
+    "premiumWarning": "Please enable Baby Journey+ in Premium Settings to use this feature."
+  },
+  "systemEvents": {
+    "care": {
+      "title": "Today's Care Rhythm",
+      "story": "Today recorded {{feedings}} feeds, {{diaperChanges}} diaper changes, and {{sleepHours}}h sleep. This is the Care Rhythm layer in Memory DNA."
+    },
+    "growth": {
+      "title": "Growth Story Updated",
+      "story": "Weight {{weightKg}}kg, height {{heightCm}}cm, head circumference {{headCircumferenceCm}}cm."
+    },
+    "health": {
+      "title": "Health Milestone: {{vaccineName}}",
+      "story": "Scheduled vaccination on {{dueDate}}. The timeline keeps this as a Health Signal."
+    },
+    "visual": {
+      "title": "New Photo in Visual Memories",
+      "story": "{{fileName}} was added to the gallery. AI Curator can turn this into a memorable moment."
+    }
+  },
+  "suggestions": {
+    "care": {
+      "title": "A Day Filled with Care",
+      "detail": "Family logged {{feedings}} feeds, {{diaperChanges}} diaper changes, and {{sleepHours}}h sleep.",
+      "reason": "Day has sufficient care logs to be saved as a rhythm of life memory."
+    },
+    "growth": {
+      "title": "New Growth Milestone",
+      "detail": "Latest measurement: {{weightKg}}kg and {{heightCm}}cm.{{deltaWeight}}",
+      "deltaWeight": " Weight changed by {{deltaWeightKg}}kg.",
+      "reason": "Every growth index is a chapter in the Growth Story."
+    },
+    "health": {
+      "title": "Prepare for {{vaccineName}}",
+      "detail": "Appointment: {{dueDate}}. You can add reminders and parents' emotions to the Journey.",
+      "reason": "Important medical milestone should be kept in baby's dedicated timeline."
+    },
+    "visual": {
+      "title": "New Photo Could Be a Memory",
+      "detail": "{{fileName}} can be saved as a Visual Memory for this month.",
+      "reason": "New photos close to care days are great clues to create a storybook."
+    },
+    "family": {
+      "title": "Add Family's Perspective",
+      "detail": "Each member can leave a short note so that the Timeline contains both data and emotions.",
+      "reason": "Family Voices is the layer that distinguishes BabySystem from typical tracking apps."
+    }
+  },
+  "dnaLayers": {
+    "care": {
+      "meta": "{{count}} recent care signals"
+    },
+    "growth": {
+      "meta": "{{count}} growth measurements"
+    },
+    "voice": {
+      "meta": "{{count}} saved messages"
+    },
+    "visual": {
+      "meta": "{{count}} photos or visual memories"
+    },
+    "capsule": {
+      "meta": "{{count}} messages for the future"
+    }
+  },
+  "displayStory": {
+    "lockedCapsule": "This Capsule will unlock on {{openAt}} for {{recipient}}."
+  },
+  "errors": {
+    "loadBabies": "Unable to load baby profiles."
+  }
+}

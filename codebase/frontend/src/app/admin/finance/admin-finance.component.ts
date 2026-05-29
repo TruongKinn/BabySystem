@@ -19,7 +19,7 @@ import { catchError, debounceTime, distinctUntilChanged, map, switchMap } from '
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 import { AuthService } from '../../auth/auth.service';
-import { ExpenseApi, ExpenseBudgetApi, ExpenseSummaryApi } from '../../core/services/super-app-command.service';
+import { ExpenseApi, ExpenseBudgetApi, ExpenseSummaryApi, ExpenseProposalApi } from '../../core/services/super-app-command.service';
 
 interface ApiEnvelope<T> {
   success: boolean;
@@ -102,6 +102,12 @@ export class AdminFinanceComponent implements OnInit {
   // Drawer xem chi tiết
   isDrawerVisible = false;
   selectedFamily: FamilyFinanceItem | null = null;
+
+  // Quản lý đề xuất chi tiêu trong Drawer
+  pendingProposals: ExpenseProposalApi[] = [];
+  loadingProposals = false;
+  rejectingProposalId: number | null = null;
+  rejectReason = '';
 
   // Thống kê toàn hệ thống
   systemTotalBudget = 0;
@@ -287,11 +293,104 @@ export class AdminFinanceComponent implements OnInit {
   openDrawer(family: FamilyFinanceItem): void {
     this.selectedFamily = family;
     this.isDrawerVisible = true;
+    this.loadPendingProposals(family.id);
   }
 
   closeDrawer(): void {
     this.isDrawerVisible = false;
     this.selectedFamily = null;
+    this.pendingProposals = [];
+    this.cancelReject();
+  }
+
+  loadPendingProposals(familyId: number): void {
+    this.loadingProposals = true;
+    const proposalsUrl = `${API_CONFIG.GATEWAY_URL}/expense/proposals`;
+    const params = new HttpParams().set('familyId', String(familyId));
+    
+    this.http.get<ApiEnvelope<ExpenseProposalApi[]>>(proposalsUrl, { params })
+      .pipe(
+        catchError(() => of({ success: false, message: '', data: [] as ExpenseProposalApi[] }))
+      )
+      .subscribe({
+        next: (resp) => {
+          if (resp.success && resp.data) {
+            this.pendingProposals = resp.data.filter(p => p.status === 'PENDING');
+          } else {
+            this.pendingProposals = [];
+          }
+          this.loadingProposals = false;
+        },
+        error: () => {
+          this.pendingProposals = [];
+          this.loadingProposals = false;
+        }
+      });
+  }
+
+  approveProposal(proposalId: number): void {
+    const adminUsername = this.authService.getStoredItem('atg_username') || 'admin';
+    const approveUrl = `${API_CONFIG.GATEWAY_URL}/expense/proposals/${proposalId}/approve`;
+    const params = new HttpParams().set('approver', adminUsername);
+
+    this.http.put<ApiEnvelope<any>>(approveUrl, {}, { params })
+      .subscribe({
+        next: (resp) => {
+          if (resp.success) {
+            this.message.success(this.i18n.translate('momApp.admin.finance.messages.approveSuccess') || 'Đã phê duyệt đề xuất chi tiêu thành công');
+            if (this.selectedFamily) {
+              this.loadPendingProposals(this.selectedFamily.id);
+              this.loadFinanceData();
+            }
+          } else {
+            this.message.error(resp.message || 'Không thể phê duyệt đề xuất');
+          }
+        },
+        error: (err) => {
+          this.message.error(err.error?.message || 'Lỗi hệ thống khi phê duyệt đề xuất');
+        }
+      });
+  }
+
+  rejectProposal(proposalId: number): void {
+    if (!this.rejectReason.trim()) {
+      this.message.warning(this.i18n.translate('momApp.admin.finance.messages.rejectReasonRequired') || 'Vui lòng nhập lý do từ chối');
+      return;
+    }
+
+    const adminUsername = this.authService.getStoredItem('atg_username') || 'admin';
+    const rejectUrl = `${API_CONFIG.GATEWAY_URL}/expense/proposals/${proposalId}/reject`;
+    const params = new HttpParams().set('approver', adminUsername);
+    const body = { rejectReason: this.rejectReason.trim() };
+
+    this.http.put<ApiEnvelope<any>>(rejectUrl, body, { params })
+      .subscribe({
+        next: (resp) => {
+          if (resp.success) {
+            this.message.success(this.i18n.translate('momApp.admin.finance.messages.rejectSuccess') || 'Đã từ chối đề xuất chi tiêu');
+            this.rejectingProposalId = null;
+            this.rejectReason = '';
+            if (this.selectedFamily) {
+              this.loadPendingProposals(this.selectedFamily.id);
+            }
+          } else {
+            this.message.error(resp.message || 'Không thể từ chối đề xuất');
+          }
+        },
+        error: (err) => {
+          this.message.error(err.error?.message || 'Lỗi hệ thống khi từ chối đề xuất');
+        }
+      });
+  }
+
+  startReject(proposalId: number): void {
+    this.rejectingProposalId = proposalId;
+    this.rejectReason = '';
+  }
+
+  cancelReject(): void {
+    this.rejectingProposalId = null;
+    this.rejectReason = '';
   }
 
   formatCurrency(value: number): string {

@@ -130,6 +130,7 @@ export class ProfileComponent implements OnDestroy {
     PREMIUM_FEATURE_KEYS.aiCareAssistant,
     PREMIUM_FEATURE_KEYS.premiumReports,
     PREMIUM_FEATURE_KEYS.familyCollaborationPlus,
+    PREMIUM_FEATURE_KEYS.babyJourneyPlus,
     PREMIUM_FEATURE_KEYS.medicalVaultExport,
     PREMIUM_FEATURE_KEYS.unlimitedMemory
   ];

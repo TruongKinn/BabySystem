@@ -13,9 +13,13 @@ public interface NotificationRepository extends JpaRepository<NotificationEntity
 
     List<NotificationEntity> findByFamilyIdAndUserIdOrderByCreatedAtDesc(Long familyId, Long userId);
 
+    List<NotificationEntity> findByUserIdOrderByCreatedAtDesc(Long userId);
+
     long countByFamilyIdAndReadAtIsNull(Long familyId);
 
     long countByFamilyIdAndUserIdAndReadAtIsNull(Long familyId, Long userId);
+
+    long countByUserIdAndReadAtIsNull(Long userId);
 
     List<NotificationEntity> findByStatusAndScheduledAtLessThanEqual(NotificationStatus status, OffsetDateTime scheduledAt);
 }

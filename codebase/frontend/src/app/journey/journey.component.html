@@ -1,0 +1,559 @@
+<!-- SVG gradient defs for score ring -->
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <linearGradient id="scoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#ec4899"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<section class="page-container journey-page">
+  <!-- ─── HERO ─────────────────────────────────────────── -->
+  <header class="journey-hero">
+    <div class="journey-hero-orbs" aria-hidden="true">
+      <span class="orb orb-1"></span>
+      <span class="orb orb-2"></span>
+      <span class="orb orb-3"></span>
+    </div>
+
+    <div class="journey-hero-copy">
+      <span class="journey-kicker">
+        <span nz-icon nzType="crown" nzTheme="fill"></span>
+        {{ 'app.journey.hero.kicker' | translate }}
+      </span>
+      <h1>Memory <span class="hero-gradient-text">DNA</span></h1>
+      <p>
+        {{ 'app.journey.hero.description' | translate }}
+      </p>
+      <div class="journey-hero-chips">
+        <span><span nz-icon nzType="heart" nzTheme="fill"></span> {{ 'app.journey.hero.careRhythm' | translate }}</span>
+        <span><span nz-icon nzType="line-chart"></span> {{ 'app.journey.hero.growthStory' | translate }}</span>
+        <span><span nz-icon nzType="lock" nzTheme="fill"></span> {{ 'app.journey.hero.futureCapsules' | translate }}</span>
+        <span><span nz-icon nzType="bulb" nzTheme="fill"></span> {{ 'app.journey.hero.aiCurator' | translate }}</span>
+      </div>
+    </div>
+
+    <div class="journey-score-panel">
+      <span class="score-label">{{ 'app.journey.score.label' | translate }}</span>
+      <div class="score-ring-wrap">
+        <svg class="score-ring" viewBox="0 0 100 100" aria-hidden="true">
+          <circle cx="50" cy="50" r="40" class="ring-track"/>
+          <circle cx="50" cy="50" r="40" class="ring-fill"
+            [style.strokeDashoffset]="251.2 - (dnaScore / 100 * 251.2)"/>
+        </svg>
+        <div class="score-ring-content">
+          <strong>{{ dnaScore }}</strong>
+          <small>/100</small>
+        </div>
+      </div>
+      <p class="score-baby-name">{{ selectedBaby?.name || 'Baby' }}</p>
+      <div class="score-grade" [ngClass]="dnaScoreGrade.cls">
+        <span nz-icon [nzType]="dnaScoreGrade.icon" nzTheme="fill"></span>
+        {{ dnaScoreGrade.label }}
+      </div>
+    </div>
+  </header>
+
+  <!-- ─── TOOLBAR ──────────────────────────────────────── -->
+  <div class="journey-toolbar">
+    <nz-select
+      class="journey-baby-select"
+      [ngModel]="selectedBabyId"
+      (ngModelChange)="onSelectedBabyChange($event)"
+      [nzPlaceHolder]="'app.journey.toolbar.babySelectPlaceholder' | translate"
+      [nzShowSearch]="true"
+    >
+      <nz-option
+        *ngFor="let baby of babyProfiles; trackBy: trackByBaby"
+        [nzValue]="baby.id"
+        [nzLabel]="baby.name"
+      ></nz-option>
+    </nz-select>
+
+    <div class="journey-actions">
+      <button nz-button nzType="default" class="btn-user-outline" (click)="loadWorkspace()">
+        <span nz-icon nzType="reload"></span>
+        {{ 'app.journey.toolbar.refresh' | translate }}
+      </button>
+      <button
+        nz-button
+        nzType="default"
+        class="btn-user-outline"
+        [disabled]="isJourneyLocked || !selectedBabyId"
+        (click)="openCreateCapsuleModal()"
+      >
+        <span nz-icon nzType="lock" nzTheme="fill"></span>
+        {{ 'app.journey.toolbar.timeCapsule' | translate }}
+      </button>
+      <button
+        nz-button
+        nzType="primary"
+        class="btn-user-primary"
+        [disabled]="isJourneyLocked || !selectedBabyId"
+        (click)="openCreateMemoryModal()"
+      >
+        <span nz-icon nzType="plus"></span>
+        {{ 'app.journey.toolbar.addMilestone' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <!-- ─── STATES ───────────────────────────────────────── -->
+  <div class="journey-error" *ngIf="loadError">
+    <span nz-icon nzType="warning" nzTheme="fill"></span>
+    {{ loadError }}
+  </div>
+
+  <div class="journey-loading" *ngIf="isLoading && timelineEvents.length === 0">
+    <nz-spin nzSimple></nz-spin>
+    <span>{{ 'app.journey.loading' | translate }}</span>
+  </div>
+
+  <!-- ─── LOCK CARD ─────────────────────────────────────── -->
+  <nz-card class="journey-lock-card" *ngIf="!isLoading && isJourneyLocked">
+    <div class="lock-icon">
+      <span nz-icon nzType="crown" nzTheme="fill"></span>
+    </div>
+    <div>
+      <span class="journey-kicker">{{ 'app.journey.lock.kicker' | translate }}</span>
+      <h2>{{ 'app.journey.lock.title' | translate }}</h2>
+      <p>
+        {{ 'app.journey.lock.description' | translate }}
+      </p>
+      <div class="lock-feature-grid">
+        <span><span nz-icon nzType="bulb" nzTheme="fill"></span> {{ 'app.journey.lock.features.aiCurator' | translate }}</span>
+        <span><span nz-icon nzType="history"></span> {{ 'app.journey.lock.features.timeline' | translate }}</span>
+        <span><span nz-icon nzType="book" nzTheme="fill"></span> {{ 'app.journey.lock.features.storybook' | translate }}</span>
+        <span><span nz-icon nzType="safety" nzTheme="fill"></span> {{ 'app.journey.lock.features.privacy' | translate }}</span>
+      </div>
+      <a routerLink="/admin/premium" nz-button nzType="primary" class="btn-user-primary">
+        <span nz-icon nzType="unlock" nzTheme="fill"></span>
+        {{ 'app.journey.lock.unlock' | translate }}
+      </a>
+    </div>
+  </nz-card>
+
+  <nz-card class="journey-empty-card" *ngIf="!isLoading && !isJourneyLocked && babyProfiles.length === 0">
+    <nz-empty [nzNotFoundContent]="'app.journey.empty.noBaby' | translate"></nz-empty>
+  </nz-card>
+
+  <!-- ─── MAIN CONTENT ──────────────────────────────────── -->
+  <ng-container *ngIf="!isLoading && !isJourneyLocked && selectedBabyId">
+
+    <!-- DNA Layers -->
+    <section class="dna-grid">
+      <div class="dna-layer" *ngFor="let layer of dnaLayers; trackBy: trackByDna" [ngClass]="'tone-' + layer.tone">
+        <div class="dna-layer-head">
+          <span class="dna-icon"><span nz-icon [nzType]="layer.icon"></span></span>
+          <div class="dna-layer-info">
+            <strong>{{ layer.label }}</strong>
+            <span class="dna-value-badge">{{ layer.value }}<em>/{{ layer.max }}</em></span>
+          </div>
+        </div>
+        <div class="dna-progress">
+          <div [style.width.%]="(layer.value > layer.max ? layer.max : layer.value) / layer.max * 100">
+            <span class="progress-glow"></span>
+          </div>
+        </div>
+        <p>{{ layer.meta }}</p>
+      </div>
+    </section>
+
+    <!-- Tabs -->
+    <nz-tabset class="journey-tabs">
+
+      <!-- TAB 1: LIVING TIMELINE -->
+      <nz-tab [nzTitle]="'app.journey.tabs.timeline' | translate">
+        <ng-template nz-tab>
+          <nz-card class="journey-panel">
+            <div class="panel-head">
+              <div>
+                <h2>
+                  <span class="panel-icon panel-icon-teal"><span nz-icon nzType="history"></span></span>
+                  {{ 'app.journey.timeline.title' | translate }}
+                </h2>
+                <p>{{ 'app.journey.timeline.subtitle' | translate }}</p>
+              </div>
+              <nz-tag nzColor="gold" class="premium-tag">
+                <span nz-icon nzType="crown" nzTheme="fill"></span>
+                Journey+
+              </nz-tag>
+            </div>
+
+            <nz-empty
+              *ngIf="timelineEvents.length === 0"
+              [nzNotFoundContent]="'app.journey.empty.noMilestone' | translate"
+            ></nz-empty>
+
+            <nz-timeline
+              *ngIf="timelineEvents.length > 0"
+              nzMode="alternate"
+              [nzPending]="suggestions.length > 0 ? ('app.journey.timeline.pendingSuggestions' | translate) : false"
+            >
+              <nz-timeline-item
+                *ngFor="let event of timelineEvents; trackBy: trackByEvent"
+                [nzColor]="event.color"
+                [nzDot]="eventDot"
+                [nzLabel]="eventLabel"
+              >
+                <ng-template #eventDot>
+                  <span class="timeline-dot" [attr.data-type]="event.type">
+                    <span nz-icon [nzType]="event.icon"></span>
+                  </span>
+                </ng-template>
+                <ng-template #eventLabel>
+                  <span class="timeline-label">{{ event.dateLabel }}</span>
+                </ng-template>
+
+                <article class="timeline-memory" [class.timeline-memory-locked]="event.locked">
+                  <div class="memory-head">
+                    <div class="memory-head-left">
+                      <div class="memory-type-dot" [attr.data-type]="event.type"></div>
+                      <div>
+                        <h3>{{ event.title }}</h3>
+                        <div class="memory-meta">
+                          <span class="meta-chip meta-type">{{ event.typeLabel }}</span>
+                          <span class="meta-chip meta-source">{{ event.sourceLabel }}</span>
+                          <span class="meta-chip meta-privacy">
+                            <span nz-icon [nzType]="event.privacy === 'PRIVATE' ? 'lock' : event.privacy === 'PARENTS' ? 'user' : 'team'"></span>
+                            {{ event.privacyLabel }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      *ngIf="event.persisted"
+                      nz-button
+                      nzType="text"
+                      nzDanger
+                      nzSize="small"
+                      class="memory-delete-btn"
+                      (click)="deleteEvent(event)"
+                    >
+                      <span nz-icon nzType="delete"></span>
+                    </button>
+                  </div>
+                  <p class="memory-story" [class.locked-story]="event.locked">
+                    <span *ngIf="event.locked" nz-icon nzType="lock" class="locked-icon"></span>
+                    {{ event.displayStory }}
+                  </p>
+                </article>
+              </nz-timeline-item>
+            </nz-timeline>
+          </nz-card>
+        </ng-template>
+      </nz-tab>
+
+      <!-- TAB 2: AI CURATOR -->
+      <nz-tab [nzTitle]="'app.journey.tabs.aiCurator' | translate">
+        <ng-template nz-tab>
+          <nz-card class="journey-panel">
+            <div class="panel-head">
+              <div>
+                <h2>
+                  <span class="panel-icon panel-icon-violet"><span nz-icon nzType="bulb" nzTheme="fill"></span></span>
+                  {{ 'app.journey.aiCurator.title' | translate }}
+                </h2>
+                <p>{{ 'app.journey.aiCurator.subtitle' | translate }}</p>
+              </div>
+              <button nz-button nzType="primary" class="btn-user-primary" (click)="loadWorkspace()">
+                <span nz-icon nzType="sync"></span>
+                {{ 'app.journey.aiCurator.rescan' | translate }}
+              </button>
+            </div>
+
+            <nz-empty *ngIf="suggestions.length === 0" [nzNotFoundContent]="'app.journey.empty.noSuggestion' | translate"></nz-empty>
+
+            <div class="suggestion-grid" *ngIf="suggestions.length > 0">
+              <article class="suggestion-card" *ngFor="let suggestion of suggestions; trackBy: trackBySuggestion">
+                <div class="suggestion-header">
+                  <span class="suggestion-icon-wrap">
+                    <span nz-icon [nzType]="suggestion.icon"></span>
+                  </span>
+                  <div class="suggestion-confidence">
+                    <div class="confidence-bar">
+                      <div [style.width.%]="suggestion.confidence"></div>
+                    </div>
+                    <strong>{{ suggestion.confidence }}%</strong>
+                    <small>{{ 'app.journey.aiCurator.confidence' | translate }}</small>
+                  </div>
+                </div>
+                <h3>{{ suggestion.title }}</h3>
+                <p>{{ suggestion.detail }}</p>
+                <small class="suggestion-reason">
+                  <span nz-icon nzType="info-circle"></span>
+                  {{ suggestion.reason }}
+                </small>
+                <div class="suggestion-footer">
+                  <nz-tag [nzColor]="suggestion.color">{{ eventTypeLabel(suggestion.type) }}</nz-tag>
+                  <button
+                    nz-button
+                    nzType="default"
+                    class="btn-user-secondary"
+                    [class.btn-saved]="suggestion.saved"
+                    [disabled]="suggestion.saved"
+                    (click)="saveSuggestion(suggestion)"
+                  >
+                    <span nz-icon [nzType]="suggestion.saved ? 'check' : 'plus'"></span>
+                    {{ (suggestion.saved ? 'app.journey.aiCurator.saved' : 'app.journey.aiCurator.save') | translate }}
+                  </button>
+                </div>
+              </article>
+            </div>
+          </nz-card>
+        </ng-template>
+      </nz-tab>
+
+      <!-- TAB 3: TIME CAPSULE -->
+      <nz-tab [nzTitle]="'app.journey.tabs.timeCapsule' | translate">
+        <ng-template nz-tab>
+          <nz-card class="journey-panel">
+            <div class="panel-head">
+              <div>
+                <h2>
+                  <span class="panel-icon panel-icon-slate"><span nz-icon nzType="lock" nzTheme="fill"></span></span>
+                  {{ 'app.journey.capsule.title' | translate }}
+                </h2>
+                <p>{{ 'app.journey.capsule.subtitle' | translate }}</p>
+              </div>
+              <div class="capsule-summary">
+                <div class="capsule-stat">
+                  <strong>{{ capsuleLockedCount }}</strong>
+                  <small>{{ 'app.journey.capsule.lockedCount' | translate }}</small>
+                </div>
+                <button nz-button nzType="primary" class="btn-user-primary" (click)="openCreateCapsuleModal()">
+                  <span nz-icon nzType="lock" nzTheme="fill"></span>
+                  {{ 'app.journey.capsule.create' | translate }}
+                </button>
+              </div>
+            </div>
+
+            <nz-empty *ngIf="capsuleEvents.length === 0" [nzNotFoundContent]="'app.journey.empty.noCapsule' | translate"></nz-empty>
+
+            <div class="capsule-list" *ngIf="capsuleEvents.length > 0">
+              <article class="capsule-card" *ngFor="let capsule of capsuleEvents; trackBy: trackByEvent">
+                <span class="capsule-icon" [class.capsule-icon-open]="!capsule.locked">
+                  <span nz-icon [nzType]="capsule.locked ? 'lock' : 'unlock'" nzTheme="fill"></span>
+                </span>
+                <div class="capsule-body">
+                  <div class="capsule-title-row">
+                    <h3>{{ capsule.title }}</h3>
+                    <nz-tag [nzColor]="capsule.locked ? 'default' : 'green'" class="capsule-status-tag">
+                      {{ (capsule.locked ? 'app.journey.capsule.status.locked' : 'app.journey.capsule.status.open') | translate }}
+                    </nz-tag>
+                  </div>
+                  <p>{{ capsule.displayStory }}</p>
+                  <small>
+                    <span nz-icon nzType="clock-circle"></span>
+                    {{ (capsule.locked ? 'app.journey.capsule.openAt' : 'app.journey.capsule.openedAt') | translate }} {{ formatDateTime(capsule.capsuleOpenAt) }}
+                  </small>
+                </div>
+                <button nz-button nzType="text" nzDanger class="memory-delete-btn" (click)="deleteEvent(capsule)">
+                  <span nz-icon nzType="delete"></span>
+                </button>
+              </article>
+            </div>
+          </nz-card>
+        </ng-template>
+      </nz-tab>
+
+      <!-- TAB 4: STORYBOOK -->
+      <nz-tab [nzTitle]="'app.journey.tabs.storybook' | translate">
+        <ng-template nz-tab>
+          <nz-card class="journey-panel storybook-panel">
+            <div class="panel-head">
+              <div>
+                <h2>
+                  <span class="panel-icon panel-icon-rose"><span nz-icon nzType="book" nzTheme="fill"></span></span>
+                  {{ storybookTitle }}
+                </h2>
+                <p>{{ 'app.journey.storybook.subtitle' | translate }}</p>
+              </div>
+              <input
+                class="month-input"
+                type="month"
+                [(ngModel)]="selectedMonthKey"
+                (ngModelChange)="onMonthChange()"
+              />
+            </div>
+
+            <div class="storybook-cover">
+              <div class="storybook-cover-left">
+                <span class="storybook-eyebrow">{{ 'app.journey.storybook.kicker' | translate }}</span>
+                <h3>{{ selectedBaby?.name || 'Baby' }}</h3>
+                <div class="storybook-stats">
+                  <span><strong>{{ storybookEvents.length }}</strong> {{ 'app.journey.storybook.stats.milestones' | translate }}</span>
+                  <span class="stat-dot"></span>
+                  <span><strong>{{ suggestions.length }}</strong> {{ 'app.journey.storybook.stats.aiSuggestions' | translate }}</span>
+                  <span class="stat-dot"></span>
+                  <span><strong>{{ capsuleEvents.length }}</strong> {{ 'app.journey.storybook.stats.capsules' | translate }}</span>
+                </div>
+              </div>
+              <div class="storybook-dna-badge">
+                <strong>{{ dnaScore }}</strong>
+                <small>DNA</small>
+              </div>
+            </div>
+
+            <nz-empty *ngIf="storybookEvents.length === 0" [nzNotFoundContent]="'app.journey.empty.noStorybook' | translate"></nz-empty>
+
+            <div class="storybook-list" *ngIf="storybookEvents.length > 0">
+              <article *ngFor="let event of storybookEvents; trackBy: trackByEvent">
+                <span class="storybook-event-icon" [attr.data-type]="event.type">
+                  <span nz-icon [nzType]="event.icon"></span>
+                </span>
+                <div>
+                  <div class="storybook-event-title">
+                    <strong>{{ event.title }}</strong>
+                    <nz-tag [nzColor]="event.color" class="storybook-type-tag">{{ event.typeLabel }}</nz-tag>
+                  </div>
+                  <p>{{ event.displayStory }}</p>
+                  <small>
+                    <span nz-icon nzType="calendar"></span>
+                    {{ event.dateLabel }}
+                  </small>
+                </div>
+              </article>
+            </div>
+          </nz-card>
+        </ng-template>
+      </nz-tab>
+
+    </nz-tabset>
+  </ng-container>
+</section>
+
+<!-- ─── MODAL: TẠO CỘT MỐC ──────────────────────────────── -->
+<nz-modal
+  [(nzVisible)]="isCreateMemoryModalVisible"
+  nzClassName="user-role-modal"
+  [nzTitle]="memoryModalTitle"
+  [nzWidth]="800"
+  [nzOkLoading]="isSubmittingMemory"
+  [nzOkText]="'app.journey.modal.memory.form.submit' | translate"
+  [nzCancelText]="'app.journey.modal.cancel' | translate"
+  (nzOnCancel)="closeCreateMemoryModal()"
+  (nzOnOk)="submitCreateMemory()"
+>
+  <ng-template #memoryModalTitle>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="modal-title-icon-wrap">
+        <span nz-icon nzType="heart" nzTheme="fill"></span>
+      </span>
+      <span class="modal-title-text">
+        <span class="modal-title-main">{{ 'app.journey.modal.memory.title' | translate }}</span>
+        <span class="modal-title-sub">{{ 'app.journey.modal.memory.subtitle' | translate }}</span>
+      </span>
+    </div>
+  </ng-template>
+
+  <ng-container *nzModalContent>
+    <form nz-form nzLayout="vertical" [formGroup]="createMemoryForm" class="journey-form-grid">
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'app.journey.modal.memory.form.title' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="title" [placeholder]="'app.journey.modal.memory.form.titlePlaceholder' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'app.journey.modal.memory.form.type' | translate }}</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="type">
+            <nz-option *ngFor="let type of eventTypes" [nzValue]="type" [nzLabel]="eventTypeLabel(type)"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'app.journey.modal.memory.form.happenedAt' | translate }}</nz-form-label>
+        <nz-form-control>
+          <nz-date-picker formControlName="happenedAt" nzShowTime nzFormat="yyyy-MM-dd HH:mm"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'app.journey.modal.memory.form.privacy' | translate }}</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="privacy">
+            <nz-option *ngFor="let privacy of privacyOptions" [nzValue]="privacy" [nzLabel]="privacyLabel(privacy)"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="form-full">
+        <nz-form-label nzRequired>{{ 'app.journey.modal.memory.form.story' | translate }}</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input rows="5" formControlName="story" [placeholder]="'app.journey.modal.memory.form.storyPlaceholder' | translate"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<!-- ─── MODAL: TẠO TIME CAPSULE ─────────────────────────── -->
+<nz-modal
+  [(nzVisible)]="isCreateCapsuleModalVisible"
+  nzClassName="user-role-modal"
+  [nzTitle]="capsuleModalTitle"
+  [nzWidth]="800"
+  [nzOkLoading]="isSubmittingCapsule"
+  [nzOkText]="'app.journey.modal.capsule.form.submit' | translate"
+  [nzCancelText]="'app.journey.modal.cancel' | translate"
+  (nzOnCancel)="closeCreateCapsuleModal()"
+  (nzOnOk)="submitCreateCapsule()"
+>
+  <ng-template #capsuleModalTitle>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="modal-title-icon-wrap modal-title-icon-wrap--violet">
+        <span nz-icon nzType="lock" nzTheme="fill"></span>
+      </span>
+      <span class="modal-title-text">
+        <span class="modal-title-main">{{ 'app.journey.modal.capsule.title' | translate }}</span>
+        <span class="modal-title-sub">{{ 'app.journey.modal.capsule.subtitle' | translate }}</span>
+      </span>
+    </div>
+  </ng-template>
+
+  <ng-container *nzModalContent>
+    <form nz-form nzLayout="vertical" [formGroup]="createCapsuleForm" class="journey-form-grid">
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'app.journey.modal.capsule.form.title' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="title" [placeholder]="'app.journey.modal.capsule.form.titlePlaceholder' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>{{ 'app.journey.modal.capsule.form.recipient' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="recipient" [placeholder]="'app.journey.modal.capsule.form.recipientPlaceholder' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'app.journey.modal.capsule.form.openAt' | translate }}</nz-form-label>
+        <nz-form-control>
+          <nz-date-picker formControlName="openAt" nzShowTime nzFormat="yyyy-MM-dd HH:mm"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'app.journey.modal.capsule.form.privacy' | translate }}</nz-form-label>
+        <nz-form-control>
+          <nz-select formControlName="privacy">
+            <nz-option *ngFor="let privacy of privacyOptions" [nzValue]="privacy" [nzLabel]="privacyLabel(privacy)"></nz-option>
+          </nz-select>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item class="form-full">
+        <nz-form-label nzRequired>{{ 'app.journey.modal.capsule.form.message' | translate }}</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input rows="6" formControlName="message" [placeholder]="'app.journey.modal.capsule.form.messagePlaceholder' | translate"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

@@ -41,5 +41,12 @@
     "registerSuccessDesc": "Your account has been created! Redirecting to login page...",
     "registerFailedTitle": "Registration failed",
     "registerFailedDesc": "Unable to create account. Please verify your input."
+  },
+  "steps": {
+    "account": "Account",
+    "personal": "Personal",
+    "confirm": "Confirmation",
+    "next": "Next",
+    "prev": "Back"
   }
 }

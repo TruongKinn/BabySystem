@@ -1,0 +1,214 @@
+{
+  "hero": {
+    "kicker": "宝贝时光+ 尊享版",
+    "title": "记忆 DNA",
+    "description": "将每日的护理记录、照片、成长里程碑以及家人的心声，转化为宝宝生动的生活成长轨迹。",
+    "careRhythm": "护理节奏",
+    "growthStory": "成长故事",
+    "futureCapsules": "时光胶囊",
+    "aiCurator": "AI 策展人"
+  },
+  "score": {
+    "label": "记忆DNA得分",
+    "grade": {
+      "great": "极好",
+      "good": "成长中",
+      "start": "开始"
+    }
+  },
+  "toolbar": {
+    "babySelectPlaceholder": "选择宝宝档案",
+    "refresh": "刷新",
+    "timeCapsule": "时光胶囊",
+    "addMilestone": "添加里程碑"
+  },
+  "loading": "正在加载宝宝的成长时光...",
+  "lock": {
+    "kicker": "高级版专属功能",
+    "title": "宝贝时光+ 已被锁定",
+    "description": "这是 BabySystem 的招牌功能：AI 策展人自动检测值得纪念的瞬间，为每个宝宝创建动态时间线、时光胶囊以及月度回忆册。",
+    "unlock": "解锁高级版",
+    "features": {
+      "aiCurator": "AI 记忆策展人",
+      "timeline": "动态时间线",
+      "storybook": "月度回忆册",
+      "privacy": "智能隐私保护"
+    }
+  },
+  "empty": {
+    "noBaby": "在使用宝贝时光+ 之前，请先创建宝宝档案。",
+    "noMilestone": "时光轨迹中尚无里程碑。",
+    "noSuggestion": "目前还没有足够强烈的建议值得保存。",
+    "noCapsule": "目前还没有时光胶囊。",
+    "noStorybook": "本月还没有足够的数据来生成回忆册。"
+  },
+  "tabs": {
+    "timeline": "动态时间线",
+    "aiCurator": "AI 策展人",
+    "timeCapsule": "时光胶囊",
+    "storybook": "月度回忆册"
+  },
+  "timeline": {
+    "title": "动态时间线",
+    "subtitle": "一段融合了护理记录、健康信号、家人心声以及时光胶囊的鲜活记忆流动。",
+    "pendingSuggestions": "AI 策展人有新的建议"
+  },
+  "aiCurator": {
+    "title": "AI 记忆策展人",
+    "subtitle": "根据护理、成长、疫苗和相册数据，推荐值得保存的精彩瞬间。",
+    "rescan": "重新扫描",
+    "confidence": "可信度",
+    "save": "保存到时光",
+    "saved": "已保存"
+  },
+  "capsule": {
+    "title": "时光胶囊",
+    "subtitle": "寄往未来的私人信件，锁定至生日、入学日或未来的某一天开启。",
+    "lockedCount": "个锁定中",
+    "create": "创建胶囊",
+    "status": {
+      "locked": "锁定中",
+      "open": "已开启"
+    },
+    "openAt": "开启时间",
+    "openedAt": "已开启"
+  },
+  "storybook": {
+    "subtitle": "月度摘要，自动将多层记忆 DNA 整合为一章成长回忆录。",
+    "kicker": "月度记忆回忆册",
+    "stats": {
+      "milestones": "个里程碑",
+      "aiSuggestions": "条 AI 建议",
+      "capsules": "个时光胶囊"
+    }
+  },
+  "modal": {
+    "memory": {
+      "title": "添加里程碑到记忆 DNA",
+      "subtitle": "记录宝宝的难忘瞬间",
+      "form": {
+        "title": "标题",
+        "titlePlaceholder": "例如：宝宝第一次站起来",
+        "type": "记忆 DNA 图层",
+        "happenedAt": "时间",
+        "privacy": "隐私设置",
+        "story": "成长故事",
+        "storyPlaceholder": "写下家人想要留存的温馨回忆...",
+        "submit": "保存里程碑"
+      }
+    },
+    "capsule": {
+      "title": "创建时光胶囊",
+      "subtitle": "封存至未来某一天开启的寄语",
+      "form": {
+        "title": "标题",
+        "titlePlaceholder": "例如：写给宝宝1岁时的信",
+        "recipient": "收信人",
+        "recipientPlaceholder": "宝宝的姓名或收信人",
+        "openAt": "开启日期",
+        "privacy": "隐私设置",
+        "message": "致未来的寄语",
+        "messagePlaceholder": "写下您希望宝宝在未来开启的话语...",
+        "submit": "封存胶囊"
+      }
+    },
+    "cancel": "取消"
+  },
+  "types": {
+    "care": "护理节奏",
+    "growth": "成长故事",
+    "health": "健康信号",
+    "family": "家人心声",
+    "visual": "视觉记忆",
+    "capsule": "时光胶囊"
+  },
+  "privacy": {
+    "family": "全家共享",
+    "parents": "仅限父母",
+    "private": "私密"
+  },
+  "sources": {
+    "ai": "AI 策展人",
+    "system": "BabySystem",
+    "capsule": "时光胶囊",
+    "family": "家人心声"
+  },
+  "notifications": {
+    "chooseBaby": "请先选择宝宝档案。",
+    "saveSuccess": "里程碑已保存至记忆 DNA。",
+    "futureDateRequired": "开启日期必须是未来的时间。",
+    "capsuleSuccess": "时光胶囊已封存，静待未来开启。",
+    "aiSuggestionSuccess": "精彩瞬间已添加至动态时间线。",
+    "deleteSuccess": "里程碑已从时光轨迹中移除。",
+    "premiumWarning": "请在高级版设置中启用宝贝时光+ 以使用此功能。"
+  },
+  "systemEvents": {
+    "care": {
+      "title": "今日护理节奏",
+      "story": "今天记录了喂奶{{feedings}}次，换尿布{{diaperChanges}}次，睡眠{{sleepHours}}小时。这是记忆 DNA 中的护理节奏图层。"
+    },
+    "growth": {
+      "title": "更新了成长故事",
+      "story": "体重{{weightKg}}kg，身高{{heightCm}}cm，头围{{headCircumferenceCm}}cm。"
+    },
+    "health": {
+      "title": "健康里程碑：{{vaccineName}}",
+      "story": "预计于{{dueDate}}接种疫苗。时间线会将此作为健康信号留存。"
+    },
+    "visual": {
+      "title": "视觉记忆新增照片",
+      "story": "{{fileName}} 已添加至相册。AI 策展人可以将它转化为一段令人难忘的回忆瞬间。"
+    }
+  },
+  "suggestions": {
+    "care": {
+      "title": "充实的一天护理",
+      "detail": "家人记录了喂奶{{feedings}}次，换尿布{{diaperChanges}}次，睡眠{{sleepHours}}小时。",
+      "reason": "今天有足够的护理记录，适合保存为生活作息的记忆片段。"
+    },
+    "growth": {
+      "title": "新增成长里程碑",
+      "detail": "最新测量值：体重{{weightKg}}kg，身高{{heightCm}}cm。{{deltaWeight}}",
+      "deltaWeight": " 体重变化了{{deltaWeightKg}}kg。",
+      "reason": "每一个成长指标都是成长故事中的精彩章节。"
+    },
+    "health": {
+      "title": "准备接种 {{vaccineName}}",
+      "detail": "预约日期：{{dueDate}}。您可以在时光轨迹中添加提醒或父母的真实感受。",
+      "reason": "重要的医疗健康里程碑应当保存在宝宝专属的时间线中。"
+    },
+    "visual": {
+      "title": "新照片可转化为回忆",
+      "detail": "{{fileName}} 可以保存为本月的视觉记忆。",
+      "reason": "临近护理日的新照片，是创作月度回忆册的极佳线索。"
+    },
+    "family": {
+      "title": "添加家人的视角",
+      "detail": "每个家庭成员都可以留下一句简短的寄语，让时间线不仅充满数据，更有温情。",
+      "reason": "家人心声是让 BabySystem 区别于普通记录工具的温情所在。"
+    }
+  },
+  "dnaLayers": {
+    "care": {
+      "meta": "最近有{{count}}条护理信号"
+    },
+    "growth": {
+      "meta": "累计{{count}}次成长测量"
+    },
+    "voice": {
+      "meta": "已保存{{count}}条留言心声"
+    },
+    "visual": {
+      "meta": "累计{{count}}张照片或视觉记忆"
+    },
+    "capsule": {
+      "meta": "已封存{{count}}条致未来的寄语"
+    }
+  },
+  "displayStory": {
+    "lockedCapsule": "此时光胶囊将于 {{openAt}} 开启，收信人：{{recipient}}。"
+  },
+  "errors": {
+    "loadBabies": "无法加载宝宝档案。"
+  }
+}

@@ -633,3 +633,232 @@
   color: var(--color-primary);
   font-size: 15px;
 }
+
+/* =========================================================
+   MULTI-STEP REGISTER & NZ-STEPS CUSTOM STYLES
+   ========================================================= */
+
+/* --- Custom NZ-Steps --- */
+.register-steps {
+  margin-bottom: 28px;
+  padding: 8px 0;
+}
+
+:host ::ng-deep .register-steps .ant-steps-item-title {
+  color: var(--color-text) !important;
+  font-weight: 700 !important;
+  font-size: 13.5px !important;
+}
+
+:host ::ng-deep .register-steps .ant-steps-item-process .ant-steps-item-icon {
+  background-color: var(--color-primary) !important;
+  border-color: var(--color-primary) !important;
+}
+
+:host ::ng-deep .register-steps .ant-steps-item-process .ant-steps-item-icon > .ant-steps-icon {
+  color: #ffffff !important;
+}
+
+:host ::ng-deep .register-steps .ant-steps-item-finish .ant-steps-item-icon {
+  background-color: transparent !important;
+  border-color: var(--color-primary) !important;
+}
+
+:host ::ng-deep .register-steps .ant-steps-item-finish .ant-steps-item-icon > .ant-steps-icon {
+  color: var(--color-primary) !important;
+}
+
+:host ::ng-deep .register-steps .ant-steps-item-finish > .ant-steps-item-container > .ant-steps-item-content > .ant-steps-item-title::after {
+  background-color: var(--color-primary) !important;
+}
+
+:host ::ng-deep .register-steps .ant-steps-item-wait .ant-steps-item-icon {
+  border-color: var(--color-subtle) !important;
+  background-color: var(--color-soft) !important;
+}
+
+:host ::ng-deep .register-steps .ant-steps-item-wait .ant-steps-item-icon > .ant-steps-icon {
+  color: var(--color-muted) !important;
+}
+
+/* --- Animated Step Switch --- */
+.animated-step {
+  animation: stepFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes stepFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --- Step Navigation Actions --- */
+.step-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-subtle);
+}
+
+.prev-btn, .next-btn {
+  height: 44px !important;
+  border-radius: var(--radius-md) !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast) !important;
+}
+
+.prev-btn {
+  border-color: var(--color-subtle) !important;
+  background: var(--color-soft) !important;
+  color: var(--color-text) !important;
+  min-width: 100px;
+}
+
+.prev-btn:hover {
+  background: var(--color-subtle) !important;
+  color: var(--color-ink) !important;
+  transform: translateY(-1px);
+}
+
+.next-btn {
+  flex: 1;
+  border: 0 !important;
+  background: var(--color-primary) !important;
+  color: #ffffff !important;
+  box-shadow: var(--shadow-control) !important;
+}
+
+.next-btn:hover {
+  background: var(--color-primary-dark) !important;
+  box-shadow: 0 10px 20px rgba(15, 118, 110, 0.16) !important;
+  transform: translateY(-1px) !important;
+}
+
+.next-btn:active, .prev-btn:active {
+  transform: translateY(0) !important;
+}
+
+/* --- Step 3: Confirmation Summary --- */
+.confirm-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.summary-intro {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  background: rgba(15, 118, 110, 0.04);
+  border: 1px solid rgba(15, 118, 110, 0.08);
+  border-radius: var(--radius-md);
+  margin-bottom: 4px;
+}
+
+.summary-check-icon {
+  font-size: 20px;
+}
+
+.summary-intro h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--color-primary-dark);
+}
+
+.summary-card {
+  background: var(--color-soft);
+  border: 1px solid var(--color-subtle);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.summary-card:hover {
+  border-color: rgba(15, 118, 110, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+}
+
+.summary-card-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(15, 118, 110, 0.04);
+  border-bottom: 1px solid var(--color-subtle);
+}
+
+.summary-card-icon {
+  color: var(--color-primary);
+  font-size: 14px;
+}
+
+.summary-card-header h5 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--color-ink);
+}
+
+.summary-card-body {
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.summary-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+}
+
+.row-label {
+  color: var(--color-muted);
+  font-weight: 600;
+}
+
+.row-val {
+  color: var(--color-ink);
+}
+
+.font-semibold {
+  font-weight: 700;
+}
+
+/* --- Dark Theme Extensions --- */
+:host-context(.dark-theme) .prev-btn {
+  background: #1e293b !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #cbd5e1 !important;
+}
+
+:host-context(.dark-theme) .prev-btn:hover {
+  background: #334155 !important;
+  color: #ffffff !important;
+}
+
+:host-context(.dark-theme) .summary-card {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.06);
+}
+
+:host-context(.dark-theme) .summary-card-header {
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+
