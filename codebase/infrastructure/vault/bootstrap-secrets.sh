@@ -151,6 +151,9 @@ docker exec mom-vault sh -c "
     POSTGRES_PASSWORD='postgres' \
     REDIS_HOST='localhost' \
     REDIS_PORT='6379'
+
+  vault kv put secret/ai-service \
+    OPENAI_API_KEY='your-gemini-api-key-here'
 "
 
 echo "=== BOOTSTRAP VAULT HOÀN THÀNH ==="

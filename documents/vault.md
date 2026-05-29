@@ -119,7 +119,7 @@ docker exec -it mom-vault vault status
 2.  Tệp `cluster-keys.json` được đưa vào `.gitignore` để ngăn chặn đẩy lên Git repository.
 3.  Nếu Vault đang bị khóa (`sealed: true`), script tự động đọc 3 khóa giải mã từ file `cluster-keys.json` và mở khóa Vault.
 4.  Kiểm tra xem KV Secrets Engine phiên bản 2 tại đường dẫn `secret/` đã được kích hoạt chưa (do ở chế độ Prod mặc định chưa bật), nếu chưa sẽ tiến hành kích hoạt.
-5.  Thực hiện ghi toàn bộ các khóa kết nối cơ sở dữ liệu, Redis, Kafka của 9 microservices vào Vault.
+5.  Thực hiện ghi toàn bộ các khóa kết nối cơ sở dữ liệu, Redis, Kafka của 10 microservices (bao gồm cả `ai-service` cho AI Copilot) vào Vault.
 
 ---
 
