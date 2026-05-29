@@ -5,6 +5,7 @@ Local stack for Mom Super App backend:
 - PostgreSQL
 - Redis
 - Kafka + Zookeeper + Kafka UI
+- Debezium Kafka Connect (CDC for transactional outbox)
 - Vault (dev mode)
 - MinIO
 - Keycloak (OIDC / SSO)
@@ -56,6 +57,37 @@ docker compose down
 - `task.created`
 - `task.completed`
 - `notification.requested`
+- `expense.proposal.submitted`
+- `expense.proposal.approved`
+- `expense.proposal.rejected`
+- `expense.proposal.resubmitted`
+- `expense.proposal.approval.started`
+- `expense.proposal.approval.completed`
+- `expense.proposal.approval.failed`
+- `expense.proposal.approval.compensated`
+- `notification.requested.dlq`
+- `expense.proposal.submitted.dlq`
+- `expense.proposal.approved.dlq`
+- `expense.proposal.rejected.dlq`
+- `expense.proposal.resubmitted.dlq`
+- `expense.proposal.approval.started.dlq`
+- `expense.proposal.approval.completed.dlq`
+- `expense.proposal.approval.failed.dlq`
+- `expense.proposal.approval.compensated.dlq`
+
+## Debezium outbox
+
+`debezium-connect` registers `expense-outbox-connector` automatically through `debezium-init`.
+The connector reads `expense_db.public.outbox_events` and routes rows by `aggregatetype`, so an outbox row with
+`aggregatetype = expense.proposal.approved` is emitted to the Kafka topic `expense.proposal.approved`.
+
+Connector config:
+
+- `infrastructure/debezium/expense-outbox-connector.json`
+
+Kafka Connect endpoint:
+
+- `http://localhost:8094`
 
 ## Vault bootstrap
 

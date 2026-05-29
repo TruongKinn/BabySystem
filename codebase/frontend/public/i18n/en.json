@@ -1892,6 +1892,14 @@
           "successApprove": "Proposal approved! Expense added to family vault.",
           "successReject": "Expense proposal rejected.",
           "successResubmit": "Proposal updated and resubmitted successfully!"
+        },
+        "banner": {
+          "subtitle": "Submit expense proposals needing other members' approvals and track progress.",
+          "manageBtn": "Manage Proposals",
+          "pendingLabel": "Pending",
+          "approvedLabel": "Approved",
+          "rejectedLabel": "Rejected",
+          "totalLabel": "Total Proposals"
         }
       }
     },

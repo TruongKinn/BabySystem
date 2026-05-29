@@ -257,136 +257,207 @@
   <!-- Tỷ giá ngoại tệ đã được chuyển đổi sang Dialog riêng để tối ưu diện tích hiển thị -->
 
   <!-- =========================================================
-       FAMILY EXPENSE PROPOSALS SECTION (Multi-step & Interactive Flow)
+       FAMILY EXPENSE PROPOSALS OVERVIEW BANNER (Premium Fintech Style)
        ========================================================= -->
-  <nz-card class="table-card proposal-section-card" [nzTitle]="proposalTitleTpl" [nzExtra]="proposalExtraTpl">
-    <ng-template #proposalTitleTpl>
-      <div class="proposal-title-container">
-        <span nz-icon nzType="solution" class="proposal-header-icon"></span>
-        <span class="proposal-header-text">{{ 'app.expenses.proposals.title' | translate }}</span>
-      </div>
-    </ng-template>
-    
-    <ng-template #proposalExtraTpl>
-      <button nz-button nzType="primary" class="btn-user-primary btn-proposal-create" (click)="openProposalModal()">
-        <span nz-icon nzType="plus-circle"></span>
-        {{ 'app.expenses.proposals.createBtn' | translate }}
-      </button>
-    </ng-template>
-
-    <div class="empty-state" *ngIf="expenseProposals.length === 0">
-      Không có đề xuất chi tiêu nào được ghi nhận.
-    </div>
-
-    <!-- Bento Grid list of Proposals -->
-    <div class="proposal-bento-grid" *ngIf="expenseProposals.length > 0">
-      <div class="proposal-card animate-slide-up" *ngFor="let proposal of expenseProposals" [class.proposal-approved]="proposal.status === 'APPROVED'" [class.proposal-rejected]="proposal.status === 'REJECTED'">
-        
-        <!-- Proposal Card Header -->
-        <div class="proposal-card-header">
-          <div class="proposal-info-wrap">
-            <span class="proposal-cat-badge">
-              {{ proposal.categoryName }}
-            </span>
-            <h4 class="proposal-card-title">{{ proposal.title }}</h4>
-            <span class="proposal-date">
-              <span nz-icon nzType="calendar" style="margin-right: 4px;"></span>
-              {{ formatSpentAt(proposal.createdAt) }}
-            </span>
-          </div>
-          <div class="proposal-amount-wrap">
-            <div class="proposal-amount">{{ proposal.amount | currency : userCurrency : 'symbol' : '1.0-0' }}</div>
-            <div class="proposal-members-tag">
-              <span class="member-tag proposer" nz-tooltip nzTooltipTitle="Người đề xuất"><span nz-icon nzType="arrow-up"></span> {{ proposal.proposedBy }}</span>
-              <span class="member-tag approver" nz-tooltip nzTooltipTitle="Người duyệt"><span nz-icon nzType="eye"></span> {{ proposal.approver }}</span>
-            </div>
-          </div>
+  <div class="proposal-overview-banner animate-fade-in">
+    <div class="banner-body">
+      <div class="banner-left">
+        <div class="banner-icon-container">
+          <span nz-icon nzType="solution" class="banner-icon"></span>
+          <span class="badge-pulsing" *ngIf="pendingProposalsCount > 0">{{ pendingProposalsCount }}</span>
         </div>
-
-        <!-- Dynamic NZ-Steps for Proposal Lifecycle -->
-        <div class="proposal-steps-wrapper">
-          <nz-steps [nzCurrent]="proposal.currentStep" nzSize="small" class="proposal-steps">
-            <nz-step [nzTitle]="'app.expenses.proposals.steps.submit' | translate" nzDescription="Đã gửi"></nz-step>
-            <nz-step [nzTitle]="'app.expenses.proposals.steps.review' | translate" [nzDescription]="proposal.status === 'PENDING' ? 'Đang duyệt' : 'Hoàn tất'"></nz-step>
-            
-            <!-- Conditional Step 3 status based on APPROVED / REJECTED -->
-            <nz-step 
-              [nzTitle]="'app.expenses.proposals.steps.result' | translate" 
-              [nzDescription]="proposal.status === 'APPROVED' ? 'Đã duyệt' : (proposal.status === 'REJECTED' ? 'Bị từ chối' : 'Chờ')"
-              [nzStatus]="proposal.status === 'APPROVED' ? 'finish' : (proposal.status === 'REJECTED' ? 'error' : 'wait')">
-            </nz-step>
-          </nz-steps>
-        </div>
-
-        <!-- Rejected reason if exists -->
-        <div class="proposal-reject-alert animate-fade-in" *ngIf="proposal.status === 'REJECTED' && proposal.rejectReason">
-          <div class="reject-alert-header">
-            <span nz-icon nzType="close-circle" class="reject-icon"></span>
-            <strong>Đề xuất bị từ chối:</strong>
-          </div>
-          <p class="reject-reason-desc">"{{ proposal.rejectReason }}"</p>
-        </div>
-
-        <!-- Approved success notification -->
-        <div class="proposal-approved-alert animate-fade-in" *ngIf="proposal.status === 'APPROVED'">
-          <span nz-icon nzType="check-circle" class="approved-icon"></span>
-          <span>Đề xuất đã được duyệt và đồng bộ vào Lịch sử chi tiêu thật của gia đình.</span>
-        </div>
-
-        <!-- Simulation Interactive Actions -->
-        <div class="proposal-card-actions">
-          <!-- 1. Trường hợp đề xuất đang chờ duyệt (PENDING) -->
-          <ng-container *ngIf="proposal.status === 'PENDING'">
-            <!-- A. Nếu là người được chỉ định duyệt chi tiêu -->
-            <ng-container *ngIf="proposal.approver === currentUserDisplayName">
-              <div class="simulation-tag" style="margin-bottom: 8px;">
-                <span nz-icon nzType="safety-certificate" style="color: var(--color-primary); margin-right: 6px;"></span> Quyền phê duyệt của bạn ({{ proposal.approver }}):
-              </div>
-              <div class="actions-buttons-wrap">
-                <button nz-button nzType="primary" class="btn-action-approve" (click)="approveProposal(proposal)">
-                  <span nz-icon nzType="check"></span>
-                  {{ 'app.expenses.proposals.actions.approve' | translate }}
-                </button>
-                <button nz-button nzType="default" class="btn-action-reject" (click)="openRejectModal(proposal)">
-                  <span nz-icon nzType="close"></span>
-                  {{ 'app.expenses.proposals.actions.reject' | translate }}
-                </button>
-              </div>
-            </ng-container>
-
-            <!-- B. Nếu người dùng đăng nhập không phải người duyệt (người tạo hoặc thành viên khác) -->
-            <ng-container *ngIf="proposal.approver !== currentUserDisplayName">
-              <div class="simulation-tag simulation-tag--waiting" style="color: #f59e0b; background: rgba(245, 158, 11, 0.08); padding: 8px 12px; border-radius: 6px; font-weight: 500; display: inline-flex; align-items: center;">
-                <span nz-icon nzType="loading" nzTheme="outline" style="margin-right: 6px;"></span>
-                Đang chờ <strong style="color: #d97706; margin: 0 4px;">{{ proposal.approver }}</strong> phê duyệt...
-              </div>
-            </ng-container>
-          </ng-container>
+        <div class="banner-text">
+          <h3 class="banner-title">{{ 'app.expenses.proposals.title' | translate }}</h3>
+          <p class="banner-subtitle">{{ 'app.expenses.proposals.banner.subtitle' | translate }}</p>
           
-          <!-- 2. Trường hợp đề xuất bị từ chối (REJECTED) -->
-          <ng-container *ngIf="proposal.status === 'REJECTED'">
-            <!-- Chỉ cho phép chính người tạo đề xuất (proposedBy) được gửi lại -->
-            <ng-container *ngIf="proposal.proposedBy === currentUserDisplayName">
-              <div class="actions-buttons-wrap">
-                <button nz-button nzType="default" class="btn-action-resubmit animate-pulse-orange" (click)="openEditProposalModal(proposal)">
-                  <span nz-icon nzType="retweet"></span>
-                  {{ 'app.expenses.proposals.actions.resubmit' | translate }}
-                </button>
-              </div>
-            </ng-container>
-            <!-- Nếu không phải người tạo thì hiển thị nhãn trạng thái từ chối -->
-            <ng-container *ngIf="proposal.proposedBy !== currentUserDisplayName">
-              <div class="simulation-tag" style="color: #ef4444; background: rgba(239, 68, 68, 0.08); padding: 8px 12px; border-radius: 6px; display: inline-flex; align-items: center;">
-                <span nz-icon nzType="close-circle" style="margin-right: 6px;"></span>
-                Đề xuất bị từ chối bởi {{ proposal.approver }}.
-              </div>
-            </ng-container>
-          </ng-container>
+          <div class="banner-quick-stats">
+            <span class="stat-pill stat-pill--pending">
+              <span class="dot"></span>
+              {{ 'app.expenses.proposals.banner.pendingLabel' | translate }}: <strong>{{ pendingProposalsCount }}</strong>
+            </span>
+            <span class="stat-pill stat-pill--approved">
+              <span class="dot"></span>
+              {{ 'app.expenses.proposals.banner.approvedLabel' | translate }}: <strong>{{ approvedProposalsCount }}</strong>
+            </span>
+            <span class="stat-pill stat-pill--rejected">
+              <span class="dot"></span>
+              {{ 'app.expenses.proposals.banner.rejectedLabel' | translate }}: <strong>{{ rejectedProposalsCount }}</strong>
+            </span>
+            <span class="stat-pill stat-pill--total">
+              <span class="dot"></span>
+              {{ 'app.expenses.proposals.banner.totalLabel' | translate }}: <strong>{{ expenseProposals.length }}</strong>
+            </span>
+          </div>
         </div>
-
+      </div>
+      
+      <div class="banner-right">
+        <button nz-button nzType="primary" class="btn-user-primary btn-banner-manage glow-effect" (click)="openProposalsListModal()">
+          <span nz-icon nzType="folder-open" style="margin-right: 6px;"></span>
+          {{ 'app.expenses.proposals.banner.manageBtn' | translate }}
+        </button>
       </div>
     </div>
-  </nz-card>
+  </div>
+
+  <!-- Modal: Quản lý Đề xuất & Phê duyệt Chi tiêu Gia đình -->
+  <nz-modal [(nzVisible)]="isProposalsListModalVisible" [nzTitle]="proposalsListTitleTpl" nzClassName="user-role-modal proposals-list-modal"
+    [nzWidth]="960" [nzFooter]="proposalsListFooterTpl" (nzOnCancel)="closeProposalsListModal()">
+    
+    <ng-template #proposalsListTitleTpl>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="modal-title-icon-wrap">
+          <span nz-icon nzType="solution"></span>
+        </span>
+        <span class="modal-title-text">
+          <span class="modal-title-main">{{ 'app.expenses.proposals.title' | translate }}</span>
+          <span class="modal-title-sub">{{ 'app.expenses.proposals.banner.subtitle' | translate }}</span>
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-container *nzModalContent>
+      <div class="proposals-list-body">
+        <div class="empty-state" *ngIf="expenseProposals.length === 0" style="padding: 48px 0;">
+          <span nz-icon nzType="inbox" style="font-size: 40px; color: var(--text-muted); margin-bottom: 12px; display: block;"></span>
+          Không có đề xuất chi tiêu nào được ghi nhận.
+        </div>
+
+        <!-- Bento Grid list of Proposals (Backend paginated) -->
+        <div class="proposal-bento-grid" *ngIf="expenseProposals.length > 0">
+          <div class="proposal-card animate-slide-up" *ngFor="let proposal of expenseProposals" [class.proposal-approved]="proposal.status === 'APPROVED'" [class.proposal-rejected]="proposal.status === 'REJECTED'">
+            
+            <!-- Proposal Card Header -->
+            <div class="proposal-card-header">
+              <div class="proposal-info-wrap">
+                <span class="proposal-cat-badge">
+                  {{ proposal.categoryName }}
+                </span>
+                <h4 class="proposal-card-title">{{ proposal.title }}</h4>
+                <span class="proposal-date">
+                  <span nz-icon nzType="calendar" style="margin-right: 4px;"></span>
+                  {{ formatSpentAt(proposal.createdAt) }}
+                </span>
+              </div>
+              <div class="proposal-amount-wrap">
+                <div class="proposal-amount">{{ proposal.amount | currency : userCurrency : 'symbol' : '1.0-0' }}</div>
+                <div class="proposal-members-tag">
+                  <span class="member-tag proposer" nz-tooltip nzTooltipTitle="Người đề xuất"><span nz-icon nzType="arrow-up"></span> {{ proposal.proposedBy }}</span>
+                  <span class="member-tag approver" nz-tooltip nzTooltipTitle="Người duyệt"><span nz-icon nzType="eye"></span> {{ proposal.approver }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dynamic NZ-Steps for Proposal Lifecycle -->
+            <div class="proposal-steps-wrapper">
+              <nz-steps [nzCurrent]="proposal.currentStep" nzSize="small" class="proposal-steps">
+                <nz-step [nzTitle]="'app.expenses.proposals.steps.submit' | translate" nzDescription="Đã gửi"></nz-step>
+                <nz-step [nzTitle]="'app.expenses.proposals.steps.review' | translate" [nzDescription]="proposal.status === 'PENDING' ? 'Đang duyệt' : 'Hoàn tất'"></nz-step>
+                
+                <!-- Conditional Step 3 status based on APPROVED / REJECTED -->
+                <nz-step 
+                  [nzTitle]="'app.expenses.proposals.steps.result' | translate" 
+                  [nzDescription]="proposal.status === 'APPROVED' ? 'Đã duyệt' : (proposal.status === 'REJECTED' ? 'Bị từ chối' : 'Chờ')"
+                  [nzStatus]="proposal.status === 'APPROVED' ? 'finish' : (proposal.status === 'REJECTED' ? 'error' : 'wait')">
+                </nz-step>
+              </nz-steps>
+            </div>
+
+            <!-- Rejected reason if exists -->
+            <div class="proposal-reject-alert animate-fade-in" *ngIf="proposal.status === 'REJECTED' && proposal.rejectReason">
+              <div class="reject-alert-header">
+                <span nz-icon nzType="close-circle" class="reject-icon"></span>
+                <strong>Đề xuất bị từ chối:</strong>
+              </div>
+              <p class="reject-reason-desc">"{{ proposal.rejectReason }}"</p>
+            </div>
+
+            <!-- Approved success notification -->
+            <div class="proposal-approved-alert animate-fade-in" *ngIf="proposal.status === 'APPROVED'">
+              <span nz-icon nzType="check-circle" class="approved-icon"></span>
+              <span>Đề xuất đã được duyệt và đồng bộ vào Lịch sử chi tiêu thật của gia đình.</span>
+            </div>
+
+            <!-- Simulation Interactive Actions -->
+            <div class="proposal-card-actions">
+              <!-- 1. Trường hợp đề xuất đang chờ duyệt (PENDING) -->
+              <ng-container *ngIf="proposal.status === 'PENDING'">
+                <!-- A. Nếu là người được chỉ định duyệt chi tiêu -->
+                <ng-container *ngIf="proposal.approver === currentUserDisplayName">
+                  <div class="simulation-tag" style="margin-bottom: 8px;">
+                    <span nz-icon nzType="safety-certificate" style="color: var(--color-primary); margin-right: 6px;"></span> Quyền phê duyệt của bạn ({{ proposal.approver }}):
+                  </div>
+                  <div class="actions-buttons-wrap">
+                    <button nz-button nzType="primary" class="btn-action-approve" (click)="approveProposal(proposal)">
+                      <span nz-icon nzType="check"></span>
+                      {{ 'app.expenses.proposals.actions.approve' | translate }}
+                    </button>
+                    <button nz-button nzType="default" class="btn-action-reject" (click)="openRejectModal(proposal)">
+                      <span nz-icon nzType="close"></span>
+                      {{ 'app.expenses.proposals.actions.reject' | translate }}
+                    </button>
+                  </div>
+                </ng-container>
+
+                <!-- B. Nếu người dùng đăng nhập không phải người duyệt (người tạo hoặc thành viên khác) -->
+                <ng-container *ngIf="proposal.approver !== currentUserDisplayName">
+                  <div class="simulation-tag simulation-tag--waiting" style="color: #f59e0b; background: rgba(245, 158, 11, 0.08); padding: 8px 12px; border-radius: 6px; font-weight: 500; display: inline-flex; align-items: center;">
+                    <span nz-icon nzType="loading" nzTheme="outline" style="margin-right: 6px;"></span>
+                    Đang chờ <strong style="color: #d97706; margin: 0 4px;">{{ proposal.approver }}</strong> phê duyệt...
+                  </div>
+                </ng-container>
+              </ng-container>
+              
+              <!-- 2. Trường hợp đề xuất bị từ chối (REJECTED) -->
+              <ng-container *ngIf="proposal.status === 'REJECTED'">
+                <!-- Chỉ cho phép chính người tạo đề xuất (proposedBy) được gửi lại -->
+                <ng-container *ngIf="proposal.proposedBy === currentUserDisplayName">
+                  <div class="actions-buttons-wrap">
+                    <button nz-button nzType="default" class="btn-action-resubmit animate-pulse-orange" (click)="openEditProposalModal(proposal)">
+                      <span nz-icon nzType="retweet"></span>
+                      {{ 'app.expenses.proposals.actions.resubmit' | translate }}
+                    </button>
+                  </div>
+                </ng-container>
+                <!-- Nếu không phải người tạo thì hiển thị nhãn trạng thái từ chối -->
+                <ng-container *ngIf="proposal.proposedBy !== currentUserDisplayName">
+                  <div class="simulation-tag" style="color: #ef4444; background: rgba(239, 68, 68, 0.08); padding: 8px 12px; border-radius: 6px; display: inline-flex; align-items: center;">
+                    <span nz-icon nzType="close-circle" style="margin-right: 6px;"></span>
+                    Đề xuất bị từ chối bởi {{ proposal.approver }}.
+                  </div>
+                </ng-container>
+              </ng-container>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #proposalsListFooterTpl>
+      <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+        <!-- Client-side Pagination -->
+        <nz-pagination
+          [(nzPageIndex)]="proposalPageIndex"
+          [nzPageSize]="proposalPageSize"
+          [nzTotal]="proposalTotalCount"
+          (nzPageIndexChange)="onProposalPageChange($event)"
+          [nzHideOnSinglePage]="false"
+          class="user-pagination">
+        </nz-pagination>
+        
+        <div style="display:flex;gap:8px">
+          <button nz-button nzType="primary" class="btn-user-primary" (click)="openProposalModalFromList()">
+            <span nz-icon nzType="plus-circle"></span>
+            {{ 'app.expenses.proposals.createBtn' | translate }}
+          </button>
+          <button nz-button nzType="default" class="btn-user-outline" (click)="closeProposalsListModal()">
+            Đóng
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </nz-modal>
 
   <nz-card class="table-card expense-history-card" [nzTitle]="'momApp.expenses.receipts.title' | translate">
     <div class="table-summary-row">

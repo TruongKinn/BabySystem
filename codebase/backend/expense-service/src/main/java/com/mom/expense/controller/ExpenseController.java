@@ -17,6 +17,8 @@ import com.mom.expense.controller.dto.CreateProposalRequest;
 import com.mom.expense.controller.dto.RejectProposalRequest;
 import com.mom.expense.controller.dto.ResubmitProposalRequest;
 import com.mom.expense.controller.dto.ProposalResponse;
+import com.mom.expense.controller.dto.PageResponse;
+import com.mom.expense.controller.dto.ProposalPageResponse;
 import com.mom.common.dto.ApiResponse;
 import com.mom.expense.service.ExpenseService;
 import jakarta.validation.Valid;
@@ -140,8 +142,12 @@ public class ExpenseController {
     }
 
     @GetMapping("/proposals")
-    public ApiResponse<List<ProposalResponse>> getProposals(@RequestParam("familyId") Long familyId) {
-        return ApiResponse.ok("Success", expenseService.getProposals(familyId));
+    public ApiResponse<ProposalPageResponse> getProposals(
+            @RequestParam("familyId") Long familyId,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "4") int size
+    ) {
+        return ApiResponse.ok("Success", expenseService.getProposalsPage(familyId, page, size));
     }
 
     @PostMapping("/proposals")

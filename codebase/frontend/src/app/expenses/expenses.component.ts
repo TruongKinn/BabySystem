@@ -16,8 +16,9 @@ import { NzAutocompleteModule } from 'ng-zorro-antd/auto-complete';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
-import { ExchangeRateApi, ExpenseApi, ExpenseBudgetApi, ExpenseCategoryApi, ExpenseCategoryReportApi, ExpenseCategoryReportItemApi, ExpenseDailySummaryApi, ExpenseSummaryApi, ExpenseProposalApi, FamilyMemberProfile, FileMetadata, SuperAppCommandService } from '../core/services/super-app-command.service';
+import { ExchangeRateApi, ExpenseApi, ExpenseBudgetApi, ExpenseCategoryApi, ExpenseCategoryReportApi, ExpenseCategoryReportItemApi, ExpenseDailySummaryApi, ExpenseSummaryApi, ExpenseProposalApi, ExpenseProposalPageApi, FamilyMemberProfile, FileMetadata, SuperAppCommandService } from '../core/services/super-app-command.service';
 import { UserPreferencesService } from '../core/services/user-preferences.service';
 import { I18nService } from '../i18n/i18n.service';
 
@@ -71,7 +72,8 @@ type ExpenseSortMode = 'NEWEST' | 'OLDEST' | 'HIGHEST' | 'LOWEST' | 'CATEGORY';
     NzAutocompleteModule,
     NzSelectModule,
     NzDatePickerModule,
-    NzStepsModule
+    NzStepsModule,
+    NzPaginationModule
   ],
   templateUrl: './expenses.component.html',
   styleUrl: './expenses.component.css'
@@ -143,6 +145,15 @@ export class ExpensesComponent implements OnInit {
   isEditProposalModalVisible = false;
   selectedProposal: ExpenseProposal | null = null;
   rejectReasonText = '';
+
+  isProposalsListModalVisible = false;
+  proposalPageIndex = 1;
+  proposalPageSize = 4;
+  proposalTotalCount = 0;
+
+  pendingProposalsCount = 0;
+  approvedProposalsCount = 0;
+  rejectedProposalsCount = 0;
 
   readonly proposalForm = this.fb.group({
     title: ['', [Validators.required, Validators.maxLength(200)]],
@@ -287,7 +298,17 @@ export class ExpensesComponent implements OnInit {
       report: this.command.getExpenseCategoryReport(month).pipe(catchError(() => of(this.emptyCategoryReport(month)))),
       budgets: this.command.getExpenseBudgets().pipe(catchError(() => of([] as ExpenseBudgetApi[]))),
       categories: this.command.getExpenseCategories().pipe(catchError(() => of([] as ExpenseCategoryApi[]))),
-      proposals: this.command.getExpenseProposals().pipe(catchError(() => of([] as ExpenseProposalApi[]))),
+      proposals: this.command.getExpenseProposals(this.proposalPageIndex - 1, this.proposalPageSize).pipe(
+        catchError(() => of({
+          page: 0,
+          size: 4,
+          total: 0,
+          items: [],
+          pendingCount: 0,
+          approvedCount: 0,
+          rejectedCount: 0
+        } as ExpenseProposalPageApi))
+      ),
       members: this.command.getFamilyMembersDetailed().pipe(catchError(() => of([] as FamilyMemberProfile[]))),
       profile: this.command.getProfile().pipe(catchError(() => of(null as any)))
     })
@@ -298,7 +319,11 @@ export class ExpensesComponent implements OnInit {
         next: ({ expenses, summary, daily, report, budgets, categories, proposals, members, profile }) => {
           this.expenseRecords = expenses.map((item) => this.toExpenseRecord(item));
           this.allBudgets = budgets;
-          this.expenseProposals = proposals;
+          this.expenseProposals = proposals.items;
+          this.proposalTotalCount = proposals.total;
+          this.pendingProposalsCount = proposals.pendingCount;
+          this.approvedProposalsCount = proposals.approvedCount;
+          this.rejectedProposalsCount = proposals.rejectedCount;
           this.familyMembers = members;
 
           if (profile && profile.displayName) {
@@ -982,6 +1007,37 @@ export class ExpensesComponent implements OnInit {
       URL.revokeObjectURL(this.viewerObjectUrl);
       this.viewerObjectUrl = null;
     }
+  }
+
+  openProposalsListModal(): void {
+    this.isProposalsListModalVisible = true;
+    this.proposalPageIndex = 1;
+    this.loadExpenseProposals(0, this.proposalPageSize);
+  }
+
+  closeProposalsListModal(): void {
+    this.isProposalsListModalVisible = false;
+  }
+
+  loadExpenseProposals(page: number, size: number): void {
+    this.command.getExpenseProposals(page, size).subscribe({
+      next: (res) => {
+        this.expenseProposals = res.items;
+        this.proposalTotalCount = res.total;
+        this.pendingProposalsCount = res.pendingCount;
+        this.approvedProposalsCount = res.approvedCount;
+        this.rejectedProposalsCount = res.rejectedCount;
+      }
+    });
+  }
+
+  onProposalPageChange(pageIndex: number): void {
+    this.proposalPageIndex = pageIndex;
+    this.loadExpenseProposals(pageIndex - 1, this.proposalPageSize);
+  }
+
+  openProposalModalFromList(): void {
+    this.openProposalModal();
   }
 
   openProposalModal(): void {

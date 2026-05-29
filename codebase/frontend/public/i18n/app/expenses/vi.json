@@ -2,6 +2,14 @@
   "proposals": {
     "title": "Đề xuất & Phê duyệt Chi tiêu Gia đình",
     "createBtn": "Tạo đề xuất mới",
+    "banner": {
+      "subtitle": "Gửi đề xuất chi tiêu cần sự phê duyệt của thành viên khác và theo dõi tiến trình phê duyệt.",
+      "manageBtn": "Quản lý Đề xuất",
+      "pendingLabel": "Chờ duyệt",
+      "approvedLabel": "Đã duyệt",
+      "rejectedLabel": "Bị từ chối",
+      "totalLabel": "Tổng số đề xuất"
+    },
     "table": {
       "title": "Nội dung đề xuất",
       "amount": "Số tiền đề xuất",

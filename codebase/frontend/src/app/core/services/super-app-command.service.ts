@@ -251,6 +251,16 @@ export interface ExpenseProposalApi {
   updatedAt: string | null;
 }
 
+export interface ExpenseProposalPageApi {
+  page: number;
+  size: number;
+  total: number;
+  items: ExpenseProposalApi[];
+  pendingCount: number;
+  approvedCount: number;
+  rejectedCount: number;
+}
+
 export interface ExchangeRateApi {
   currency: string;
   buyRate: number | null;
@@ -716,9 +726,12 @@ export class SuperAppCommandService {
     }).pipe(map(() => undefined));
   }
 
-  getExpenseProposals(): Observable<ExpenseProposalApi[]> {
-    const params = new HttpParams().set('familyId', String(this.getFamilyId()));
-    return this.get<ExpenseProposalApi[]>('/expense/proposals', params);
+  getExpenseProposals(page = 0, size = 4): Observable<ExpenseProposalPageApi> {
+    const params = new HttpParams()
+      .set('familyId', String(this.getFamilyId()))
+      .set('page', String(page))
+      .set('size', String(size));
+    return this.get<ExpenseProposalPageApi>('/expense/proposals', params);
   }
 
   createExpenseProposal(input: {

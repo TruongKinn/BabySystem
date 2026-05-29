@@ -27,6 +27,10 @@ import com.mom.expense.controller.dto.CreateProposalRequest;
 import com.mom.expense.controller.dto.RejectProposalRequest;
 import com.mom.expense.controller.dto.ResubmitProposalRequest;
 import com.mom.expense.controller.dto.ProposalResponse;
+import com.mom.expense.controller.dto.PageResponse;
+import com.mom.expense.controller.dto.ProposalPageResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import com.mom.common.exception.ResourceNotFoundException;
 import com.mom.common.utils.MonthUtils;
 import com.mom.common.security.DataIsolationUtil;
@@ -461,6 +465,31 @@ public class ExpenseService {
         return expenseProposalRepository.findByFamilyIdOrderByCreatedAtDesc(familyId).stream()
                 .map(this::toProposalResponse)
                 .toList();
+    }
+
+    public ProposalPageResponse getProposalsPage(Long familyId, int page, int size) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        
+        List<ExpenseProposalEntity> allProposals = expenseProposalRepository.findByFamilyIdOrderByCreatedAtDesc(familyId);
+        long pendingCount = allProposals.stream().filter(p -> "PENDING".equalsIgnoreCase(p.getStatus())).count();
+        long approvedCount = allProposals.stream().filter(p -> "APPROVED".equalsIgnoreCase(p.getStatus())).count();
+        long rejectedCount = allProposals.stream().filter(p -> "REJECTED".equalsIgnoreCase(p.getStatus())).count();
+
+        PageRequest pageRequest = PageRequest.of(Math.max(page, 0), Math.max(size, 1));
+        Page<ExpenseProposalEntity> resultPage = expenseProposalRepository.findByFamilyIdOrderByCreatedAtDesc(familyId, pageRequest);
+        List<ProposalResponse> items = resultPage.getContent().stream()
+                .map(this::toProposalResponse)
+                .toList();
+
+        return ProposalPageResponse.builder()
+                .page(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .total(resultPage.getTotalElements())
+                .items(items)
+                .pendingCount(pendingCount)
+                .approvedCount(approvedCount)
+                .rejectedCount(rejectedCount)
+                .build();
     }
 
     @Transactional

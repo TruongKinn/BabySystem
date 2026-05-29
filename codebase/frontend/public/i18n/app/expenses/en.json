@@ -2,6 +2,14 @@
   "proposals": {
     "title": "Family Expense Proposals & Approvals",
     "createBtn": "New Proposal",
+    "banner": {
+      "subtitle": "Submit expense proposals needing other members' approvals and track progress.",
+      "manageBtn": "Manage Proposals",
+      "pendingLabel": "Pending",
+      "approvedLabel": "Approved",
+      "rejectedLabel": "Rejected",
+      "totalLabel": "Total Proposals"
+    },
     "table": {
       "title": "Proposal Title",
       "amount": "Proposed Amount",

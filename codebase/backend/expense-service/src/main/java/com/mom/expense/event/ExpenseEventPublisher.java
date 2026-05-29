@@ -2,22 +2,18 @@ package com.mom.expense.event;
 
 import com.mom.common.kafka.BaseEvent;
 import com.mom.common.kafka.EventTopics;
+import com.mom.expense.domain.ExpenseProposalEntity;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.support.TransactionSynchronization;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ExpenseEventPublisher {
 
-    private final KafkaTemplate<String, BaseEvent<?>> kafkaTemplate;
+    private final OutboxEventPublisher outboxEventPublisher;
 
     public void publishExpenseCreated(Long familyId, ExpenseChangedPayload payload) {
         publish(EventTopics.EXPENSE_CREATED, familyId, payload);
@@ -31,6 +27,38 @@ public class ExpenseEventPublisher {
         publish(EventTopics.EXPENSE_DELETED, familyId, payload);
     }
 
+    public void publishProposalSubmitted(ExpenseProposalEntity proposal, Long userId) {
+        publishProposal(EventTopics.EXPENSE_PROPOSAL_SUBMITTED, proposal, userId, "SUBMITTED", null);
+    }
+
+    public void publishProposalApproved(ExpenseProposalEntity proposal, Long userId, Long expenseId) {
+        publishProposal(EventTopics.EXPENSE_PROPOSAL_APPROVED, proposal, userId, "APPROVED", expenseId);
+    }
+
+    public void publishProposalApprovalStarted(ExpenseProposalEntity proposal, Long userId) {
+        publishProposal(EventTopics.EXPENSE_PROPOSAL_APPROVAL_STARTED, proposal, userId, "APPROVAL_STARTED", null);
+    }
+
+    public void publishProposalApprovalCompleted(ExpenseProposalEntity proposal, Long userId, Long expenseId) {
+        publishProposal(EventTopics.EXPENSE_PROPOSAL_APPROVAL_COMPLETED, proposal, userId, "APPROVAL_COMPLETED", expenseId);
+    }
+
+    public void publishProposalApprovalFailed(ExpenseProposalEntity proposal, Long userId, String failureReason) {
+        publishProposal(EventTopics.EXPENSE_PROPOSAL_APPROVAL_FAILED, proposal, userId, "APPROVAL_FAILED", null, failureReason);
+    }
+
+    public void publishProposalApprovalCompensated(ExpenseProposalEntity proposal, Long userId, Long expenseId, String reason) {
+        publishProposal(EventTopics.EXPENSE_PROPOSAL_APPROVAL_COMPENSATED, proposal, userId, "APPROVAL_COMPENSATED", expenseId, reason);
+    }
+
+    public void publishProposalRejected(ExpenseProposalEntity proposal, Long userId) {
+        publishProposal(EventTopics.EXPENSE_PROPOSAL_REJECTED, proposal, userId, "REJECTED", null);
+    }
+
+    public void publishProposalResubmitted(ExpenseProposalEntity proposal, Long userId) {
+        publishProposal(EventTopics.EXPENSE_PROPOSAL_RESUBMITTED, proposal, userId, "RESUBMITTED", null);
+    }
+
     private void publish(String topic, Long familyId, ExpenseChangedPayload payload) {
         BaseEvent<ExpenseChangedPayload> event = new BaseEvent<>(
                 UUID.randomUUID().toString(),
@@ -40,37 +68,49 @@ public class ExpenseEventPublisher {
                 null,
                 payload
         );
-        sendAfterCommit(topic, String.valueOf(payload.expenseId()), event);
+        outboxEventPublisher.publish(topic, String.valueOf(payload.expenseId()), event);
     }
 
-    private void sendAfterCommit(String topic, String key, BaseEvent<?> event) {
-        Runnable sendAction = () -> kafkaTemplate.send(topic, key, event)
-                .whenComplete((result, ex) -> {
-                    if (ex != null) {
-                        log.error("Failed to publish event {} to topic {}", event.eventType(), topic, ex);
-                        return;
-                    }
-                    if (result != null) {
-                        log.info(
-                                "Published event {} to topic {} partition={} offset={}",
-                                event.eventType(),
-                                topic,
-                                result.getRecordMetadata().partition(),
-                                result.getRecordMetadata().offset()
-                        );
-                    }
-                });
+    private void publishProposal(
+            String topic,
+            ExpenseProposalEntity proposal,
+            Long userId,
+            String action,
+            Long expenseId
+    ) {
+        publishProposal(topic, proposal, userId, action, expenseId, proposal.getRejectReason());
+    }
 
-        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
-            sendAction.run();
-            return;
-        }
-
-        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-            @Override
-            public void afterCommit() {
-                sendAction.run();
-            }
-        });
+    private void publishProposal(
+            String topic,
+            ExpenseProposalEntity proposal,
+            Long userId,
+            String action,
+            Long expenseId,
+            String reason
+    ) {
+        ExpenseProposalSagaPayload payload = new ExpenseProposalSagaPayload(
+                proposal.getId(),
+                proposal.getFamilyId(),
+                proposal.getTitle(),
+                proposal.getAmount(),
+                proposal.getCategoryName(),
+                proposal.getProposedBy(),
+                proposal.getApprover(),
+                proposal.getStatus(),
+                action,
+                reason,
+                expenseId,
+                OffsetDateTime.now()
+        );
+        BaseEvent<ExpenseProposalSagaPayload> event = new BaseEvent<>(
+                UUID.randomUUID().toString(),
+                topic,
+                OffsetDateTime.now(),
+                proposal.getFamilyId(),
+                userId,
+                payload
+        );
+        outboxEventPublisher.publish(topic, String.valueOf(proposal.getId()), event);
     }
 }

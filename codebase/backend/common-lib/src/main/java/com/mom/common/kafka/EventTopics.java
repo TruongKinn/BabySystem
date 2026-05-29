@@ -7,6 +7,14 @@ public final class EventTopics {
     public static final String EXPENSE_CREATED = "expense.created";
     public static final String EXPENSE_UPDATED = "expense.updated";
     public static final String EXPENSE_DELETED = "expense.deleted";
+    public static final String EXPENSE_PROPOSAL_SUBMITTED = "expense.proposal.submitted";
+    public static final String EXPENSE_PROPOSAL_APPROVED = "expense.proposal.approved";
+    public static final String EXPENSE_PROPOSAL_REJECTED = "expense.proposal.rejected";
+    public static final String EXPENSE_PROPOSAL_RESUBMITTED = "expense.proposal.resubmitted";
+    public static final String EXPENSE_PROPOSAL_APPROVAL_STARTED = "expense.proposal.approval.started";
+    public static final String EXPENSE_PROPOSAL_APPROVAL_COMPLETED = "expense.proposal.approval.completed";
+    public static final String EXPENSE_PROPOSAL_APPROVAL_FAILED = "expense.proposal.approval.failed";
+    public static final String EXPENSE_PROPOSAL_APPROVAL_COMPENSATED = "expense.proposal.approval.compensated";
     public static final String MEAL_PLAN_CREATED = "meal.plan.created";
     public static final String BABY_LOG_CREATED = "baby.log.created";
     public static final String TASK_CREATED = "task.created";

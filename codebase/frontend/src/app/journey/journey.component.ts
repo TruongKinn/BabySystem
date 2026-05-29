@@ -670,7 +670,7 @@ export class JourneyComponent implements OnInit, OnDestroy {
           heightCm: this.formatDecimal(latestGrowth.heightCm),
           headCircumferenceCm: this.formatDecimal(latestGrowth.headCircumferenceCm)
         }),
-        happenedAt: `${latestGrowth.measuredAt}T08:00:00`,
+        happenedAt: this.resolveDate(`${latestGrowth.measuredAt}T08:00:00`)?.toISOString() ?? new Date().toISOString(),
         type: 'GROWTH',
         privacy: 'FAMILY',
         source: 'SYSTEM',
@@ -686,7 +686,7 @@ export class JourneyComponent implements OnInit, OnDestroy {
         babyId: this.selectedBabyId,
         title: this.i18n.translate('app.journey.systemEvents.health.title', { vaccineName: nextVaccine.vaccineName }),
         story: this.i18n.translate('app.journey.systemEvents.health.story', { dueDate: this.formatDate(nextVaccine.dueDate) }),
-        happenedAt: `${nextVaccine.dueDate}T09:00:00`,
+        happenedAt: this.resolveDate(`${nextVaccine.dueDate}T09:00:00`)?.toISOString() ?? new Date().toISOString(),
         type: 'HEALTH',
         privacy: 'PARENTS',
         source: 'SYSTEM',
@@ -763,7 +763,7 @@ export class JourneyComponent implements OnInit, OnDestroy {
           deltaWeight: deltaWeightText
         }),
         reason: this.i18n.translate('app.journey.suggestions.growth.reason'),
-        happenedAt: `${latestGrowth.measuredAt}T08:00:00`,
+        happenedAt: this.resolveDate(`${latestGrowth.measuredAt}T08:00:00`)?.toISOString() ?? new Date().toISOString(),
         type: 'GROWTH',
         confidence: previousGrowth ? 92 : 82,
         icon: this.eventTypeConfig.GROWTH.icon,
@@ -780,7 +780,7 @@ export class JourneyComponent implements OnInit, OnDestroy {
         title: this.i18n.translate('app.journey.suggestions.health.title', { vaccineName: nextVaccine.vaccineName }),
         detail: this.i18n.translate('app.journey.suggestions.health.detail', { dueDate: this.formatDate(nextVaccine.dueDate) }),
         reason: this.i18n.translate('app.journey.suggestions.health.reason'),
-        happenedAt: `${nextVaccine.dueDate}T09:00:00`,
+        happenedAt: this.resolveDate(`${nextVaccine.dueDate}T09:00:00`)?.toISOString() ?? new Date().toISOString(),
         type: 'HEALTH',
         confidence: this.dashboard.vaccinationInsight.overdueCount > 0 ? 95 : 84,
         icon: this.eventTypeConfig.HEALTH.icon,
@@ -941,8 +941,8 @@ export class JourneyComponent implements OnInit, OnDestroy {
     return babies[0]?.id ?? null;
   }
 
-  private createId(prefix: string): string {
-    return `${prefix}-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  private createId(_prefix?: string): string {
+    return crypto.randomUUID();
   }
 
   private apiToEvent(api: JourneyEventApi): JourneyEvent {

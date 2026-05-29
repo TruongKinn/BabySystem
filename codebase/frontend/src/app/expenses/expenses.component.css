@@ -1610,3 +1610,258 @@
   border-color: rgba(239, 68, 68, 0.25) !important;
   color: #f87171 !important;
 }
+
+/* ============================================================================
+   Family Expense Proposals Popup & Pagination (Fintech Design Enhancements)
+   ============================================================================ */
+.proposal-overview-banner {
+  background: var(--surface-bg);
+  background-image: radial-gradient(120% 120% at 0% 0%, rgba(249, 115, 22, 0.03) 0%, rgba(139, 92, 246, 0.01) 50%, transparent 100%) !important;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015);
+  transition: all 0.3s ease;
+}
+
+.proposal-overview-banner:hover {
+  border-color: rgba(249, 115, 22, 0.15);
+  box-shadow: 0 8px 30px rgba(249, 115, 22, 0.03);
+}
+
+.banner-body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.banner-left {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  flex: 1;
+  min-width: 280px;
+}
+
+.banner-icon-container {
+  position: relative;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(249, 115, 22, 0.08);
+  color: var(--user-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.banner-icon {
+  font-size: 22px;
+}
+
+.badge-pulsing {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #ef4444;
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 800;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--surface-bg);
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4);
+  animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4);
+  }
+  70% {
+    box-shadow: 0 0 0 6px rgba(239, 68, 68, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+  }
+}
+
+.banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.banner-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.2px;
+}
+
+.banner-subtitle {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.banner-quick-stats {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.stat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+
+.stat-pill .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.stat-pill--pending {
+  background: rgba(245, 158, 11, 0.05);
+  color: #b45309;
+  border: 1px solid rgba(245, 158, 11, 0.12);
+}
+.stat-pill--pending .dot {
+  background: #f59e0b;
+}
+
+.stat-pill--approved {
+  background: rgba(16, 185, 129, 0.05);
+  color: #047857;
+  border: 1px solid rgba(16, 185, 129, 0.12);
+}
+.stat-pill--approved .dot {
+  background: #10b981;
+}
+
+.stat-pill--rejected {
+  background: rgba(239, 68, 68, 0.05);
+  color: #b91c1c;
+  border: 1px solid rgba(239, 68, 68, 0.12);
+}
+.stat-pill--rejected .dot {
+  background: #ef4444;
+}
+
+.stat-pill--total {
+  background: rgba(99, 102, 241, 0.05);
+  color: #4338ca;
+  border: 1px solid rgba(99, 102, 241, 0.12);
+}
+.stat-pill--total .dot {
+  background: #6366f1;
+}
+
+.banner-right {
+  display: flex;
+  align-items: center;
+}
+
+.btn-banner-manage {
+  height: 40px !important;
+  padding: 0 20px !important;
+  font-weight: 700 !important;
+  border-radius: 10px !important;
+  box-shadow: 0 4px 14px rgba(249, 115, 22, 0.15) !important;
+}
+
+.proposals-list-body {
+  padding: 8px 4px;
+}
+
+/* Pagination Styling */
+.user-pagination {
+  display: flex;
+  align-items: center;
+}
+
+:host ::ng-deep .user-pagination .ant-pagination-item {
+  border-radius: 8px !important;
+  border-color: var(--border-color) !important;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+
+:host ::ng-deep .user-pagination .ant-pagination-item:hover {
+  border-color: var(--user-primary) !important;
+}
+
+:host ::ng-deep .user-pagination .ant-pagination-item a {
+  color: var(--text-secondary) !important;
+}
+
+:host ::ng-deep .user-pagination .ant-pagination-item-active {
+  background: var(--user-grad-1) !important;
+  border-color: var(--user-primary) !important;
+}
+
+:host ::ng-deep .user-pagination .ant-pagination-item-active a {
+  color: #ffffff !important;
+}
+
+:host ::ng-deep .user-pagination .ant-pagination-prev .ant-pagination-item-link,
+:host ::ng-deep .user-pagination .ant-pagination-next .ant-pagination-item-link {
+  border-radius: 8px !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-secondary) !important;
+}
+
+:host ::ng-deep .user-pagination .ant-pagination-prev:hover .ant-pagination-item-link,
+:host ::ng-deep .user-pagination .ant-pagination-next:hover .ant-pagination-item-link {
+  border-color: var(--user-primary) !important;
+  color: var(--user-primary) !important;
+}
+
+/* Dark mode banner adaptations */
+:host-context(.dark-theme) .proposal-overview-banner {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+:host-context(.dark-theme) .proposal-overview-banner:hover {
+  border-color: rgba(249, 115, 22, 0.3);
+}
+
+:host-context(.dark-theme) .badge-pulsing {
+  border-color: #1e293b;
+}
+
+:host-context(.dark-theme) .stat-pill--pending {
+  background: rgba(245, 158, 11, 0.1);
+  color: #f59e0b;
+}
+:host-context(.dark-theme) .stat-pill--approved {
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+}
+:host-context(.dark-theme) .stat-pill--rejected {
+  background: rgba(239, 68, 68, 0.1);
+  color: #f87171;
+}
+:host-context(.dark-theme) .stat-pill--total {
+  background: rgba(99, 102, 241, 0.1);
+  color: #818cf8;
+}

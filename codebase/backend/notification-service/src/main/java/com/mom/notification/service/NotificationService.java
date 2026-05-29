@@ -8,9 +8,11 @@ import com.mom.notification.domain.NotificationChannel;
 import com.mom.notification.domain.NotificationEntity;
 import com.mom.notification.domain.NotificationStatus;
 import com.mom.notification.domain.NotificationType;
+import com.mom.notification.domain.ProcessedEventEntity;
 import com.mom.notification.event.NotificationRequestedPayload;
 import com.mom.notification.premium.PremiumFeatures;
 import com.mom.notification.repository.NotificationRepository;
+import com.mom.notification.repository.ProcessedEventRepository;
 import com.mom.common.security.DataIsolationUtil;
 import com.mom.common.context.UserContext;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +31,7 @@ import java.util.List;
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final ProcessedEventRepository processedEventRepository;
     private final SimpMessagingTemplate messagingTemplate;
     private final PremiumAccessService premiumAccessService;
 
@@ -51,6 +54,31 @@ public class NotificationService {
         entity.setScheduledAt(request.scheduledAt() != null ? request.scheduledAt() : OffsetDateTime.now());
         entity.setStatus(NotificationStatus.PENDING);
         return toResponse(notificationRepository.save(entity));
+    }
+
+    @Transactional
+    public NotificationResponse createFromEventOnce(
+            String eventId,
+            String eventType,
+            Long familyId,
+            Long userId,
+            NotificationRequestedPayload payload
+    ) {
+        if (eventId == null || eventId.isBlank()) {
+            return createFromEvent(familyId, userId, payload);
+        }
+        if (processedEventRepository.existsById(eventId)) {
+            log.info("Skipping duplicate Kafka event {}", eventId);
+            return null;
+        }
+
+        NotificationResponse response = createFromEvent(familyId, userId, payload);
+
+        ProcessedEventEntity processedEvent = new ProcessedEventEntity();
+        processedEvent.setEventId(eventId);
+        processedEvent.setEventType(eventType != null && !eventType.isBlank() ? eventType : "unknown");
+        processedEventRepository.save(processedEvent);
+        return response;
     }
 
     @Transactional
