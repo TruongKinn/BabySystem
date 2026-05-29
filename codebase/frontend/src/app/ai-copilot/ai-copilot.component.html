@@ -1,0 +1,217 @@
+<section class="page-container ai-copilot-page">
+
+  <!-- ===================== PAGE HEADER ===================== -->
+  <div class="header-actions">
+    <div>
+      <h1 class="page-title">AI Copilot</h1>
+      <p class="page-subtitle">Trợ lý gia đình thông minh — hỏi về bữa ăn, chi tiêu, chăm sóc bé và tài liệu gia đình</p>
+    </div>
+    <div class="header-buttons">
+      <span class="model-badge" *ngIf="lastModel">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+        </svg>
+        {{ lastModel }}
+      </span>
+      <span class="token-badge" *ngIf="lastUsage?.totalTokens">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/>
+        </svg>
+        {{ lastUsage?.totalTokens | number }} tokens
+      </span>
+      <button nz-button nzType="default" class="btn-user-outline" (click)="clearConversation()"
+              nz-tooltip nzTooltipTitle="Bắt đầu cuộc hội thoại mới">
+        <span nz-icon nzType="reload"></span>
+        Làm mới
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================== MAIN GRID ===================== -->
+  <div class="copilot-grid">
+
+    <!-- ===== LEFT PANEL: Context & Quick Prompts ===== -->
+    <aside>
+
+      <!-- Context Input Card -->
+      <nz-card class="table-card context-card" nzSize="small">
+        <ng-template #contextTitle>
+          <div class="card-title-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="card-title-icon card-title-icon--teal">
+                <span nz-icon nzType="database"></span>
+              </span>
+              <div>
+                <div class="card-title-main">Ngữ cảnh gia đình</div>
+                <div class="card-title-sub">Tự động tải hoặc điều chỉnh dữ liệu tư vấn</div>
+              </div>
+            </div>
+            <button
+              nz-button
+              nzType="text"
+              class="btn-user-secondary"
+              (click)="autoLoadContext()"
+              [disabled]="isLoadingContext"
+              nz-tooltip
+              nzTooltipTitle="Tự động tải ngữ cảnh thực tế (bé yêu, chi tiêu...)"
+              style="border: none; padding: 4px 8px; display: flex; align-items: center; gap: 4px;"
+            >
+              <span nz-icon [nzType]="isLoadingContext ? 'loading' : 'sync'"></span>
+              <span>Tải lại</span>
+            </button>
+          </div>
+        </ng-template>
+
+        <div class="context-field">
+          <label class="field-label">Gia đình hiện tại</label>
+          <div class="family-info-badge" style="padding: 8px 12px; background: rgba(249, 115, 22, 0.05); border: 1px solid rgba(249, 115, 22, 0.15); border-radius: 8px; font-weight: 600; color: var(--user-primary, #f97316); display: flex; align-items: center; gap: 8px;">
+            <span nz-icon nzType="home" style="font-size: 16px;"></span>
+            <span>{{ familyName || 'Gia đình #' + familyId }}</span>
+          </div>
+        </div>
+
+        <div class="context-field" style="margin-top: 14px;">
+          <label class="field-label" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Dữ liệu ngữ cảnh</span>
+            <span *ngIf="isLoadingContext" style="font-size: 12px; color: var(--user-primary, #f97316); font-weight: normal;">
+              <span nz-icon nzType="loading" style="margin-right: 4px;"></span>Đang tải dữ liệu...
+            </span>
+          </label>
+          <textarea
+            nz-input
+            id="contextTextarea"
+            [nzAutosize]="{ minRows: 6, maxRows: 10 }"
+            [(ngModel)]="context"
+            placeholder="Dán hoặc bấm 'Tải lại' ở trên để lấy dữ liệu baby, meal, expense hoặc document summary..."
+            [disabled]="isLoadingContext"
+          ></textarea>
+        </div>
+      </nz-card>
+
+      <!-- Quick Prompts Card -->
+      <nz-card class="table-card quick-prompts-card" nzSize="small" style="margin-top: 16px;">
+        <ng-template #quickPromptsTitle>
+          <div class="card-title-row">
+            <span class="card-title-icon card-title-icon--orange">
+              <span nz-icon nzType="thunderbolt"></span>
+            </span>
+            <div>
+              <div class="card-title-main">Gợi ý nhanh</div>
+              <div class="card-title-sub">Click để điền vào ô nhập</div>
+            </div>
+          </div>
+        </ng-template>
+
+        <div class="quick-prompt-list">
+          <button
+            *ngFor="let prompt of quickPrompts; let i = index"
+            class="quick-prompt-btn"
+            type="button"
+            (click)="usePrompt(prompt)"
+          >
+            <span class="prompt-index">{{ i + 1 }}</span>
+            <span class="prompt-text">{{ prompt }}</span>
+            <span nz-icon nzType="arrow-right" class="prompt-arrow"></span>
+          </button>
+        </div>
+      </nz-card>
+    </aside>
+
+    <!-- ===== RIGHT PANEL: Chat ===== -->
+    <main class="chat-column">
+      <nz-card class="table-card chat-card" [nzBodyStyle]="{ padding: 0, display: 'flex', flexDirection: 'column', height: '100%' }">
+
+        <!-- Message List -->
+        <div class="message-list" id="messageListContainer">
+
+          <!-- Empty State -->
+          <div class="chat-empty-state" *ngIf="messages.length === 0">
+            <div class="empty-ai-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10A10 10 0 0 1 2 12 10 10 0 0 1 12 2"/>
+                <path d="M12 8v4l3 3"/>
+              </svg>
+            </div>
+            <p>Bắt đầu bằng cách nhập câu hỏi bên dưới</p>
+          </div>
+
+          <!-- Messages -->
+          <article
+            *ngFor="let message of messages; trackBy: trackByIndex"
+            class="message-bubble"
+            [class.message-user]="message.role === 'user'"
+            [class.message-assistant]="message.role === 'assistant'"
+          >
+            <div class="bubble-avatar" [class.avatar-ai]="message.role === 'assistant'" [class.avatar-user]="message.role === 'user'">
+              <span nz-icon [nzType]="message.role === 'user' ? 'user' : 'robot'"></span>
+            </div>
+            <div class="bubble-body">
+              <div class="bubble-role">{{ message.role === 'user' ? 'Bạn' : 'AI Copilot' }}</div>
+              <div class="bubble-content">
+                <p>{{ message.content }}</p>
+              </div>
+              <div class="bubble-time">{{ message.createdAt | date: 'HH:mm' }}</div>
+            </div>
+          </article>
+
+          <!-- Loading indicator -->
+          <article class="message-bubble message-assistant message-loading" *ngIf="loading">
+            <div class="bubble-avatar avatar-ai">
+              <span nz-icon nzType="robot"></span>
+            </div>
+            <div class="bubble-body">
+              <div class="bubble-role">AI Copilot</div>
+              <div class="bubble-content typing-indicator">
+                <span></span><span></span><span></span>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <!-- Composer -->
+        <div class="composer">
+          <form (ngSubmit)="send()" style="display: contents;">
+            <nz-input-group
+              class="composer-input-group"
+              [nzSuffix]="sendBtn"
+            >
+              <textarea
+                nz-input
+                id="chatDraftInput"
+                name="draft"
+                [(ngModel)]="draft"
+                placeholder="Nhập câu hỏi cho AI Copilot... (Shift+Enter để xuống dòng)"
+                [disabled]="loading"
+                [nzAutosize]="{ minRows: 1, maxRows: 4 }"
+                (keydown.enter)="onEnterKey($any($event))"
+                class="composer-textarea"
+              ></textarea>
+            </nz-input-group>
+            <ng-template #sendBtn>
+              <button
+                nz-button
+                nzType="primary"
+                class="btn-user-primary send-button"
+                type="submit"
+                [disabled]="loading || !draft.trim()"
+                nz-tooltip
+                nzTooltipTitle="Gửi (Enter)"
+              >
+                <span nz-icon [nzType]="loading ? 'loading' : 'arrow-right'"></span>
+              </button>
+            </ng-template>
+          </form>
+          <div class="composer-hint">
+            <span *ngIf="!loading">Nhấn <kbd>Enter</kbd> để gửi · <kbd>Shift+Enter</kbd> xuống dòng</span>
+            <span *ngIf="loading" class="hint-loading">
+              <span nz-icon nzType="loading" style="margin-right:4px;"></span>
+              AI đang suy nghĩ...
+            </span>
+          </div>
+        </div>
+
+      </nz-card>
+    </main>
+
+  </div>
+</section>

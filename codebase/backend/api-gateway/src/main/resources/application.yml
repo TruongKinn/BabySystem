@@ -131,6 +131,19 @@ spring:
                 name: insightServiceGateway
                 fallbackUri: forward:/gateway/fallback/insight-service
 
+        - id: ai-service
+          uri: ${AI_SERVICE_URI:http://localhost:8104}
+          predicates:
+            - Path=/ai/**
+          metadata:
+            response-timeout: 60000
+          filters:
+            - RewritePath=/ai/(?<segment>.*), /api/$\{segment}
+            - name: CircuitBreaker
+              args:
+                name: aiServiceGateway
+                fallbackUri: forward:/gateway/fallback/ai-service
+
         - id: file-service
           uri: ${FILE_SERVICE_URI:http://localhost:8092}
           predicates:
@@ -332,6 +345,8 @@ springdoc:
         url: /shopping/v3/api-docs
       - name: Insight Service
         url: /insight/v3/api-docs
+      - name: AI Service
+        url: /ai/v3/api-docs
       - name: File Service
         url: /file/v3/api-docs
       - name: Notification Service
@@ -409,6 +424,13 @@ resilience4j:
         waitDurationInOpenState: 30s
         permittedNumberOfCallsInHalfOpenState: 3
       insightServiceGateway:
+        slidingWindowType: COUNT_BASED
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        failureRateThreshold: 50
+        waitDurationInOpenState: 30s
+        permittedNumberOfCallsInHalfOpenState: 3
+      aiServiceGateway:
         slidingWindowType: COUNT_BASED
         slidingWindowSize: 10
         minimumNumberOfCalls: 5
@@ -521,5 +543,8 @@ resilience4j:
     instances:
       commonServiceGateway:
         timeoutDuration: 30s
+        cancelRunningFuture: true
+      aiServiceGateway:
+        timeoutDuration: 60s
         cancelRunningFuture: true
 

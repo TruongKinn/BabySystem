@@ -16,3 +16,6 @@ run-logs/
 
 # Sensitive Credentials
 documents/authentication-service-secrets.md
+
+# Java build target
+**/target/
