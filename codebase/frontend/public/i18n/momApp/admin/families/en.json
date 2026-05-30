@@ -1,0 +1,15 @@
+{
+  "modal": {
+    "hostBadge": "HOST"
+  },
+  "actions": {
+    "assignHost": "Assign Host",
+    "assignHostConfirm": "Are you sure you want to assign this member as the family host?",
+    "demoteHost": "Demote Host",
+    "demoteHostConfirm": "Are you sure you want to demote this member from the family host?"
+  },
+  "messages": {
+    "assignHostSuccess": "Assigned family host successfully!",
+    "demoteHostSuccess": "Demoted family host successfully!"
+  }
+}

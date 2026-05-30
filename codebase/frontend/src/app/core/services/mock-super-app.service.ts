@@ -178,6 +178,7 @@ interface FamilyMemberApi {
   userId: number;
   displayName: string;
   role: 'MOM' | 'DAD' | 'GRANDMA' | 'CAREGIVER' | 'ADMIN';
+  isHost?: boolean;
 }
 
 interface FamilyApi {

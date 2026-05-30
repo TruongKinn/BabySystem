@@ -11,6 +11,7 @@ public record FamilyMemberResponse(
         FamilyRole role,
         FamilyRelation relation,
         Long parentUserId,
-        LocalDate dateOfBirth
+        LocalDate dateOfBirth,
+        Boolean isHost
 ) {
 }

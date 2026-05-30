@@ -32,6 +32,7 @@ interface FamilyMemberApi {
   displayName: string;
   role: string;
   relation: string;
+  isHost?: boolean;
 }
 
 interface FamilyApi {
@@ -45,7 +46,9 @@ export interface FamilyFinanceItem {
   id: number;
   name: string;
   memberCount: number;
+  creatorId: number;
   creatorName: string;
+  creatorAvatarUrl: string;
   monthlyBudget: number; // Tải từ /expense/budgets
   totalSpent: number;    // Tải từ /expense/expenses/summary
   remainingBudget: number;
@@ -170,8 +173,25 @@ export class AdminFinanceComponent implements OnInit {
           // Bước 2: Tạo mảng các observable để gọi song song cho từng gia đình
           const detailsObservables = families.map((family) => {
             const members = family.members ?? [];
-            const creator = members.find((m) => m.userId === family.createdByUserId);
-            const creatorName = creator?.displayName ?? `#${family.createdByUserId}`;
+            
+            // Tìm chủ hộ thực sự (isHost = true), nếu không có thì fallback về người tạo (createdByUserId)
+            const hostMember = members.find((m) => m.isHost === true);
+            const selectedHostId = hostMember ? hostMember.userId : family.createdByUserId;
+            
+            const creator = members.find((m) => m.userId === selectedHostId);
+            
+            // Nếu không tìm thấy thông tin creator trong members, gọi API lấy thông tin người dùng chi tiết
+            const creatorObservable = creator 
+              ? of({ displayName: creator.displayName, userId: creator.userId })
+              : this.http.get<ApiEnvelope<any>>(`${API_CONFIG.GATEWAY_URL}/account/users/${selectedHostId}`).pipe(
+                  map(res => ({
+                    displayName: res?.data?.displayName || res?.data?.username || `#${selectedHostId}`,
+                    userId: selectedHostId
+                  })),
+                  catchError(() => of({ displayName: `#${selectedHostId}`, userId: selectedHostId }))
+                );
+
+            const creatorAvatarUrl = `${API_CONFIG.GATEWAY_URL}/auth/account/user/avatar/${selectedHostId}`;
 
             const budgetsUrl = `${API_CONFIG.GATEWAY_URL}/expense/budgets`;
             const summaryUrl = `${API_CONFIG.GATEWAY_URL}/expense/expenses/summary`;
@@ -181,7 +201,7 @@ export class AdminFinanceComponent implements OnInit {
             const summaryParams = new HttpParams().set('familyId', String(family.id)).set('month', this.monthKey);
             const expenseParams = new HttpParams().set('familyId', String(family.id)).set('month', this.monthKey);
 
-            // Gọi song song 3 API của mỗi gia đình và bóc tách envelope ApiEnvelope
+            // Gọi song song các API của mỗi gia đình (bao gồm cả API lấy thông tin creator nếu thiếu)
             return forkJoin({
               budgetsRes: this.http.get<ApiEnvelope<ExpenseBudgetApi[]>>(budgetsUrl, { params: budgetParams }).pipe(
                 catchError(() => of({ success: false, message: '', data: [] as ExpenseBudgetApi[] }))
@@ -191,12 +211,15 @@ export class AdminFinanceComponent implements OnInit {
               ),
               expensesRes: this.http.get<ApiEnvelope<ExpenseApi[]>>(expensesUrl, { params: expenseParams }).pipe(
                 catchError(() => of({ success: false, message: '', data: [] as ExpenseApi[] }))
-              )
+              ),
+              creatorInfo: creatorObservable
             }).pipe(
-              map(({ budgetsRes, summaryRes, expensesRes }) => {
+              map(({ budgetsRes, summaryRes, expensesRes, creatorInfo }) => {
                 const budgets = budgetsRes.data ?? [];
                 const summary = summaryRes.data ?? { month: this.monthKey, totalAmount: 0, byCategories: [] };
                 const expenses = expensesRes.data ?? [];
+
+                const creatorName = creatorInfo.displayName;
 
                 // Lấy ngân sách của tháng hiện tại
                 const currentBudgetRecord = budgets.find((b) => b.month === this.monthKey);
@@ -223,7 +246,9 @@ export class AdminFinanceComponent implements OnInit {
                   id: family.id,
                   name: family.name,
                   memberCount: members.length,
+                  creatorId: selectedHostId,
                   creatorName,
+                  creatorAvatarUrl,
                   monthlyBudget,
                   totalSpent,
                   remainingBudget,

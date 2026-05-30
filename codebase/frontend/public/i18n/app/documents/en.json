@@ -1,0 +1,19 @@
+{
+  "label": "File Description / Category (e.g. Birth Certificate, Medical)",
+  "placeholderSelect": "Select document category (Default: Document)",
+  "placeholderCustom": "E.g. Birth Certificate, Vaccination Book...",
+  "defaultTag": "Document",
+  "addCategoryTitle": "Add New Document Category",
+  "addCategoryLabel": "Document Category Name",
+  "addCategoryPlaceholder": "E.g. Sales Contract, Car Papers, Invoice...",
+  "saveBtn": "Save",
+  "cancelBtn": "Cancel",
+  "errorRequired": "Please enter document category name",
+  "options": {
+    "birthCertificate": "Birth Certificate",
+    "vaccinationRecord": "Vaccination Record",
+    "medicalRecord": "Medical Record",
+    "insuranceCard": "Insurance Card",
+    "other": "Other..."
+  }
+}

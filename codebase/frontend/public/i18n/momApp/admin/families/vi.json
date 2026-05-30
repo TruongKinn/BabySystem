@@ -1,0 +1,15 @@
+{
+  "modal": {
+    "hostBadge": "CHỦ HỘ"
+  },
+  "actions": {
+    "assignHost": "Chỉ định Chủ hộ",
+    "assignHostConfirm": "Bạn có chắc chắn muốn chỉ định thành viên này làm Chủ hộ không?",
+    "demoteHost": "Hạ chủ hộ",
+    "demoteHostConfirm": "Bạn có chắc chắn muốn hạ thành viên này khỏi vị trí Chủ hộ không?"
+  },
+  "messages": {
+    "assignHostSuccess": "Đã chỉ định Chủ hộ thành công!",
+    "demoteHostSuccess": "Đã hạ Chủ hộ thành công!"
+  }
+}

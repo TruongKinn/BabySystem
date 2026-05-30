@@ -177,6 +177,7 @@ interface FamilyMemberApi {
   relation: FamilyRelation;
   parentUserId: number | null;
   dateOfBirth?: string | null;
+  isHost?: boolean;
 }
 
 interface FamilyApi {
@@ -291,6 +292,15 @@ export interface FileMetadata {
   contentType: string | null;
   sizeBytes: number;
   fileTag: string | null;
+  createdAt: string;
+}
+
+export interface DocumentCategory {
+  id: number;
+  familyId: number | null;
+  name: string;
+  icon: string | null;
+  color: string | null;
   createdAt: string;
 }
 
@@ -1165,6 +1175,14 @@ export class SuperAppCommandService {
     }).pipe(map(() => undefined));
   }
 
+  assignFamilyHost(familyId: number, userId: number): Observable<void> {
+    return this.put<void>(`/account/families/${familyId}/members/${userId}/host`, {}).pipe(map(() => undefined));
+  }
+
+  demoteFamilyHost(familyId: number, userId: number): Observable<void> {
+    return this.put<void>(`/account/families/${familyId}/members/${userId}/demote-host`, {}).pipe(map(() => undefined));
+  }
+
   getNotificationSettings(): NotificationSettings {
     if (typeof window === 'undefined') {
       return { notificationEnabled: true, reminderHour: '20:30' };
@@ -1281,6 +1299,21 @@ export class SuperAppCommandService {
         params: new HttpParams().set('deleteObject', 'true')
       })
       .pipe(map(() => undefined));
+  }
+
+  getDocumentCategories(): Observable<DocumentCategory[]> {
+    const params = new HttpParams().set('familyId', String(this.getFamilyId()));
+    return this.get<DocumentCategory[]>('/file/document-categories', params);
+  }
+
+  createDocumentCategory(input: { name: string; icon?: string; color?: string }): Observable<DocumentCategory> {
+    const familyId = this.getFamilyId();
+    return this.post<DocumentCategory>('/file/document-categories', {
+      familyId,
+      name: input.name,
+      icon: input.icon || 'file',
+      color: input.color || '#6b7280'
+    });
   }
 
   private ensureExpenseCategory(familyId: number, rawCategoryName: string): Observable<ExpenseCategoryApi> {
@@ -1663,6 +1696,27 @@ export class SuperAppCommandService {
     return this.post<BatchImportResponse>('/file/files/import/babies', {
       familyId: this.getFamilyId(),
       babies: babies
+    });
+  }
+
+  importShoppingBatch(items: any[]): Observable<BatchImportResponse> {
+    return this.post<BatchImportResponse>('/file/files/import/shopping', {
+      familyId: this.getFamilyId(),
+      items: items
+    });
+  }
+
+  importVaccinationsBatch(babyId: number, vaccinations: any[]): Observable<BatchImportResponse> {
+    return this.post<BatchImportResponse>('/file/files/import/vaccinations', {
+      babyId: babyId,
+      vaccinations: vaccinations
+    });
+  }
+
+  importGrowthBatch(babyId: number, records: any[]): Observable<BatchImportResponse> {
+    return this.post<BatchImportResponse>('/file/files/import/growth-records', {
+      babyId: babyId,
+      records: records
     });
   }
 

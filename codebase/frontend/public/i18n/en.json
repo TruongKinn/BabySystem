@@ -279,7 +279,11 @@
           "createFamily": "Create Household",
           "manageMembers": "Manage members",
           "deleteConfirm": "Are you sure you want to delete this household?",
-          "removeMemberConfirm": "Are you sure you want to remove this member from the household?"
+          "removeMemberConfirm": "Are you sure you want to remove this member from the household?",
+          "assignHost": "Assign Host",
+          "assignHostConfirm": "Are you sure you want to assign this member as the family host?",
+          "demoteHost": "Demote Host",
+          "demoteHostConfirm": "Are you sure you want to demote this member from the family host?"
         },
         "empty": {
           "title": "No households found",
@@ -308,7 +312,8 @@
           "emailPlaceholder": "e.g., john.doe@example.com",
           "searchExisting": "Search existing",
           "createNew": "Create new",
-          "inviteMemberBtn": "Add new member"
+          "inviteMemberBtn": "Add new member",
+          "hostBadge": "HOST"
         },
         "messages": {
           "loadFailed": "Unable to load households.",
@@ -327,7 +332,9 @@
           "updateMemberSuccess": "Member updated successfully!",
           "removeMemberSuccess": "Member removed from household successfully.",
           "allFieldsRequired": "Please enter all fields!",
-          "inviteMemberSuccess": "New member added successfully!"
+          "inviteMemberSuccess": "New member added successfully!",
+          "assignHostSuccess": "Assigned family host successfully!",
+          "demoteHostSuccess": "Demoted family host successfully!"
         }
       },
       "premium": {
@@ -2116,6 +2123,25 @@
       "errors": {
         "loadBabies": "Unable to load baby profiles."
       }
+    },
+    "documents": {
+      "label": "File Description / Category (e.g. Birth Certificate, Medical)",
+      "placeholderSelect": "Select document category (Default: Document)",
+      "placeholderCustom": "E.g. Birth Certificate, Vaccination Book...",
+      "defaultTag": "Document",
+      "options": {
+        "birthCertificate": "Birth Certificate",
+        "vaccinationRecord": "Vaccination Record",
+        "medicalRecord": "Medical Record",
+        "insuranceCard": "Insurance Card",
+        "other": "Other..."
+      },
+      "addCategoryTitle": "Add New Document Category",
+      "addCategoryLabel": "Document Category Name",
+      "addCategoryPlaceholder": "E.g. Sales Contract, Car Papers, Invoice...",
+      "saveBtn": "Save",
+      "cancelBtn": "Cancel",
+      "errorRequired": "Please enter document category name"
     }
   },
   "auth": {

@@ -270,6 +270,26 @@
   background: #fafafa !important;
 }
 
+/* Creator cell premium layout */
+.table-creator-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.creator-avatar {
+  background-color: #6366f1 !important;
+  flex-shrink: 0 !important; /* Ngăn avatar bị bóp méo dẹt lép */
+}
+
+.creator-name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px; /* Tránh làm vỡ layout bảng nếu tên quá dài */
+}
+
 /* Status badgification */
 .status-badge {
   display: inline-flex;

@@ -3,7 +3,7 @@ import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
-import { catchError, finalize, forkJoin, of, Subscription } from 'rxjs';
+import { catchError, finalize, forkJoin, Observable, of, Subscription } from 'rxjs';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -25,6 +25,7 @@ import { NzProgressModule } from 'ng-zorro-antd/progress';
 import {
   BabyProfile,
   BatchImportResponse,
+  DocumentCategory,
   DocumentParseResponse,
   ExcelParseResponse,
   ExcelParseRow,
@@ -73,34 +74,111 @@ export class DocumentsComponent implements OnInit {
   // Template API Url
   templateExcelUrl = `${API_CONFIG.GATEWAY_URL}/file/files/template/excel`;
 
+  getTemplateDownloadUrl(type: string): string {
+    return `${API_CONFIG.GATEWAY_URL}/file/files/template/excel?type=${type}`;
+  }
+
+  // Premium POI Template Collection
+  poiTemplates = [
+    {
+      id: 'expense',
+      title: 'Mẫu Chi tiêu Gia đình',
+      desc: 'Mẫu nhập nhanh các khoản chi tiêu hàng ngày của cả gia đình để phân tích tài chính.',
+      icon: 'file-excel',
+      color: '#f97316',
+      colorRGB: '249, 115, 22',
+      columns: ['Ngày chi tiêu', 'Danh mục', 'Số tiền', 'Ghi chú']
+    },
+    {
+      id: 'baby',
+      title: 'Mẫu Sức khỏe & Dinh dưỡng Bé',
+      desc: 'Theo dõi chi tiết bữa ăn, lượng sữa, chiều cao, cân nặng và ghi chú y tế của bé.',
+      icon: 'smile',
+      color: '#ec4899',
+      colorRGB: '236, 72, 153',
+      columns: ['Ngày giờ', 'Loại bữa ăn', 'Lượng ăn', 'Chiều cao', 'Cân nặng', 'Ghi chú y tế']
+    },
+    {
+      id: 'shopping',
+      title: 'Mẫu Kế hoạch Mua sắm',
+      desc: 'Lên danh sách chuẩn bị mua sắm đồ dùng gia đình, tã bỉm, đồ chơi với số lượng, giá cả.',
+      icon: 'shopping-cart',
+      color: '#8b5cf6',
+      colorRGB: '139, 92, 246',
+      columns: ['Tên món đồ', 'Danh mục', 'Đơn giá', 'Số lượng', 'Ưu tiên', 'Ghi chú']
+    },
+    {
+      id: 'vaccine',
+      title: 'Mẫu Lịch Tiêm chủng của Bé',
+      desc: 'Ghi nhật ký lịch tiêm phòng vắc xin của bé, chi phí, cơ sở y tế và ngày hẹn tiếp theo.',
+      icon: 'safety-certificate',
+      color: '#0d9488',
+      colorRGB: '13, 148, 136',
+      columns: ['Ngày tiêm', 'Tên vắc xin', 'Mũi số', 'Chi phí', 'Cơ sở tiêm', 'Ngày hẹn sau']
+    }
+  ];
+
   // Tab State
   activeTab = 0;
 
   // Common UI State
   loading = false;
-  uploading = false;
-  uploadProgress = 0;
-  dragOver = false;
+
+  // Tab 1: Baby Documents State
+  babyUploading = false;
+  babyUploadProgress = 0;
+  babyDragOver = false;
+
+  // Tab 2: Excel Parse State
+  excelUploading = false;
+  excelUploadProgress = 0;
+  excelDragOver = false;
 
   // Tab 1: Baby Profiles & Documents
   babies: BabyProfile[] = [];
   selectedBabyId: number | null = null;
   babyFiles: FileMetadata[] = [];
   selectedBabyFilesLoading = false;
+  babySelectedFileIds = new Set<number>();
+  babyMultiSelectMode = false;
 
-  // Tab 2: Expense Excel Parse & Import
+  // Tab 2: Expense Excel Parse & Import (Multi-File Support)
+  parsedExcelFiles: Array<{
+    fileName: string;
+    parsedData: ExcelParseResponse;
+    headers: string[];
+    rows: ExcelParseRow[];
+    selectedRows: Record<number, boolean>;
+    isImported: boolean;
+    importResult: any;
+  }> = [];
+  selectedExcelFileIndex: number | null = null;
+
   parsedExcel: ExcelParseResponse | null = null;
   expenseCategories: ExpenseCategoryApi[] = [];
   excelHeaders: string[] = [];
   excelRows: ExcelParseRow[] = [];
   selectedRows: Record<number, boolean> = {};
   isImporting = false;
-  importResult: BatchImportResponse | null = null;
+  importResult: any = null;
   showImportResultModal = false;
+  isBulkImporting = false;
+  showBulkImportResultModal = false;
+  bulkImportResults: Array<{
+    fileName: string;
+    successCount: number;
+    failedCount: number;
+    errors: { index: number; reason: string }[];
+  }> = [];
 
   // Tab 3: General Family Documents
+  generalUploading = false;
+  generalUploadProgress = 0;
+  generalDragOver = false;
   generalFiles: FileMetadata[] = [];
   generalFilesLoading = false;
+  generalSelectedFileIds = new Set<number>();
+  generalMultiSelectMode = false;
 
   // Inline Preview Modal
   isViewerModalVisible = false;
@@ -116,8 +194,88 @@ export class DocumentsComponent implements OnInit {
 
   // Upload Form
   readonly fileUploadForm = this.fb.group({
-    tag: ['']
+    selectedCategory: [''],
+    customTag: ['']
   });
+
+  documentCategories: DocumentCategory[] = [];
+  documentCategoriesLoading = false;
+
+  // Add Category Form
+  readonly addCategoryForm = this.fb.group({
+    name: ['', Validators.required],
+    icon: ['file'],
+    color: ['#3b82f6']
+  });
+  isAddCategoryModalVisible = false;
+  isSavingCategory = false;
+
+  loadDocumentCategories(): void {
+    this.documentCategoriesLoading = true;
+    this.command.getDocumentCategories()
+      .pipe(
+        finalize(() => { this.documentCategoriesLoading = false; }),
+        catchError(() => of([] as DocumentCategory[]))
+      )
+      .subscribe(cats => {
+        this.documentCategories = cats;
+      });
+  }
+
+  openAddCategoryModal(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.addCategoryForm.reset({
+      name: '',
+      icon: 'file',
+      color: '#3b82f6'
+    });
+    this.isAddCategoryModalVisible = true;
+  }
+
+  closeAddCategoryModal(): void {
+    this.isAddCategoryModalVisible = false;
+  }
+
+  saveCategory(): void {
+    if (this.addCategoryForm.invalid) {
+      Object.values(this.addCategoryForm.controls).forEach(control => {
+        if (control.invalid) {
+          control.markAsDirty();
+          control.updateValueAndValidity({ onlySelf: true });
+        }
+      });
+      return;
+    }
+
+    this.isSavingCategory = true;
+    const formVal = this.addCategoryForm.value;
+
+    this.command.createDocumentCategory({
+      name: formVal.name!.trim(),
+      icon: formVal.icon || 'file',
+      color: formVal.color || '#3b82f6'
+    })
+      .pipe(finalize(() => { this.isSavingCategory = false; }))
+      .subscribe({
+        next: (newCat) => {
+          this.notification.success(
+            this.i18n.translate('momApp.common.success'),
+            `Đã thêm danh mục "${newCat.name}" thành công.`
+          );
+          this.isAddCategoryModalVisible = false;
+          this.loadDocumentCategories();
+          this.fileUploadForm.controls.selectedCategory.setValue(String(newCat.id));
+        },
+        error: (err) => {
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            err.message || 'Thêm danh mục mới thất bại. Vui lòng kiểm tra lại.'
+          );
+        }
+      });
+  }
 
   ngOnInit(): void {
     this.loadInitialData();
@@ -140,6 +298,7 @@ export class DocumentsComponent implements OnInit {
       });
 
     this.loadGeneralFiles();
+    this.loadDocumentCategories();
   }
 
   // ---- TAB 1: BABY DOCUMENTS ----
@@ -150,56 +309,133 @@ export class DocumentsComponent implements OnInit {
 
   loadBabyFiles(babyId: number): void {
     this.selectedBabyFilesLoading = true;
-    this.command.getFiles('baby-documents', `baby:${babyId}`)
+    this.command.getFiles('baby-documents')
       .pipe(
         finalize(() => { this.selectedBabyFilesLoading = false; }),
         catchError(() => of([] as FileMetadata[]))
       )
       .subscribe(files => {
-        this.babyFiles = files;
+        this.babyFiles = files.filter(f => f.fileTag && f.fileTag.startsWith(`baby:${babyId}`));
       });
   }
 
   // ---- TAB 2: EXCEL IMPORT FOR EXPENSES ----
+  selectExcelFile(index: number): void {
+    this.selectedExcelFileIndex = index;
+    if (index >= 0 && index < this.parsedExcelFiles.length) {
+      const file = this.parsedExcelFiles[index];
+      this.parsedExcel = file.parsedData;
+      this.excelHeaders = file.headers;
+      this.excelRows = file.rows;
+      this.selectedRows = file.selectedRows;
+      this.importResult = file.importResult;
+    } else {
+      this.parsedExcel = null;
+      this.excelHeaders = [];
+      this.excelRows = [];
+      this.selectedRows = {};
+      this.importResult = null;
+    }
+  }
+
+  removeExcelFile(index: number, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.parsedExcelFiles.splice(index, 1);
+    if (this.parsedExcelFiles.length === 0) {
+      this.selectedExcelFileIndex = null;
+      this.selectExcelFile(-1);
+    } else {
+      if (this.selectedExcelFileIndex === index) {
+        const nextIndex = Math.min(index, this.parsedExcelFiles.length - 1);
+        this.selectExcelFile(nextIndex);
+      } else if (this.selectedExcelFileIndex !== null && this.selectedExcelFileIndex > index) {
+        this.selectedExcelFileIndex--;
+        this.selectExcelFile(this.selectedExcelFileIndex);
+      }
+    }
+  }
+
   handleExcelDrop(file: File): void {
-    if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+    this.handleExcelFiles([file]);
+  }
+
+  handleExcelFiles(files: File[]): void {
+    const validFiles = files.filter(f => f.name.endsWith('.xlsx') || f.name.endsWith('.xls'));
+    if (validFiles.length === 0) {
+      console.warn("[Tab 2 Excel] Không có file đúng định dạng Excel (.xlsx hoặc .xls)");
       this.notification.warning(
         this.i18n.translate('common.warningTitle'),
-        'Vui lòng kéo thả tệp Excel (.xlsx hoặc .xls)'
+        'Vui lòng kéo thả hoặc chọn tệp Excel (.xlsx hoặc .xls)'
       );
       return;
     }
 
-    this.uploading = true;
-    this.uploadProgress = 30;
+    this.excelUploading = true;
+    this.excelUploadProgress = 10;
+    console.log("[Tab 2 Excel] Bắt đầu parse đồng thời các file Excel:", validFiles.map(f => f.name));
 
-    this.command.parseExcelFile(file)
+    const parseObservables = validFiles.map(file => {
+      return this.command.parseExcelFile(file).pipe(
+        catchError((err) => {
+          console.error(`[Tab 2 Excel] Parse lỗi file: ${file.name}`, err);
+          this.notification.error(
+            'Lỗi phân tích tệp',
+            `Tệp "${file.name}" phân tích thất bại: ${err.message || 'Sai cấu trúc'}`
+          );
+          return of(null);
+        })
+      );
+    });
+
+    forkJoin(parseObservables)
       .pipe(
         finalize(() => {
-          this.uploading = false;
-          this.uploadProgress = 0;
+          console.log("[Tab 2 Excel] Kết thúc parse danh sách file.");
+          this.excelUploading = false;
+          this.excelUploadProgress = 0;
         })
       )
       .subscribe({
-        next: (res) => {
-          this.parsedExcel = res;
-          this.excelHeaders = res.headers;
-          this.excelRows = res.rows;
-          this.selectedRows = {};
-          // Auto select all valid parsed rows
-          res.rows.forEach(row => {
-            this.selectedRows[row.rowNumber] = true;
+        next: (results) => {
+          let addedCount = 0;
+          results.forEach((res, idx) => {
+            if (res) {
+              const file = validFiles[idx];
+              const selectedRowsMap: Record<number, boolean> = {};
+              res.rows.forEach(row => {
+                selectedRowsMap[row.rowNumber] = true;
+              });
+
+              this.parsedExcelFiles.push({
+                fileName: file.name,
+                parsedData: res,
+                headers: res.headers,
+                rows: res.rows,
+                selectedRows: selectedRowsMap,
+                isImported: false,
+                importResult: null
+              });
+              addedCount++;
+            }
           });
-          this.importResult = null;
-          this.notification.success(
-            this.i18n.translate('momApp.common.success'),
-            `Đã parse thành công tệp Excel với ${res.totalRows} hàng.`
-          );
+
+          if (addedCount > 0) {
+            this.notification.success(
+              this.i18n.translate('momApp.common.success'),
+              `Đã phân tích thành công ${addedCount} tệp Excel.`
+            );
+            if (this.selectedExcelFileIndex === null || this.selectedExcelFileIndex < 0) {
+              this.selectExcelFile(0);
+            }
+          }
         },
         error: (err) => {
+          console.error("[Tab 2 Excel] Lỗi nghiêm trọng khi parse danh sách file", err);
           this.notification.error(
             this.i18n.translate('common.errorTitle'),
-            err.message || 'Lỗi phân tích tệp Excel. Vui lòng kiểm tra lại cấu trúc.'
+            'Không thể phân tích các tệp Excel đã chọn.'
           );
         }
       });
@@ -230,86 +466,298 @@ export class DocumentsComponent implements OnInit {
     return this.excelRows.every(row => this.selectedRows[row.rowNumber]);
   }
 
-  executeImport(): void {
-    const importPayload: any[] = [];
+  buildImportPayloadForFile(fileItem: any): { dataType: string; payload: any[]; targetBabyId: number | null } {
+    const headersStr = fileItem.headers.join(',').toLowerCase();
+    let dataType: 'expense' | 'baby_health' | 'shopping' | 'vaccine' = 'expense';
+
+    if (headersStr.includes('ngày giờ') || headersStr.includes('bữa ăn') || headersStr.includes('lượng ăn') || headersStr.includes('chiều cao') || headersStr.includes('cân nặng')) {
+      dataType = 'baby_health';
+    } else if (headersStr.includes('món đồ') || headersStr.includes('đơn giá') || headersStr.includes('số lượng')) {
+      dataType = 'shopping';
+    } else if (headersStr.includes('tiêm') || headersStr.includes('vắc xin') || headersStr.includes('chi phí')) {
+      dataType = 'vaccine';
+    }
+
+    let targetBabyId = this.selectedBabyId;
+    if ((dataType === 'vaccine' || dataType === 'baby_health') && !targetBabyId && this.babies.length > 0) {
+      targetBabyId = this.babies[0].id;
+    }
+
+    const payload: any[] = [];
     const familyId = this.command.getFamilyId();
 
-    this.excelRows.forEach(row => {
-      if (this.selectedRows[row.rowNumber]) {
-        // Map excel data columns to Downstream CreateExpenseRequest format
+    fileItem.rows.forEach((row: any) => {
+      if (fileItem.selectedRows[row.rowNumber]) {
         const rowData = row.data;
-        
-        // Resolve spentAt date
-        let spentAt: string | null = null;
-        const rawDate = rowData['Ngày chi tiêu'] || rowData['spentAt'] || rowData['Date'];
-        if (rawDate) {
-          try {
-            spentAt = new Date(rawDate).toISOString();
-          } catch {
+
+        if (dataType === 'expense') {
+          let spentAt: string | null = null;
+          const rawDate = rowData['Ngày chi tiêu'] || rowData['spentAt'] || rowData['Date'];
+          if (rawDate) {
+            try {
+              spentAt = new Date(rawDate).toISOString();
+            } catch {
+              spentAt = new Date().toISOString();
+            }
+          } else {
             spentAt = new Date().toISOString();
           }
-        } else {
-          spentAt = new Date().toISOString();
-        }
 
-        // Resolve Category String to categoryId
-        const categoryNameStr = String(rowData['Danh mục'] || rowData['category'] || rowData['Category'] || '').trim();
-        let categoryId: number | null = null;
-        if (categoryNameStr) {
-          const matched = this.expenseCategories.find(c => c.name.toLowerCase() === categoryNameStr.toLowerCase());
-          if (matched) {
-            categoryId = matched.id;
-          } else if (this.expenseCategories.length > 0) {
-            // Fallback to first category if not matched
-            categoryId = this.expenseCategories[0].id;
+          const categoryNameStr = String(rowData['Danh mục'] || rowData['category'] || rowData['Category'] || '').trim();
+          let categoryId: number | null = null;
+          if (categoryNameStr) {
+            const matched = this.expenseCategories.find(c => c.name.toLowerCase() === categoryNameStr.toLowerCase());
+            if (matched) {
+              categoryId = matched.id;
+            } else if (this.expenseCategories.length > 0) {
+              categoryId = this.expenseCategories[0].id;
+            }
           }
-        }
 
-        const amountRaw = Number(rowData['Số tiền'] || rowData['amount'] || rowData['Amount'] || 0);
-        const amount = Number.isFinite(amountRaw) ? amountRaw : 0;
-        const note = String(rowData['Ghi chú'] || rowData['note'] || rowData['Note'] || '').trim();
+          const amountRaw = Number(rowData['Số tiền'] || rowData['amount'] || rowData['Amount'] || 0);
+          const amount = Number.isFinite(amountRaw) ? amountRaw : 0;
+          const note = String(rowData['Ghi chú'] || rowData['note'] || rowData['Note'] || '').trim();
 
-        if (categoryId && amount > 0) {
-          importPayload.push({
-            familyId,
-            categoryId,
-            amount,
-            currency: 'VND',
-            note: note || 'Nhập từ file Excel',
-            spentAt
-          });
+          if (categoryId && amount > 0) {
+            payload.push({
+              familyId,
+              categoryId,
+              amount,
+              currency: 'VND',
+              note: note || 'Nhập từ file Excel Chi tiêu',
+              spentAt
+            });
+          }
+        } else if (dataType === 'shopping') {
+          const name = String(rowData['Tên món đồ'] || rowData['name'] || '').trim();
+          const category = String(rowData['Danh mục mua sắm'] || rowData['Danh mục'] || rowData['category'] || '').trim();
+          const price = Number(rowData['Đơn giá dự kiến'] || rowData['Đơn giá'] || rowData['price'] || 0);
+          const quantity = Number(rowData['Số lượng'] || rowData['quantity'] || 0);
+          const priority = String(rowData['Mức độ ưu tiên'] || rowData['Ưu tiên'] || rowData['priority'] || '').trim();
+          const notes = String(rowData['Ghi chú'] || rowData['notes'] || '').trim();
+
+          if (name) {
+            payload.push({
+              name,
+              category,
+              price,
+              quantity,
+              priority,
+              notes
+            });
+          }
+        } else if (dataType === 'vaccine') {
+          const dateStr = String(rowData['Ngày tiêm'] || rowData['dateStr'] || '').trim();
+          const vaccineName = String(rowData['Tên vắc xin'] || rowData['vaccineName'] || '').trim();
+          const shotNo = String(rowData['Mũi số'] || rowData['shotNo'] || '').trim();
+          const cost = Number(rowData['Chi phí tiêm'] || rowData['Chi phí'] || rowData['cost'] || 0);
+          const location = String(rowData['Cơ sở tiêm chủng'] || rowData['Cơ sở tiêm'] || rowData['location'] || '').trim();
+          const nextDateStr = String(rowData['Ngày hẹn tiếp theo'] || rowData['Ngày hẹn sau'] || rowData['nextDateStr'] || '').trim();
+
+          if (vaccineName) {
+            payload.push({
+              dateStr,
+              vaccineName,
+              shotNo,
+              cost,
+              location,
+              nextDateStr
+            });
+          }
+        } else if (dataType === 'baby_health') {
+          const dateStr = String(rowData['Ngày giờ'] || rowData['dateStr'] || '').trim();
+          const mealType = String(rowData['Loại bữa ăn'] || rowData['mealType'] || '').trim();
+          const intake = Number(rowData['Lượng ăn (ml/g)'] || rowData['Lượng ăn'] || rowData['intake'] || 0);
+          const height = Number(rowData['Chiều cao (cm)'] || rowData['Chiều cao'] || rowData['height'] || 0);
+          const weight = Number(rowData['Cân nặng (kg)'] || rowData['Cân nặng'] || rowData['weight'] || 0);
+          const notes = String(rowData['Ghi chú y tế'] || rowData['notes'] || '').trim();
+
+          if (dateStr) {
+            payload.push({
+              dateStr,
+              mealType,
+              intake,
+              height,
+              weight,
+              notes
+            });
+          }
         }
       }
     });
 
-    if (importPayload.length === 0) {
+    return { dataType, payload, targetBabyId };
+  }
+
+  executeSingleImport(): void {
+    if (this.selectedExcelFileIndex === null || !this.parsedExcelFiles[this.selectedExcelFileIndex]) {
+      return;
+    }
+
+    const fileItem = this.parsedExcelFiles[this.selectedExcelFileIndex];
+    const { dataType, payload, targetBabyId } = this.buildImportPayloadForFile(fileItem);
+
+    if (payload.length === 0) {
       this.notification.warning(
         this.i18n.translate('common.warningTitle'),
-        'Không có hàng dữ liệu hợp lệ nào được chọn hoặc thiếu thông tin danh mục.'
+        'Không có hàng dữ liệu hợp lệ nào được chọn để nhập vào hệ thống.'
       );
       return;
     }
 
     this.isImporting = true;
-    this.command.importExpensesBatch(importPayload)
-      .pipe(finalize(() => { this.isImporting = false; }))
+    let importObs$;
+
+    if (dataType === 'expense') {
+      importObs$ = this.command.importExpensesBatch(payload);
+    } else if (dataType === 'shopping') {
+      importObs$ = this.command.importShoppingBatch(payload);
+    } else if (dataType === 'vaccine') {
+      importObs$ = this.command.importVaccinationsBatch(targetBabyId!, payload);
+    } else {
+      importObs$ = this.command.importGrowthBatch(targetBabyId!, payload);
+    }
+
+    importObs$.pipe(finalize(() => { this.isImporting = false; }))
       .subscribe({
-        next: (res) => {
-          this.importResult = res;
+        next: (res: any) => {
+          this.importResult = { ...res, fileName: fileItem.fileName };
           this.showImportResultModal = true;
-          // Clean up spreadsheet preview after success
           if (res.failedCount === 0) {
-            this.parsedExcel = null;
-            this.excelRows = [];
+            fileItem.isImported = true;
+            this.notification.success(
+              this.i18n.translate('momApp.common.success'),
+              `Đã nhập thành công tệp "${fileItem.fileName}" vào hệ thống!`
+            );
+            setTimeout(() => {
+              if (this.selectedExcelFileIndex !== null) {
+                this.removeExcelFile(this.selectedExcelFileIndex);
+              }
+            }, 1200);
+          } else {
+            this.notification.warning(
+              'Nhập tệp hoàn tất có lỗi',
+              `Tệp "${fileItem.fileName}" có ${res.failedCount} dòng bị lỗi.`
+            );
           }
         },
         error: (err) => {
           this.notification.error(
             this.i18n.translate('common.errorTitle'),
-            err.message || 'Nhập dữ liệu hàng loạt thất bại. Vui lòng kiểm tra kết nối.'
+            err.message || 'Nhập dữ liệu từ Excel thất bại. Vui lòng kiểm tra lại dữ liệu hoặc kết nối.'
           );
         }
       });
+  }
+
+  executeBulkImport(): void {
+    const pendingFiles = this.parsedExcelFiles.filter(f => !f.isImported);
+    if (pendingFiles.length === 0) {
+      this.notification.warning('Không có tệp cần nhập', 'Tất cả các tệp Excel đã được nhập thành công.');
+      return;
+    }
+
+    this.isBulkImporting = true;
+    this.bulkImportResults = [];
+    console.log("[Tab 2 Excel] Bắt đầu nhập hàng loạt tất cả các tệp:", pendingFiles.map(f => f.fileName));
+
+    const importObservables = pendingFiles.map(fileItem => {
+      const { dataType, payload, targetBabyId } = this.buildImportPayloadForFile(fileItem);
+      if (payload.length === 0) {
+        return of({
+          fileName: fileItem.fileName,
+          successCount: 0,
+          failedCount: 0,
+          errors: [{ index: -1, reason: 'Không có dòng dữ liệu nào được chọn.' }]
+        });
+      }
+
+      let obs$;
+      if (dataType === 'expense') {
+        obs$ = this.command.importExpensesBatch(payload);
+      } else if (dataType === 'shopping') {
+        obs$ = this.command.importShoppingBatch(payload);
+      } else if (dataType === 'vaccine') {
+        obs$ = this.command.importVaccinationsBatch(targetBabyId!, payload);
+      } else {
+        obs$ = this.command.importGrowthBatch(targetBabyId!, payload);
+      }
+
+      return new Observable<any>(observer => {
+        obs$.subscribe({
+          next: (res: any) => {
+            observer.next({
+              fileName: fileItem.fileName,
+              successCount: res.successCount,
+              failedCount: res.failedCount,
+              errors: res.errors
+            });
+            observer.complete();
+          },
+          error: (err: any) => {
+            observer.next({
+              fileName: fileItem.fileName,
+              successCount: 0,
+              failedCount: payload.length,
+              errors: [{ index: -1, reason: err.message || 'Lỗi hệ thống hoặc định dạng' }]
+            });
+            observer.complete();
+          }
+        });
+      });
+    });
+
+    forkJoin(importObservables)
+      .pipe(finalize(() => { this.isBulkImporting = false; }))
+      .subscribe({
+        next: (results) => {
+          console.log("[Tab 2 Excel] Kết quả nhập hàng loạt (forkJoin):", results);
+          this.bulkImportResults = results;
+          this.showBulkImportResultModal = true;
+
+          results.forEach(res => {
+            if (res.failedCount === 0) {
+              const matchedFile = this.parsedExcelFiles.find(f => f.fileName === res.fileName);
+              if (matchedFile) {
+                matchedFile.isImported = true;
+              }
+            }
+          });
+
+          const totalSuccess = results.reduce((acc, r) => acc + r.successCount, 0);
+          const totalFailed = results.reduce((acc, r) => acc + r.failedCount, 0);
+
+          if (totalSuccess > 0) {
+            this.notification.success(
+              this.i18n.translate('momApp.common.success'),
+              `Nhập hàng loạt hoàn tất! Đã nhập thành công ${totalSuccess} dòng dữ liệu.`
+            );
+            
+            setTimeout(() => {
+              this.parsedExcelFiles = this.parsedExcelFiles.filter(f => !f.isImported);
+              if (this.parsedExcelFiles.length === 0) {
+                this.selectedExcelFileIndex = null;
+                this.selectExcelFile(-1);
+              } else {
+                this.selectExcelFile(0);
+              }
+            }, 1500);
+          } else {
+            this.notification.warning('Nhập hàng loạt có lỗi', `Không có dữ liệu nào được nhập thành công. Vui lòng kiểm tra báo cáo lỗi.`);
+          }
+        },
+        error: (err) => {
+          console.error("[Tab 2 Excel] forkJoin nhập hàng loạt lỗi", err);
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            'Quá trình nhập hàng loạt gặp sự cố. Vui lòng thử lại.'
+          );
+        }
+      });
+  }
+
+  executeImport(): void {
+    this.executeBulkImport();
   }
 
   // ---- TAB 3: GENERAL FAMILY DOCUMENTS ----
@@ -325,76 +773,234 @@ export class DocumentsComponent implements OnInit {
       });
   }
 
-  // ---- COMMON FILE UPLOAD LOGIC ----
-  onFileDrop(event: DragEvent): void {
+  // ---- TAB 1: BABY DOCUMENTS UPLOAD LOGIC ----
+  onBabyDragOver(event: DragEvent): void {
     event.preventDefault();
-    this.dragOver = false;
-
-    const file = event.dataTransfer?.files[0];
-    if (!file) return;
-
-    if (this.activeTab === 0) {
-      this.uploadBabyDocument(file);
-    } else if (this.activeTab === 1) {
-      this.handleExcelDrop(file);
-    } else {
-      this.uploadGeneralDocument(file);
-    }
+    this.babyDragOver = true;
+    console.log("[Tab 1 Baby] onBabyDragOver: Đang kéo file qua dropzone...");
   }
 
-  onFileSelected(event: Event): void {
+  onBabyDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    this.babyDragOver = false;
+    console.log("[Tab 1 Baby] onBabyDragLeave: Đã rời khỏi dropzone.");
+  }
+
+  onBabyFileDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.babyDragOver = false;
+    const files = event.dataTransfer?.files;
+    console.log("[Tab 1 Baby] onBabyFileDrop: Kéo thả file thành công. Danh sách files nhận được:", files);
+    if (!files || files.length === 0) {
+      console.warn("[Tab 1 Baby] Danh sách files trống hoặc rỗng.");
+      return;
+    }
+    this.uploadBabyDocuments(Array.from(files));
+  }
+
+  onBabyFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    const file = input.files?.[0];
-    input.value = '';
-    if (!file) return;
-
-    if (this.activeTab === 0) {
-      this.uploadBabyDocument(file);
-    } else if (this.activeTab === 1) {
-      this.handleExcelDrop(file);
-    } else {
-      this.uploadGeneralDocument(file);
+    const files = input.files;
+    console.log("[Tab 1 Baby] onBabyFileSelected: Đã chọn file từ Explorer. Danh sách files:", files);
+    if (!files || files.length === 0) {
+      console.warn("[Tab 1 Baby] Explorer không chọn file nào.");
+      input.value = '';
+      return;
     }
+    const filesArray = Array.from(files);
+    input.value = '';
+    this.uploadBabyDocuments(filesArray);
   }
 
-  uploadBabyDocument(file: File): void {
+  uploadBabyDocuments(files: File[]): void {
+    console.log("[Tab 1 Baby] Bắt đầu tải lên tài liệu cho bé. Danh sách files:", files);
     if (!this.selectedBabyId) {
+      console.warn("[Tab 1 Baby] Chưa chọn em bé! Stop upload.");
       this.notification.warning('Chọn em bé', 'Vui lòng chọn em bé trước khi tải lên hồ sơ.');
       return;
     }
 
-    this.uploading = true;
-    this.uploadProgress = 20;
+    this.babyUploading = true;
+    this.babyUploadProgress = 10;
 
-    const tag = this.fileUploadForm.controls.tag.value?.trim() || 'hồ sơ';
+    const selectedCatId = this.fileUploadForm.controls.selectedCategory.value;
+    let customTag = '';
 
-    this.command.uploadFile(file, 'baby-documents', `baby:${this.selectedBabyId}`)
-      .pipe(finalize(() => { this.uploading = false; this.uploadProgress = 0; }))
+    if (selectedCatId) {
+      const matched = this.documentCategories.find(c => String(c.id) === selectedCatId);
+      if (matched) {
+        customTag = matched.name;
+      }
+    }
+
+    const tagValue = customTag || 'Hồ sơ';
+    const combinedTag = `baby:${this.selectedBabyId}:${tagValue}`;
+    console.log("[Tab 1 Baby] Metadata tag được gán cho file:", combinedTag);
+
+    // Upload tất cả các file cùng lúc
+    const uploadObservables = files.map(file => {
+      console.log("[Tab 1 Baby] Chuẩn bị upload tệp:", file.name, "size:", file.size, "bytes");
+      return this.command.uploadFile(file, 'baby-documents', combinedTag).pipe(
+        catchError((err) => {
+          const errMsg = err?.error?.message || err?.message || 'Lỗi không xác định';
+          console.error("[Tab 1 Baby] Lỗi upload tệp lẻ:", file.name, errMsg, err);
+          this.notification.error('Lỗi tải lên', `Tệp "${file.name}" tải lên thất bại: ${errMsg}`);
+          return of(null);
+        })
+      );
+    });
+
+    console.log("[Tab 1 Baby] Gọi API upload đồng thời (forkJoin)...");
+    forkJoin(uploadObservables)
+      .pipe(finalize(() => {
+        console.log("[Tab 1 Baby] Kết thúc upload tài liệu bé (Finalize).");
+        this.babyUploading = false;
+        this.babyUploadProgress = 0;
+      }))
       .subscribe({
-        next: () => {
-          this.notification.success(this.i18n.translate('momApp.common.success'), 'Tải lên tài liệu bé thành công.');
-          this.loadBabyFiles(this.selectedBabyId!);
-          this.fileUploadForm.reset();
+        next: (results) => {
+          console.log("[Tab 1 Baby] Kết quả upload (forkJoin results):", results);
+          const successCount = results.filter(r => r !== null).length;
+          if (successCount > 0) {
+            console.log(`[Tab 1 Baby] Tải lên thành công ${successCount}/${files.length} tệp.`);
+            this.notification.success(
+              this.i18n.translate('momApp.common.success'), 
+              `Đã tải lên thành công ${successCount}/${files.length} tài liệu của bé.`
+            );
+            this.loadBabyFiles(this.selectedBabyId!);
+            this.fileUploadForm.reset();
+          } else {
+            console.warn("[Tab 1 Baby] Không có tệp nào tải lên thành công.");
+          }
         },
         error: (err) => {
-          this.notification.error(this.i18n.translate('common.errorTitle'), err.message || 'Tải lên thất bại.');
+          console.error("[Tab 1 Baby] forkJoin upload bị lỗi nghiêm trọng!", err);
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            err?.message || 'Tải lên tài liệu bé thất bại. Vui lòng thử lại.'
+          );
         }
       });
   }
 
-  uploadGeneralDocument(file: File): void {
-    this.uploading = true;
-    this.uploadProgress = 20;
+  // ---- TAB 2: EXCEL IMPORT UPLOAD LOGIC ----
+  onExcelDragOver(event: DragEvent): void {
+    event.preventDefault();
+    this.excelDragOver = true;
+  }
 
-    this.command.uploadFile(file, 'family-documents')
-      .pipe(finalize(() => { this.uploading = false; this.uploadProgress = 0; }))
+  onExcelDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    this.excelDragOver = false;
+  }
+
+  onExcelFileDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.excelDragOver = false;
+    const files = event.dataTransfer?.files;
+    if (!files || files.length === 0) return;
+    this.handleExcelFiles(Array.from(files));
+  }
+
+  onExcelFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+    console.log("[Tab 2 Excel] onExcelFileSelected: Đã chọn file Excel từ Explorer. Files:", files);
+    if (!files || files.length === 0) {
+      console.warn("[Tab 2 Excel] Explorer không chọn file nào.");
+      input.value = '';
+      return;
+    }
+    const filesArray = Array.from(files);
+    input.value = '';
+    this.handleExcelFiles(filesArray);
+  }
+
+  // ---- TAB 3: GENERAL DOCUMENTS UPLOAD LOGIC ----
+  onGeneralDragOver(event: DragEvent): void {
+    event.preventDefault();
+    this.generalDragOver = true;
+    console.log("[Tab 3 General] onGeneralDragOver: Đang kéo file qua dropzone chung...");
+  }
+
+  onGeneralDragLeave(event: DragEvent): void {
+    event.preventDefault();
+    this.generalDragOver = false;
+    console.log("[Tab 3 General] onGeneralDragLeave: Rời khỏi dropzone chung.");
+  }
+
+  onGeneralFileDrop(event: DragEvent): void {
+    event.preventDefault();
+    this.generalDragOver = false;
+    const files = event.dataTransfer?.files;
+    console.log("[Tab 3 General] onGeneralFileDrop: Kéo thả tệp chung. Files nhận được:", files);
+    if (!files || files.length === 0) {
+      console.warn("[Tab 3 General] Danh sách files kéo thả trống.");
+      return;
+    }
+    this.uploadGeneralDocuments(Array.from(files));
+  }
+
+  onGeneralFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const files = input.files;
+    console.log("[Tab 3 General] onGeneralFileSelected: Đã chọn tệp chung qua Explorer. Files:", files);
+    if (!files || files.length === 0) {
+      console.warn("[Tab 3 General] Explorer không có tệp nào được chọn.");
+      input.value = '';
+      return;
+    }
+    const filesArray = Array.from(files);
+    input.value = '';
+    this.uploadGeneralDocuments(filesArray);
+  }
+
+  uploadGeneralDocuments(files: File[]): void {
+    console.log("[Tab 3 General] Bắt đầu tải lên tài liệu dùng chung gia đình. Files:", files);
+    this.generalUploading = true;
+    this.generalUploadProgress = 10;
+
+    // Upload tất cả các file cùng lúc
+    const uploadObservables = files.map(file => {
+      console.log("[Tab 3 General] Chuẩn bị upload tệp chung:", file.name, "size:", file.size, "bytes");
+      return this.command.uploadFile(file, 'family-documents').pipe(
+        catchError((err) => {
+          const errMsg = err?.error?.message || err?.message || 'Lỗi không xác định';
+          console.error("[Tab 3 General] Lỗi upload tệp chung lẻ:", file.name, errMsg, err);
+          this.notification.error('Lỗi tải lên', `Tệp "${file.name}" tải lên thất bại: ${errMsg}`);
+          return of(null);
+        })
+      );
+    });
+
+    console.log("[Tab 3 General] Gọi API upload đồng thời (forkJoin)...");
+    forkJoin(uploadObservables)
+      .pipe(finalize(() => {
+        console.log("[Tab 3 General] Kết thúc quá trình upload tệp chung (Finalize).");
+        this.generalUploading = false;
+        this.generalUploadProgress = 0;
+      }))
       .subscribe({
-        next: () => {
-          this.notification.success(this.i18n.translate('momApp.common.success'), 'Tải lên tài liệu dùng chung thành công.');
-          this.loadGeneralFiles();
+        next: (results) => {
+          console.log("[Tab 3 General] Kết quả upload (forkJoin results):", results);
+          const successCount = results.filter(r => r !== null).length;
+          if (successCount > 0) {
+            console.log(`[Tab 3 General] Tải lên thành công ${successCount}/${files.length} tệp chung.`);
+            this.notification.success(
+              this.i18n.translate('momApp.common.success'), 
+              `Đã tải lên thành công ${successCount}/${files.length} tài liệu dùng chung.`
+            );
+            this.loadGeneralFiles();
+          } else {
+            console.warn("[Tab 3 General] Không có tệp chung nào tải lên thành công.");
+          }
         },
         error: (err) => {
-          this.notification.error(this.i18n.translate('common.errorTitle'), err.message || 'Tải lên thất bại.');
+          console.error("[Tab 3 General] forkJoin upload tệp chung bị lỗi nghiêm trọng!", err);
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            err?.message || 'Tải lên tài liệu gia đình thất bại. Vui lòng thử lại.'
+          );
         }
       });
   }
@@ -545,16 +1151,142 @@ export class DocumentsComponent implements OnInit {
     });
   }
 
-  // ---- HELPER METHODS ----
-  onDragOver(event: DragEvent): void {
-    event.preventDefault();
-    this.dragOver = true;
+  // ---- MULTI-SELECT WORKFLOWS ----
+  toggleBabyMultiSelectMode(): void {
+    this.babyMultiSelectMode = !this.babyMultiSelectMode;
+    if (!this.babyMultiSelectMode) {
+      this.babySelectedFileIds.clear();
+    }
   }
 
-  onDragLeave(event: DragEvent): void {
-    event.preventDefault();
-    this.dragOver = false;
+  toggleBabyFileSelection(fileId: number): void {
+    if (this.babySelectedFileIds.has(fileId)) {
+      this.babySelectedFileIds.delete(fileId);
+    } else {
+      this.babySelectedFileIds.add(fileId);
+    }
   }
+
+  isBabyFileSelected(fileId: number): boolean {
+    return this.babySelectedFileIds.has(fileId);
+  }
+
+  selectAllBabyFiles(): void {
+    this.babyFiles.forEach(file => {
+      this.babySelectedFileIds.add(file.id);
+    });
+  }
+
+  downloadSelectedBabyFiles(): void {
+    if (this.babySelectedFileIds.size === 0) return;
+    const filesToDownload = this.babyFiles.filter(f => this.babySelectedFileIds.has(f.id));
+    console.log("[Tab 1 Baby] Tải xuống hàng loạt các tệp tin:", filesToDownload);
+    filesToDownload.forEach((file, index) => {
+      setTimeout(() => {
+        this.downloadFile(file);
+      }, index * 400);
+    });
+  }
+
+  deleteSelectedBabyFiles(): void {
+    if (this.babySelectedFileIds.size === 0) return;
+    this.modalService.confirm({
+      nzTitle: 'Xác nhận xóa hàng loạt',
+      nzContent: `Bạn có chắc chắn muốn xóa ${this.babySelectedFileIds.size} tệp tin của bé đã chọn? Hành động này không thể khôi phục lại.`,
+      nzOkText: 'Xóa',
+      nzOkType: 'primary',
+      nzOkDanger: true,
+      nzCancelText: 'Hủy',
+      nzOnOk: () => {
+        console.log("[Tab 1 Baby] Bắt đầu xóa hàng loạt các tệp tin có ID:", Array.from(this.babySelectedFileIds));
+        const deleteObservables = Array.from(this.babySelectedFileIds).map(id => this.command.deleteFile(id));
+        this.loading = true;
+        forkJoin(deleteObservables)
+          .pipe(finalize(() => { this.loading = false; }))
+          .subscribe({
+            next: () => {
+              this.notification.success(this.i18n.translate('momApp.common.success'), `Đã xóa thành công ${this.babySelectedFileIds.size} tệp tin.`);
+              this.babySelectedFileIds.clear();
+              this.babyMultiSelectMode = false;
+              this.loadBabyFiles(this.selectedBabyId!);
+            },
+            error: (err) => {
+              console.error("[Tab 1 Baby] Lỗi xóa hàng loạt:", err);
+              this.notification.error(this.i18n.translate('common.errorTitle'), err.message || 'Không thể xóa các tệp tin.');
+            }
+          });
+      }
+    });
+  }
+
+  toggleGeneralMultiSelectMode(): void {
+    this.generalMultiSelectMode = !this.generalMultiSelectMode;
+    if (!this.generalMultiSelectMode) {
+      this.generalSelectedFileIds.clear();
+    }
+  }
+
+  toggleGeneralFileSelection(fileId: number): void {
+    if (this.generalSelectedFileIds.has(fileId)) {
+      this.generalSelectedFileIds.delete(fileId);
+    } else {
+      this.generalSelectedFileIds.add(fileId);
+    }
+  }
+
+  isGeneralFileSelected(fileId: number): boolean {
+    return this.generalSelectedFileIds.has(fileId);
+  }
+
+  selectAllGeneralFiles(): void {
+    this.generalFiles.forEach(file => {
+      this.generalSelectedFileIds.add(file.id);
+    });
+  }
+
+  downloadSelectedGeneralFiles(): void {
+    if (this.generalSelectedFileIds.size === 0) return;
+    const filesToDownload = this.generalFiles.filter(f => this.generalSelectedFileIds.has(f.id));
+    console.log("[Tab 3 General] Tải xuống hàng loạt các tệp dùng chung:", filesToDownload);
+    filesToDownload.forEach((file, index) => {
+      setTimeout(() => {
+        this.downloadFile(file);
+      }, index * 400);
+    });
+  }
+
+  deleteSelectedGeneralFiles(): void {
+    if (this.generalSelectedFileIds.size === 0) return;
+    this.modalService.confirm({
+      nzTitle: 'Xác nhận xóa hàng loạt',
+      nzContent: `Bạn có chắc chắn muốn xóa ${this.generalSelectedFileIds.size} tệp tin gia đình đã chọn? Hành động này không thể khôi phục lại.`,
+      nzOkText: 'Xóa',
+      nzOkType: 'primary',
+      nzOkDanger: true,
+      nzCancelText: 'Hủy',
+      nzOnOk: () => {
+        console.log("[Tab 3 General] Bắt đầu xóa hàng loạt các tệp chung có ID:", Array.from(this.generalSelectedFileIds));
+        const deleteObservables = Array.from(this.generalSelectedFileIds).map(id => this.command.deleteFile(id));
+        this.loading = true;
+        forkJoin(deleteObservables)
+          .pipe(finalize(() => { this.loading = false; }))
+          .subscribe({
+            next: () => {
+              this.notification.success(this.i18n.translate('momApp.common.success'), `Đã xóa thành công ${this.generalSelectedFileIds.size} tệp tin dùng chung.`);
+              this.generalSelectedFileIds.clear();
+              this.generalMultiSelectMode = false;
+              this.loadGeneralFiles();
+            },
+            error: (err) => {
+              console.error("[Tab 3 General] Lỗi xóa hàng loạt:", err);
+              this.notification.error(this.i18n.translate('common.errorTitle'), err.message || 'Không thể xóa các tệp tin.');
+            }
+          });
+      }
+    });
+  }
+
+  // ---- HELPER METHODS ----
 
   formatDate(value: string): string {
     const date = new Date(value);
@@ -598,12 +1330,28 @@ export class DocumentsComponent implements OnInit {
     }
   }
 
+  translateCategoryName(name: string): string {
+    if (name && name.startsWith('app.documents.options.')) {
+      return this.i18n.translate(name);
+    }
+    return name;
+  }
+
   formatFileTag(fileTag: string | null, defaultTag: string): string {
     if (!fileTag) return defaultTag;
     if (fileTag.startsWith('baby:')) {
-      const babyId = Number(fileTag.split(':')[1]);
+      const parts = fileTag.split(':');
+      const babyId = Number(parts[1]);
+      const customTag = parts[2];
       const baby = this.babies.find(b => b.id === babyId);
-      return baby ? `Hồ sơ bé ${baby.name}` : 'Hồ sơ của Bé';
+      const babyName = baby ? `bé ${baby.name}` : 'Bé';
+      if (customTag) {
+        if (customTag.startsWith('app.documents.options.')) {
+          return `${this.i18n.translate(customTag)} - ${babyName}`;
+        }
+        return `${customTag} - ${babyName}`;
+      }
+      return `Hồ sơ - ${babyName}`;
     }
     return fileTag;
   }

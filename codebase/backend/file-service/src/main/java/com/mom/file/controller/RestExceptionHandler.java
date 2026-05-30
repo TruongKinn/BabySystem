@@ -30,6 +30,12 @@ public class RestExceptionHandler {
                 .body(new ApiResponse<>(false, ex.getMessage(), null));
     }
 
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse<Object>> handleIllegalState(IllegalStateException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ApiResponse<>(false, ex.getMessage(), null));
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiResponse<Object>> handleValidation(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()

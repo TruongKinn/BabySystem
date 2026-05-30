@@ -234,109 +234,246 @@ public class DocumentParseService {
         }
     }
 
-    public byte[] generateExcelTemplate() {
+    public byte[] generateExcelTemplate(String type) {
+        if (type == null) {
+            type = "expense";
+        }
+        type = type.toLowerCase().trim();
+
         try (Workbook workbook = new XSSFWorkbook()) {
-            Sheet sheet = workbook.createSheet("Chi tiêu mẫu");
+            String sheetName;
+            String[] columns;
+            Object[][] data;
+            byte[] rgbColor;
+
+            switch (type) {
+                case "baby":
+                    sheetName = "Dinh dưỡng & Sức khỏe bé";
+                    columns = new String[]{"Ngày giờ", "Loại bữa ăn", "Lượng ăn (ml/g)", "Chiều cao (cm)", "Cân nặng (kg)", "Ghi chú y tế"};
+                    data = new Object[][]{
+                        {"2026-05-20 07:30", "Sữa công thức", 180.0, 68.5, 7.8, "Bé bú tốt, ngủ sâu"},
+                        {"2026-05-20 11:30", "Ăn dặm (Bột rây)", 100.0, 68.5, 7.8, "Bé ăn hết suất"},
+                        {"2026-05-21 19:00", "Sữa mẹ", 150.0, 68.7, 7.9, "Bé hơi quấy trước khi ăn"}
+                    };
+                    // Màu xanh Teal nhã nhặn #0F766E (RGB: 15, 118, 110)
+                    rgbColor = new byte[]{(byte) 15, (byte) 118, (byte) 110};
+                    break;
+
+                case "shopping":
+                    sheetName = "Kế hoạch Mua sắm";
+                    columns = new String[]{"Tên món đồ", "Danh mục mua sắm", "Đơn giá dự kiến", "Số lượng", "Mức độ ưu tiên", "Ghi chú"};
+                    data = new Object[][]{
+                        {"Tã quần Moony size L", "Bỉm tã", 380000.0, 2.0, "Cao", "Mua loại nội địa Nhật"},
+                        {"Sữa bột Meiji số 0-1", "Sữa công thức", 520000.0, 1.0, "Cao", "Check hạn sử dụng xa"},
+                        {"Đồ chơi gỗ thả hình", "Đồ chơi", 150000.0, 1.0, "Trung bình", "Kích thích tư duy cho bé"}
+                    };
+                    // Màu xanh Indigo sang trọng #4338CA (RGB: 67, 56, 202)
+                    rgbColor = new byte[]{(byte) 67, (byte) 56, (byte) 202};
+                    break;
+
+                case "vaccine":
+                    sheetName = "Lịch Tiêm chủng & Y tế";
+                    columns = new String[]{"Ngày tiêm", "Tên vắc xin", "Mũi số", "Chi phí tiêm", "Cơ sở tiêm chủng", "Ngày hẹn tiếp theo"};
+                    data = new Object[][]{
+                        {"2026-05-15", "6 trong 1 (Infanrix)", 2.0, 1050000.0, "Trung tâm VNVC", "2026-06-15"},
+                        {"2026-05-20", "Phế cầu (Synflorix)", 1.0, 980000.0, "Phòng tiêm chủng phường", "2026-07-20"},
+                        {"2026-05-25", "Nhỏ ngừa Rota", 2.0, 850000.0, "Bệnh viện Sản Nhi", "2026-06-25"}
+                    };
+                    // Màu xanh Slate quý phái #475569 (RGB: 71, 85, 105)
+                    rgbColor = new byte[]{(byte) 71, (byte) 85, (byte) 105};
+                    break;
+
+                case "expense":
+                default:
+                    sheetName = "Chi tiêu gia đình";
+                    columns = new String[]{"Ngày chi tiêu", "Danh mục", "Số tiền", "Ghi chú"};
+                    data = new Object[][]{
+                        {"2026-05-20", "Meals", 150000.0, "Ăn trưa gia đình"},
+                        {"2026-05-21", "Shopping", 550000.0, "Mua tã bỉm cho bé"},
+                        {"2026-05-22", "Education", 1200000.0, "Học phí lớp vẽ của bé"}
+                    };
+                    // Màu xanh Navy thanh lịch #1E293B (RGB: 30, 41, 59)
+                    rgbColor = new byte[]{(byte) 30, (byte) 41, (byte) 59};
+                    break;
+            }
+
+            Sheet sheet = workbook.createSheet(sheetName);
             sheet.setDisplayGridlines(true);
 
-            // Định nghĩa Font Header
+            // [NÂNG CẤP CLAUDE 1] Khóa cố định hàng đầu tiên (Freeze Pane) để cuộn dữ liệu mượt mà
+            sheet.createFreezePane(0, 1);
+
+            // 1. Định nghĩa Font Header (Times New Roman theo yêu cầu)
             Font headerFont = workbook.createFont();
             headerFont.setFontName("Times New Roman");
             headerFont.setFontHeightInPoints((short) 11);
             headerFont.setBold(true);
             headerFont.setColor(IndexedColors.WHITE.getIndex());
 
-            // Tạo màu cam thương hiệu cho header (#F97316 -> RGB: 249, 115, 22)
-            byte[] orangeRGB = new byte[]{(byte) 249, (byte) 115, (byte) 22};
-            XSSFColor headerBgColor = new XSSFColor(orangeRGB, new DefaultIndexedColorMap());
+            XSSFColor headerBgColor = new XSSFColor(rgbColor, new DefaultIndexedColorMap());
 
-            // Cấu hình style Header
+            // 2. Cấu hình style Header với viền tinh tế
             CellStyle headerStyle = workbook.createCellStyle();
             headerStyle.setFont(headerFont);
             ((org.apache.poi.xssf.usermodel.XSSFCellStyle) headerStyle).setFillForegroundColor(headerBgColor);
             headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             headerStyle.setAlignment(HorizontalAlignment.CENTER);
             headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            
+            // Đường viền Header xám đậm trung bình
             headerStyle.setBorderTop(BorderStyle.THIN);
+            headerStyle.setTopBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
             headerStyle.setBorderBottom(BorderStyle.MEDIUM);
+            headerStyle.setBottomBorderColor(IndexedColors.GREY_50_PERCENT.getIndex());
             headerStyle.setBorderLeft(BorderStyle.THIN);
+            headerStyle.setLeftBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
             headerStyle.setBorderRight(BorderStyle.THIN);
+            headerStyle.setRightBorderColor(IndexedColors.GREY_40_PERCENT.getIndex());
 
-            // Định nghĩa Font dữ liệu
+            // 3. Định nghĩa Font dữ liệu (Times New Roman theo yêu cầu)
             Font dataFont = workbook.createFont();
             dataFont.setFontName("Times New Roman");
             dataFont.setFontHeightInPoints((short) 11);
 
-            // Style Dữ liệu Chung
-            CellStyle dataStyle = workbook.createCellStyle();
-            dataStyle.setFont(dataFont);
-            dataStyle.setBorderTop(BorderStyle.THIN);
-            dataStyle.setBorderBottom(BorderStyle.THIN);
-            dataStyle.setBorderLeft(BorderStyle.THIN);
-            dataStyle.setBorderRight(BorderStyle.THIN);
-            dataStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            // 4. Style Dữ liệu hàng lẻ (Nền trắng mặc định)
+            CellStyle oddRowStyle = workbook.createCellStyle();
+            oddRowStyle.setFont(dataFont);
+            oddRowStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            
+            oddRowStyle.setBorderTop(BorderStyle.THIN);
+            oddRowStyle.setTopBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            oddRowStyle.setBorderBottom(BorderStyle.THIN);
+            oddRowStyle.setBottomBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            oddRowStyle.setBorderLeft(BorderStyle.THIN);
+            oddRowStyle.setLeftBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
+            oddRowStyle.setBorderRight(BorderStyle.THIN);
+            oddRowStyle.setRightBorderColor(IndexedColors.GREY_25_PERCENT.getIndex());
 
-            // Style Ngày chi tiêu (căn giữa)
-            CellStyle dateStyle = workbook.createCellStyle();
-            dateStyle.cloneStyleFrom(dataStyle);
-            dateStyle.setAlignment(HorizontalAlignment.CENTER);
+            // [NÂNG CẤP CLAUDE 2] Style Dữ liệu hàng chẵn - Sọc xen kẽ (Zebra Striping) nền xám cực nhạt (#F9FAFB)
+            byte[] zebraRGB = new byte[]{(byte) 249, (byte) 250, (byte) 251};
+            XSSFColor zebraBgColor = new XSSFColor(zebraRGB, new DefaultIndexedColorMap());
 
-            // Style Số tiền (căn phải, định dạng hiển thị #,##0)
-            CellStyle amountStyle = workbook.createCellStyle();
-            amountStyle.cloneStyleFrom(dataStyle);
-            amountStyle.setAlignment(HorizontalAlignment.RIGHT);
+            CellStyle evenRowStyle = workbook.createCellStyle();
+            evenRowStyle.cloneStyleFrom(oddRowStyle);
+            ((org.apache.poi.xssf.usermodel.XSSFCellStyle) evenRowStyle).setFillForegroundColor(zebraBgColor);
+            evenRowStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+
+            // 5. Định nghĩa Style Căn giữa và Căn phải cho hàng lẻ/chẵn
+            CellStyle oddCenterStyle = workbook.createCellStyle();
+            oddCenterStyle.cloneStyleFrom(oddRowStyle);
+            oddCenterStyle.setAlignment(HorizontalAlignment.CENTER);
+
+            CellStyle evenCenterStyle = workbook.createCellStyle();
+            evenCenterStyle.cloneStyleFrom(evenRowStyle);
+            evenCenterStyle.setAlignment(HorizontalAlignment.CENTER);
+
+            // Style Số tiền/Số lượng (định dạng hiển thị #,##0)
             DataFormat format = workbook.createDataFormat();
-            amountStyle.setDataFormat(format.getFormat("#,##0"));
+            
+            CellStyle oddNumberStyle = workbook.createCellStyle();
+            oddNumberStyle.cloneStyleFrom(oddRowStyle);
+            oddNumberStyle.setAlignment(HorizontalAlignment.RIGHT);
+            oddNumberStyle.setDataFormat(format.getFormat("#,##0"));
 
-            // Định nghĩa cột
-            String[] columns = {"Ngày chi tiêu", "Danh mục", "Số tiền", "Ghi chú"};
+            CellStyle evenNumberStyle = workbook.createCellStyle();
+            evenNumberStyle.cloneStyleFrom(evenRowStyle);
+            evenNumberStyle.setAlignment(HorizontalAlignment.RIGHT);
+            evenNumberStyle.setDataFormat(format.getFormat("#,##0"));
+
             Row headerRow = sheet.createRow(0);
-            headerRow.setHeightInPoints(28);
+            headerRow.setHeightInPoints(30); // Độ cao hàng header thoáng đãng
+
+            // 6. Khởi tạo Comments / Hướng dẫn thông minh bằng Apache POI
+            CreationHelper factory = workbook.getCreationHelper();
+            Drawing<?> drawing = sheet.createDrawingPatriarch();
 
             for (int i = 0; i < columns.length; i++) {
                 Cell cell = headerRow.createCell(i);
                 cell.setCellValue(columns[i]);
                 cell.setCellStyle(headerStyle);
+
+                // Tạo nội dung chỉ dẫn chi tiết cho từng loại cột
+                String colName = columns[i];
+                String commentText = null;
+
+                if (colName.contains("Ngày") || colName.contains("giờ")) {
+                    commentText = "Hướng dẫn nhập Ngày/Giờ:\n- Mẫu Chi tiêu/Tiêm chủng/Mua sắm: YYYY-MM-DD (Ví dụ: 2026-05-20)\n- Mẫu Dinh dưỡng bé: YYYY-MM-DD HH:mm (Ví dụ: 2026-05-20 07:30)\n- Vui lòng nhập đúng để hệ thống phân tích tự động.";
+                } else if (colName.contains("Số tiền") || colName.contains("Chi phí") || colName.contains("Đơn giá")) {
+                    commentText = "Hướng dẫn nhập Số tiền/Chi phí:\n- Nhập số nguyên dương (Ví dụ: 150000 hoặc 520000)\n- Tuyệt đối KHÔNG nhập chữ 'đ', 'VND', dấu phẩy/chấm phân cách hàng nghìn.";
+                } else if (colName.contains("Danh mục")) {
+                    commentText = "Hướng dẫn nhập Danh mục:\n- Chi tiêu: Meals, Shopping, Education, Utilities, Medical, Travel...\n- Mua sắm: Bỉm tã, Sữa công thức, Đồ chơi, Quần áo, Thực phẩm...";
+                } else if (colName.contains("Lượng ăn")) {
+                    commentText = "Hướng dẫn nhập lượng ăn:\n- Chỉ nhập giá trị số ml hoặc gram (Ví dụ: 180 hoặc 100)\n- KHÔNG điền chữ 'ml' hoặc 'g' phía sau.";
+                } else if (colName.contains("Chiều cao")) {
+                    commentText = "Đơn vị đo Chiều cao:\n- Nhập số đo bằng cm (Ví dụ: 68.5 hoặc 72.0).";
+                } else if (colName.contains("Cân nặng")) {
+                    commentText = "Đơn vị đo Cân nặng:\n- Nhập số đo bằng kg (Ví dụ: 7.8 hoặc 8.5).";
+                } else if (colName.contains("Ưu tiên") || colName.contains("Mức độ ưu tiên")) {
+                    commentText = "Mức độ ưu tiên:\n- Vui lòng điền một trong ba giá trị: Cao, Trung bình, Thấp.";
+                } else if (colName.contains("Mũi số") || colName.contains("Số lượng")) {
+                    commentText = "Nhập số nguyên dương:\n- Ví dụ: 1, 2, 3...";
+                }
+
+                if (commentText != null) {
+                    ClientAnchor anchor = factory.createClientAnchor();
+                    anchor.setCol1(cell.getColumnIndex() + 1);
+                    anchor.setCol2(cell.getColumnIndex() + 4);
+                    anchor.setRow1(0);
+                    anchor.setRow2(4);
+
+                    Comment comment = drawing.createCellComment(anchor);
+                    RichTextString rts = factory.createRichTextString(commentText);
+                    comment.setString(rts);
+                    comment.setAuthor("MOM App");
+                    cell.setCellComment(comment);
+                }
             }
 
-            // Dữ liệu chi tiêu mẫu
-            Object[][] data = {
-                {"2026-05-20", "Meals", 150000.0, "Ăn trưa gia đình"},
-                {"2026-05-21", "Shopping", 550000.0, "Mua tã bỉm cho bé"},
-                {"2026-05-22", "Education", 1200000.0, "Học phí lớp vẽ của bé"}
-            };
-
+            // 7. Điền dữ liệu mẫu và áp dụng style sọc xen kẽ, độ cao hàng rộng rãi
             for (int rowNum = 0; rowNum < data.length; rowNum++) {
                 Row row = sheet.createRow(rowNum + 1);
-                row.setHeightInPoints(22);
+                row.setHeightInPoints(24); // Độ cao hàng dữ liệu thoáng đãng, dễ đọc
 
                 Object[] rowData = data[rowNum];
+                boolean isEven = (rowNum % 2 == 0); // Hàng dữ liệu chẵn/lẻ để tô màu sọc
 
-                // Ngày chi tiêu
-                Cell cell0 = row.createCell(0);
-                cell0.setCellValue((String) rowData[0]);
-                cell0.setCellStyle(dateStyle);
+                for (int colNum = 0; colNum < columns.length; colNum++) {
+                    Cell cell = row.createCell(colNum);
+                    Object val = rowData[colNum];
 
-                // Danh mục
-                Cell cell1 = row.createCell(1);
-                cell1.setCellValue((String) rowData[1]);
-                cell1.setCellStyle(dataStyle);
+                    // Chọn cell style tương ứng với hàng chẵn/lẻ
+                    CellStyle currentTextStyle = isEven ? evenRowStyle : oddRowStyle;
+                    CellStyle currentCenterStyle = isEven ? evenCenterStyle : oddCenterStyle;
+                    CellStyle currentNumberStyle = isEven ? evenNumberStyle : oddNumberStyle;
 
-                // Số tiền
-                Cell cell2 = row.createCell(2);
-                cell2.setCellValue((Double) rowData[2]);
-                cell2.setCellStyle(amountStyle);
-
-                // Ghi chú
-                Cell cell3 = row.createCell(3);
-                cell3.setCellValue((String) rowData[3]);
-                cell3.setCellStyle(dataStyle);
+                    if (val instanceof String) {
+                        cell.setCellValue((String) val);
+                        String colName = columns[colNum];
+                        if (colName.contains("Ngày") || colName.contains("giờ")) {
+                            cell.setCellStyle(currentCenterStyle);
+                        } else {
+                            cell.setCellStyle(currentTextStyle);
+                        }
+                    } else if (val instanceof Double) {
+                        cell.setCellValue((Double) val);
+                        cell.setCellStyle(currentNumberStyle);
+                    } else {
+                        cell.setCellValue("");
+                        cell.setCellStyle(currentTextStyle);
+                    }
+                }
             }
 
-            // Tự động căn chỉnh độ rộng cột + đệm lề
+            // [NÂNG CẤP CLAUDE 3] Thêm bộ lọc AutoFilter tự động cho tất cả các cột
+            org.apache.poi.ss.util.CellRangeAddress filterRange = new org.apache.poi.ss.util.CellRangeAddress(
+                0, data.length, 0, columns.length - 1
+            );
+            sheet.setAutoFilter(filterRange);
+
+            // 8. Tự động căn chỉnh độ rộng cột + đệm lề an toàn
             for (int i = 0; i < columns.length; i++) {
                 sheet.autoSizeColumn(i);
-                sheet.setColumnWidth(i, sheet.getColumnWidth(i) + 1200);
+                sheet.setColumnWidth(i, sheet.getColumnWidth(i) + 1500); // Tăng đệm lề thêm thoáng đãng
             }
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();

@@ -539,40 +539,86 @@
 .action-buttons {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
-/* Premium Ghost Buttons for Table Actions */
-.action-buttons button {
-  border-radius: var(--user-btn-radius, 6px);
-  font-weight: 500;
-  box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+.btn-icon-action {
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+  border: 1px solid #e2e8f0 !important;
+  padding: 0 !important;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02) !important;
 }
 
-.action-buttons button[nzDanger] {
-  color: #ef4444;
-  border-color: #fecaca;
-  background: #fef2f2;
+.btn-icon-action ::ng-deep .anticon {
+  font-size: 14px !important;
+  transition: transform 0.2s ease !important;
 }
 
-.action-buttons button[nzDanger]:hover {
-  color: #ffffff;
-  background: #ef4444;
-  border-color: #ef4444;
-  box-shadow: 0 4px 8px rgba(239, 68, 68, 0.2);
+/* Hover effects */
+.btn-icon-action:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
 }
 
-.action-buttons button:not([nzDanger]):not([nzType="primary"]) {
-  color: var(--primary-color, #0f766e);
-  border-color: color-mix(in srgb, var(--primary-color, #0f766e) 30%, #cbd5e1);
-  background: color-mix(in srgb, var(--primary-color, #0f766e) 6%, #f8fafc);
+.btn-icon-action:hover ::ng-deep .anticon {
+  transform: scale(1.15) !important;
 }
 
-.action-buttons button:not([nzDanger]):not([nzType="primary"]):hover {
-  background: var(--primary-color, #0f766e);
-  color: white;
-  border-color: var(--primary-color, #0f766e);
-  box-shadow: 0 4px 8px color-mix(in srgb, var(--primary-color, #0f766e) 20%, transparent);
+/* Style cụ thể cho từng loại action */
+.btn-assign-host {
+  background-color: #fffbeb !important;
+  color: #d97706 !important;
+  border-color: #fde68a !important;
+}
+.btn-assign-host:hover {
+  background-color: #d97706 !important;
+  color: #ffffff !important;
+  border-color: #d97706 !important;
+  box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25) !important;
+}
+
+.btn-demote-host {
+  background-color: #fff1f2 !important;
+  color: #e11d48 !important;
+  border-color: #fecdd3 !important;
+}
+.btn-demote-host:hover {
+  background-color: #e11d48 !important;
+  color: #ffffff !important;
+  border-color: #e11d48 !important;
+  box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25) !important;
+}
+
+.btn-edit {
+  background-color: #f0f9ff !important;
+  color: #0284c7 !important;
+  border-color: #bae6fd !important;
+}
+.btn-edit:hover {
+  background-color: #0284c7 !important;
+  color: #ffffff !important;
+  border-color: #0284c7 !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25) !important;
+}
+
+.btn-delete {
+  background-color: #fef2f2 !important;
+  color: #ef4444 !important;
+  border-color: #fecaca !important;
+}
+.btn-delete:hover {
+  background-color: #ef4444 !important;
+  color: #ffffff !important;
+  border-color: #ef4444 !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25) !important;
 }
 
 .editing-row td {
@@ -713,3 +759,23 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* Beautiful Scrollbar & Responsive Table tweaks */
+::ng-deep .manage-members-container .ant-table-body,
+::ng-deep .manage-members-container .ant-table-content {
+  overflow-x: auto !important;
+}
+
+::ng-deep .manage-members-container .ant-table-content::-webkit-scrollbar {
+  height: 6px !important;
+}
+
+::ng-deep .manage-members-container .ant-table-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1 !important;
+  border-radius: 999px !important;
+}
+
+::ng-deep .manage-members-container .ant-table-content::-webkit-scrollbar-track {
+  background: #f8fafc !important;
+}
+

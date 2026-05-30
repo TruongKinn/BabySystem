@@ -44,11 +44,27 @@ public class FileImportController {
         return ApiResponse.ok("Babies imported successfully", integrationService.importBabies(request));
     }
 
+    @PostMapping("/import/shopping")
+    public ApiResponse<BatchImportResponse> importShopping(@RequestBody BatchImportShoppingRequest request) {
+        return ApiResponse.ok("Shopping items imported successfully", integrationService.importShopping(request));
+    }
+
+    @PostMapping("/import/vaccinations")
+    public ApiResponse<BatchImportResponse> importVaccinations(@RequestBody BatchImportVaccinationsRequest request) {
+        return ApiResponse.ok("Vaccinations imported successfully", integrationService.importVaccinations(request));
+    }
+
+    @PostMapping("/import/growth-records")
+    public ApiResponse<BatchImportResponse> importGrowthRecords(@RequestBody BatchImportGrowthRequest request) {
+        return ApiResponse.ok("Growth records imported successfully", integrationService.importGrowthRecords(request));
+    }
+
     @GetMapping("/template/excel")
-    public ResponseEntity<byte[]> getExcelTemplate() {
-        byte[] excelBytes = documentParseService.generateExcelTemplate();
+    public ResponseEntity<byte[]> getExcelTemplate(@RequestParam(value = "type", defaultValue = "expense") String type) {
+        byte[] excelBytes = documentParseService.generateExcelTemplate(type);
+        String fileName = type.toLowerCase().trim() + "_import_template.xlsx";
         return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=expense_import_template.xlsx")
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName)
                 .contentType(MediaType.parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(excelBytes);
     }

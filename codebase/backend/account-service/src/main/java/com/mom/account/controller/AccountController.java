@@ -314,6 +314,22 @@ public class AccountController {
         return ApiResponse.ok("Family member updated", accountService.updateMember(familyId, userId, request));
     }
 
+    @PutMapping("/families/{id}/members/{userId}/host")
+    public ApiResponse<FamilyResponse> assignFamilyHost(
+            @PathVariable("id") Long familyId,
+            @PathVariable("userId") Long userId
+    ) {
+        return ApiResponse.ok("Family host assigned successfully", accountService.assignFamilyHost(familyId, userId));
+    }
+
+    @PutMapping("/families/{id}/members/{userId}/demote-host")
+    public ApiResponse<FamilyResponse> demoteFamilyHost(
+            @PathVariable("id") Long familyId,
+            @PathVariable("userId") Long userId
+    ) {
+        return ApiResponse.ok("Family host demoted successfully", accountService.demoteFamilyHost(familyId, userId));
+    }
+
     // --- Admin Endpoints for Member Management ---
 
     @PostMapping("/admin/families/{id}/members/invite")
@@ -354,5 +370,23 @@ public class AccountController {
     ) {
         com.mom.common.context.UserContext.setFamilyIds(null); // Bypass family check
         return ApiResponse.ok("Family member updated", accountService.updateMember(familyId, userId, request));
+    }
+
+    @PutMapping("/admin/families/{id}/members/{userId}/host")
+    public ApiResponse<FamilyResponse> assignFamilyHostForAdmin(
+            @PathVariable("id") Long familyId,
+            @PathVariable("userId") Long userId
+    ) {
+        com.mom.common.context.UserContext.setFamilyIds(null); // Bypass family check
+        return ApiResponse.ok("Family host assigned successfully", accountService.assignFamilyHost(familyId, userId));
+    }
+
+    @PutMapping("/admin/families/{id}/members/{userId}/demote-host")
+    public ApiResponse<FamilyResponse> demoteFamilyHostForAdmin(
+            @PathVariable("id") Long familyId,
+            @PathVariable("userId") Long userId
+    ) {
+        com.mom.common.context.UserContext.setFamilyIds(null); // Bypass family check
+        return ApiResponse.ok("Family host demoted successfully", accountService.demoteFamilyHost(familyId, userId));
     }
 }

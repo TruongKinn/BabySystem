@@ -15,6 +15,8 @@ import { NzDividerModule } from 'ng-zorro-antd/divider';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzIconModule } from 'ng-zorro-antd/icon';
 import { AuthService } from '../../auth/auth.service';
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
@@ -32,6 +34,7 @@ interface FamilyMemberApi {
   relation: string;
   parentUserId: number | null;
   dateOfBirth?: string | null;
+  isHost?: boolean;
 }
 
 interface FamilyApi {
@@ -81,7 +84,9 @@ interface UpcomingBirthdayApi {
     NzDividerModule,
     NzTagModule,
     NzSpinModule,
-    NzTabsModule
+    NzTabsModule,
+    NzToolTipModule,
+    NzIconModule
   ],
   templateUrl: './admin-families.component.html',
   styleUrl: './admin-families.component.css'
@@ -659,6 +664,52 @@ export class AdminFamiliesComponent implements OnInit {
         this.message.error(msg);
       }
     });
+  }
+
+  assignHost(member: FamilyMemberApi): void {
+    if (!this.selectedFamily) {
+      return;
+    }
+
+    this.membersLoading = true;
+    this.http
+      .put<ApiEnvelope<FamilyApi>>(`${API_CONFIG.GATEWAY_URL}/account/admin/families/${this.selectedFamily.id}/members/${member.userId}/host`, {})
+      .subscribe({
+        next: (response) => {
+          this.membersLoading = false;
+          this.message.success(this.i18n.translate('momApp.admin.families.messages.assignHostSuccess'));
+          this.refreshSelectedFamily(response.data);
+          this.loadFamilies();
+        },
+        error: (err) => {
+          this.membersLoading = false;
+          const msg = err?.error?.message || 'Không thể chỉ định Chủ hộ';
+          this.message.error(msg);
+        }
+      });
+  }
+
+  demoteHost(member: FamilyMemberApi): void {
+    if (!this.selectedFamily) {
+      return;
+    }
+
+    this.membersLoading = true;
+    this.http
+      .put<ApiEnvelope<FamilyApi>>(`${API_CONFIG.GATEWAY_URL}/account/admin/families/${this.selectedFamily.id}/members/${member.userId}/demote-host`, {})
+      .subscribe({
+        next: (response) => {
+          this.membersLoading = false;
+          this.message.success(this.i18n.translate('momApp.admin.families.messages.demoteHostSuccess'));
+          this.refreshSelectedFamily(response.data);
+          this.loadFamilies();
+        },
+        error: (err) => {
+          this.membersLoading = false;
+          const msg = err?.error?.message || 'Không thể hạ chức danh Chủ hộ';
+          this.message.error(msg);
+        }
+      });
   }
 
   removeMember(member: FamilyMemberApi): void {

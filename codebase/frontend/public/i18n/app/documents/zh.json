@@ -1,0 +1,19 @@
+{
+  "label": "文件描述 / 分类 (例如: 出生证明、医疗)",
+  "placeholderSelect": "选择文件分类 (默认: 档案)",
+  "placeholderCustom": "例如: 出生证明、接种记录本...",
+  "defaultTag": "档案",
+  "addCategoryTitle": "添加新文件分类",
+  "addCategoryLabel": "文件分类名称",
+  "addCategoryPlaceholder": "例如: 买卖合同、车辆证件、发票...",
+  "saveBtn": "保存",
+  "cancelBtn": "取消",
+  "errorRequired": "请输入文件分类名称",
+  "options": {
+    "birthCertificate": "出生证明",
+    "vaccinationRecord": "接种记录本",
+    "medicalRecord": "病历本",
+    "insuranceCard": "保险卡",
+    "other": "其他..."
+  }
+}

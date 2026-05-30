@@ -2011,6 +2011,25 @@
       "errors": {
         "loadBabies": "赤ちゃんのプロフィールを読み込めません。"
       }
+    },
+    "documents": {
+      "label": "ファイルの説明 / 分類 (例: 出生証明、医療)",
+      "placeholderSelect": "ドキュメントカテゴリの選択 (デフォルト: フォルダ)",
+      "placeholderCustom": "例: 出生証明書、予防接種手帳...",
+      "defaultTag": "フォルダ",
+      "addCategoryTitle": "新しいドキュメントカテゴリを追加",
+      "addCategoryLabel": "ドキュメントカテゴリ名",
+      "addCategoryPlaceholder": "例: 売買契約書、車の書類、請求書...",
+      "saveBtn": "保存",
+      "cancelBtn": "キャンセル",
+      "errorRequired": "ドキュメントカテゴリ名を入力してください",
+      "options": {
+        "birthCertificate": "出生証明書",
+        "vaccinationRecord": "予防接種手帳",
+        "medicalRecord": "お薬手帳・診療録",
+        "insuranceCard": "保険証",
+        "other": "その他..."
+      }
     }
   },
   "auth": {

@@ -209,17 +209,17 @@
           [nzShowPagination]="false"
           nzSize="middle"
           nzTableLayout="fixed"
-          [nzScroll]="{ x: '900px' }"
+          [nzScroll]="{ x: '820px' }"
         >
           <thead>
             <tr>
               <th nzWidth="60px">ID</th>
               <th nzWidth="180px">{{ 'momApp.admin.families.modal.displayName' | translate }}</th>
-              <th nzWidth="120px">{{ 'momApp.admin.families.modal.role' | translate }}</th>
-              <th nzWidth="150px">{{ 'momApp.admin.families.modal.relation' | translate }}</th>
-              <th nzWidth="130px">{{ 'momApp.family.modal.birthDateLabel' | translate }}</th>
-              <th nzWidth="130px">{{ 'momApp.admin.families.modal.parent' | translate }}</th>
-              <th nzWidth="150px">{{ 'momApp.admin.families.modal.actions' | translate }}</th>
+              <th nzWidth="110px">{{ 'momApp.admin.families.modal.role' | translate }}</th>
+              <th nzWidth="130px">{{ 'momApp.admin.families.modal.relation' | translate }}</th>
+              <th nzWidth="110px">{{ 'momApp.family.modal.birthDateLabel' | translate }}</th>
+              <th nzWidth="90px">{{ 'momApp.admin.families.modal.parent' | translate }}</th>
+              <th nzWidth="140px">{{ 'momApp.admin.families.modal.actions' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -227,7 +227,12 @@
               <!-- Chế độ Đọc -->
               <ng-container *ngIf="editingMemberId !== member.userId; else editRow">
                 <td>{{ member.userId }}</td>
-                <td><strong>{{ member.displayName }}</strong></td>
+                <td>
+                  <strong>{{ member.displayName }}</strong>
+                  <nz-tag *ngIf="member.isHost" nzColor="warning" style="font-weight: 700; border-radius: 6px; margin-left: 6px;">
+                    {{ 'momApp.admin.families.modal.hostBadge' | translate }}
+                  </nz-tag>
+                </td>
                 <td>
                   <span class="role-badge" [ngClass]="roleClass(member.role)">
                     {{ roleLabel(member.role) }}
@@ -242,20 +247,67 @@
                 </td>
                 <td>
                   <div class="action-buttons">
-                    <button nz-button nzType="default" nzSize="small" (click)="startEditMember(member)">
-                      {{ 'commonActions.edit' | translate }}
+                    <!-- Nút chỉ định Chủ hộ -->
+                    <button
+                      *ngIf="!member.isHost"
+                      nz-button
+                      nzType="default"
+                      nzShape="circle"
+                      nzSize="small"
+                      class="btn-icon-action btn-assign-host"
+                      nz-tooltip
+                      [nzTooltipTitle]="'momApp.admin.families.actions.assignHost' | translate"
+                      nz-popconfirm
+                      [nzPopconfirmTitle]="'momApp.admin.families.actions.assignHostConfirm' | translate"
+                      (nzOnConfirm)="assignHost(member)"
+                    >
+                      <span nz-icon nzType="key"></span>
                     </button>
+                    <!-- Nút hạ Chủ hộ -->
+                    <button
+                      *ngIf="member.isHost"
+                      nz-button
+                      nzType="default"
+                      nzShape="circle"
+                      nzSize="small"
+                      class="btn-icon-action btn-demote-host"
+                      nz-tooltip
+                      [nzTooltipTitle]="'momApp.admin.families.actions.demoteHost' | translate"
+                      nz-popconfirm
+                      [nzPopconfirmTitle]="'momApp.admin.families.actions.demoteHostConfirm' | translate"
+                      (nzOnConfirm)="demoteHost(member)"
+                    >
+                      <span nz-icon nzType="arrow-down"></span>
+                    </button>
+                    <!-- Nút Chỉnh sửa -->
+                    <button
+                      nz-button
+                      nzType="default"
+                      nzShape="circle"
+                      nzSize="small"
+                      class="btn-icon-action btn-edit"
+                      nz-tooltip
+                      [nzTooltipTitle]="'commonActions.edit' | translate"
+                      (click)="startEditMember(member)"
+                    >
+                      <span nz-icon nzType="edit"></span>
+                    </button>
+                    <!-- Nút Xóa -->
                     <button
                       nz-button
                       nzType="default"
                       nzDanger
+                      nzShape="circle"
                       nzSize="small"
+                      class="btn-icon-action btn-delete"
+                      nz-tooltip
+                      [nzTooltipTitle]="'commonActions.delete' | translate"
                       nz-popconfirm
                       [nzPopconfirmTitle]="'momApp.admin.families.actions.removeMemberConfirm' | translate"
                       [nzLoading]="removingMemberId === member.userId"
                       (nzOnConfirm)="removeMember(member)"
                     >
-                      {{ 'commonActions.delete' | translate }}
+                      <span nz-icon nzType="delete"></span>
                     </button>
                   </div>
                 </td>

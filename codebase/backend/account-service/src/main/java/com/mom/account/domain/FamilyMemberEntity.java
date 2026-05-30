@@ -42,4 +42,7 @@ public class FamilyMemberEntity {
 
     @Column(name = "joined_at", nullable = false)
     private OffsetDateTime joinedAt = OffsetDateTime.now();
+
+    @Column(name = "is_host", nullable = false)
+    private Boolean isHost = false;
 }

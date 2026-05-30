@@ -279,7 +279,11 @@
           "createFamily": "Tạo Hộ Gia Đình",
           "manageMembers": "Quản lý thành viên",
           "deleteConfirm": "Bạn có chắc chắn muốn xóa hộ gia đình này không?",
-          "removeMemberConfirm": "Bạn có chắc muốn xóa thành viên này khỏi hộ gia đình?"
+          "removeMemberConfirm": "Bạn có chắc muốn xóa thành viên này khỏi hộ gia đình?",
+          "assignHost": "Chỉ định Chủ hộ",
+          "assignHostConfirm": "Bạn có chắc chắn muốn chỉ định thành viên này làm Chủ hộ không?",
+          "demoteHost": "Hạ chủ hộ",
+          "demoteHostConfirm": "Bạn có chắc chắn muốn hạ thành viên này khỏi vị trí Chủ hộ không?"
         },
         "empty": {
           "title": "Không tìm thấy hộ gia đình nào",
@@ -308,7 +312,8 @@
           "inviteMemberBtn": "Thêm thành viên mới",
           "searchUserPlaceholder": "Nhập Username hoặc Email để tìm kiếm người dùng...",
           "searchUser": "Tìm người dùng",
-          "addMemberBtn": "Thêm vào gia đình"
+          "addMemberBtn": "Thêm vào gia đình",
+          "hostBadge": "CHỦ HỘ"
         },
         "messages": {
           "loadFailed": "Không thể tải danh sách hộ gia đình.",
@@ -327,7 +332,9 @@
           "updateMemberSuccess": "Cập nhật thông tin thành viên thành công!",
           "removeMemberSuccess": "Đã xóa thành viên khỏi hộ gia đình.",
           "allFieldsRequired": "Vui lòng nhập đầy đủ thông tin!",
-          "inviteMemberSuccess": "Thêm thành viên mới thành công!"
+          "inviteMemberSuccess": "Thêm thành viên mới thành công!",
+          "assignHostSuccess": "Đã chỉ định Chủ hộ thành công!",
+          "demoteHostSuccess": "Đã hạ Chủ hộ thành công!"
         }
       },
       "premium": {
@@ -2114,6 +2121,25 @@
       "errors": {
         "loadBabies": "Không thể tải danh sách em bé."
       }
+    },
+    "documents": {
+      "label": "Mô tả tệp tin / Phân loại (Ví dụ: Khai sinh, Y tế)",
+      "placeholderSelect": "Chọn phân loại tài liệu (Mặc định: Hồ sơ)",
+      "placeholderCustom": "Ví dụ: Giấy khai sinh, Sổ tiêm chủng...",
+      "defaultTag": "Hồ sơ",
+      "options": {
+        "birthCertificate": "Giấy khai sinh",
+        "vaccinationRecord": "Sổ tiêm chủng",
+        "medicalRecord": "Sổ khám bệnh",
+        "insuranceCard": "Thẻ bảo hiểm",
+        "other": "Khác..."
+      },
+      "addCategoryTitle": "Thêm Phân loại tài liệu mới",
+      "addCategoryLabel": "Tên phân loại tài liệu",
+      "addCategoryPlaceholder": "Ví dụ: Hợp đồng mua bán, Giấy tờ xe, Hóa đơn...",
+      "saveBtn": "Lưu lại",
+      "cancelBtn": "Hủy bỏ",
+      "errorRequired": "Vui lòng nhập tên phân loại tài liệu"
     }
   },
   "auth": {

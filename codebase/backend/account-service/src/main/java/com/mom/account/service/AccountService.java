@@ -192,6 +192,7 @@ public class AccountService {
         ownerMember.setUserId(creator.getId());
         ownerMember.setRole(FamilyRole.MOM);
         ownerMember.setRelation(FamilyRelation.ME);
+        ownerMember.setIsHost(true); // Mặc định người tạo gia đình là Chủ hộ
         familyMemberRepository.save(ownerMember);
         accountEventPublisher.publishFamilyCreated(new FamilyCreatedPayload(
                 savedFamily.getId(),
@@ -424,6 +425,51 @@ public class AccountService {
     }
 
     @Transactional
+    public FamilyResponse assignFamilyHost(Long familyId, Long userId) {
+        validateFamilyAccessIfContextPresent(familyId);
+        
+        List<FamilyMemberEntity> members = familyMemberRepository.findByFamilyId(familyId);
+        
+        // Kiểm tra xem người dùng có thực sự là thành viên gia đình không
+        FamilyMemberEntity targetMember = members.stream()
+                .filter(m -> m.getUserId().equals(userId))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("User is not a member of this family"));
+        
+        // Đặt isHost = false cho toàn bộ thành viên
+        members.forEach(m -> m.setIsHost(false));
+        
+        // Đặt isHost = true cho thành viên được chỉ định
+        targetMember.setIsHost(true);
+        
+        // Lưu lại tất cả
+        familyMemberRepository.saveAll(members);
+        
+        return getFamily(familyId);
+    }
+
+    @Transactional
+    public FamilyResponse demoteFamilyHost(Long familyId, Long userId) {
+        validateFamilyAccessIfContextPresent(familyId);
+        
+        List<FamilyMemberEntity> members = familyMemberRepository.findByFamilyId(familyId);
+        
+        // Kiểm tra xem người dùng có thực sự là thành viên gia đình không
+        FamilyMemberEntity targetMember = members.stream()
+                .filter(m -> m.getUserId().equals(userId))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("User is not a member of this family"));
+        
+        // Đặt isHost = false cho thành viên được chỉ định
+        targetMember.setIsHost(false);
+        
+        // Lưu lại
+        familyMemberRepository.save(targetMember);
+        
+        return getFamily(familyId);
+    }
+
+    @Transactional
     public FamilyResponse updateMember(Long familyId, Long userId, com.mom.account.controller.dto.UpdateFamilyMemberRequest request) {
         validateFamilyRole(request.role());
         validateFamilyAccessIfContextPresent(familyId);
@@ -478,7 +524,8 @@ public class AccountService {
                             member.getRole(),
                             member.getRelation(),
                             member.getParentUserId(),
-                            dateOfBirth
+                            dateOfBirth,
+                            member.getIsHost()
                     );
                 })
                 .toList();
@@ -691,7 +738,7 @@ public class AccountService {
                         .map(m -> {
                             UserEntity u = userRepository.findById(m.getUserId()).orElse(null);
                             String dName = u != null ? u.getDisplayName() : "Unknown";
-                            return new FamilyMemberResponse(m.getUserId(), dName, m.getRole(), m.getRelation(), m.getParentUserId(), u != null ? u.getDateOfBirth() : null);
+                            return new FamilyMemberResponse(m.getUserId(), dName, m.getRole(), m.getRelation(), m.getParentUserId(), u != null ? u.getDateOfBirth() : null, m.getIsHost());
                         })
                         .toList();
             }

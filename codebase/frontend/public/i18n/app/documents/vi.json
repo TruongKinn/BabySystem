@@ -1,0 +1,19 @@
+{
+  "label": "Mô tả tệp tin / Phân loại (Ví dụ: Khai sinh, Y tế)",
+  "placeholderSelect": "Chọn phân loại tài liệu (Mặc định: Hồ sơ)",
+  "placeholderCustom": "Ví dụ: Giấy khai sinh, Sổ tiêm chủng...",
+  "defaultTag": "Hồ sơ",
+  "addCategoryTitle": "Thêm Phân loại tài liệu mới",
+  "addCategoryLabel": "Tên phân loại tài liệu",
+  "addCategoryPlaceholder": "Ví dụ: Hợp đồng mua bán, Giấy tờ xe, Hóa đơn...",
+  "saveBtn": "Lưu lại",
+  "cancelBtn": "Hủy bỏ",
+  "errorRequired": "Vui lòng nhập tên phân loại tài liệu",
+  "options": {
+    "birthCertificate": "Giấy khai sinh",
+    "vaccinationRecord": "Sổ tiêm chủng",
+    "medicalRecord": "Sổ khám bệnh",
+    "insuranceCard": "Thẻ bảo hiểm",
+    "other": "Khác..."
+  }
+}

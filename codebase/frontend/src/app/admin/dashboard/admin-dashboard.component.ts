@@ -49,6 +49,7 @@ interface ApiEnvelope<T> {
 
 interface FamilyMemberApi {
   userId: number;
+  isHost?: boolean;
 }
 
 interface AdminFamily {

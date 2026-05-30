@@ -131,9 +131,9 @@
             <td style="font-weight: 700; color: #64748b;">#{{ item.id }}</td>
             <td style="font-weight: 700; color: #1e293b;">{{ item.name }}</td>
             <td>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <nz-avatar nzSize="small" nzIcon="user" style="background-color: #6366f1;"></nz-avatar>
-                <span style="font-weight: 500;">{{ item.creatorName }}</span>
+              <div class="table-creator-cell" nz-tooltip [nzTooltipTitle]="item.creatorName">
+                <nz-avatar nzSize="small" nzIcon="user" [nzSrc]="item.creatorAvatarUrl" class="creator-avatar"></nz-avatar>
+                <span class="creator-name">{{ item.creatorName }}</span>
               </div>
             </td>
             <td style="text-align: center;">
@@ -317,7 +317,7 @@
               <div class="admin-proposal-header">
                 <div class="admin-proposal-meta">
                   <span class="admin-proposal-proposer">
-                    <nz-avatar nzSize="small" nzIcon="user" style="background-color: #f59e0b; margin-right: 6px;"></nz-avatar>
+                    <nz-avatar nzSize="small" nzIcon="user" style="background-color: #f59e0b; margin-right: 6px; flex-shrink: 0;"></nz-avatar>
                     <strong>{{ proposal.proposedBy }}</strong>
                   </span>
                   <span class="admin-proposal-date">{{ proposal.createdAt | date:'dd/MM/yyyy HH:mm' }}</span>
