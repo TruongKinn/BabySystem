@@ -2007,8 +2007,18 @@
           "aiCurator": "AI 记忆策展人",
           "timeline": "动态时间线",
           "storybook": "月度回忆册",
-          "privacy": "智能隐私保护"
-        }
+          "privacy": "智能隐私保护",
+          "aiCuratorDesc": "自动从日常护理数据中检测値得纪念的瞬间",
+          "timelineDesc": "记录宝宝成长的点滴，充满情感与记忆",
+          "storybookDesc": "每月自动为每个宝宝生成一本回忆小册",
+          "privacyDesc": "控制谁可以查看家庭的每一份美好回忆"
+        },
+        "trust": {
+          "noRisk": "无需承诺",
+          "private": "数据隐私",
+          "family": "专为家庭设计"
+        },
+        "pending": "等待管理员审批..."
       },
       "empty": {
         "noBaby": "在使用宝贝时光+ 之前，请先创建宝宝档案。",
@@ -2115,7 +2125,9 @@
         "capsuleSuccess": "时光胶囊已封存，静待未来开启。",
         "aiSuggestionSuccess": "精彩瞬间已添加至动态时间线。",
         "deleteSuccess": "里程碑已从时光轨迹中移除。",
-        "premiumWarning": "请在高级版设置中启用宝贝时光+ 以使用此功能。"
+        "premiumWarning": "请在高级版设置中启用宝贝时光+ 以使用此功能。",
+        "requestSuccess": "高级版解锁申请已成功发送给管理员！",
+        "premiumUnlocked": "恭喜！您家庭的宝贝时光+ 高级版功能已成功解锁！"
       },
       "systemEvents": {
         "care": {
@@ -2534,6 +2546,152 @@
         "github": "GitHub",
         "facebook": "Facebook",
         "soon": "即将"
+      }
+    }
+  },
+  "admin": {
+    "premium": {
+      "hero": {
+        "kicker": "高级会员管理",
+        "title": "按家庭配置高级功能",
+        "subtitle": "管理每个家庭的高级功能、积分和变更历史"
+      },
+      "stats": {
+        "households": "总家庭数",
+        "members": "成员数",
+        "enabledFeatures": "已启用功能"
+      },
+      "family": {
+        "selectPlaceholder": "选择家庭...",
+        "selected": "已选家庭",
+        "id": "编号",
+        "members": "成员",
+        "empty": "请选择一个家庭以查看高级功能配置"
+      },
+      "actions": {
+        "refreshConfig": "刷新配置",
+        "save": "保存配置"
+      },
+      "bulk": {
+        "title": "批量应用",
+        "subtitle": "将当前配置复制到其他家庭",
+        "selectPlaceholder": "选择目标家庭...",
+        "apply": "批量应用"
+      },
+      "questPoints": {
+        "title": "积分管理",
+        "subtitle": "发放奖励积分并跟踪家庭的积分历史",
+        "currentPoints": "当前总积分",
+        "currentStreak": "连续天数",
+        "lastClaimDate": "最近领取日期",
+        "pointsLabel": "发放积分数",
+        "reasonLabel": "原因",
+        "reasonPlaceholder": "输入发放积分的原因（可选）...",
+        "grantAction": "发放积分",
+        "historyTitle": "积分发放历史",
+        "historySubtitle": "显示系统分页的任务积分发放历史记录",
+        "historyEmpty": "暂无积分发放历史",
+        "table": {
+          "points": "积分",
+          "reason": "原因",
+          "byUser": "发放者",
+          "grantedAt": "时间"
+        },
+        "messages": {
+          "invalidPoints": "积分必须大于 0",
+          "grantSuccess": "成功发放 {{points}} 积分！",
+          "grantFailed": "发放积分失败，请重试。"
+        }
+      },
+      "entitlements": {
+        "title": "高级功能配置",
+        "subtitle": "管理家庭每项高级功能的访问权限",
+        "statusLabel": "状态",
+        "expiresAtLabel": "到期时间",
+        "reasonLabel": "原因 / 备注",
+        "reasonPlaceholder": "输入原因或备注（最多 300 字符）...",
+        "empty": "暂无高级功能可显示"
+      },
+      "effectiveState": {
+        "enabled": "已启用",
+        "disabled": "已禁用"
+      },
+      "effectiveReason": {
+        "ALLOW": "已允许",
+        "DENY": "已拒绝",
+        "INHERIT": "继承",
+        "EXPIRED": "已过期",
+        "DEFAULT": "默认"
+      },
+      "status": {
+        "ALLOW": "允许",
+        "DENY": "拒绝",
+        "INHERIT": "继承"
+      },
+      "audit": {
+        "title": "高级功能变更历史",
+        "subtitle": "显示最近 20 次家庭高级功能配置变更记录",
+        "empty": "暂无变更历史",
+        "table": {
+          "feature": "功能",
+          "statusChange": "状态变更",
+          "expires": "到期时间变更",
+          "reason": "原因",
+          "byUser": "操作者",
+          "changedAt": "变更时间"
+        }
+      },
+      "messages": {
+        "loadFamiliesFailed": "无法加载家庭列表",
+        "loadConfigFailed": "无法加载高级功能配置",
+        "saveSuccess": "高级功能配置保存成功！",
+        "saveFailed": "保存配置失败，请重试。",
+        "bulkTargetRequired": "请至少选择一个目标家庭",
+        "bulkApplySuccess": "已成功应用到 {{count}} 个家庭！",
+        "bulkApplyPartial": "已应用到 {{success}} 个家庭，失败：{{failed}}",
+        "bulkApplyFailed": "批量应用失败，请重试。"
+      },
+      "features": {
+        "advanced_growth_tracking": {
+          "name": "高级生长追踪",
+          "description": "生长百分比分析、趋势变化与深层儿科见解"
+        },
+        "smart_reminders": {
+          "name": "智能提醒",
+          "description": "自动提醒疫苗接种、健康检查和重要发育里程碑"
+        },
+        "ai_care_assistant": {
+          "name": "AI 护理助手",
+          "description": "基于宝宝日志和行为模式提供个性化护理建议"
+        },
+        "premium_reports": {
+          "name": "高级报告",
+          "description": "按成长阶段提供宝宝健康、发育和活动的详细报告"
+        },
+        "family_collaboration_plus": {
+          "name": "家庭协作 Plus",
+          "description": "支持多位家庭成员共同监测和照料宝宝"
+        },
+        "baby_journey_plus": {
+          "name": "宝宝旅程+",
+          "description": "记忆 DNA、AI 精选里程碑、时间舩和每月家庭故事书"
+        },
+        "medical_vault_export": {
+          "name": "医疗记录导出",
+          "description": "以 PDF 或 CSV 格式导出完整健康档案和病历"
+        },
+        "unlimited_memory": {
+          "name": "无限存储",
+          "description": "无限存储宝宝的照片、视频和美好回忆"
+        },
+        "currency_exchange": {
+          "name": "货币兑换",
+          "description": "自动从越南外贸领取实时汇率并将外币支出换算为越南盾"
+        },
+        "theme_customization": {
+          "name": "主题定制",
+          "description": "根据个人喜好自定义应用颜色、主题和界面"
+        }
       }
     }
   }

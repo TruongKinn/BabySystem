@@ -5,6 +5,7 @@ import SockJS from 'sockjs-client';
 import { Subject, Observable } from 'rxjs';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 import { SuperAppCommandService } from './super-app-command.service';
+import { AuthService } from '../../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +17,8 @@ export class NotificationWebsocketService implements OnDestroy {
 
   constructor(
     @Inject(PLATFORM_ID) private platformId: Object,
-    private commandService: SuperAppCommandService
+    private commandService: SuperAppCommandService,
+    private authService: AuthService
   ) {}
 
   public connect(): void {
@@ -59,6 +61,21 @@ export class NotificationWebsocketService implements OnDestroy {
           }
         }
       });
+
+      // Nếu là Admin, subscribe thêm topic của hệ thống (userId = null)
+      if (this.authService.isAdminUser()) {
+        const adminDestination = `/topic/notifications/user/null`;
+        this.client?.subscribe(adminDestination, (message: IMessage) => {
+          if (message.body) {
+            try {
+              const notification = JSON.parse(message.body);
+              this.notificationSubject.next(notification);
+            } catch (e) {
+              console.error('Failed to parse WebSocket message for Admin', e);
+            }
+          }
+        });
+      }
     };
 
     this.client.onStompError = (frame) => {

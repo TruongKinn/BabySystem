@@ -28,11 +28,21 @@
     "title": "Baby Journey+ is locked",
     "description": "This is a signature feature of BabySystem: AI Curator automatically detects memorable moments, creating a Living Timeline, Time Capsule, and Monthly Storybook for each baby.",
     "unlock": "Unlock Premium",
+    "pending": "Waiting for Admin approval...",
     "features": {
       "aiCurator": "AI Memory Curator",
+      "aiCuratorDesc": "Auto-detects memorable moments from daily care data",
       "timeline": "Living Timeline",
+      "timelineDesc": "Records your baby's journey with full emotions and memories",
       "storybook": "Monthly Storybook",
-      "privacy": "Smart Privacy"
+      "storybookDesc": "Automatically generates a memory book each month for each baby",
+      "privacy": "Smart Privacy",
+      "privacyDesc": "Control who can view each family memory"
+    },
+    "trust": {
+      "noRisk": "No commitment",
+      "private": "Private data",
+      "family": "For families"
     }
   },
   "empty": {
@@ -140,7 +150,9 @@
     "capsuleSuccess": "Time Capsule locked for the future.",
     "aiSuggestionSuccess": "Moment added to the Living Timeline.",
     "deleteSuccess": "Milestone removed from Journey.",
-    "premiumWarning": "Please enable Baby Journey+ in Premium Settings to use this feature."
+    "premiumWarning": "Please enable Baby Journey+ in Premium Settings to use this feature.",
+    "requestSuccess": "Premium unlock request has been sent to Admin successfully!",
+    "premiumUnlocked": "Congratulations! Premium Baby Journey+ has been unlocked for your family!"
   },
   "systemEvents": {
     "care": {

@@ -28,11 +28,21 @@
     "title": "宝贝时光+ 已被锁定",
     "description": "这是 BabySystem 的招牌功能：AI 策展人自动检测值得纪念的瞬间，为每个宝宝创建动态时间线、时光胶囊以及月度回忆册。",
     "unlock": "解锁高级版",
+    "pending": "等待管理员审批...",
     "features": {
       "aiCurator": "AI 记忆策展人",
+      "aiCuratorDesc": "自动从日常护理数据中检测値得纪念的瞬间",
       "timeline": "动态时间线",
+      "timelineDesc": "记录宝宝成长的点滴，充满情感与记忆",
       "storybook": "月度回忆册",
-      "privacy": "智能隐私保护"
+      "storybookDesc": "每月自动为每个宝宝生成一本回忆小册",
+      "privacy": "智能隐私保护",
+      "privacyDesc": "控制谁可以查看家庭的每一份美好回忆"
+    },
+    "trust": {
+      "noRisk": "无需承诺",
+      "private": "数据隐私",
+      "family": "专为家庭设计"
     }
   },
   "empty": {
@@ -140,7 +150,9 @@
     "capsuleSuccess": "时光胶囊已封存，静待未来开启。",
     "aiSuggestionSuccess": "精彩瞬间已添加至动态时间线。",
     "deleteSuccess": "里程碑已从时光轨迹中移除。",
-    "premiumWarning": "请在高级版设置中启用宝贝时光+ 以使用此功能。"
+    "premiumWarning": "请在高级版设置中启用宝贝时光+ 以使用此功能。",
+    "requestSuccess": "高级版解锁申请已成功发送给管理员！",
+    "premiumUnlocked": "恭喜！您家庭的宝贝时光+ 高级版功能已成功解锁！"
   },
   "systemEvents": {
     "care": {

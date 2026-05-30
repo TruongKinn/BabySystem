@@ -28,11 +28,21 @@
     "title": "Baby Journey+ đang bị khóa",
     "description": "Đây là tính năng thương hiệu của BabySystem: AI Curator tự động phát hiện khoảnh khắc đáng nhớ, tạo Dòng thời gian sống, Hộp thư tương lai và Storybook tháng cho từng bé.",
     "unlock": "Mở khóa Premium",
+    "pending": "Đang chờ Admin duyệt...",
     "features": {
       "aiCurator": "AI Memory Curator",
+      "aiCuratorDesc": "Tự động phát hiện khoảnh khắc đáng nhớ từ dữ liệu chăm sóc hàng ngày",
       "timeline": "Dòng thời gian sống",
+      "timelineDesc": "Ghi lại hành trình bé lớn khôn với đầy đủ cảm xúc và ký ức",
       "storybook": "Storybook tháng",
-      "privacy": "Quyền riêng tư thông minh"
+      "storybookDesc": "Tự động tạo cuốn sách ký ức mỗi tháng cho từng bé",
+      "privacy": "Quyền riêng tư thông minh",
+      "privacyDesc": "Kiểm soát ai được xem từng kỷ niệm của gia đình"
+    },
+    "trust": {
+      "noRisk": "Không ràng buộc",
+      "private": "Dữ liệu riêng tư",
+      "family": "Dành cho gia đình"
     }
   },
   "empty": {
@@ -140,7 +150,9 @@
     "capsuleSuccess": "Đã khóa Time Capsule cho tương lai.",
     "aiSuggestionSuccess": "Khoảnh khắc này đã được đưa vào Living Timeline.",
     "deleteSuccess": "Đã xóa cột mốc khỏi Journey.",
-    "premiumWarning": "Cần bật Baby Journey+ trong Admin Premium để sử dụng tính năng này."
+    "premiumWarning": "Cần bật Baby Journey+ trong Admin Premium để sử dụng tính năng này.",
+    "requestSuccess": "Yêu cầu kích hoạt Premium đã được gửi tới Admin thành công!",
+    "premiumUnlocked": "Chúc mừng! Chức năng Premium Baby Journey+ đã được kích hoạt thành công cho gia đình của bạn!"
   },
   "systemEvents": {
     "care": {

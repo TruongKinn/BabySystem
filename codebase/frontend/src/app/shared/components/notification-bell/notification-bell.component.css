@@ -728,22 +728,23 @@
 }
 
 .nd-modal-action-btn {
-  padding: 8px 20px;
-  font-size: 13.5px;
+  padding: 6px 16px;
+  font-size: 12.5px;
   font-weight: 600;
   font-family: 'Inter', sans-serif;
   color: #fff;
   background: linear-gradient(135deg, #1890ff 0%, #0050b3 100%);
   border: none;
-  border-radius: 10px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.25);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  box-shadow: 0 2px 6px rgba(24, 144, 255, 0.2);
+  white-space: nowrap;
 }
 
 .nd-modal-action-btn:hover {
   transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(24, 144, 255, 0.35);
+  box-shadow: 0 4px 10px rgba(24, 144, 255, 0.3);
 }
 
 .nd-modal-action-btn:active {
@@ -800,11 +801,11 @@
 
 :host-context(.dark-theme) .nd-modal-action-btn {
   background: linear-gradient(135deg, #38bdf8 0%, #0369a1 100%);
-  box-shadow: 0 4px 12px rgba(56, 189, 248, 0.25);
+  box-shadow: 0 2px 6px rgba(56, 189, 248, 0.2);
 }
 
 :host-context(.dark-theme) .nd-modal-action-btn:hover {
-  box-shadow: 0 6px 16px rgba(56, 189, 248, 0.35);
+  box-shadow: 0 4px 10px rgba(56, 189, 248, 0.3);
 }
 
 /* ---- Responsive (Modal) --------------------------------- */
@@ -840,4 +841,86 @@
   .nd-modal-action-btn {
     width: 100%;
   }
+}
+
+/* -- Approve / Reject Buttons ------------------------------ */
+.nd-btn-approve {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  color: #ffffff;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+}
+
+.nd-btn-approve:hover:not([disabled]) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
+  background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.nd-btn-approve:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.nd-btn-reject {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  font-size: 12.5px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.06);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.nd-btn-reject:hover:not([disabled]) {
+  background: rgba(239, 68, 68, 0.12);
+  border-color: #ef4444;
+  transform: translateY(-1px);
+}
+
+.nd-btn-reject:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-spinner {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #ffffff;
+  animation: btnSpin 0.8s linear infinite;
+}
+
+@keyframes btnSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* -- Dark Theme (Approve/Reject) --------------------------- */
+:host-context(.dark-theme) .nd-btn-reject {
+  color: #f87171;
+  border-color: rgba(248, 113, 113, 0.25);
+}
+
+:host-context(.dark-theme) .nd-btn-reject:hover:not([disabled]) {
+  background: rgba(248, 113, 113, 0.08);
+  border-color: #f87171;
 }

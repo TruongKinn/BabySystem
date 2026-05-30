@@ -1838,7 +1838,21 @@
           "password": {
             "title": "Mật khẩu",
             "subtitle": "Thay đổi mật khẩu định kỳ để bảo vệ tài khoản",
-            "status": "Được bảo vệ"
+            "status": "Được bảo vệ",
+            "changeBtn": "Thay đổi",
+            "oldPasswordLabel": "Mật khẩu cũ",
+            "oldPasswordPlaceholder": "Nhập mật khẩu cũ của bạn",
+            "oldPasswordError": "Vui lòng nhập mật khẩu cũ",
+            "newPasswordLabel": "Mật khẩu mới",
+            "newPasswordPlaceholder": "Nhập mật khẩu mới",
+            "newPasswordError": "Mật khẩu phải từ 8-20 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt",
+            "confirmPasswordLabel": "Xác nhận mật khẩu mới",
+            "confirmPasswordPlaceholder": "Nhập lại mật khẩu mới",
+            "confirmRequired": "Vui lòng xác nhận mật khẩu mới của bạn",
+            "confirmMismatch": "Xác nhận mật khẩu mới không khớp",
+            "submit": "Cập nhật mật khẩu",
+            "successTitle": "Thay đổi mật khẩu thành công!",
+            "changeErrorFallback": "Thay đổi mật khẩu thất bại!"
           },
           "session": {
             "title": "Phiên đăng nhập",
@@ -1856,7 +1870,19 @@
         "enabled": "Đã kích hoạt",
         "disabled": "Chưa kích hoạt",
         "empty": "Cấu hình Premium hiện chưa khả dụng.",
-        "expiresAt": "Hạn dùng đến"
+        "expiresAt": "Hạn dùng đến",
+        "featureLabels": {
+          "advanced_growth_tracking": "Theo dõi tăng trưởng nâng cao",
+          "smart_reminders": "Nhắc việc thông minh",
+          "ai_care_assistant": "Trợ lý chăm sóc AI",
+          "premium_reports": "Báo cáo Premium",
+          "family_collaboration_plus": "Cộng tác gia đình Plus",
+          "baby_journey_plus": "Baby Journey+",
+          "medical_vault_export": "Xuất hồ sơ y tế",
+          "unlimited_memory": "Bộ nhớ không giới hạn",
+          "currency_exchange": "Chuyển đổi tiền tệ",
+          "theme_customization": "Tùy biến giao diện"
+        }
       },
       "familyTree": {
         "title": "Cây gia đình",
@@ -2051,8 +2077,18 @@
           "aiCurator": "AI Memory Curator",
           "timeline": "Dòng thời gian sống",
           "storybook": "Storybook tháng",
-          "privacy": "Quyền riêng tư thông minh"
-        }
+          "privacy": "Quyền riêng tư thông minh",
+          "aiCuratorDesc": "Tự động phát hiện khoảnh khắc đáng nhớ từ dữ liệu chăm sóc hàng ngày",
+          "timelineDesc": "Ghi lại hành trình bé lớn khôn với đầy đủ cảm xúc và ký ức",
+          "storybookDesc": "Tự động tạo cuốn sách ký ức mỗi tháng cho từng bé",
+          "privacyDesc": "Kiểm soát ai được xem từng kỷ niệm của gia đình"
+        },
+        "trust": {
+          "noRisk": "Không ràng buộc",
+          "private": "Dữ liệu riêng tư",
+          "family": "Dành cho gia đình"
+        },
+        "pending": "Đang chờ Admin duyệt..."
       },
       "empty": {
         "noBaby": "Cần tạo hồ sơ em bé trước khi dùng Baby Journey+.",
@@ -2159,7 +2195,9 @@
         "capsuleSuccess": "Đã khóa Time Capsule cho tương lai.",
         "aiSuggestionSuccess": "Khoảnh khắc này đã được đưa vào Living Timeline.",
         "deleteSuccess": "Đã xóa cột mốc khỏi Journey.",
-        "premiumWarning": "Cần bật Baby Journey+ trong Admin Premium để sử dụng tính năng này."
+        "premiumWarning": "Cần bật Baby Journey+ trong Admin Premium để sử dụng tính năng này.",
+        "requestSuccess": "Yêu cầu kích hoạt Premium đã được gửi tới Admin thành công!",
+        "premiumUnlocked": "Chúc mừng! Chức năng Premium Baby Journey+ đã được kích hoạt thành công cho gia đình của bạn!"
       },
       "systemEvents": {
         "care": {
@@ -2513,6 +2551,152 @@
         "github": "GitHub",
         "facebook": "Facebook",
         "soon": "Sắp có"
+      }
+    }
+  },
+  "admin": {
+    "premium": {
+      "hero": {
+        "kicker": "Quản lý gói Premium",
+        "title": "Cấu hình Premium theo Hộ gia đình",
+        "subtitle": "Kiểm soát tính năng Premium, điểm Quest và lịch sử thay đổi cho từng gia đình"
+      },
+      "stats": {
+        "households": "Tổng hộ gia đình",
+        "members": "Thành viên",
+        "enabledFeatures": "Tính năng đang bật"
+      },
+      "family": {
+        "selectPlaceholder": "Chọn hộ gia đình...",
+        "selected": "Gia đình đang chọn",
+        "id": "Mã số",
+        "members": "Thành viên",
+        "empty": "Vui lòng chọn một hộ gia đình để xem cấu hình Premium"
+      },
+      "actions": {
+        "refreshConfig": "Làm mới cấu hình",
+        "save": "Lưu cấu hình"
+      },
+      "bulk": {
+        "title": "Áp dụng hàng loạt",
+        "subtitle": "Sao chép cấu hình hiện tại sang các hộ gia đình khác",
+        "selectPlaceholder": "Chọn hộ gia đình đích...",
+        "apply": "Áp dụng hàng loạt"
+      },
+      "questPoints": {
+        "title": "Quản lý điểm Quest",
+        "subtitle": "Cấp điểm thưởng và theo dõi lịch sử nhận điểm của gia đình",
+        "currentPoints": "Tổng điểm hiện tại",
+        "currentStreak": "Chuỗi ngày liên tiếp",
+        "lastClaimDate": "Lần nhận điểm gần nhất",
+        "pointsLabel": "Số điểm cần cấp",
+        "reasonLabel": "Lý do",
+        "reasonPlaceholder": "Nhập lý do cấp điểm (tùy chọn)...",
+        "grantAction": "Cấp điểm",
+        "historyTitle": "Lịch sử cấp điểm",
+        "historySubtitle": "Hiển thị lịch sử cấp điểm Quest có phân trang từ hệ thống",
+        "historyEmpty": "Chưa có lịch sử cấp điểm nào",
+        "table": {
+          "points": "Điểm",
+          "reason": "Lý do",
+          "byUser": "Cấp bởi",
+          "grantedAt": "Thời gian"
+        },
+        "messages": {
+          "invalidPoints": "Số điểm phải lớn hơn 0",
+          "grantSuccess": "Đã cấp {{points}} điểm thành công!",
+          "grantFailed": "Cấp điểm thất bại. Vui lòng thử lại."
+        }
+      },
+      "entitlements": {
+        "title": "Cấu hình tính năng Premium",
+        "subtitle": "Quản lý quyền truy cập từng tính năng Premium của hộ gia đình",
+        "statusLabel": "Trạng thái",
+        "expiresAtLabel": "Hết hạn vào",
+        "reasonLabel": "Lý do / Ghi chú",
+        "reasonPlaceholder": "Nhập lý do hoặc ghi chú (tối đa 300 ký tự)...",
+        "empty": "Không có tính năng Premium nào để hiển thị"
+      },
+      "effectiveState": {
+        "enabled": "Đang bật",
+        "disabled": "Đang tắt"
+      },
+      "effectiveReason": {
+        "ALLOW": "Được phép",
+        "DENY": "Bị từ chối",
+        "INHERIT": "Kế thừa",
+        "EXPIRED": "Hết hạn",
+        "DEFAULT": "Mặc định"
+      },
+      "status": {
+        "ALLOW": "Cho phép",
+        "DENY": "Từ chối",
+        "INHERIT": "Kế thừa"
+      },
+      "audit": {
+        "title": "Lịch sử thay đổi Premium",
+        "subtitle": "Hiển thị tối đa 20 thay đổi gần nhất về cấu hình tính năng Premium của gia đình",
+        "empty": "Chưa có lịch sử thay đổi nào",
+        "table": {
+          "feature": "Tính năng",
+          "statusChange": "Thay đổi trạng thái",
+          "expires": "Thay đổi hết hạn",
+          "reason": "Lý do",
+          "byUser": "Thực hiện bởi",
+          "changedAt": "Thời gian thay đổi"
+        }
+      },
+      "messages": {
+        "loadFamiliesFailed": "Không thể tải danh sách hộ gia đình",
+        "loadConfigFailed": "Không thể tải cấu hình Premium",
+        "saveSuccess": "Đã lưu cấu hình Premium thành công!",
+        "saveFailed": "Lưu cấu hình thất bại. Vui lòng thử lại.",
+        "bulkTargetRequired": "Vui lòng chọn ít nhất một gia đình đích",
+        "bulkApplySuccess": "Đã áp dụng thành công cho {{count}} hộ gia đình!",
+        "bulkApplyPartial": "Đã áp dụng cho {{success}} hộ gia đình. Thất bại: {{failed}}",
+        "bulkApplyFailed": "Áp dụng hàng loạt thất bại. Vui lòng thử lại."
+      },
+      "features": {
+        "advanced_growth_tracking": {
+          "name": "Theo dõi tăng trưởng nâng cao",
+          "description": "Phân tích phần trăm tăng trưởng, xu hướng thay đổi và thông tin nhi khoa chuyên sâu"
+        },
+        "smart_reminders": {
+          "name": "Nhắc việc thông minh",
+          "description": "Tự động nhắc lịch tiêm chủng, khám sức khỏe và các mốc phát triển quan trọng"
+        },
+        "ai_care_assistant": {
+          "name": "Trợ lý chăm sóc AI",
+          "description": "Gợi ý chăm sóc cá nhân hóa dựa trên nhật ký và hành vi của bé"
+        },
+        "premium_reports": {
+          "name": "Báo cáo Premium",
+          "description": "Báo cáo chi tiết về sức khỏe, phát triển và hoạt động của bé theo từng giai đoạn"
+        },
+        "family_collaboration_plus": {
+          "name": "Cộng tác gia đình Plus",
+          "description": "Cho phép nhiều thành viên gia đình cùng theo dõi và chăm sóc bé"
+        },
+        "baby_journey_plus": {
+          "name": "Baby Journey+",
+          "description": "DNA ký ức, mốc phát triển do AI tuyển chọn, Nang thời gian và Sách câu chuyện gia đình hàng tháng"
+        },
+        "medical_vault_export": {
+          "name": "Xuất hồ sơ y tế",
+          "description": "Xuất toàn bộ hồ sơ sức khỏe và lịch sử y tế dưới dạng PDF hoặc CSV"
+        },
+        "unlimited_memory": {
+          "name": "Bộ nhớ không giới hạn",
+          "description": "Lưu trữ không giới hạn ảnh, video và kỷ niệm của bé"
+        },
+        "currency_exchange": {
+          "name": "Chuyển đổi tiền tệ",
+          "description": "Tự động lấy tỷ giá ngoại tệ trực tiếp từ Vietcombank và quy đổi chi phí sang VND"
+        },
+        "theme_customization": {
+          "name": "Tùy biến giao diện",
+          "description": "Tùy chỉnh màu sắc, theme và giao diện ứng dụng theo sở thích cá nhân"
+        }
       }
     }
   }

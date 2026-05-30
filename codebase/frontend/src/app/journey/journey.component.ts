@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { Subject, forkJoin, of } from 'rxjs';
 import { catchError, takeUntil } from 'rxjs/operators';
 import { NzButtonModule } from 'ng-zorro-antd/button';
@@ -31,6 +30,7 @@ import {
   SuperAppCommandService
 } from '../core/services/super-app-command.service';
 import { I18nService } from '../i18n/i18n.service';
+import { NotificationWebsocketService } from '../core/services/notification-websocket.service';
 
 type JourneyEventType = 'CARE' | 'GROWTH' | 'HEALTH' | 'FAMILY' | 'MEMORY' | 'CAPSULE';
 type JourneyEventSource = 'SYSTEM' | 'MANUAL' | 'AI' | 'CAPSULE';
@@ -101,7 +101,6 @@ interface JourneyTypeConfig {
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterLink,
     TranslateModule,
     NzButtonModule,
     NzCardModule,
@@ -125,6 +124,10 @@ export class JourneyComponent implements OnInit, OnDestroy {
   private readonly command = inject(SuperAppCommandService);
   private readonly notification = inject(NzNotificationService);
   private readonly i18n = inject(I18nService);
+  private readonly wsService = inject(NotificationWebsocketService);
+
+  isSubmittingRequest = false;
+  isRequestPending = false;
 
   private readonly destroy$ = new Subject<void>();
   private readonly journeyFeatureKey = PREMIUM_FEATURE_KEYS.babyJourneyPlus;
@@ -189,6 +192,34 @@ export class JourneyComponent implements OnInit, OnDestroy {
           this.rebuildJourneyState();
         }
       });
+
+    this.wsService.notifications$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((notification) => {
+        try {
+          const meta = notification.metadataJson ? JSON.parse(notification.metadataJson) : null;
+          const familyId = this.command.getFamilyId();
+          if (meta && meta.featureKey === this.journeyFeatureKey && Number(meta.familyId) === Number(familyId)) {
+            if (meta.requestType === 'PREMIUM_APPROVED') {
+              this.isRequestPending = false;
+              if (typeof window !== 'undefined') {
+                window.localStorage.removeItem('premium_request_pending_' + familyId);
+              }
+              this.notification.success('Journey+ Premium', this.i18n.translate('app.journey.notifications.premiumUnlocked'));
+              this.loadWorkspace();
+            } else if (meta.requestType === 'PREMIUM_REJECTED') {
+              this.isRequestPending = false;
+              if (typeof window !== 'undefined') {
+                window.localStorage.removeItem('premium_request_pending_' + familyId);
+              }
+              this.notification.warning('Premium Request', 'Yêu cầu mở khóa Premium Baby Journey+ đã bị từ chối bởi Admin.');
+              this.loadWorkspace();
+            }
+          }
+        } catch (e) {
+          // ignore
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -241,6 +272,11 @@ export class JourneyComponent implements OnInit, OnDestroy {
     this.isLoading = true;
     this.loadError = null;
 
+    const familyId = this.command.getFamilyId();
+    if (typeof window !== 'undefined') {
+      this.isRequestPending = window.localStorage.getItem('premium_request_pending_' + familyId) === 'true';
+    }
+
     forkJoin({
       features: this.command.getResolvedFamilyFeatures().pipe(catchError(() => of([] as ResolvedPremiumFeature[]))),
       babies: this.command.getBabies().pipe(
@@ -279,6 +315,38 @@ export class JourneyComponent implements OnInit, OnDestroy {
       return;
     }
     this.loadBabyContext(babyId);
+  }
+
+  requestPremiumUnlock(): void {
+    const familyId = this.command.getFamilyId();
+    const userId = this.command.getUserId();
+
+    this.isSubmittingRequest = true;
+    this.command.createNotification({
+      userId: null,
+      title: 'Yêu cầu mở khóa Premium Baby Journey+',
+      message: `Hộ gia đình #${familyId} (Bé ${this.selectedBaby?.name || ''}) yêu cầu kích hoạt chức năng Premium Baby Journey+.`,
+      type: 'INFO',
+      metadataJson: JSON.stringify({
+        familyId,
+        featureKey: this.journeyFeatureKey,
+        requestUserId: userId,
+        requestType: 'PREMIUM_REQUEST'
+      })
+    }).subscribe({
+      next: () => {
+        this.isSubmittingRequest = false;
+        this.isRequestPending = true;
+        if (typeof window !== 'undefined') {
+          window.localStorage.setItem('premium_request_pending_' + familyId, 'true');
+        }
+        this.notification.info('Premium Request', this.i18n.translate('app.journey.notifications.requestSuccess'));
+      },
+      error: (err) => {
+        this.isSubmittingRequest = false;
+        this.notification.error('Error', err?.message || 'Không thể gửi yêu cầu phê duyệt.');
+      }
+    });
   }
 
   openCreateMemoryModal(): void {

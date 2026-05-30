@@ -140,12 +140,18 @@ export class AdminPremiumComponent implements OnInit {
   questGrantPointsInput = 100;
   questGrantReasonInput = '';
 
-  /**
-   * Trạng thái hiển thị của Modal Lịch sử Thay đổi Premium (Premium Audit Log).
-   * Được thiết kế theo chuẩn giao diện admin cao cấp (admin-role-modal) rộng 1200px
-   * giúp hiển thị tối ưu các cột dữ liệu lịch sử thay đổi entitlement.
-   */
   isAuditModalVisible = false;
+
+  /**
+   * Trạng thái hiển thị của Modal Lịch sử Cấp điểm (Quest Point Grants Log).
+   * Hỗ trợ phân trang trực tiếp từ Backend để tối ưu hiệu năng.
+   */
+  isQuestGrantsModalVisible = false;
+  questGrantsList: FamilyQuestPointGrantLogApi[] = [];
+  questGrantsPage = 0;
+  questGrantsSize = 10;
+  questGrantsTotal = 0;
+  questGrantsLoading = false;
 
   readonly entitlementStatuses: PremiumEntitlementStatus[] = ['INHERIT', 'ALLOW', 'DENY'];
 
@@ -166,6 +172,104 @@ export class AdminPremiumComponent implements OnInit {
    */
   closeAuditModal(): void {
     this.isAuditModalVisible = false;
+  }
+
+  /**
+   * Mở Modal Lịch sử Cấp điểm Quest.
+   */
+  openQuestGrantsModal(): void {
+    if (!this.selectedFamilyId) {
+      return;
+    }
+    this.isQuestGrantsModalVisible = true;
+    this.questGrantsPage = 0;
+    this.loadQuestGrantsPage();
+  }
+
+  /**
+   * Đóng Modal Lịch sử Cấp điểm Quest.
+   */
+  closeQuestGrantsModal(): void {
+    this.isQuestGrantsModalVisible = false;
+  }
+
+  /**
+   * Tải trang Lịch sử Cấp điểm Quest từ Backend (BE).
+   */
+  loadQuestGrantsPage(): void {
+    if (!this.selectedFamilyId) {
+      return;
+    }
+    this.questGrantsLoading = true;
+    const url = `${API_CONFIG.GATEWAY_URL}/account/admin/families/${this.selectedFamilyId}/quest-points/grants/page?page=${this.questGrantsPage}&size=${this.questGrantsSize}`;
+    this.http.get<ApiEnvelope<{ page: number; size: number; total: number; items: FamilyQuestPointGrantLogApi[] }>>(url).subscribe({
+      next: (response) => {
+        this.questGrantsLoading = false;
+        const pageResponse = response.data;
+        this.questGrantsList = pageResponse?.items ?? [];
+        this.questGrantsTotal = pageResponse?.total ?? 0;
+
+        // Tải thêm thông tin tài khoản của người thực hiện cấp điểm
+        const actorIds = [...new Set(this.questGrantsList.map((row) => row.grantedByUserId))].filter(
+          (id): id is number => !!id && id > 0
+        );
+        if (actorIds.length > 0) {
+          this.loadAdditionalActorUsers(actorIds);
+        }
+      },
+      error: () => {
+        this.questGrantsLoading = false;
+        this.questGrantsList = [];
+        this.questGrantsTotal = 0;
+        this.message.error(this.i18n.translate('admin.premium.questPoints.messages.loadFailed'));
+      }
+    });
+  }
+
+  /**
+   * Tải thêm thông tin người dùng nếu chưa có sẵn trong cache
+   */
+  private loadAdditionalActorUsers(actorIds: number[]): void {
+    const missingIds = actorIds.filter((id) => !this.auditUsersById[id]);
+    if (missingIds.length === 0) {
+      return;
+    }
+
+    forkJoin(
+      missingIds.map((userId) =>
+        this.http
+          .get<ApiEnvelope<AccountUserApi>>(`${API_CONFIG.GATEWAY_URL}/account/users/${userId}`)
+          .pipe(
+            map((response) => response.data),
+            catchError(() => of(null))
+          )
+      )
+    ).subscribe((users) => {
+      const updated = { ...this.auditUsersById };
+      for (const user of users) {
+        if (user?.id) {
+          updated[user.id] = user;
+        }
+      }
+      this.auditUsersById = updated;
+    });
+  }
+
+  /**
+   * Xử lý thay đổi số trang trong nz-table.
+   */
+  onQuestGrantsPageChange(pageIndex: number): void {
+    this.questGrantsPage = pageIndex - 1;
+    this.loadQuestGrantsPage();
+  }
+
+  /**
+   * Xử lý thay đổi kích thước trang trong nz-table.
+   */
+  onQuestGrantsSizeChange(pageSize: number): void {
+    this.questGrantsSize = pageSize;
+    this.questGrantsPage = 0;
+    this.loadQuestGrantsPage();
   }
 
   get selectedFamily(): FamilyOption | null {
@@ -236,7 +340,7 @@ export class AdminPremiumComponent implements OnInit {
         this.families = [];
         this.selectedFamilyId = null;
         this.clearPremiumData();
-        this.message.error(this.i18n.translate('momApp.admin.premium.messages.loadFamiliesFailed'));
+        this.message.error(this.i18n.translate('admin.premium.messages.loadFamiliesFailed'));
       }
     });
   }
@@ -265,7 +369,7 @@ export class AdminPremiumComponent implements OnInit {
 
     const points = Math.trunc(Number(this.questGrantPointsInput));
     if (!Number.isFinite(points) || points <= 0) {
-      this.message.warning(this.i18n.translate('momApp.admin.premium.questPoints.messages.invalidPoints'));
+      this.message.warning(this.i18n.translate('admin.premium.questPoints.messages.invalidPoints'));
       return;
     }
 
@@ -282,12 +386,16 @@ export class AdminPremiumComponent implements OnInit {
         next: () => {
           this.questPointsGranting = false;
           this.questGrantReasonInput = '';
-          this.message.success(this.i18n.translate('momApp.admin.premium.questPoints.messages.grantSuccess', { points }));
+          this.message.success(this.i18n.translate('admin.premium.questPoints.messages.grantSuccess', { points }));
           this.loadPremiumConfig(this.selectedFamilyId!);
+          if (this.isQuestGrantsModalVisible) {
+            this.questGrantsPage = 0;
+            this.loadQuestGrantsPage();
+          }
         },
         error: (err) => {
           this.questPointsGranting = false;
-          const fallback = this.i18n.translate('momApp.admin.premium.questPoints.messages.grantFailed');
+          const fallback = this.i18n.translate('admin.premium.questPoints.messages.grantFailed');
           this.message.error(err?.error?.message || fallback);
         }
       });
@@ -309,12 +417,12 @@ export class AdminPremiumComponent implements OnInit {
       .subscribe({
         next: () => {
           this.premiumSaving = false;
-          this.message.success(this.i18n.translate('momApp.admin.premium.messages.saveSuccess'));
+          this.message.success(this.i18n.translate('admin.premium.messages.saveSuccess'));
           this.loadPremiumConfig(this.selectedFamilyId!);
         },
         error: (err) => {
           this.premiumSaving = false;
-          const fallback = this.i18n.translate('momApp.admin.premium.messages.saveFailed');
+          const fallback = this.i18n.translate('admin.premium.messages.saveFailed');
           this.message.error(err?.error?.message || fallback);
         }
       });
@@ -331,7 +439,7 @@ export class AdminPremiumComponent implements OnInit {
       .sort((left, right) => left - right);
 
     if (targetFamilyIds.length === 0) {
-      this.message.warning(this.i18n.translate('momApp.admin.premium.messages.bulkTargetRequired'));
+      this.message.warning(this.i18n.translate('admin.premium.messages.bulkTargetRequired'));
       return;
     }
 
@@ -362,7 +470,7 @@ export class AdminPremiumComponent implements OnInit {
 
         if (failed.length === 0) {
           this.message.success(
-            this.i18n.translate('momApp.admin.premium.messages.bulkApplySuccess', { count: successCount })
+            this.i18n.translate('admin.premium.messages.bulkApplySuccess', { count: successCount })
           );
           return;
         }
@@ -370,7 +478,7 @@ export class AdminPremiumComponent implements OnInit {
         if (successCount > 0) {
           const failedIds = failed.map((result) => `#${result.familyId}`).join(', ');
           this.message.warning(
-            this.i18n.translate('momApp.admin.premium.messages.bulkApplyPartial', {
+            this.i18n.translate('admin.premium.messages.bulkApplyPartial', {
               success: successCount,
               failed: failedIds
             })
@@ -378,12 +486,12 @@ export class AdminPremiumComponent implements OnInit {
           return;
         }
 
-        const firstError = failed[0]?.message || this.i18n.translate('momApp.admin.premium.messages.bulkApplyFailed');
+        const firstError = failed[0]?.message || this.i18n.translate('admin.premium.messages.bulkApplyFailed');
         this.message.error(firstError);
       },
       error: () => {
         this.bulkApplying = false;
-        this.message.error(this.i18n.translate('momApp.admin.premium.messages.bulkApplyFailed'));
+        this.message.error(this.i18n.translate('admin.premium.messages.bulkApplyFailed'));
       }
     });
   }
@@ -395,13 +503,25 @@ export class AdminPremiumComponent implements OnInit {
   }
 
   statusLabel(status: PremiumEntitlementStatus): string {
-    return this.i18n.translate(`momApp.admin.premium.status.${status}`);
+    return this.i18n.translate(`admin.premium.status.${status}`);
   }
 
   effectiveReasonLabel(reason: string): string {
-    const key = `momApp.admin.premium.effectiveReason.${reason}`;
+    const key = `admin.premium.effectiveReason.${reason}`;
     const translated = this.i18n.translate(key);
     return translated === key ? reason : translated;
+  }
+
+  featureName(featureKey: string, fallback: string): string {
+    const key = `admin.premium.features.${featureKey}.name`;
+    const translated = this.i18n.translate(key);
+    return translated === key ? fallback : translated;
+  }
+
+  featureDescription(featureKey: string, fallback: string): string {
+    const key = `admin.premium.features.${featureKey}.description`;
+    const translated = this.i18n.translate(key);
+    return translated === key ? (fallback || '') : translated;
   }
 
   effectiveTagColor(item: PremiumEntitlementView): string {
@@ -419,7 +539,7 @@ export class AdminPremiumComponent implements OnInit {
 
   formatDateTime(value: string | null | undefined): string {
     if (!value?.trim()) {
-      return this.i18n.translate('momApp.common.notAvailable');
+      return this.i18n.translate('commonValues.na');
     }
 
     const parsed = new Date(value);
@@ -439,7 +559,7 @@ export class AdminPremiumComponent implements OnInit {
 
   changedByDisplay(row: PremiumEntitlementAuditApi): string {
     if (!row.changedByUserId) {
-      return this.i18n.translate('momApp.common.notAvailable');
+      return this.i18n.translate('commonValues.na');
     }
 
     const actor = this.auditUsersById[row.changedByUserId];
@@ -471,7 +591,7 @@ export class AdminPremiumComponent implements OnInit {
 
   questGrantByDisplay(row: FamilyQuestPointGrantLogApi): string {
     if (!row.grantedByUserId) {
-      return this.i18n.translate('momApp.common.notAvailable');
+      return this.i18n.translate('commonValues.na');
     }
 
     const actor = this.auditUsersById[row.grantedByUserId];
@@ -513,12 +633,9 @@ export class AdminPremiumComponent implements OnInit {
       ),
       questState: this.http.get<ApiEnvelope<FamilyQuestStateApi>>(
         `${API_CONFIG.GATEWAY_URL}/account/admin/families/${familyId}/quest-state`
-      ),
-      questPointGrants: this.http.get<ApiEnvelope<FamilyQuestPointGrantLogApi[]>>(
-        `${API_CONFIG.GATEWAY_URL}/account/admin/families/${familyId}/quest-points/grants`
       )
     }).subscribe({
-      next: ({ entitlements, audit, questState, questPointGrants }) => {
+      next: ({ entitlements, audit, questState }) => {
         this.premiumLoading = false;
         this.premiumEntitlements = (entitlements.data ?? []).map((item) => ({
           ...item,
@@ -526,11 +643,10 @@ export class AdminPremiumComponent implements OnInit {
         }));
         this.premiumAudit = (audit.data ?? []).slice(0, 20);
         this.questState = questState.data ?? null;
-        this.questPointGrants = (questPointGrants.data ?? []).slice(0, 30);
+        this.questPointGrants = [];
         const actorIds = [
           ...new Set([
-            ...this.premiumAudit.map((row) => row.changedByUserId),
-            ...this.questPointGrants.map((row) => row.grantedByUserId)
+            ...this.premiumAudit.map((row) => row.changedByUserId)
           ])
         ].filter((id): id is number => !!id && id > 0);
         this.loadActorUsers(actorIds);
@@ -538,7 +654,7 @@ export class AdminPremiumComponent implements OnInit {
       error: () => {
         this.premiumLoading = false;
         this.clearPremiumData();
-        this.message.error(this.i18n.translate('momApp.admin.premium.messages.loadConfigFailed'));
+        this.message.error(this.i18n.translate('admin.premium.messages.loadConfigFailed'));
       }
     });
   }

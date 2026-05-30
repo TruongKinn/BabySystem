@@ -7,6 +7,7 @@ import com.mom.account.controller.dto.FamilyQuestRewardRedemptionResponse;
 import com.mom.account.controller.dto.FamilyQuestStateResponse;
 import com.mom.account.controller.dto.GrantFamilyQuestPointsRequest;
 import com.mom.account.controller.dto.GrantFamilyQuestPointsResponse;
+import com.mom.account.controller.dto.PageResponse;
 import com.mom.account.controller.dto.RedeemFamilyQuestRewardRequest;
 import com.mom.account.controller.dto.RedeemFamilyQuestRewardResponse;
 import com.mom.account.domain.FamilyQuestPointGrantLogEntity;
@@ -19,6 +20,8 @@ import com.mom.account.repository.FamilyRepository;
 import com.mom.common.context.UserContext;
 import com.mom.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -134,6 +137,21 @@ public class FamilyQuestService {
         return familyQuestPointGrantLogRepository.findTop30ByFamilyIdOrderByGrantedAtDesc(familyId).stream()
                 .map(this::toPointGrantLogResponse)
                 .toList();
+    }
+
+    public PageResponse<FamilyQuestPointGrantLogResponse> getPointGrantLogsPageForAdmin(Long familyId, int page, int size) {
+        ensureRequestAuthenticated();
+        ensureFamilyExists(familyId);
+        int safeSize = Math.min(Math.max(size, 1), 100);
+        int safePage = Math.max(page, 0);
+        Page<FamilyQuestPointGrantLogEntity> pageResult = familyQuestPointGrantLogRepository
+                .findByFamilyIdOrderByGrantedAtDesc(familyId, PageRequest.of(safePage, safeSize));
+        return PageResponse.<FamilyQuestPointGrantLogResponse>builder()
+                .page(safePage)
+                .size(safeSize)
+                .total(pageResult.getTotalElements())
+                .items(pageResult.getContent().stream().map(this::toPointGrantLogResponse).toList())
+                .build();
     }
 
     @Transactional

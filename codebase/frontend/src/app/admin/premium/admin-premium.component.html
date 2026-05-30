@@ -1,22 +1,22 @@
 <section class="admin-premium-page admin-theme">
   <header class="premium-hero">
     <div class="hero-copy">
-      <span class="hero-kicker">{{ 'momApp.admin.premium.hero.kicker' | translate }}</span>
-      <h1>{{ 'momApp.admin.premium.hero.title' | translate }}</h1>
-      <p>{{ 'momApp.admin.premium.hero.subtitle' | translate }}</p>
+      <span class="hero-kicker">{{ 'admin.premium.hero.kicker' | translate }}</span>
+      <h1>{{ 'admin.premium.hero.title' | translate }}</h1>
+      <p>{{ 'admin.premium.hero.subtitle' | translate }}</p>
     </div>
 
     <div class="hero-stats">
       <div class="hero-stat">
-        <span>{{ 'momApp.admin.premium.stats.households' | translate }}</span>
+        <span>{{ 'admin.premium.stats.households' | translate }}</span>
         <strong>{{ families.length }}</strong>
       </div>
       <div class="hero-stat">
-        <span>{{ 'momApp.admin.premium.stats.members' | translate }}</span>
+        <span>{{ 'admin.premium.stats.members' | translate }}</span>
         <strong>{{ selectedFamily?.memberCount ?? 0 }}</strong>
       </div>
       <div class="hero-stat">
-        <span>{{ 'momApp.admin.premium.stats.enabledFeatures' | translate }}</span>
+        <span>{{ 'admin.premium.stats.enabledFeatures' | translate }}</span>
         <strong>{{ enabledFeatureCount }}</strong>
       </div>
     </div>
@@ -28,7 +28,7 @@
         class="family-select"
         [ngModel]="selectedFamilyId"
         (ngModelChange)="onSelectedFamilyChange($event)"
-        [nzPlaceHolder]="'momApp.admin.premium.family.selectPlaceholder' | translate"
+        [nzPlaceHolder]="'admin.premium.family.selectPlaceholder' | translate"
         [nzShowSearch]="true"
       >
         <nz-option
@@ -43,42 +43,47 @@
           {{ 'commonActions.refresh' | translate }}
         </button>
         <button nz-button nzType="primary" [disabled]="!selectedFamilyId" (click)="refreshSelectedFamilyConfig()">
-          {{ 'momApp.admin.premium.actions.refreshConfig' | translate }}
+          {{ 'admin.premium.actions.refreshConfig' | translate }}
         </button>
         <!-- Nút mở Lịch sử thay đổi Premium (chỉ kích hoạt khi Admin đã lựa chọn một hộ gia đình cụ thể) -->
         <button nz-button nzType="default" [disabled]="!selectedFamilyId" (click)="openAuditModal()">
           <span nz-icon nzType="history"></span>
-          {{ 'momApp.admin.premium.audit.title' | translate }}
+          {{ 'admin.premium.audit.title' | translate }}
+        </button>
+        <!-- Nút mở Lịch sử cấp điểm Quest có phân trang -->
+        <button nz-button nzType="default" [disabled]="!selectedFamilyId" (click)="openQuestGrantsModal()">
+          <span nz-icon nzType="history"></span>
+          {{ 'admin.premium.questPoints.historyTitle' | translate }}
         </button>
       </div>
     </div>
 
     <div class="family-meta" *ngIf="selectedFamily as family">
       <span>
-        {{ 'momApp.admin.premium.family.selected' | translate }}:
+        {{ 'admin.premium.family.selected' | translate }}:
         <strong>{{ family.name }}</strong>
       </span>
       <span>
-        {{ 'momApp.admin.premium.family.id' | translate }}:
+        {{ 'admin.premium.family.id' | translate }}:
         <strong>#{{ family.id }}</strong>
       </span>
       <span>
-        {{ 'momApp.admin.premium.family.members' | translate }}:
+        {{ 'admin.premium.family.members' | translate }}:
         <strong>{{ family.memberCount }}</strong>
       </span>
     </div>
 
     <div class="bulk-toolbar" *ngIf="selectedFamilyId">
       <div class="bulk-copy">
-        <strong>{{ 'momApp.admin.premium.bulk.title' | translate }}</strong>
-        <p>{{ 'momApp.admin.premium.bulk.subtitle' | translate }}</p>
+        <strong>{{ 'admin.premium.bulk.title' | translate }}</strong>
+        <p>{{ 'admin.premium.bulk.subtitle' | translate }}</p>
       </div>
       <nz-select
         class="bulk-select"
         [ngModel]="bulkTargetFamilyIds"
         (ngModelChange)="bulkTargetFamilyIds = $event ?? []"
         [nzMode]="'multiple'"
-        [nzPlaceHolder]="'momApp.admin.premium.bulk.selectPlaceholder' | translate"
+        [nzPlaceHolder]="'admin.premium.bulk.selectPlaceholder' | translate"
         [nzShowSearch]="true"
         [nzMaxTagCount]="3"
       >
@@ -89,44 +94,44 @@
         ></nz-option>
       </nz-select>
       <button nz-button nzType="primary" [nzLoading]="bulkApplying" [disabled]="!canApplyBulkConfig" (click)="applyBulkPremiumConfig()">
-        {{ 'momApp.admin.premium.bulk.apply' | translate }}
+        {{ 'admin.premium.bulk.apply' | translate }}
       </button>
     </div>
   </nz-card>
 
   <nz-card class="premium-card" *ngIf="selectedFamilyId">
     <div class="section-head">
-      <h2>{{ 'momApp.admin.premium.questPoints.title' | translate }}</h2>
-      <p>{{ 'momApp.admin.premium.questPoints.subtitle' | translate }}</p>
+      <h2>{{ 'admin.premium.questPoints.title' | translate }}</h2>
+      <p>{{ 'admin.premium.questPoints.subtitle' | translate }}</p>
     </div>
 
     <div class="quest-points-head">
       <div class="quest-points-pill">
-        <span>{{ 'momApp.admin.premium.questPoints.currentPoints' | translate }}</span>
+        <span>{{ 'admin.premium.questPoints.currentPoints' | translate }}</span>
         <strong>{{ totalQuestPoints | number }}</strong>
       </div>
       <div class="quest-points-pill">
-        <span>{{ 'momApp.admin.premium.questPoints.currentStreak' | translate }}</span>
+        <span>{{ 'admin.premium.questPoints.currentStreak' | translate }}</span>
         <strong>{{ questState?.streakDays ?? 0 }}</strong>
       </div>
       <div class="quest-points-pill">
-        <span>{{ 'momApp.admin.premium.questPoints.lastClaimDate' | translate }}</span>
+        <span>{{ 'admin.premium.questPoints.lastClaimDate' | translate }}</span>
         <strong>{{ formatDateTime(questState?.lastClaimDate) }}</strong>
       </div>
     </div>
 
     <div class="quest-points-form">
       <div class="form-item">
-        <label>{{ 'momApp.admin.premium.questPoints.pointsLabel' | translate }}</label>
+        <label>{{ 'admin.premium.questPoints.pointsLabel' | translate }}</label>
         <input nz-input type="number" min="1" max="5000000" [(ngModel)]="questGrantPointsInput" />
       </div>
       <div class="form-item">
-        <label>{{ 'momApp.admin.premium.questPoints.reasonLabel' | translate }}</label>
+        <label>{{ 'admin.premium.questPoints.reasonLabel' | translate }}</label>
         <input
           nz-input
           maxlength="300"
           [(ngModel)]="questGrantReasonInput"
-          [placeholder]="'momApp.admin.premium.questPoints.reasonPlaceholder' | translate"
+          [placeholder]="'admin.premium.questPoints.reasonPlaceholder' | translate"
         />
       </div>
       <div class="quest-points-action">
@@ -137,55 +142,18 @@
           [disabled]="!canGrantQuestPoints"
           (click)="grantQuestPoints()"
         >
-          {{ 'momApp.admin.premium.questPoints.grantAction' | translate }}
+          {{ 'admin.premium.questPoints.grantAction' | translate }}
         </button>
       </div>
     </div>
 
-    <div class="section-head quest-points-history-head">
-      <h2>{{ 'momApp.admin.premium.questPoints.historyTitle' | translate }}</h2>
-      <p>{{ 'momApp.admin.premium.questPoints.historySubtitle' | translate }}</p>
-    </div>
 
-    <nz-table
-      #grantTable
-      [nzData]="questPointGrants"
-      [nzFrontPagination]="false"
-      [nzShowPagination]="false"
-      nzSize="small"
-      nzTableLayout="fixed"
-      [nzScroll]="{ x: '800px' }"
-    >
-      <thead>
-        <tr>
-          <th nzWidth="120px">{{ 'momApp.admin.premium.questPoints.table.points' | translate }}</th>
-          <th nzWidth="260px">{{ 'momApp.admin.premium.questPoints.table.reason' | translate }}</th>
-          <th nzWidth="240px">{{ 'momApp.admin.premium.questPoints.table.byUser' | translate }}</th>
-          <th nzWidth="170px">{{ 'momApp.admin.premium.questPoints.table.grantedAt' | translate }}</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let row of grantTable.data">
-          <td><strong>+{{ row.points | number }}</strong></td>
-          <td>{{ row.reason || ('momApp.common.notAvailable' | translate) }}</td>
-          <td>
-            <div class="audit-actor-primary">{{ questGrantByDisplay(row) }}</div>
-            <div class="audit-actor-meta" *ngIf="questGrantByMeta(row)">{{ questGrantByMeta(row) }}</div>
-          </td>
-          <td>{{ formatDateTime(row.grantedAt) }}</td>
-        </tr>
-      </tbody>
-    </nz-table>
-
-    <div class="empty-inline" *ngIf="questPointGrants.length === 0">
-      {{ 'momApp.admin.premium.questPoints.historyEmpty' | translate }}
-    </div>
   </nz-card>
 
   <nz-card class="premium-card" *ngIf="selectedFamilyId; else selectFamilyState">
     <div class="section-head">
-      <h2>{{ 'momApp.admin.premium.entitlements.title' | translate }}</h2>
-      <p>{{ 'momApp.admin.premium.entitlements.subtitle' | translate }}</p>
+      <h2>{{ 'admin.premium.entitlements.title' | translate }}</h2>
+      <p>{{ 'admin.premium.entitlements.subtitle' | translate }}</p>
     </div>
 
     <nz-spin [nzSpinning]="premiumLoading || premiumSaving">
@@ -193,18 +161,18 @@
         <div class="entitlement-card" *ngFor="let item of premiumEntitlements">
           <div class="entitlement-head">
             <div>
-              <strong>{{ item.featureName }}</strong>
-              <p>{{ item.featureDescription || ('momApp.common.notAvailable' | translate) }}</p>
+              <strong>{{ featureName(item.featureKey, item.featureName) }}</strong>
+              <p>{{ featureDescription(item.featureKey, item.featureDescription) }}</p>
             </div>
             <nz-tag [nzColor]="effectiveTagColor(item)">
-              {{ item.effectiveEnabled ? ('momApp.admin.premium.effectiveState.enabled' | translate) : ('momApp.admin.premium.effectiveState.disabled' | translate) }}
+              {{ item.effectiveEnabled ? ('admin.premium.effectiveState.enabled' | translate) : ('admin.premium.effectiveState.disabled' | translate) }}
               ({{ effectiveReasonLabel(item.effectiveReason) }})
             </nz-tag>
           </div>
 
           <div class="entitlement-form-row">
             <div class="form-item">
-              <label>{{ 'momApp.admin.premium.entitlements.statusLabel' | translate }}</label>
+              <label>{{ 'admin.premium.entitlements.statusLabel' | translate }}</label>
               <nz-select [(ngModel)]="item.status" (ngModelChange)="onEntitlementStatusChange(item)">
                 <nz-option
                   *ngFor="let status of entitlementStatuses"
@@ -215,7 +183,7 @@
             </div>
 
             <div class="form-item">
-              <label>{{ 'momApp.admin.premium.entitlements.expiresAtLabel' | translate }}</label>
+              <label>{{ 'admin.premium.entitlements.expiresAtLabel' | translate }}</label>
               <input
                 nz-input
                 type="datetime-local"
@@ -226,11 +194,11 @@
           </div>
 
           <div class="form-item">
-            <label>{{ 'momApp.admin.premium.entitlements.reasonLabel' | translate }}</label>
+            <label>{{ 'admin.premium.entitlements.reasonLabel' | translate }}</label>
             <input
               nz-input
               [(ngModel)]="item.reason"
-              [placeholder]="'momApp.admin.premium.entitlements.reasonPlaceholder' | translate"
+              [placeholder]="'admin.premium.entitlements.reasonPlaceholder' | translate"
               maxlength="300"
             />
           </div>
@@ -238,12 +206,12 @@
       </div>
 
       <ng-template #emptyEntitlements>
-        <div class="empty-inline">{{ 'momApp.admin.premium.entitlements.empty' | translate }}</div>
+        <div class="empty-inline">{{ 'admin.premium.entitlements.empty' | translate }}</div>
       </ng-template>
 
       <div class="save-row">
         <button nz-button nzType="primary" [nzLoading]="premiumSaving" (click)="savePremiumConfig()">
-          {{ 'momApp.admin.premium.actions.save' | translate }}
+          {{ 'admin.premium.actions.save' | translate }}
         </button>
       </div>
     </nz-spin>
@@ -251,7 +219,7 @@
 
   <ng-template #selectFamilyState>
     <nz-card class="premium-card">
-      <nz-empty [nzNotFoundContent]="'momApp.admin.premium.family.empty' | translate"></nz-empty>
+      <nz-empty [nzNotFoundContent]="'admin.premium.family.empty' | translate"></nz-empty>
     </nz-card>
   </ng-template>
 
@@ -264,7 +232,7 @@
 <nz-modal
   nzWrapClassName="admin-role-modal"
   [(nzVisible)]="isAuditModalVisible"
-  [nzTitle]="('momApp.admin.premium.audit.title' | translate) + (selectedFamily ? ': ' + selectedFamily.name : '')"
+  [nzTitle]="('admin.premium.audit.title' | translate) + (selectedFamily ? ': ' + selectedFamily.name : '')"
   [nzWidth]="1200"
   [nzFooter]="null"
   (nzOnCancel)="closeAuditModal()"
@@ -273,7 +241,7 @@
     <!-- Hiển thị danh sách tối đa 20 dòng lịch sử thay đổi entitlement gần đây nhất của gia đình -->
     <div class="premium-audit-modal-content" style="padding: 10px 0;">
       <p class="modal-subtitle" style="margin-bottom: 20px; color: var(--color-text-secondary, #666); font-size: 14px;">
-        {{ 'momApp.admin.premium.audit.subtitle' | translate }}
+        {{ 'admin.premium.audit.subtitle' | translate }}
       </p>
 
       <nz-table
@@ -287,19 +255,19 @@
       >
         <thead>
           <tr>
-            <th nzWidth="180px">{{ 'momApp.admin.premium.audit.table.feature' | translate }}</th>
-            <th nzWidth="160px">{{ 'momApp.admin.premium.audit.table.statusChange' | translate }}</th>
-            <th nzWidth="170px">{{ 'momApp.admin.premium.audit.table.expires' | translate }}</th>
-            <th nzWidth="220px">{{ 'momApp.admin.premium.audit.table.reason' | translate }}</th>
-            <th nzWidth="250px">{{ 'momApp.admin.premium.audit.table.byUser' | translate }}</th>
-            <th nzWidth="170px">{{ 'momApp.admin.premium.audit.table.changedAt' | translate }}</th>
+            <th nzWidth="180px">{{ 'admin.premium.audit.table.feature' | translate }}</th>
+            <th nzWidth="160px">{{ 'admin.premium.audit.table.statusChange' | translate }}</th>
+            <th nzWidth="170px">{{ 'admin.premium.audit.table.expires' | translate }}</th>
+            <th nzWidth="220px">{{ 'admin.premium.audit.table.reason' | translate }}</th>
+            <th nzWidth="250px">{{ 'admin.premium.audit.table.byUser' | translate }}</th>
+            <th nzWidth="170px">{{ 'admin.premium.audit.table.changedAt' | translate }}</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let row of auditTable.data">
             <td><strong style="color: var(--color-primary, #1890ff);">{{ row.featureKey }}</strong></td>
             <td>
-              <span>{{ row.oldStatus ? statusLabel(row.oldStatus) : ('momApp.common.notAvailable' | translate) }}</span>
+              <span>{{ row.oldStatus ? statusLabel(row.oldStatus) : ('commonValues.na' | translate) }}</span>
               <span style="margin: 0 8px; color: var(--color-text-muted, #999);">→</span>
               <strong>{{ statusLabel(row.newStatus) }}</strong>
             </td>
@@ -308,7 +276,7 @@
               <span style="margin: 0 8px; color: var(--color-text-muted, #999);">→</span>
               <span>{{ formatDateTime(row.newExpiresAt) }}</span>
             </td>
-            <td>{{ row.reason || ('momApp.common.notAvailable' | translate) }}</td>
+            <td>{{ row.reason || ('commonValues.na' | translate) }}</td>
             <td>
               <div class="audit-actor-primary" style="font-weight: 500;">{{ changedByDisplay(row) }}</div>
               <div class="audit-actor-meta" style="font-size: 12px; color: var(--color-text-muted, #999);">{{ changedByMeta(row) }}</div>
@@ -319,7 +287,70 @@
       </nz-table>
 
       <div class="empty-inline" *ngIf="premiumAudit.length === 0" style="padding: 40px; text-align: center; color: var(--color-text-muted, #999); font-style: italic;">
-        {{ 'momApp.admin.premium.audit.empty' | translate }}
+        {{ 'admin.premium.audit.empty' | translate }}
+      </div>
+    </div>
+  </ng-container>
+</nz-modal>
+
+<!-- MODAL LỊCH SỬ CẤP ĐIỂM QUEST (QUEST POINT GRANTS LOG) 
+     - Thiết kế chuẩn Admin cao cấp với class `admin-role-modal`
+     - Chiều rộng rộng rãi 1000px giúp bảng dữ liệu hiển thị trực quan không bị tràn
+     - Hỗ trợ phân trang trực tiếp từ Backend -->
+<nz-modal
+  nzWrapClassName="admin-role-modal"
+  [(nzVisible)]="isQuestGrantsModalVisible"
+  [nzTitle]="('admin.premium.questPoints.historyTitle' | translate) + (selectedFamily ? ': ' + selectedFamily.name : '')"
+  [nzWidth]="1000"
+  [nzFooter]="null"
+  (nzOnCancel)="closeQuestGrantsModal()"
+>
+  <ng-container *nzModalContent>
+    <div class="premium-audit-modal-content" style="padding: 10px 0;">
+      <p class="modal-subtitle" style="margin-bottom: 20px; color: var(--color-text-secondary, #666); font-size: 14px;">
+        {{ 'admin.premium.questPoints.historySubtitle' | translate }}
+      </p>
+
+      <nz-table
+        #questGrantsTable
+        [nzData]="questGrantsList"
+        [nzFrontPagination]="false"
+        [nzTotal]="questGrantsTotal"
+        [nzPageIndex]="questGrantsPage + 1"
+        [nzPageSize]="questGrantsSize"
+        [nzLoading]="questGrantsLoading"
+        (nzPageIndexChange)="onQuestGrantsPageChange($event)"
+        (nzPageSizeChange)="onQuestGrantsSizeChange($event)"
+        [nzShowSizeChanger]="true"
+        nzSize="small"
+        nzTableLayout="fixed"
+        [nzScroll]="{ x: '950px' }"
+      >
+        <thead>
+          <tr>
+            <th nzWidth="120px">{{ 'admin.premium.questPoints.table.points' | translate }}</th>
+            <th nzWidth="300px">{{ 'admin.premium.questPoints.table.reason' | translate }}</th>
+            <th nzWidth="250px">{{ 'admin.premium.questPoints.table.byUser' | translate }}</th>
+            <th nzWidth="180px">{{ 'admin.premium.questPoints.table.grantedAt' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let row of questGrantsTable.data">
+            <td><strong style="color: var(--color-success, #52c41a);">+{{ row.points | number }}</strong></td>
+            <td>{{ row.reason || ('commonValues.na' | translate) }}</td>
+            <td>
+              <div class="audit-actor-primary" style="font-weight: 500;">{{ questGrantByDisplay(row) }}</div>
+              <div class="audit-actor-meta" style="font-size: 12px; color: var(--color-text-muted, #999);" *ngIf="questGrantByMeta(row)">
+                {{ questGrantByMeta(row) }}
+              </div>
+            </td>
+            <td>{{ formatDateTime(row.grantedAt) }}</td>
+          </tr>
+        </tbody>
+      </nz-table>
+
+      <div class="empty-inline" *ngIf="questGrantsList.length === 0" style="padding: 40px; text-align: center; color: var(--color-text-muted, #999); font-style: italic;">
+        {{ 'admin.premium.questPoints.historyEmpty' | translate }}
       </div>
     </div>
   </ng-container>

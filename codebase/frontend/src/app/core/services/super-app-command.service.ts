@@ -835,15 +835,20 @@ export class SuperAppCommandService {
     title: string;
     message: string;
     type?: string;
+    metadataJson?: string;
   }): Observable<void> {
     const familyId = this.getFamilyId();
+    const allowedTypes = ['REMINDER', 'EVENT', 'INFO', 'EXPENSE'];
+    const resolvedType = allowedTypes.includes(input.type ?? '') ? input.type : 'INFO';
+
     return this.post<void>('/notification/api/notifications', {
       familyId,
       userId: input.userId,
       channel: 'PUSH',
-      type: input.type ?? 'SYSTEM',
+      type: resolvedType,
       title: input.title,
       message: input.message,
+      metadataJson: input.metadataJson ?? null,
       scheduledAt: new Date().toISOString()
     }).pipe(map(() => undefined));
   }

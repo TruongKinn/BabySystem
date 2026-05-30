@@ -169,6 +169,15 @@ public class AccountController {
         return ApiResponse.ok("Success", familyQuestService.getPointGrantLogsForAdmin(familyId));
     }
 
+    @GetMapping("/admin/families/{id}/quest-points/grants/page")
+    public ApiResponse<PageResponse<FamilyQuestPointGrantLogResponse>> getFamilyQuestPointGrantsPageForAdmin(
+            @PathVariable("id") Long familyId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ApiResponse.ok("Success", familyQuestService.getPointGrantLogsPageForAdmin(familyId, page, size));
+    }
+
     @PostMapping("/admin/families/{id}/quest-points/grant")
     public ApiResponse<GrantFamilyQuestPointsResponse> grantFamilyQuestPointsForAdmin(
             @PathVariable("id") Long familyId,

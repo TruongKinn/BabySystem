@@ -1,0 +1,144 @@
+{
+  "hero": {
+    "kicker": "プレミアム管理",
+    "title": "世帯別プレミアム設定",
+    "subtitle": "各家族のプレミアム機能、クエストポイント、変更履歴を管理します"
+  },
+  "stats": {
+    "households": "総世帯数",
+    "members": "メンバー数",
+    "enabledFeatures": "有効な機能"
+  },
+  "family": {
+    "selectPlaceholder": "世帯を選択...",
+    "selected": "選択中の家族",
+    "id": "ID",
+    "members": "メンバー",
+    "empty": "プレミアム設定を表示するには世帯を選択してください"
+  },
+  "actions": {
+    "refreshConfig": "設定を更新",
+    "save": "設定を保存"
+  },
+  "bulk": {
+    "title": "一括適用",
+    "subtitle": "現在の設定を他の世帯にコピーします",
+    "selectPlaceholder": "対象世帯を選択...",
+    "apply": "一括適用"
+  },
+  "questPoints": {
+    "title": "クエストポイント管理",
+    "subtitle": "ボーナスポイントを付与し、家族のポイント履歴を確認します",
+    "currentPoints": "現在の合計ポイント",
+    "currentStreak": "連続日数",
+    "lastClaimDate": "最終受取日",
+    "pointsLabel": "付与するポイント数",
+    "reasonLabel": "理由",
+    "reasonPlaceholder": "ポイント付与の理由を入力（任意）...",
+    "grantAction": "ポイントを付与",
+    "historyTitle": "ポイント付与履歴",
+    "historySubtitle": "システムからのクエストポイント付与履歴のページネーション表示",
+    "historyEmpty": "ポイント付与履歴がありません",
+    "table": {
+      "points": "ポイント",
+      "reason": "理由",
+      "byUser": "付与者",
+      "grantedAt": "日時"
+    },
+    "messages": {
+      "invalidPoints": "ポイントは0より大きい値を入力してください",
+      "grantSuccess": "{{points}}ポイントの付与に成功しました！",
+      "grantFailed": "ポイントの付与に失敗しました。再度お試しください。"
+    }
+  },
+  "entitlements": {
+    "title": "プレミアム機能設定",
+    "subtitle": "世帯の各プレミアム機能へのアクセス権限を管理します",
+    "statusLabel": "ステータス",
+    "expiresAtLabel": "有効期限",
+    "reasonLabel": "理由 / メモ",
+    "reasonPlaceholder": "理由またはメモを入力（最大300文字）...",
+    "empty": "表示するプレミアム機能がありません"
+  },
+  "effectiveState": {
+    "enabled": "有効",
+    "disabled": "無効"
+  },
+  "effectiveReason": {
+    "ALLOW": "許可済み",
+    "DENY": "拒否済み",
+    "INHERIT": "継承",
+    "EXPIRED": "期限切れ",
+    "DEFAULT": "デフォルト"
+  },
+  "status": {
+    "ALLOW": "許可",
+    "DENY": "拒否",
+    "INHERIT": "継承"
+  },
+  "audit": {
+    "title": "プレミアム変更履歴",
+    "subtitle": "家族のプレミアム機能設定の直近20件の変更を表示します",
+    "empty": "変更履歴がありません",
+    "table": {
+      "feature": "機能",
+      "statusChange": "ステータス変更",
+      "expires": "有効期限の変更",
+      "reason": "理由",
+      "byUser": "変更者",
+      "changedAt": "変更日時"
+    }
+  },
+  "messages": {
+    "loadFamiliesFailed": "世帯リストの読み込みに失敗しました",
+    "loadConfigFailed": "プレミアム設定の読み込みに失敗しました",
+    "saveSuccess": "プレミアム設定を保存しました！",
+    "saveFailed": "設定の保存に失敗しました。再度お試しください。",
+    "bulkTargetRequired": "少なくとも1つの対象世帯を選択してください",
+    "bulkApplySuccess": "{{count}}世帯への適用に成功しました！",
+    "bulkApplyPartial": "{{success}}世帯に適用しました。失敗：{{failed}}",
+    "bulkApplyFailed": "一括適用に失敗しました。再度お試しください。"
+  },
+  "features": {
+    "advanced_growth_tracking": {
+      "name": "高度な成長追跟",
+      "description": "成長パーセンタイル分析、傾向変化、小児科の深い洞察"
+    },
+    "smart_reminders": {
+      "name": "スマートリマインダー",
+      "description": "ワクチン接種、健康診断、重要な発達マイルストーンの自動リマインダー"
+    },
+    "ai_care_assistant": {
+      "name": "AI ケアアシスタント",
+      "description": "赤ちゃんのログと行動パターンに基づいたパーソナライズされたケア提案"
+    },
+    "premium_reports": {
+      "name": "プレミアムレポート",
+      "description": "成長フェーズごとの赤ちゃんの健康、発達、活動に関する詳細レポート"
+    },
+    "family_collaboration_plus": {
+      "name": "ファミリーコラボレーション Plus",
+      "description": "複数の家族メンバーが協力して赤ちゃんを見守り、ケアできる機能"
+    },
+    "baby_journey_plus": {
+      "name": "ベビージャーニー+",
+      "description": "メモリー DNA、AIが選んだマイルストーン、タイムカプセル、毎月の家族ストーリーブック"
+    },
+    "medical_vault_export": {
+      "name": "医療記録のエクスポート",
+      "description": "健康記録と病歴全体を PDF または CSV 形式でエクスポート"
+    },
+    "unlimited_memory": {
+      "name": "無制限ストレージ",
+      "description": "赤ちゃんの写真、動画、思い出を無制限に保存"
+    },
+    "currency_exchange": {
+      "name": "通貨換算",
+      "description": "Vietcombankからリアルタイムの為替レートを取得し、外貨支出を VND に自動変換"
+    },
+    "theme_customization": {
+      "name": "テーマカスタマイズ",
+      "description": "個人の好みに合わせてアプリの色、テーマ、インターフェースをカスタマイズ"
+    }
+  }
+}

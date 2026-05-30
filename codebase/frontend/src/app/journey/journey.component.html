@@ -8,9 +8,9 @@
   </defs>
 </svg>
 
-<section class="page-container journey-page">
-  <!-- ─── HERO ─────────────────────────────────────────── -->
-  <header class="journey-hero">
+<section class="page-container journey-page" [class.journey-page--locked]="!isLoading && isJourneyLocked">
+  <!-- ─── HERO (hiển thị khi KHÔNG bị khóa) ───────────────── -->
+  <header class="journey-hero" *ngIf="!(!isLoading && isJourneyLocked)">
     <div class="journey-hero-orbs" aria-hidden="true">
       <span class="orb orb-1"></span>
       <span class="orb orb-2"></span>
@@ -55,8 +55,8 @@
     </div>
   </header>
 
-  <!-- ─── TOOLBAR ──────────────────────────────────────── -->
-  <div class="journey-toolbar">
+  <!-- ─── TOOLBAR (ẩn khi bị khóa) ────────────────────────── -->
+  <div class="journey-toolbar" *ngIf="!(!isLoading && isJourneyLocked)">
     <nz-select
       class="journey-baby-select"
       [ngModel]="selectedBabyId"
@@ -110,29 +110,93 @@
     <span>{{ 'app.journey.loading' | translate }}</span>
   </div>
 
-  <!-- ─── LOCK CARD ─────────────────────────────────────── -->
-  <nz-card class="journey-lock-card" *ngIf="!isLoading && isJourneyLocked">
-    <div class="lock-icon">
+  <!-- ─── PREMIUM UPGRADE PAGE (khi bị khóa) ─────────────── -->
+  <div class="journey-premium-gate" *ngIf="!isLoading && isJourneyLocked">
+    <!-- Animated background orbs -->
+    <div class="gate-bg-orbs" aria-hidden="true">
+      <span class="gate-orb gate-orb-1"></span>
+      <span class="gate-orb gate-orb-2"></span>
+      <span class="gate-orb gate-orb-3"></span>
+    </div>
+
+    <!-- Crown badge -->
+    <div class="gate-crown-badge">
       <span nz-icon nzType="crown" nzTheme="fill"></span>
     </div>
-    <div>
-      <span class="journey-kicker">{{ 'app.journey.lock.kicker' | translate }}</span>
-      <h2>{{ 'app.journey.lock.title' | translate }}</h2>
-      <p>
-        {{ 'app.journey.lock.description' | translate }}
-      </p>
-      <div class="lock-feature-grid">
-        <span><span nz-icon nzType="bulb" nzTheme="fill"></span> {{ 'app.journey.lock.features.aiCurator' | translate }}</span>
-        <span><span nz-icon nzType="history"></span> {{ 'app.journey.lock.features.timeline' | translate }}</span>
-        <span><span nz-icon nzType="book" nzTheme="fill"></span> {{ 'app.journey.lock.features.storybook' | translate }}</span>
-        <span><span nz-icon nzType="safety" nzTheme="fill"></span> {{ 'app.journey.lock.features.privacy' | translate }}</span>
+
+    <!-- Kicker -->
+    <span class="gate-kicker">{{ 'app.journey.lock.kicker' | translate }}</span>
+
+    <!-- Title -->
+    <h1 class="gate-title">
+      Baby Journey<span class="gate-title-plus">+</span>
+    </h1>
+
+    <!-- Description -->
+    <p class="gate-description">
+      {{ 'app.journey.lock.description' | translate }}
+    </p>
+
+    <!-- Feature cards -->
+    <div class="gate-features">
+      <div class="gate-feature-card">
+        <span class="gate-feature-icon gate-feature-icon--violet">
+          <span nz-icon nzType="bulb" nzTheme="fill"></span>
+        </span>
+        <div class="gate-feature-body">
+          <strong>{{ 'app.journey.lock.features.aiCurator' | translate }}</strong>
+          <span>{{ 'app.journey.lock.features.aiCuratorDesc' | translate }}</span>
+        </div>
       </div>
-      <a routerLink="/admin/premium" nz-button nzType="primary" class="btn-user-primary">
-        <span nz-icon nzType="unlock" nzTheme="fill"></span>
-        {{ 'app.journey.lock.unlock' | translate }}
-      </a>
+      <div class="gate-feature-card">
+        <span class="gate-feature-icon gate-feature-icon--teal">
+          <span nz-icon nzType="history"></span>
+        </span>
+        <div class="gate-feature-body">
+          <strong>{{ 'app.journey.lock.features.timeline' | translate }}</strong>
+          <span>{{ 'app.journey.lock.features.timelineDesc' | translate }}</span>
+        </div>
+      </div>
+      <div class="gate-feature-card">
+        <span class="gate-feature-icon gate-feature-icon--rose">
+          <span nz-icon nzType="book" nzTheme="fill"></span>
+        </span>
+        <div class="gate-feature-body">
+          <strong>{{ 'app.journey.lock.features.storybook' | translate }}</strong>
+          <span>{{ 'app.journey.lock.features.storybookDesc' | translate }}</span>
+        </div>
+      </div>
+      <div class="gate-feature-card">
+        <span class="gate-feature-icon gate-feature-icon--sky">
+          <span nz-icon nzType="safety" nzTheme="fill"></span>
+        </span>
+        <div class="gate-feature-body">
+          <strong>{{ 'app.journey.lock.features.privacy' | translate }}</strong>
+          <span>{{ 'app.journey.lock.features.privacyDesc' | translate }}</span>
+        </div>
+      </div>
     </div>
-  </nz-card>
+
+    <!-- CTA -->
+    <button 
+      nz-button 
+      nzType="primary" 
+      class="btn-user-primary gate-cta"
+      [nzLoading]="isSubmittingRequest"
+      [disabled]="isSubmittingRequest || isRequestPending"
+      (click)="requestPremiumUnlock()"
+    >
+      <span nz-icon [nzType]="isRequestPending ? 'hourglass' : 'unlock'" nzTheme="fill" *ngIf="!isSubmittingRequest"></span>
+      {{ (isRequestPending ? 'app.journey.lock.pending' : 'app.journey.lock.unlock') | translate }}
+    </button>
+
+    <!-- Trust chips -->
+    <div class="gate-trust-chips">
+      <span><span nz-icon nzType="check-circle" nzTheme="fill"></span> {{ 'app.journey.lock.trust.noRisk' | translate }}</span>
+      <span><span nz-icon nzType="safety-certificate" nzTheme="fill"></span> {{ 'app.journey.lock.trust.private' | translate }}</span>
+      <span><span nz-icon nzType="heart" nzTheme="fill"></span> {{ 'app.journey.lock.trust.family' | translate }}</span>
+    </div>
+  </div>
 
   <nz-card class="journey-empty-card" *ngIf="!isLoading && !isJourneyLocked && babyProfiles.length === 0">
     <nz-empty [nzNotFoundContent]="'app.journey.empty.noBaby' | translate"></nz-empty>

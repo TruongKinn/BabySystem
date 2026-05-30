@@ -1840,7 +1840,21 @@
           "password": {
             "title": "Password",
             "subtitle": "Change password regularly to protect your account",
-            "status": "Protected"
+            "status": "Protected",
+            "changeBtn": "Change",
+            "oldPasswordLabel": "Old password",
+            "oldPasswordPlaceholder": "Enter your old password",
+            "oldPasswordError": "Please enter your old password",
+            "newPasswordLabel": "New password",
+            "newPasswordPlaceholder": "Enter new password",
+            "newPasswordError": "Password must be 8-20 characters with uppercase, lowercase, number, and special character",
+            "confirmPasswordLabel": "Confirm new password",
+            "confirmPasswordPlaceholder": "Re-enter new password",
+            "confirmRequired": "Please confirm your new password",
+            "confirmMismatch": "Confirm password does not match",
+            "submit": "Update password",
+            "successTitle": "Password changed successfully!",
+            "changeErrorFallback": "Failed to change password!"
           },
           "session": {
             "title": "Session",
@@ -1858,7 +1872,19 @@
         "enabled": "Enabled",
         "disabled": "Disabled",
         "empty": "Premium configuration is not available right now.",
-        "expiresAt": "Expires on"
+        "expiresAt": "Expires on",
+        "featureLabels": {
+          "advanced_growth_tracking": "Advanced growth tracking",
+          "smart_reminders": "Smart reminders",
+          "ai_care_assistant": "AI care assistant",
+          "premium_reports": "Premium reports",
+          "family_collaboration_plus": "Family collaboration Plus",
+          "baby_journey_plus": "Baby Journey+",
+          "medical_vault_export": "Medical vault export",
+          "unlimited_memory": "Unlimited memory",
+          "currency_exchange": "Currency exchange",
+          "theme_customization": "Theme customization"
+        }
       },
       "familyTree": {
         "title": "Family tree",
@@ -2053,8 +2079,18 @@
           "aiCurator": "AI Memory Curator",
           "timeline": "Living Timeline",
           "storybook": "Monthly Storybook",
-          "privacy": "Smart Privacy"
-        }
+          "privacy": "Smart Privacy",
+          "aiCuratorDesc": "Auto-detects memorable moments from daily care data",
+          "timelineDesc": "Records your baby's journey with full emotions and memories",
+          "storybookDesc": "Automatically generates a memory book each month for each baby",
+          "privacyDesc": "Control who can view each family memory"
+        },
+        "trust": {
+          "noRisk": "No commitment",
+          "private": "Private data",
+          "family": "For families"
+        },
+        "pending": "Waiting for Admin approval..."
       },
       "empty": {
         "noBaby": "Please create a baby profile before using Baby Journey+.",
@@ -2161,7 +2197,9 @@
         "capsuleSuccess": "Time Capsule locked for the future.",
         "aiSuggestionSuccess": "Moment added to the Living Timeline.",
         "deleteSuccess": "Milestone removed from Journey.",
-        "premiumWarning": "Please enable Baby Journey+ in Premium Settings to use this feature."
+        "premiumWarning": "Please enable Baby Journey+ in Premium Settings to use this feature.",
+        "requestSuccess": "Premium unlock request has been sent to Admin successfully!",
+        "premiumUnlocked": "Congratulations! Premium Baby Journey+ has been unlocked for your family!"
       },
       "systemEvents": {
         "care": {
@@ -2515,6 +2553,152 @@
         "github": "GitHub",
         "facebook": "Facebook",
         "soon": "Soon"
+      }
+    }
+  },
+  "admin": {
+    "premium": {
+      "hero": {
+        "kicker": "Premium Management",
+        "title": "Premium Configuration by Household",
+        "subtitle": "Control Premium features, Quest points and change history for each family"
+      },
+      "stats": {
+        "households": "Total Households",
+        "members": "Members",
+        "enabledFeatures": "Active Features"
+      },
+      "family": {
+        "selectPlaceholder": "Select a household...",
+        "selected": "Selected Family",
+        "id": "ID",
+        "members": "Members",
+        "empty": "Please select a household to view Premium configuration"
+      },
+      "actions": {
+        "refreshConfig": "Refresh Config",
+        "save": "Save Configuration"
+      },
+      "bulk": {
+        "title": "Bulk Apply",
+        "subtitle": "Copy current configuration to other households",
+        "selectPlaceholder": "Select target households...",
+        "apply": "Apply Bulk"
+      },
+      "questPoints": {
+        "title": "Quest Points Management",
+        "subtitle": "Grant bonus points and track the family's point history",
+        "currentPoints": "Total Current Points",
+        "currentStreak": "Day Streak",
+        "lastClaimDate": "Last Claim Date",
+        "pointsLabel": "Points to Grant",
+        "reasonLabel": "Reason",
+        "reasonPlaceholder": "Enter reason for granting points (optional)...",
+        "grantAction": "Grant Points",
+        "historyTitle": "Points Grant History",
+        "historySubtitle": "Display paginated history of Quest point grants from the system",
+        "historyEmpty": "No point grant history yet",
+        "table": {
+          "points": "Points",
+          "reason": "Reason",
+          "byUser": "Granted By",
+          "grantedAt": "Date"
+        },
+        "messages": {
+          "invalidPoints": "Points must be greater than 0",
+          "grantSuccess": "Successfully granted {{points}} points!",
+          "grantFailed": "Failed to grant points. Please try again."
+        }
+      },
+      "entitlements": {
+        "title": "Premium Feature Configuration",
+        "subtitle": "Manage access rights for each Premium feature of the household",
+        "statusLabel": "Status",
+        "expiresAtLabel": "Expires At",
+        "reasonLabel": "Reason / Note",
+        "reasonPlaceholder": "Enter reason or note (max 300 characters)...",
+        "empty": "No Premium features to display"
+      },
+      "effectiveState": {
+        "enabled": "Active",
+        "disabled": "Inactive"
+      },
+      "effectiveReason": {
+        "ALLOW": "Allowed",
+        "DENY": "Denied",
+        "INHERIT": "Inherited",
+        "EXPIRED": "Expired",
+        "DEFAULT": "Default"
+      },
+      "status": {
+        "ALLOW": "Allow",
+        "DENY": "Deny",
+        "INHERIT": "Inherit"
+      },
+      "audit": {
+        "title": "Premium Change History",
+        "subtitle": "Showing up to 20 most recent changes to the family's Premium feature configuration",
+        "empty": "No change history yet",
+        "table": {
+          "feature": "Feature",
+          "statusChange": "Status Change",
+          "expires": "Expiry Change",
+          "reason": "Reason",
+          "byUser": "Changed By",
+          "changedAt": "Changed At"
+        }
+      },
+      "messages": {
+        "loadFamiliesFailed": "Failed to load household list",
+        "loadConfigFailed": "Failed to load Premium configuration",
+        "saveSuccess": "Premium configuration saved successfully!",
+        "saveFailed": "Failed to save configuration. Please try again.",
+        "bulkTargetRequired": "Please select at least one target family",
+        "bulkApplySuccess": "Successfully applied to {{count}} households!",
+        "bulkApplyPartial": "Applied to {{success}} households. Failed: {{failed}}",
+        "bulkApplyFailed": "Bulk apply failed. Please try again."
+      },
+      "features": {
+        "advanced_growth_tracking": {
+          "name": "Advanced Growth Tracking",
+          "description": "Growth percentile analysis, trend deltas, and deeper pediatric insights"
+        },
+        "smart_reminders": {
+          "name": "Smart Reminders",
+          "description": "Automated reminders for vaccinations, health checkups and key developmental milestones"
+        },
+        "ai_care_assistant": {
+          "name": "AI Care Assistant",
+          "description": "Personalized care suggestions based on baby logs and behavior patterns"
+        },
+        "premium_reports": {
+          "name": "Premium Reports",
+          "description": "Detailed reports on baby health, development and activities per growth phase"
+        },
+        "family_collaboration_plus": {
+          "name": "Family Collaboration Plus",
+          "description": "Enable multiple family members to jointly monitor and care for the baby"
+        },
+        "baby_journey_plus": {
+          "name": "Baby Journey+",
+          "description": "Memory DNA, AI-curated baby milestones, future Time Capsules, and monthly family Storybooks"
+        },
+        "medical_vault_export": {
+          "name": "Medical Vault Export",
+          "description": "Export complete health records and medical history as PDF or CSV"
+        },
+        "unlimited_memory": {
+          "name": "Unlimited Memory",
+          "description": "Unlimited storage for photos, videos and baby memories"
+        },
+        "currency_exchange": {
+          "name": "Currency Exchange",
+          "description": "Automatically fetch live exchange rates from Vietcombank and convert foreign expenses to VND"
+        },
+        "theme_customization": {
+          "name": "Theme Customization",
+          "description": "Customize app colors, themes and interface to personal preferences"
+        }
       }
     }
   }

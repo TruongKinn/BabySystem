@@ -155,7 +155,26 @@
       <time class="nd-modal-time">
         {{ formatFullTime(selectedNotification.createdAt) }}
       </time>
-      <button class="nd-modal-action-btn" (click)="closeDetail()">Đóng</button>
+      <div class="nd-modal-actions" style="display: flex; gap: 8px; align-items: center;">
+        <ng-container *ngIf="isPremiumRequest(selectedNotification) && authService.isAdminUser()">
+          <button 
+            class="nd-btn-approve" 
+            [disabled]="isApproving || isRejecting"
+            (click)="approvePremium(selectedNotification, $event)"
+          >
+            <span *ngIf="isApproving" class="btn-spinner"></span>
+            Đồng ý
+          </button>
+          <button 
+            class="nd-btn-reject" 
+            [disabled]="isApproving || isRejecting"
+            (click)="rejectPremium(selectedNotification, $event)"
+          >
+            Từ chối
+          </button>
+        </ng-container>
+        <button class="nd-modal-action-btn" (click)="closeDetail()">Đóng</button>
+      </div>
     </div>
   </div>
 </div>

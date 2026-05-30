@@ -314,7 +314,7 @@
   font-size: 14px;
 }
 
-/* ─── Lock Card ──────────────────────────────────────────── */
+/* ─── Lock Card (dự phòng) ───────────────────────────────── */
 .journey-lock-card,
 .journey-empty-card,
 .journey-panel {
@@ -368,6 +368,297 @@
   flex-wrap: wrap;
   gap: 10px;
   margin: 18px 0;
+}
+
+/* ─── Premium Gate (Locked state — full redesign) ────────── */
+.journey-page--locked {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: calc(100vh - 80px);
+  justify-content: center;
+}
+
+.journey-premium-gate {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 56px 48px 48px;
+  width: 100%;
+  max-width: 820px;
+  margin: 40px auto;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  box-shadow: 
+    0 4px 24px -1px rgba(0, 0, 0, 0.02), 
+    0 20px 60px -10px rgba(0, 0, 0, 0.04),
+    0 15px 45px -15px rgba(249, 115, 22, 0.1);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.dark-theme .journey-premium-gate {
+  background: rgba(24, 24, 28, 0.75);
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 4px 30px rgba(0, 0, 0, 0.2), 
+    0 25px 70px rgba(0, 0, 0, 0.35),
+    0 15px 45px -15px rgba(249, 115, 22, 0.14);
+}
+
+/* Animated background orbs */
+.gate-bg-orbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.gate-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  opacity: 0.13;
+  animation: orbFloat 9s ease-in-out infinite;
+}
+
+.gate-orb-1 {
+  width: 420px;
+  height: 420px;
+  background: var(--user-primary);
+  top: -140px;
+  left: -100px;
+  animation-delay: 0s;
+}
+
+.gate-orb-2 {
+  width: 340px;
+  height: 340px;
+  background: var(--user-secondary);
+  bottom: -120px;
+  right: -80px;
+  animation-delay: -4s;
+}
+
+.gate-orb-3 {
+  width: 260px;
+  height: 260px;
+  background: var(--user-accent);
+  top: 40%;
+  right: 0%;
+  animation-delay: -7s;
+}
+
+/* Crown badge */
+.gate-crown-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 92px;
+  height: 92px;
+  border-radius: 28px;
+  background: var(--user-grad-1);
+  color: #ffffff;
+  font-size: 42px;
+  margin-bottom: 28px;
+  box-shadow:
+    0 0 0 10px color-mix(in srgb, var(--user-primary) 10%, transparent),
+    0 24px 48px color-mix(in srgb, var(--user-primary) 38%, transparent);
+  animation: gateIconPulse 3s ease-in-out infinite;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes gateIconPulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow:
+      0 0 0 10px color-mix(in srgb, var(--user-primary) 10%, transparent),
+      0 24px 48px color-mix(in srgb, var(--user-primary) 38%, transparent);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow:
+      0 0 0 16px color-mix(in srgb, var(--user-primary) 7%, transparent),
+      0 32px 60px color-mix(in srgb, var(--user-primary) 48%, transparent);
+  }
+}
+
+/* Kicker badge */
+.gate-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 18px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--user-primary) 28%, transparent);
+  background: color-mix(in srgb, var(--user-primary) 8%, transparent);
+  color: var(--user-primary);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 20px;
+  position: relative;
+  z-index: 1;
+}
+
+/* Main title */
+.gate-title {
+  margin: 0 0 16px;
+  font-size: clamp(38px, 5vw, 60px);
+  font-weight: 950;
+  line-height: 1.08;
+  letter-spacing: -2px;
+  color: var(--text-main);
+  position: relative;
+  z-index: 1;
+}
+
+.gate-title-plus {
+  background: var(--user-grad-1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Description */
+.gate-description {
+  max-width: 500px;
+  margin: 0 auto 40px;
+  color: var(--text-secondary);
+  font-size: 16px;
+  line-height: 1.8;
+  position: relative;
+  z-index: 1;
+}
+
+/* Feature cards grid */
+.gate-features {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  width: 100%;
+  max-width: 640px;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.gate-feature-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  background: var(--card-bg);
+  text-align: left;
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.04);
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.25s;
+}
+
+.gate-feature-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.1);
+  border-color: color-mix(in srgb, var(--user-primary) 24%, transparent);
+}
+
+.gate-feature-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 18px;
+  color: #ffffff;
+  flex-shrink: 0;
+}
+
+.gate-feature-icon--violet { background: #8b5cf6; }
+.gate-feature-icon--teal   { background: #14b8a6; }
+.gate-feature-icon--rose   { background: #f43f5e; }
+.gate-feature-icon--sky    { background: #0ea5e9; }
+
+.gate-feature-body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.gate-feature-body strong {
+  color: var(--text-main);
+  font-size: 13px;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.gate-feature-body span {
+  color: var(--text-secondary);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* CTA Button */
+.gate-cta {
+  height: 52px !important;
+  padding: 0 40px !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  border-radius: 14px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--user-primary) 40%, transparent) !important;
+  transition: transform 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.gate-cta:hover:not([disabled]) {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 16px 40px color-mix(in srgb, var(--user-primary) 55%, transparent) !important;
+}
+
+/* Trust chips */
+.gate-trust-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.gate-trust-chips > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+/* Dark mode overrides for gate */
+.dark-theme .gate-feature-card {
+  background: var(--card-bg);
+  border-color: var(--border-color);
+}
+
+.dark-theme .gate-feature-card:hover {
+  border-color: color-mix(in srgb, var(--user-primary) 30%, transparent);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.3);
 }
 
 .journey-hero-chips span,
@@ -1266,7 +1557,25 @@
     align-items: flex-start;
     flex-direction: column;
   }
+
+  /* Gate responsive */
+  .gate-features {
+    grid-template-columns: 1fr;
+    max-width: 100%;
+  }
+
+  .journey-premium-gate {
+    padding: 48px 24px 48px;
+  }
+
+  .gate-crown-badge {
+    width: 72px;
+    height: 72px;
+    font-size: 32px;
+    border-radius: 22px;
+  }
 }
+
 
 @media (max-width: 575px) {
   .journey-hero {
