@@ -19,3 +19,7 @@ documents/authentication-service-secrets.md
 
 # Java build target
 **/target/
+
+# Local scratch files
+scratch/
+

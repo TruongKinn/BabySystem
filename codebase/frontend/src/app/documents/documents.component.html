@@ -237,161 +237,296 @@
             </div>
           </div>
 
-          <!-- Excel Dropzone & POI Templates Layout (when no data loaded) -->
-          <div *ngIf="parsedExcelFiles.length === 0" class="bento-excel-layout animate-slide-up">
-            
-            <!-- Left Side: Interactive Dropzone -->
-            <div class="left-dropzone-panel">
-              <div 
-                class="dropzone-box excel-dropzone" 
-                [class.drag-over]="excelDragOver"
-                (dragover)="onExcelDragOver($event)"
-                (dragleave)="onExcelDragLeave($event)"
-                (drop)="onExcelFileDrop($event)"
-                (click)="fileInputTab2.click()"
-              >
-                <div class="dropzone-content">
-                  <div class="icon-circle excel-icon-circle">
-                    <i nz-icon nzType="file-excel" nzTheme="outline" class="upload-icon"></i>
-                  </div>
-                  <h4 class="dropzone-title">Thả tệp Excel chứa dữ liệu Chi tiêu</h4>
-                  <p class="dropzone-hint">Kéo thả file .xlsx vào đây hoặc click để duyệt tệp tin</p>
-                  
-                  <div class="dropzone-note">
-                    <span nz-icon nzType="info-circle" nzTheme="outline"></span>
-                    <span>Hệ thống tự động đồng bộ & đối soát dữ liệu sau khi tải lên</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Right Side: POI Premium Template Gallery -->
-            <div class="right-template-panel">
-              <div class="panel-header-desc">
-                <h3 class="panel-title">
-                  <span nz-icon nzType="appstore" nzTheme="outline" style="color: var(--user-primary); font-size: 18px; margin-right: 6px;"></span>
-                  Bộ sưu tập Template Excel
-                </h3>
-                <p class="panel-subtitle">Được thiết kế chuyên nghiệp & tự động kết xuất bằng thư viện Apache POI ở Backend.</p>
-              </div>
-
-              <div class="template-gallery-grid">
-                <div 
-                  *ngFor="let temp of poiTemplates" 
-                  class="poi-template-card"
-                  [style.--c-color]="temp.color"
-                  [style.--c-rgb]="temp.colorRGB"
-                >
-                  <div class="card-info-wrap">
-                    <div class="card-icon-badge">
-                      <span nz-icon [nzType]="temp.icon" nzTheme="outline"></span>
-                    </div>
-                    <div class="card-text-block">
-                      <h4 class="card-template-title">{{ temp.title }}</h4>
-                      <p class="card-template-desc">{{ temp.desc }}</p>
-                      
-                      <!-- Column Headers tag list -->
-                      <div class="card-columns-list">
-                        <span *ngFor="let col of temp.columns" class="col-tag">
-                          {{ col }}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <!-- Download action -->
-                  <a [href]="getTemplateDownloadUrl(temp.id)" download class="btn-download-poi" nz-tooltip nzTooltipTitle="Tải xuống Template">
-                    <span nz-icon nzType="download" nzTheme="outline"></span>
-                  </a>
-                </div>
-              </div>
-              
-              <div class="poi-badge-footer">
-                <span class="poi-badge-tag"><i nz-icon nzType="thunderbolt" nzTheme="fill" style="margin-right: 4px; color: #eab308;"></i> Powered by Apache POI</span>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Spreadsheet Preview & Import Section (Fintech Bento Sheet) -->
-          <div *ngIf="parsedExcelFiles.length > 0" class="spreadsheet-preview-section fade-in">
-            <div class="preview-header-bar">
-              <div class="preview-meta">
-                <h3 class="preview-title">Duyệt dữ liệu Nhập từ Excel</h3>
-                <p class="preview-subtitle">Tìm thấy <strong>{{ excelRows.length }}</strong> dòng dữ liệu hợp lệ của tệp đang chọn. Bạn có thể sửa trực tiếp trên lưới trước khi import.</p>
-              </div>
-              <div class="preview-actions">
-                <button nz-button nzType="default" (click)="parsedExcelFiles = []; selectedExcelFileIndex = null; selectExcelFile(-1)" class="btn-user-outline" style="height: 38px; border-radius: 10px;">
-                  <i nz-icon nzType="delete" nzTheme="outline"></i> Xóa tất cả
-                </button>
-                <button nz-button nzType="default" (click)="executeSingleImport()" [nzLoading]="isImporting" class="btn-user-outline" style="height: 38px; border-radius: 10px; border-color: var(--user-primary); color: var(--user-primary);">
-                  <i nz-icon nzType="file-text" nzTheme="outline"></i> Nhập tệp này (Đơn)
-                </button>
-                <button nz-button nzType="primary" (click)="executeBulkImport()" [nzLoading]="isBulkImporting" class="btn-user-primary" style="height: 38px; border-radius: 10px;">
-                  <i nz-icon nzType="import" nzTheme="outline"></i> Nhập hàng loạt (Tất cả)
-                </button>
-              </div>
-            </div>
-
-            <!-- Uploaded Excel Files Horizontal Selector Carousel (Premium Bento Pills) -->
-            <div class="excel-files-carousel animate-slide-up">
-              <div 
-                *ngFor="let fileItem of parsedExcelFiles; let idx = index" 
-                class="excel-file-pill"
-                [class.active]="selectedExcelFileIndex === idx"
-                [class.imported]="fileItem.isImported"
-                (click)="selectExcelFile(idx)"
-              >
-                <span class="file-pill-icon">
-                  <i nz-icon nzType="file-excel" nzTheme="outline"></i>
-                </span>
-                <span class="file-pill-name" [title]="fileItem.fileName">{{ fileItem.fileName }}</span>
-                <span class="file-pill-badge" *ngIf="fileItem.rows.length > 0">{{ fileItem.rows.length }} dòng</span>
-                <button class="file-pill-remove-btn" (click)="removeExcelFile(idx, $event)" nz-tooltip nzTooltipTitle="Xóa file">
-                  <i nz-icon nzType="close" nzTheme="outline"></i>
-                </button>
-              </div>
-              
-              <!-- Thêm nút tải thêm file ngay trên thanh preview -->
-              <button class="excel-file-pill add-more-excel-pill" (click)="fileInputTab2.click()" nz-tooltip nzTooltipTitle="Tải thêm tệp Excel">
-                <i nz-icon nzType="plus" nzTheme="outline" style="margin-right: 4px;"></i> Thêm tệp
+          <!-- Toggle sub-views inside Excel Tab -->
+          <div class="excel-view-toggle" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 12px; padding: 6px 12px; backdrop-filter: blur(10px);">
+            <div style="display: flex; gap: 8px;">
+              <button nz-button [nzType]="excelActiveSubView === 'import' ? 'primary' : 'default'" (click)="setExcelSubView('import')" style="border-radius: 8px; font-weight: 600;">
+                <i nz-icon nzType="upload" nzTheme="outline"></i> Tải lên & Nhập Excel
+              </button>
+              <button nz-button [nzType]="excelActiveSubView === 'history' ? 'primary' : 'default'" (click)="setExcelSubView('history')" style="border-radius: 8px; font-weight: 600;">
+                <i nz-icon nzType="history" nzTheme="outline"></i> Lịch sử Nhập tệp (Ngầm)
               </button>
             </div>
+            <div *ngIf="excelActiveSubView === 'history'" style="display: flex; align-items: center; gap: 8px;">
+              <button nz-button nzType="default" (click)="loadImportHistory()" nz-tooltip nzTooltipTitle="Tải lại danh sách" style="border-radius: 8px; width: 36px; height: 36px; padding: 0; display: grid; place-items: center;">
+                <i nz-icon nzType="reload" nzTheme="outline"></i>
+              </button>
+            </div>
+          </div>
 
-            <!-- Bento Spreadsheet Grid -->
-            <div class="table-container-card">
-              <nz-table #basicTable [nzData]="excelRows" [nzFrontPagination]="true" [nzPageSize]="10" class="premium-table">
+          <!-- SUB-VIEW 1: IMPORT & PREVIEW EXCEL -->
+          <div *ngIf="excelActiveSubView === 'import'" class="sub-view-pane fade-in">
+            <!-- Excel Dropzone & POI Templates Layout (when no data loaded) -->
+            <div *ngIf="parsedExcelFiles.length === 0" class="bento-excel-layout animate-slide-up">
+              
+              <!-- Left Side: Interactive Dropzone -->
+              <div class="left-dropzone-panel">
+                <div 
+                  class="dropzone-box excel-dropzone" 
+                  [class.drag-over]="excelDragOver"
+                  (dragover)="onExcelDragOver($event)"
+                  (dragleave)="onExcelDragLeave($event)"
+                  (drop)="onExcelFileDrop($event)"
+                  (click)="fileInputTab2.click()"
+                >
+                  <div class="dropzone-content">
+                    <div class="icon-circle excel-icon-circle">
+                      <i nz-icon nzType="file-excel" nzTheme="outline" class="upload-icon"></i>
+                    </div>
+                    <h4 class="dropzone-title">Thả tệp Excel chứa dữ liệu Chi tiêu</h4>
+                    <p class="dropzone-hint">Kéo thả file .xlsx vào đây hoặc click để duyệt tệp tin</p>
+                    
+                    <div class="dropzone-note">
+                      <span nz-icon nzType="info-circle" nzTheme="outline"></span>
+                      <span>Hệ thống tự động đồng bộ & đối soát dữ liệu sau khi tải lên</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Right Side: POI Premium Template Gallery -->
+              <div class="right-template-panel">
+                <div class="panel-header-desc">
+                  <h3 class="panel-title">
+                    <span nz-icon nzType="appstore" nzTheme="outline" style="color: var(--user-primary); font-size: 18px; margin-right: 6px;"></span>
+                    Bộ sưu tập Template Excel
+                  </h3>
+                  <p class="panel-subtitle">Được thiết kế chuyên nghiệp & tự động kết xuất bằng thư viện Apache POI ở Backend.</p>
+                </div>
+
+                <div class="template-gallery-grid">
+                  <div 
+                    *ngFor="let temp of poiTemplates" 
+                    class="poi-template-card"
+                    [style.--c-color]="temp.color"
+                    [style.--c-rgb]="temp.colorRGB"
+                  >
+                    <div class="card-info-wrap">
+                      <div class="card-icon-badge">
+                        <span nz-icon [nzType]="temp.icon" nzTheme="outline"></span>
+                      </div>
+                      <div class="card-text-block">
+                        <h4 class="card-template-title">{{ temp.title }}</h4>
+                        <p class="card-template-desc">{{ temp.desc }}</p>
+                        
+                        <!-- Column Headers tag list -->
+                        <div class="card-columns-list">
+                          <span *ngFor="let col of temp.columns" class="col-tag">
+                            {{ col }}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Download actions -->
+                    <div style="display: flex; flex-direction: column; gap: 8px; margin-left: 12px; align-items: center; justify-content: center;">
+                      <a [href]="getTemplateDownloadUrl(temp.id)" download class="btn-download-poi" nz-tooltip nzTooltipTitle="Tải mẫu trống">
+                        <span nz-icon nzType="download" nzTheme="outline"></span>
+                      </a>
+                      <a [href]="getTemplateDownloadUrl(temp.id, 20000)" download class="btn-download-poi" nz-tooltip nzTooltipTitle="Tải 20.000 dòng dữ liệu mẫu" style="border-color: rgba(16, 185, 129, 0.4) !important; color: #10b981 !important; background: rgba(16, 185, 129, 0.08) !important;">
+                        <span nz-icon nzType="rocket" nzTheme="outline"></span>
+                      </a>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="poi-badge-footer">
+                  <span class="poi-badge-tag"><i nz-icon nzType="thunderbolt" nzTheme="fill" style="margin-right: 4px; color: #eab308;"></i> Powered by Apache POI</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Spreadsheet Preview & Import Section (Fintech Bento Sheet) -->
+            <div *ngIf="parsedExcelFiles.length > 0" class="spreadsheet-preview-section fade-in">
+              <div class="preview-header-bar">
+                <div class="preview-meta">
+                  <h3 class="preview-title">Duyệt dữ liệu Nhập từ Excel</h3>
+                  <p class="preview-subtitle">Tìm thấy <strong>{{ excelRows.length }}</strong> dòng dữ liệu hợp lệ của tệp đang chọn. Bạn có thể sửa trực tiếp trên lưới trước khi import hoặc chọn Nhập ngầm bất đồng bộ.</p>
+                </div>
+                <div class="preview-actions">
+                  <button nz-button nzType="default" (click)="parsedExcelFiles = []; selectedExcelFileIndex = null; selectExcelFile(-1)" class="btn-user-outline" style="height: 38px; border-radius: 10px;">
+                    <i nz-icon nzType="delete" nzTheme="outline"></i> Xóa tất cả
+                  </button>
+                  <button nz-button nzType="default" (click)="executeSingleImport()" [nzLoading]="isImporting" class="btn-user-outline" style="height: 38px; border-radius: 10px; border-color: var(--user-primary); color: var(--user-primary);">
+                    <i nz-icon nzType="file-text" nzTheme="outline"></i> Nhập tệp này (Đơn)
+                  </button>
+                  <button nz-button nzType="default" (click)="executeImportAsync()" [nzLoading]="isImportingAsync" class="btn-user-outline" style="height: 38px; border-radius: 10px; border-color: #10b981; color: #10b981; margin-right: 8px;">
+                    <i nz-icon nzType="cloud-upload" nzTheme="outline"></i> Nhập tệp này (Ngầm)
+                  </button>
+                  <button nz-button nzType="primary" (click)="executeBulkImport()" [nzLoading]="isBulkImporting" class="btn-user-primary" style="height: 38px; border-radius: 10px;">
+                    <i nz-icon nzType="import" nzTheme="outline"></i> Nhập hàng loạt (Tất cả)
+                  </button>
+                </div>
+              </div>
+
+              <!-- Uploaded Excel Files Horizontal Selector Carousel (Premium Bento Pills) -->
+              <div class="excel-files-carousel animate-slide-up">
+                <div 
+                  *ngFor="let fileItem of parsedExcelFiles; let idx = index" 
+                  class="excel-file-pill"
+                  [class.active]="selectedExcelFileIndex === idx"
+                  [class.imported]="fileItem.isImported"
+                  (click)="selectExcelFile(idx)"
+                >
+                  <span class="file-pill-icon">
+                    <i nz-icon nzType="file-excel" nzTheme="outline"></i>
+                  </span>
+                  <span class="file-pill-name" [title]="fileItem.fileName">{{ fileItem.fileName }}</span>
+                  <span class="file-pill-badge" *ngIf="fileItem.rows.length > 0">{{ fileItem.rows.length }} dòng</span>
+                  <button class="file-pill-remove-btn" (click)="removeExcelFile(idx, $event)" nz-tooltip nzTooltipTitle="Xóa file">
+                    <i nz-icon nzType="close" nzTheme="outline"></i>
+                  </button>
+                </div>
+                
+                <!-- Thêm nút tải thêm file ngay trên thanh preview -->
+                <button class="excel-file-pill add-more-excel-pill" (click)="fileInputTab2.click()" nz-tooltip nzTooltipTitle="Tải thêm tệp Excel">
+                  <i nz-icon nzType="plus" nzTheme="outline" style="margin-right: 4px;"></i> Thêm tệp
+                </button>
+              </div>
+
+              <!-- Bento Spreadsheet Grid -->
+              <div class="table-container-card">
+                <nz-table #basicTable [nzData]="excelRows" [nzFrontPagination]="true" [nzPageSize]="10" class="premium-table">
+                  <thead>
+                    <tr>
+                      <th nzWidth="60px" class="checkbox-cell">
+                        <label class="premium-checkbox-container">
+                          <input type="checkbox" [checked]="isAllRowsSelected()" (change)="toggleAllRows($event)" />
+                          <span class="checkmark"></span>
+                        </label>
+                      </th>
+                      <th nzWidth="80px">Dòng</th>
+                      <th *ngFor="let header of excelHeaders">{{ header }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let row of basicTable.data">
+                      <td class="checkbox-cell">
+                        <label class="premium-checkbox-container">
+                          <input type="checkbox" [checked]="selectedRows[row.rowNumber]" (change)="toggleRowSelection(row.rowNumber)" />
+                          <span class="checkmark"></span>
+                        </label>
+                      </td>
+                      <td class="row-num-cell">#{{ row.rowNumber }}</td>
+                      
+                      <!-- Render dynamic cells based on columns -->
+                      <td *ngFor="let header of excelHeaders">
+                        <input 
+                          type="text" 
+                          [value]="row.data[header] || ''" 
+                          (input)="onRowValueChange(row.rowNumber, header, $event)" 
+                          class="cell-edit-input" 
+                          [class.text-bold]="header.includes('Số tiền') || header.includes('Chi phí') || header.includes('Đơn giá')"
+                        />
+                      </td>
+                    </tr>
+                  </tbody>
+                </nz-table>
+              </div>
+            </div>
+          </div> <!-- End of SUB-VIEW 1 -->
+
+          <!-- SUB-VIEW 2: IMPORT HISTORY (ASYNC BACKGROUND TASKS) -->
+          <div *ngIf="excelActiveSubView === 'history'" class="sub-view-pane fade-in">
+            <div class="import-history-container" style="background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; backdrop-filter: blur(10px);">
+              <div class="history-header" style="margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <h4 style="font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 4px;">Danh sách tệp xử lý ngầm</h4>
+                  <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">Theo dõi tiến trình xử lý bất đồng bộ của các file Excel dung lượng lớn.</p>
+                </div>
+                <nz-tag nzColor="processing" *ngIf="isPollingHistory" style="border-radius: 6px; padding: 2px 8px; font-weight: 600;">
+                  <i nz-icon nzType="sync" nzSpin style="margin-right: 4px;"></i> Đang tự động cập nhật tiến độ...
+                </nz-tag>
+              </div>
+
+              <nz-table 
+                #historyTable 
+                [nzData]="importHistoryList" 
+                [nzFrontPagination]="false" 
+                [nzTotal]="historyTotalItems"
+                [(nzPageIndex)]="historyPageIndex"
+                [(nzPageSize)]="historyPageSize"
+                (nzPageIndexChange)="loadImportHistory()"
+                [nzLoading]="historyLoading"
+                class="premium-table"
+              >
                 <thead>
                   <tr>
-                    <th nzWidth="60px" class="checkbox-cell">
-                      <label class="premium-checkbox-container">
-                        <input type="checkbox" [checked]="isAllRowsSelected()" (change)="toggleAllRows($event)" />
-                        <span class="checkmark"></span>
-                      </label>
-                    </th>
-                    <th nzWidth="80px">Dòng</th>
-                    <th *ngFor="let header of excelHeaders">{{ header }}</th>
+                    <th style="font-weight: 700;">Tên tệp</th>
+                    <th style="font-weight: 700;">Phân loại</th>
+                    <th style="font-weight: 700; width: 120px;">Trạng thái</th>
+                    <th style="font-weight: 700; width: 220px;">Tiến trình xử lý</th>
+                    <th style="font-weight: 700; text-align: center; width: 150px;">Kết quả</th>
+                    <th style="font-weight: 700; width: 150px;">Thời gian</th>
+                    <th style="font-weight: 700; text-align: center; width: 100px;">Hành động</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let row of basicTable.data">
-                    <td class="checkbox-cell">
-                      <label class="premium-checkbox-container">
-                        <input type="checkbox" [checked]="selectedRows[row.rowNumber]" (change)="toggleRowSelection(row.rowNumber)" />
-                        <span class="checkmark"></span>
-                      </label>
+                  <tr *ngFor="let item of historyTable.data" class="animate-slide-up">
+                    <td>
+                      <div style="display: flex; align-items: center; gap: 8px;">
+                        <i nz-icon nzType="file-excel" nzTheme="fill" style="color: #10b981; font-size: 18px;"></i>
+                        <span style="font-weight: 600; color: var(--text-main);" [title]="item.fileName">{{ item.fileName | slice:0:30 }}{{ item.fileName.length > 30 ? '...' : '' }}</span>
+                      </div>
                     </td>
-                    <td class="row-num-cell">#{{ row.rowNumber }}</td>
-                    
-                    <!-- Render dynamic cells based on columns -->
-                    <td *ngFor="let header of excelHeaders">
-                      <input 
-                        type="text" 
-                        [value]="row.data[header] || ''" 
-                        (input)="onRowValueChange(row.rowNumber, header, $event)" 
-                        class="cell-edit-input" 
-                        [class.text-bold]="header.includes('Số tiền') || header.includes('Chi phí') || header.includes('Đơn giá')"
-                      />
+                    <td>
+                      <span [ngSwitch]="item.dataType">
+                        <nz-tag nzColor="blue" *ngSwitchCase="'expense'" style="font-weight: 600; border-radius: 6px;">Chi tiêu</nz-tag>
+                        <nz-tag nzColor="purple" *ngSwitchCase="'shopping'" style="font-weight: 600; border-radius: 6px;">Mua sắm</nz-tag>
+                        <nz-tag nzColor="orange" *ngSwitchCase="'vaccine'" style="font-weight: 600; border-radius: 6px;">Tiêm chủng</nz-tag>
+                        <nz-tag nzColor="cyan" *ngSwitchDefault style="font-weight: 600; border-radius: 6px;">Sức khỏe bé</nz-tag>
+                      </span>
+                    </td>
+                    <td>
+                      <span [ngSwitch]="item.status">
+                        <nz-tag nzColor="default" *ngSwitchCase="'PENDING'" style="font-weight: 600; border-radius: 6px; padding: 2px 8px;">Chờ duyệt</nz-tag>
+                        <nz-tag nzColor="processing" *ngSwitchCase="'PROCESSING'" style="font-weight: 600; border-radius: 6px; padding: 2px 8px; animation: pulse-orange 1.5s infinite;">
+                          <i nz-icon nzType="sync" nzSpin style="margin-right: 4px;"></i> Đang xử lý
+                        </nz-tag>
+                        <nz-tag nzColor="success" *ngSwitchCase="'SUCCESS'" style="font-weight: 600; border-radius: 6px; padding: 2px 8px;">
+                          <i nz-icon nzType="check-circle" style="margin-right: 4px;"></i> Thành công
+                        </nz-tag>
+                        <nz-tag nzColor="error" *ngSwitchCase="'FAILED'" style="font-weight: 600; border-radius: 6px; padding: 2px 8px;">
+                          <i nz-icon nzType="close-circle" style="margin-right: 4px;"></i> Lỗi
+                        </nz-tag>
+                      </span>
+                    </td>
+                    <td>
+                      <div class="progress-bar-container" style="display: flex; flex-direction: column; gap: 4px;">
+                        <nz-progress 
+                          [nzPercent]="getImportPercent(item)" 
+                          [nzStatus]="item.status === 'FAILED' ? 'exception' : (item.status === 'SUCCESS' ? 'success' : 'active')"
+                          [nzStrokeWidth]="6"
+                          [nzShowInfo]="false"
+                          [nzStrokeColor]="item.status === 'FAILED' ? '#ef4444' : (item.status === 'SUCCESS' ? '#10b981' : 'linear-gradient(to right, #10b981, #14b8a6)')"
+                        ></nz-progress>
+                        <span style="font-size: 11px; color: var(--text-secondary); font-weight: 500;">
+                          Đã chạy: {{ item.successCount + item.failedCount }} / {{ item.totalRows }} dòng ({{ getImportPercent(item) }}%)
+                        </span>
+                      </div>
+                    </td>
+                    <td style="text-align: center;">
+                      <div style="display: flex; flex-direction: column; align-items: center; gap: 2px;">
+                        <span *ngIf="item.successCount > 0" style="color: #10b981; font-weight: 700; font-size: 13px;">✔ {{ item.successCount }} dòng OK</span>
+                        <span *ngIf="item.failedCount > 0" style="color: #ef4444; font-weight: 700; font-size: 13px;">✖ {{ item.failedCount }} dòng lỗi</span>
+                        <span *ngIf="item.successCount === 0 && item.failedCount === 0 && item.status !== 'FAILED'" style="color: var(--text-secondary); font-size: 12px;">Đang xếp hàng...</span>
+                      </div>
+                    </td>
+                    <td>
+                      <span style="font-size: 12px; color: var(--text-secondary); font-weight: 500;">
+                        {{ item.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                      </span>
+                    </td>
+                    <td style="text-align: center;">
+                      <button 
+                        nz-button 
+                        nzType="default" 
+                        [disabled]="item.failedCount === 0" 
+                        (click)="viewHistoryErrors(item)"
+                        style="border-radius: 8px; border-color: rgba(239, 68, 68, 0.4); color: #ef4444; font-size: 12px; font-weight: 600; height: 32px;"
+                      >
+                        <i nz-icon nzType="warning" nzTheme="outline"></i> Lỗi
+                      </button>
                     </td>
                   </tr>
                 </tbody>
@@ -778,4 +913,67 @@
       </nz-form-item>
     </form>
   </ng-container>
+</nz-modal>
+
+<!-- Modal Xem chi tiết lỗi tệp lịch sử nhập ngầm -->
+<nz-modal
+  [(nzVisible)]="showHistoryErrorModal"
+  [nzTitle]="historyErrorModalTitle"
+  [nzFooter]="historyErrorModalFooter"
+  (nzOnCancel)="showHistoryErrorModal = false"
+  [nzWidth]="650"
+  nzClassName="user-role-modal import-result-modal"
+>
+  <ng-template #historyErrorModalTitle>
+    <div class="viewer-modal-title">
+      <span style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%); width: 36px; height: 36px; border-radius: 10px; display: inline-flex; align-items: center; justify-content: center; border: 1.5px solid rgba(239, 68, 68, 0.15); margin-right: 8px;">
+        <i nz-icon nzType="warning" nzTheme="outline" style="color: #ef4444; font-size: 16px;"></i>
+      </span>
+      <span>Nhật ký lỗi tệp: {{ selectedHistoryItem?.fileName | slice:0:30 }}{{ selectedHistoryItem?.fileName?.length > 30 ? '...' : '' }}</span>
+    </div>
+  </ng-template>
+
+  <ng-container *nzModalContent>
+    <div class="import-result-content">
+      <div class="import-file-info" style="margin-bottom: 16px; padding: 12px 16px; background: rgba(239, 68, 68, 0.05); border-radius: 12px; border: 1.5px solid rgba(239, 68, 68, 0.15); display: flex; align-items: center; gap: 10px;">
+        <i nz-icon nzType="file-excel" nzTheme="fill" style="color: #ef4444; font-size: 20px;"></i>
+        <div style="display: flex; flex-direction: column;">
+          <span style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-secondary); font-weight: 700;">Nhập bất đồng bộ thất bại</span>
+          <span class="file-name" style="color: var(--text-main); font-weight: 600; font-size: 13px;">{{ selectedHistoryItem?.fileName }}</span>
+        </div>
+      </div>
+
+      <div class="result-summary-grid" style="margin-bottom: 20px;">
+        <div class="result-card success-card">
+          <span class="count">{{ selectedHistoryItem?.successCount || 0 }}</span>
+          <span class="label">Dòng thành công</span>
+        </div>
+        <div class="result-card failed-card">
+          <span class="count">{{ selectedHistoryItem?.failedCount || 0 }}</span>
+          <span class="label">Dòng thất bại</span>
+        </div>
+      </div>
+
+      <div class="error-logs-section">
+        <h4 class="error-title">
+          <i nz-icon nzType="warning" nzTheme="outline" style="margin-right: 6px;"></i>
+          Chi tiết lỗi ghi nhận từ hệ thống:
+        </h4>
+        <div class="error-list-scroll" style="max-height: 250px;">
+          <div *ngFor="let err of historyErrors" class="error-item">
+            <span class="row-num" *ngIf="err.index >= 0">Dòng #{{ err.index + 1 }}</span>
+            <span class="row-num" *ngIf="err.index < 0">Hệ thống</span>
+            <span class="reason">{{ err.reason }}</span>
+          </div>
+          <div *ngIf="historyErrors.length === 0" style="text-align: center; padding: 20px; color: var(--text-secondary);">
+            Không tìm thấy thông tin lỗi chi tiết.
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+  
+  <ng-template #historyErrorModalFooter>
+    <button nz-button nzType="primary" (click)="showHistoryErrorModal = false" class="btn-user-primary" style="height: 38px; border-radius: 10px;">Đóng nhật ký</button>
+  </ng-template>
 </nz-modal>

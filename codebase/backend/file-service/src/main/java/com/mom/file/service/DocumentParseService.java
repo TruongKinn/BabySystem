@@ -30,12 +30,19 @@ public class DocumentParseService {
         if (file == null || file.isEmpty()) {
             throw new IllegalArgumentException("File is empty or null");
         }
+        try {
+            return parseExcel(file.getInputStream(), file.getOriginalFilename());
+        } catch (Exception e) {
+            log.error("Error reading file stream", e);
+            throw new IllegalArgumentException("Failed to read Excel file: " + e.getMessage(), e);
+        }
+    }
 
+    public ExcelParseResponse parseExcel(InputStream is, String originalFilename) {
         List<String> headers = new ArrayList<>();
         List<ExcelParseResponse.RowData> rows = new ArrayList<>();
 
-        try (InputStream is = file.getInputStream();
-             Workbook workbook = new XSSFWorkbook(is)) {
+        try (Workbook workbook = new XSSFWorkbook(is)) {
 
             Sheet sheet = workbook.getSheetAt(0);
             if (sheet == null) {
@@ -235,6 +242,10 @@ public class DocumentParseService {
     }
 
     public byte[] generateExcelTemplate(String type) {
+        return generateExcelTemplate(type, null);
+    }
+
+    public byte[] generateExcelTemplate(String type, Integer size) {
         if (type == null) {
             type = "expense";
         }
@@ -250,51 +261,137 @@ public class DocumentParseService {
                 case "baby":
                     sheetName = "Dinh dưỡng & Sức khỏe bé";
                     columns = new String[]{"Ngày giờ", "Loại bữa ăn", "Lượng ăn (ml/g)", "Chiều cao (cm)", "Cân nặng (kg)", "Ghi chú y tế"};
-                    data = new Object[][]{
-                        {"2026-05-20 07:30", "Sữa công thức", 180.0, 68.5, 7.8, "Bé bú tốt, ngủ sâu"},
-                        {"2026-05-20 11:30", "Ăn dặm (Bột rây)", 100.0, 68.5, 7.8, "Bé ăn hết suất"},
-                        {"2026-05-21 19:00", "Sữa mẹ", 150.0, 68.7, 7.9, "Bé hơi quấy trước khi ăn"}
-                    };
-                    // Màu xanh Teal nhã nhặn #0F766E (RGB: 15, 118, 110)
-                    rgbColor = new byte[]{(byte) 15, (byte) 118, (byte) 110};
                     break;
-
                 case "shopping":
                     sheetName = "Kế hoạch Mua sắm";
                     columns = new String[]{"Tên món đồ", "Danh mục mua sắm", "Đơn giá dự kiến", "Số lượng", "Mức độ ưu tiên", "Ghi chú"};
-                    data = new Object[][]{
-                        {"Tã quần Moony size L", "Bỉm tã", 380000.0, 2.0, "Cao", "Mua loại nội địa Nhật"},
-                        {"Sữa bột Meiji số 0-1", "Sữa công thức", 520000.0, 1.0, "Cao", "Check hạn sử dụng xa"},
-                        {"Đồ chơi gỗ thả hình", "Đồ chơi", 150000.0, 1.0, "Trung bình", "Kích thích tư duy cho bé"}
-                    };
-                    // Màu xanh Indigo sang trọng #4338CA (RGB: 67, 56, 202)
-                    rgbColor = new byte[]{(byte) 67, (byte) 56, (byte) 202};
                     break;
-
                 case "vaccine":
                     sheetName = "Lịch Tiêm chủng & Y tế";
                     columns = new String[]{"Ngày tiêm", "Tên vắc xin", "Mũi số", "Chi phí tiêm", "Cơ sở tiêm chủng", "Ngày hẹn tiếp theo"};
-                    data = new Object[][]{
-                        {"2026-05-15", "6 trong 1 (Infanrix)", 2.0, 1050000.0, "Trung tâm VNVC", "2026-06-15"},
-                        {"2026-05-20", "Phế cầu (Synflorix)", 1.0, 980000.0, "Phòng tiêm chủng phường", "2026-07-20"},
-                        {"2026-05-25", "Nhỏ ngừa Rota", 2.0, 850000.0, "Bệnh viện Sản Nhi", "2026-06-25"}
-                    };
-                    // Màu xanh Slate quý phái #475569 (RGB: 71, 85, 105)
-                    rgbColor = new byte[]{(byte) 71, (byte) 85, (byte) 105};
                     break;
-
                 case "expense":
                 default:
                     sheetName = "Chi tiêu gia đình";
                     columns = new String[]{"Ngày chi tiêu", "Danh mục", "Số tiền", "Ghi chú"};
-                    data = new Object[][]{
-                        {"2026-05-20", "Meals", 150000.0, "Ăn trưa gia đình"},
-                        {"2026-05-21", "Shopping", 550000.0, "Mua tã bỉm cho bé"},
-                        {"2026-05-22", "Education", 1200000.0, "Học phí lớp vẽ của bé"}
-                    };
-                    // Màu xanh Navy thanh lịch #1E293B (RGB: 30, 41, 59)
+                    break;
+            }
+
+            switch (type) {
+                case "baby":
+                    rgbColor = new byte[]{(byte) 15, (byte) 118, (byte) 110};
+                    break;
+                case "shopping":
+                    rgbColor = new byte[]{(byte) 67, (byte) 56, (byte) 202};
+                    break;
+                case "vaccine":
+                    rgbColor = new byte[]{(byte) 71, (byte) 85, (byte) 105};
+                    break;
+                case "expense":
+                default:
                     rgbColor = new byte[]{(byte) 30, (byte) 41, (byte) 59};
                     break;
+            }
+
+            if (size != null && size > 0) {
+                data = new Object[size][columns.length];
+                java.util.Random random = new java.util.Random();
+                
+                switch (type) {
+                    case "baby":
+                        String[] mealTypes = {"Sữa công thức", "Ăn dặm (Bột rây)", "Sữa mẹ", "Trái cây nghiền", "Cháo thịt bằm"};
+                        String[] medicalNotes = {"Bé bú tốt, ngủ sâu", "Bé ăn ngon miệng", "Bé ngoan, không quấy", "Bé hơi lười bú", "Bình thường"};
+                        for (int k = 0; k < size; k++) {
+                            long randomTime = System.currentTimeMillis() - (long)k * 30 * 60 * 1000;
+                            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm");
+                            String dateTimeStr = sdf.format(new java.util.Date(randomTime));
+                            
+                            data[k][0] = dateTimeStr;
+                            data[k][1] = mealTypes[random.nextInt(mealTypes.length)];
+                            data[k][2] = Math.round((80.0 + random.nextDouble() * 120.0) * 10) / 10.0;
+                            data[k][3] = Math.round((65.0 + random.nextDouble() * 10.0) * 10) / 10.0;
+                            data[k][4] = Math.round((7.0 + random.nextDouble() * 4.0) * 10) / 10.0;
+                            data[k][5] = medicalNotes[random.nextInt(medicalNotes.length)];
+                        }
+                        break;
+                    case "shopping":
+                        String[] itemNames = {"Tã quần Moony size L", "Sữa bột Meiji số 0-1", "Đồ chơi gỗ thả hình", "Khăn ướt Bobby 100 tờ", "Nước giặt D-nee 3000ml", "Bình sữa Hegen 150ml", "Kem chống hăm Sudocrem", "Tấm lót chống thấm"};
+                        String[] shopCategories = {"Bỉm tã", "Sữa công thức", "Đồ chơi", "Đồ dùng cho bé", "Vệ sinh cho bé"};
+                        String[] priorities = {"Cao", "Trung bình", "Thấp"};
+                        for (int k = 0; k < size; k++) {
+                            data[k][0] = itemNames[random.nextInt(itemNames.length)] + " #" + (k + 1);
+                            data[k][1] = shopCategories[random.nextInt(shopCategories.length)];
+                            data[k][2] = (double) (10000 + random.nextInt(99) * 5000);
+                            data[k][3] = (double) (1 + random.nextInt(5));
+                            data[k][4] = priorities[random.nextInt(priorities.length)];
+                            data[k][5] = "Lô mua sắm thứ " + (k / 1000 + 1);
+                        }
+                        break;
+                    case "vaccine":
+                        String[] vaccines = {"6 trong 1 (Infanrix)", "Phế cầu (Synflorix)", "Nhỏ ngừa Rota", "Sởi - Quai bị - Rubella", "Lao (BCG)", "Viêm gan B", "Cúm mùa"};
+                        String[] locations = {"Trung tâm VNVC", "Phòng tiêm chủng phường", "Bệnh viện Sản Nhi", "Bệnh viện đa khoa"};
+                        for (int k = 0; k < size; k++) {
+                            long randomTime = System.currentTimeMillis() - (long)k * 6 * 3600 * 1000;
+                            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                            String dateStr = sdf.format(new java.util.Date(randomTime));
+                            String nextDateStr = sdf.format(new java.util.Date(randomTime + 30L * 24 * 3600 * 1000));
+                            
+                            data[k][0] = dateStr;
+                            data[k][1] = vaccines[random.nextInt(vaccines.length)];
+                            data[k][2] = (double) (1 + random.nextInt(3));
+                            data[k][3] = (double) (random.nextInt(3) == 0 ? 0 : 500000 + random.nextInt(20) * 50000);
+                            data[k][4] = locations[random.nextInt(locations.length)];
+                            data[k][5] = nextDateStr;
+                        }
+                        break;
+                    case "expense":
+                    default:
+                        String[] expCategories = {"Meals", "Shopping", "Baby Care", "Utilities", "Others"};
+                        String[] expNotes = {"Ăn trưa gia đình", "Mua tã bỉm cho bé", "Học phí lớp vẽ", "Hóa đơn điện nước", "Khám sức khỏe định kỳ", "Đổ xăng", "Mua sữa bột"};
+                        for (int k = 0; k < size; k++) {
+                            long randomTime = System.currentTimeMillis() - (long)k * 30 * 60 * 1000;
+                            java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                            String dateStr = sdf.format(new java.util.Date(randomTime));
+                            
+                            data[k][0] = dateStr;
+                            data[k][1] = expCategories[random.nextInt(expCategories.length)];
+                            data[k][2] = (double) (20000 + random.nextInt(198) * 10000);
+                            data[k][3] = expNotes[random.nextInt(expNotes.length)] + " hàng loạt #" + (k + 1);
+                        }
+                        break;
+                }
+            } else {
+                switch (type) {
+                    case "baby":
+                        data = new Object[][]{
+                            {"2026-05-20 07:30", "Sữa công thức", 180.0, 68.5, 7.8, "Bé bú tốt, ngủ sâu"},
+                            {"2026-05-20 11:30", "Ăn dặm (Bột rây)", 100.0, 68.5, 7.8, "Bé ăn hết suất"},
+                            {"2026-05-21 19:00", "Sữa mẹ", 150.0, 68.7, 7.9, "Bé hơi quấy trước khi ăn"}
+                        };
+                        break;
+                    case "shopping":
+                        data = new Object[][]{
+                            {"Tã quần Moony size L", "Bỉm tã", 380000.0, 2.0, "Cao", "Mua loại nội địa Nhật"},
+                            {"Sữa bột Meiji số 0-1", "Sữa công thức", 520000.0, 1.0, "Cao", "Check hạn sử dụng xa"},
+                            {"Đồ chơi gỗ thả hình", "Đồ chơi", 150000.0, 1.0, "Trung bình", "Kích thích tư duy cho bé"}
+                        };
+                        break;
+                    case "vaccine":
+                        data = new Object[][]{
+                            {"2026-05-15", "6 trong 1 (Infanrix)", 2.0, 1050000.0, "Trung tâm VNVC", "2026-06-15"},
+                            {"2026-05-20", "Phế cầu (Synflorix)", 1.0, 980000.0, "Phòng tiêm chủng phường", "2026-07-20"},
+                            {"2026-05-25", "Nhỏ ngừa Rota", 2.0, 850000.0, "Bệnh viện Sản Nhi", "2026-06-25"}
+                        };
+                        break;
+                    case "expense":
+                    default:
+                        data = new Object[][]{
+                            {"2026-05-20", "Meals", 150000.0, "Ăn trưa gia đình"},
+                            {"2026-05-21", "Shopping", 550000.0, "Mua tã bỉm cho bé"},
+                            {"2026-05-22", "Baby Care", 1200000.0, "Mua sữa bột cho bé"}
+                        };
+                        break;
+                }
             }
 
             Sheet sheet = workbook.createSheet(sheetName);
@@ -471,9 +568,15 @@ public class DocumentParseService {
             sheet.setAutoFilter(filterRange);
 
             // 8. Tự động căn chỉnh độ rộng cột + đệm lề an toàn
-            for (int i = 0; i < columns.length; i++) {
-                sheet.autoSizeColumn(i);
-                sheet.setColumnWidth(i, sheet.getColumnWidth(i) + 1500); // Tăng đệm lề thêm thoáng đãng
+            if (size == null || size <= 500) {
+                for (int i = 0; i < columns.length; i++) {
+                    sheet.autoSizeColumn(i);
+                    sheet.setColumnWidth(i, sheet.getColumnWidth(i) + 1500); // Tăng đệm lề thêm thoáng đãng
+                }
+            } else {
+                for (int i = 0; i < columns.length; i++) {
+                    sheet.setColumnWidth(i, 6500); // Độ rộng tĩnh tối ưu cho tệp lớn
+                }
             }
 
             ByteArrayOutputStream bos = new ByteArrayOutputStream();

@@ -1739,4 +1739,29 @@ export class SuperAppCommandService {
         catchError(this.handleError)
       );
   }
+
+  importExcelAsync(file: File, dataType: string, familyId: number, babyId?: number): Observable<number> {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('dataType', dataType);
+    formData.append('familyId', String(familyId));
+    if (babyId) {
+      formData.append('babyId', String(babyId));
+    }
+    return this.http.post<ApiEnvelope<number>>(`${this.apiBase}/file/files/import/async`, formData).pipe(
+      map((response) => {
+        if (!response.success) throw new Error(response.message || 'API error');
+        return response.data;
+      }),
+      catchError(this.handleError)
+    );
+  }
+
+  getImportHistory(familyId: number, page: number = 0, size: number = 10): Observable<any> {
+    return this.get<any>(`/file/files/import/history?familyId=${familyId}&page=${page}&size=${size}`);
+  }
+
+  getImportHistoryDetail(id: number): Observable<any> {
+    return this.get<any>(`/file/files/import/history/${id}`);
+  }
 }

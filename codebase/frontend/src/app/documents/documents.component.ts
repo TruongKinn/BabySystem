@@ -1,9 +1,9 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomSanitizer, SafeResourceUrl, SafeUrl } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
-import { catchError, finalize, forkJoin, Observable, of, Subscription } from 'rxjs';
+import { catchError, finalize, forkJoin, interval, Observable, of, Subscription } from 'rxjs';
 
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -63,7 +63,7 @@ import { API_CONFIG } from '../shared/constants/api.constant';
   templateUrl: './documents.component.html',
   styleUrl: './documents.component.css'
 })
-export class DocumentsComponent implements OnInit {
+export class DocumentsComponent implements OnInit, OnDestroy {
   private readonly command = inject(SuperAppCommandService);
   private readonly notification = inject(NzNotificationService);
   private readonly i18n = inject(I18nService);
@@ -74,8 +74,9 @@ export class DocumentsComponent implements OnInit {
   // Template API Url
   templateExcelUrl = `${API_CONFIG.GATEWAY_URL}/file/files/template/excel`;
 
-  getTemplateDownloadUrl(type: string): string {
-    return `${API_CONFIG.GATEWAY_URL}/file/files/template/excel?type=${type}`;
+  getTemplateDownloadUrl(type: string, size?: number): string {
+    const sizeParam = size ? `&size=${size}` : '';
+    return `${API_CONFIG.GATEWAY_URL}/file/files/template/excel?type=${type}${sizeParam}`;
   }
 
   // Premium POI Template Collection
@@ -145,6 +146,7 @@ export class DocumentsComponent implements OnInit {
   // Tab 2: Expense Excel Parse & Import (Multi-File Support)
   parsedExcelFiles: Array<{
     fileName: string;
+    rawFile?: File;
     parsedData: ExcelParseResponse;
     headers: string[];
     rows: ExcelParseRow[];
@@ -168,8 +170,22 @@ export class DocumentsComponent implements OnInit {
     fileName: string;
     successCount: number;
     failedCount: number;
-    errors: { index: number; reason: string }[];
+    errors: Array<{ index: number; reason: string }>;
   }> = [];
+
+  // Async Import History & Polling Properties
+  excelActiveSubView: 'import' | 'history' = 'import';
+  importHistoryList: any[] = [];
+  historyTotalItems = 0;
+  historyPageIndex = 1;
+  historyPageSize = 10;
+  historyLoading = false;
+  showHistoryErrorModal = false;
+  selectedHistoryItem: any = null;
+  historyErrors: any[] = [];
+  isPollingHistory = false;
+  pollingSubscription: Subscription | null = null;
+  isImportingAsync = false;
 
   // Tab 3: General Family Documents
   generalUploading = false;
@@ -279,6 +295,10 @@ export class DocumentsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadInitialData();
+  }
+
+  ngOnDestroy(): void {
+    this.stopHistoryPolling();
   }
 
   loadInitialData(): void {
@@ -410,6 +430,7 @@ export class DocumentsComponent implements OnInit {
 
               this.parsedExcelFiles.push({
                 fileName: file.name,
+                rawFile: file,
                 parsedData: res,
                 headers: res.headers,
                 rows: res.rows,
@@ -758,6 +779,165 @@ export class DocumentsComponent implements OnInit {
 
   executeImport(): void {
     this.executeBulkImport();
+  }
+
+  // === APIS HỖ TRỢ NHẬP EXCEL BẤT ĐỒNG BỘ (ASYNC IMPORT & POLLING HISTORY) ===
+
+  setExcelSubView(view: 'import' | 'history'): void {
+    this.excelActiveSubView = view;
+    if (view === 'history') {
+      this.loadImportHistory();
+      this.startHistoryPolling();
+    } else {
+      this.stopHistoryPolling();
+    }
+  }
+
+  loadImportHistory(): void {
+    const familyId = this.command.getFamilyId();
+    if (!familyId) return;
+
+    this.historyLoading = true;
+    this.command.getImportHistory(familyId, this.historyPageIndex - 1, this.historyPageSize)
+      .pipe(finalize(() => { this.historyLoading = false; }))
+      .subscribe({
+        next: (res: any) => {
+          this.importHistoryList = res.content || [];
+          this.historyTotalItems = res.totalElements || 0;
+          
+          // Kiểm tra xem có cần tiếp tục Polling hay không
+          const hasActiveTasks = this.importHistoryList.some(item => 
+            item.status === 'PENDING' || item.status === 'PROCESSING'
+          );
+          if (!hasActiveTasks) {
+            this.stopHistoryPolling();
+          } else if (this.excelActiveSubView === 'history' && !this.isPollingHistory) {
+            this.startHistoryPolling();
+          }
+        },
+        error: () => {
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            'Không thể tải lịch sử nhập tệp Excel.'
+          );
+        }
+      });
+  }
+
+  getImportPercent(item: any): number {
+    if (!item || item.totalRows === 0) return 0;
+    const progress = Math.round(((item.successCount + item.failedCount) / item.totalRows) * 100);
+    return Math.min(progress, 100);
+  }
+
+  startHistoryPolling(): void {
+    if (this.isPollingHistory) return;
+
+    this.isPollingHistory = true;
+    this.pollingSubscription = new Subscription();
+    const intervalSub = interval(3000).subscribe(() => {
+      const familyId = this.command.getFamilyId();
+      if (!familyId) return;
+
+      this.command.getImportHistory(familyId, this.historyPageIndex - 1, this.historyPageSize)
+        .subscribe({
+          next: (res: any) => {
+            this.importHistoryList = res.content || [];
+            this.historyTotalItems = res.totalElements || 0;
+
+            const hasActiveTasks = this.importHistoryList.some(item => 
+              item.status === 'PENDING' || item.status === 'PROCESSING'
+            );
+            if (!hasActiveTasks) {
+              this.stopHistoryPolling();
+            }
+          },
+          error: () => {
+            this.stopHistoryPolling();
+          }
+        });
+    });
+    this.pollingSubscription.add(intervalSub);
+  }
+
+  stopHistoryPolling(): void {
+    this.isPollingHistory = false;
+    if (this.pollingSubscription) {
+      this.pollingSubscription.unsubscribe();
+      this.pollingSubscription = null;
+    }
+  }
+
+  viewHistoryErrors(item: any): void {
+    this.selectedHistoryItem = item;
+    this.historyErrors = [];
+    if (item.errorDetails) {
+      try {
+        this.historyErrors = JSON.parse(item.errorDetails);
+      } catch {
+        this.historyErrors = [{ index: -1, reason: item.errorDetails }];
+      }
+    }
+    this.showHistoryErrorModal = true;
+  }
+
+  executeImportAsync(): void {
+    if (this.selectedExcelFileIndex === null || !this.parsedExcelFiles[this.selectedExcelFileIndex]) {
+      return;
+    }
+
+    const fileItem = this.parsedExcelFiles[this.selectedExcelFileIndex];
+    if (!fileItem.rawFile) {
+      this.notification.error(
+        this.i18n.translate('common.errorTitle'),
+        'Không tìm thấy tệp Excel gốc để tải lên.'
+      );
+      return;
+    }
+
+    const familyId = this.command.getFamilyId();
+    if (!familyId) return;
+
+    let targetBabyId = this.selectedBabyId;
+    if ((fileItem.parsedData.headers.includes('Tên vắc xin') || fileItem.parsedData.headers.includes('Loại bữa ăn')) && !targetBabyId && this.babies.length > 0) {
+      targetBabyId = this.babies[0].id;
+    }
+
+    // Xác định dataType
+    let dataType = 'expense';
+    if (fileItem.parsedData.headers.includes('Tên món đồ')) {
+      dataType = 'shopping';
+    } else if (fileItem.parsedData.headers.includes('Tên vắc xin')) {
+      dataType = 'vaccine';
+    } else if (fileItem.parsedData.headers.includes('Loại bữa ăn')) {
+      dataType = 'baby';
+    }
+
+    this.isImportingAsync = true;
+    this.command.importExcelAsync(fileItem.rawFile, dataType, familyId, targetBabyId || undefined)
+      .pipe(finalize(() => { this.isImportingAsync = false; }))
+      .subscribe({
+        next: (historyId) => {
+          this.notification.success(
+            this.i18n.translate('momApp.common.success'),
+            `Tệp "${fileItem.fileName}" đã được đẩy vào hàng chờ xử lý ngầm!`
+          );
+          
+          fileItem.isImported = true;
+          setTimeout(() => {
+            if (this.selectedExcelFileIndex !== null) {
+              this.removeExcelFile(this.selectedExcelFileIndex);
+            }
+            this.setExcelSubView('history');
+          }, 1000);
+        },
+        error: (err) => {
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            err.message || 'Nhập bất đồng bộ thất bại. Vui lòng thử lại.'
+          );
+        }
+      });
   }
 
   // ---- TAB 3: GENERAL FAMILY DOCUMENTS ----
