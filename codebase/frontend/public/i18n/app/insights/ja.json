@@ -1,0 +1,82 @@
+{
+  "title": "家族インサイト分析",
+  "subtitle": "睡眠、予算、仕事量のクイックインジケーター",
+  "loading": "分析レポートを読み込んでいます...",
+  "sleepScore": "赤ちゃんの睡眠スコア",
+  "budgetScore": "予算安全スコア",
+  "workloadScore": "仕事量のバランス",
+  "taskCompletionRate": "タスク完了率",
+  "summary": {
+    "title": "レポートの概要",
+    "family": "家族",
+    "moodScore": "感情スコア",
+    "monthlyExpense": "今月の支出",
+    "expenseCount": "支出件数",
+    "mealsPlanned": "計画された食事",
+    "sleepHours": "睡眠時間",
+    "feedings": "授乳・食事回数",
+    "diaperChanges": "おむつ交換回数",
+    "budgetUsed": "使用済み予算: {{percent}}%",
+    "pendingTaskGap": "残タスクギャップ: {{gap}}"
+  },
+  "recommendations": {
+    "title": "推奨されるアクション",
+    "sleepRoutine": {
+      "title": "赤ちゃんの睡眠ルーチンの安定化",
+      "detail": "今日の睡眠時間は {{hours}} 時間です。就寝時間を一定にし、夜間の刺激を減らしてください。"
+    },
+    "budgetRisk": {
+      "title": "予算超過リスクの管理",
+      "detail": "予算使用率は {{percent}}% です。高コストのカテゴリを見直し、緊急でない支出を延期してください。"
+    },
+    "workload": {
+      "title": "家族の仕事量の再配分",
+      "detail": "未完了タスクのギャップは {{gap}} です。担当者を再割り当てし、期限切れのタスクを期限内に処理してください。"
+    },
+    "stable": {
+      "title": "現在の運用は安定しています",
+      "detail": "現在のルーチンを維持し、パフォーマンスを維持するために毎週のレビューを継続してください。"
+    }
+  },
+  "daily": {
+    "title": "日次内訳",
+    "daysInReport": "レポート対象日数: {{count}} 日",
+    "monthLabel": "対象月: {{month}}",
+    "empty": "この期間の毎日の分析データはありません。",
+    "columns": {
+      "date": "日付",
+      "expense": "支出額",
+      "pendingTasks": "保留中のタスク",
+      "sleepHours": "睡眠時間",
+      "riskLevel": "リスクレベル"
+    }
+  },
+  "risk": {
+    "good": "良好",
+    "warning": "警告",
+    "critical": "危険"
+  },
+  "export": {
+    "action": "保護された XLSX をエクスポート",
+    "passwordTitle": "XLSX エクスポートの保護",
+    "passwordSubtitle": "このワークブック of パスワードを入力してください。ダウンロードしたファイルを開く前に、Excel がパスワードを要求します。",
+    "filenameRule": "ファイル名はバックエンドで自動生成されます: MOM_INSIGHTS_F{familyId}_{yyyymm}_{timestamp}_{code}.xlsx",
+    "passwordLabel": "ワークブックのパスワード",
+    "confirmPasswordLabel": "パスワードの確認",
+    "passwordPlaceholder": "8文字以上",
+    "confirmPasswordPlaceholder": "パスワードを再入力してください",
+    "passwordRequired": "パスワードは8〜128文字で入力してください。",
+    "confirmPasswordRequired": "パスワードを確認用に再入力してください。",
+    "passwordMismatch": "パスワードが一致しません。",
+    "passwordHelp": "ワークブックは安全に暗号化されます。データベースには監査用のエクスポートメタデータとパスワードのハッシュ値のみが保存され、プレーンテキストのパスワードは保存されません。",
+    "confirm": "XLSXをエクスポート",
+    "cancel": "キャンセル",
+    "success": "保護された XLSX レポートがダウンロードされました。",
+    "failed": "保護された XLSX レポートのエクスポートに失敗しました。",
+    "noFile": "エクスポートされたファイルは空です。"
+  },
+  "messages": {
+    "premiumReportsRequired": "月次インサイトを表示するには Premium Reports が必要です。",
+    "aiCareAssistantRequired": "スマート推奨アクションを表示するには AI Care Assistant が必要です。"
+  }
+}

@@ -80,10 +80,16 @@ public class ShoppingController {
     }
 
     @GetMapping("/shopping-items")
-    public ApiResponse<List<ShoppingItemResponse>> getFamilyItems(
+    public ApiResponse<?> getFamilyItems(
             @RequestParam("familyId") Long familyId,
-            @RequestParam(value = "checked", required = false) Boolean checked
+            @RequestParam(value = "checked", required = false) Boolean checked,
+            @RequestParam(value = "search", required = false) String search,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size
     ) {
+        if (page != null && size != null) {
+            return ApiResponse.ok("Success", shoppingService.getFamilyItemsPage(familyId, checked, search, page, size));
+        }
         return ApiResponse.ok("Success", shoppingService.getFamilyItems(familyId, checked));
     }
 

@@ -1838,21 +1838,7 @@
           "password": {
             "title": "Mật khẩu",
             "subtitle": "Thay đổi mật khẩu định kỳ để bảo vệ tài khoản",
-            "status": "Được bảo vệ",
-            "changeBtn": "Thay đổi",
-            "oldPasswordLabel": "Mật khẩu cũ",
-            "oldPasswordPlaceholder": "Nhập mật khẩu cũ của bạn",
-            "oldPasswordError": "Vui lòng nhập mật khẩu cũ",
-            "newPasswordLabel": "Mật khẩu mới",
-            "newPasswordPlaceholder": "Nhập mật khẩu mới",
-            "newPasswordError": "Mật khẩu phải từ 8-20 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt",
-            "confirmPasswordLabel": "Xác nhận mật khẩu mới",
-            "confirmPasswordPlaceholder": "Nhập lại mật khẩu mới",
-            "confirmRequired": "Vui lòng xác nhận mật khẩu mới của bạn",
-            "confirmMismatch": "Xác nhận mật khẩu mới không khớp",
-            "submit": "Cập nhật mật khẩu",
-            "successTitle": "Thay đổi mật khẩu thành công!",
-            "changeErrorFallback": "Thay đổi mật khẩu thất bại!"
+            "status": "Được bảo vệ"
           },
           "session": {
             "title": "Phiên đăng nhập",
@@ -1870,19 +1856,7 @@
         "enabled": "Đã kích hoạt",
         "disabled": "Chưa kích hoạt",
         "empty": "Cấu hình Premium hiện chưa khả dụng.",
-        "expiresAt": "Hạn dùng đến",
-        "featureLabels": {
-          "advanced_growth_tracking": "Theo dõi tăng trưởng nâng cao",
-          "smart_reminders": "Nhắc việc thông minh",
-          "ai_care_assistant": "Trợ lý chăm sóc AI",
-          "premium_reports": "Báo cáo Premium",
-          "family_collaboration_plus": "Cộng tác gia đình Plus",
-          "baby_journey_plus": "Baby Journey+",
-          "medical_vault_export": "Xuất hồ sơ y tế",
-          "unlimited_memory": "Bộ nhớ không giới hạn",
-          "currency_exchange": "Chuyển đổi tiền tệ",
-          "theme_customization": "Tùy biến giao diện"
-        }
+        "expiresAt": "Hạn dùng đến"
       },
       "familyTree": {
         "title": "Cây gia đình",

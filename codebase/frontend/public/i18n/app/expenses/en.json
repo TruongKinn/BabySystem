@@ -50,5 +50,16 @@
       "successReject": "Expense proposal rejected.",
       "successResubmit": "Proposal updated and resubmitted successfully!"
     }
+  },
+  "receipts": {
+    "vaultBannerTitle": "Receipts & Slips Vault",
+    "vaultBannerSub": "Store and lookup all family expense receipts. 100% financial transparency.",
+    "vaultBannerBtn": "Manage Receipts",
+    "vaultModalTitle": "Expense Receipts & Documents Vault",
+    "vaultModalSub": "List of expense records and attached receipts with synchronized pagination.",
+    "showing": "Showing",
+    "records": "records",
+    "filter": "Filters",
+    "visibleTotal": "Visible Total"
   }
 }

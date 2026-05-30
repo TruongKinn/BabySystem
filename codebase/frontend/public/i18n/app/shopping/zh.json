@@ -1,0 +1,12 @@
+{
+  "pagination": {
+    "total": "商品总数",
+    "range": "显示第 {{start}}-{{end}} 项，共 {{total}} 项",
+    "prev": "上一页",
+    "next": "下一页",
+    "itemsPerPage": "项/页"
+  },
+  "messages": {
+    "loading": "正在加载购物清单..."
+  }
+}

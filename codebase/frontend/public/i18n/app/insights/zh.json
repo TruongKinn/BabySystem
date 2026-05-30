@@ -1,0 +1,82 @@
+{
+  "title": "家庭洞察分析",
+  "subtitle": "关于睡眠、预算和工作量的快速指标",
+  "loading": "正在加载洞察报告...",
+  "sleepScore": "婴儿睡眠评分",
+  "budgetScore": "预算安全评分",
+  "workloadScore": "工作量平衡",
+  "taskCompletionRate": "任务完成率",
+  "summary": {
+    "title": "报告摘要",
+    "family": "家庭",
+    "moodScore": "情绪指数",
+    "monthlyExpense": "本月支出",
+    "expenseCount": "支出笔数",
+    "mealsPlanned": "计划用餐",
+    "sleepHours": "睡眠时长",
+    "feedings": "喂养次数",
+    "diaperChanges": "换尿布次数",
+    "budgetUsed": "已用预算: {{percent}}%",
+    "pendingTaskGap": "待办任务差距: {{gap}}"
+  },
+  "recommendations": {
+    "title": "推荐行动",
+    "sleepRoutine": {
+      "title": "稳定婴儿睡眠规律",
+      "detail": "今天的睡眠时间是 {{hours}} 小时。保持固定的就寝时间并减少晚间刺激。"
+    },
+    "budgetRisk": {
+      "title": "控制预算超支风险",
+      "detail": "预算使用率为 {{percent}}%。审查高成本类别并推迟非紧急支出。"
+    },
+    "workload": {
+      "title": "重新平衡家庭工作量",
+      "detail": "待办任务缺口为 {{gap}}。重新分配负责人并先关闭逾期任务。"
+    },
+    "stable": {
+      "title": "目前运营稳定",
+      "detail": "保持现有的日程安排，并继续每周审查以维持良好表现。"
+    }
+  },
+  "daily": {
+    "title": "每日明细",
+    "daysInReport": "报告期共 {{count}} 天",
+    "monthLabel": "月份: {{month}}",
+    "empty": "该期间内无每日洞察数据。",
+    "columns": {
+      "date": "日期",
+      "expense": "支出",
+      "pendingTasks": "待处理任务",
+      "sleepHours": "睡眠时长",
+      "riskLevel": "风险等级"
+    }
+  },
+  "risk": {
+    "good": "良好",
+    "warning": "警告",
+    "critical": "危险"
+  },
+  "export": {
+    "action": "导出安全 XLSX",
+    "passwordTitle": "保护 XLSX 导出",
+    "passwordSubtitle": "为该工作簿输入密码。在打开下载的文件之前，Excel 将要求输入密码。",
+    "filenameRule": "文件名由系统自动生成: MOM_INSIGHTS_F{familyId}_{yyyymm}_{timestamp}_{code}.xlsx",
+    "passwordLabel": "工作簿密码",
+    "confirmPasswordLabel": "确认密码",
+    "passwordPlaceholder": "至少 8 个字符",
+    "confirmPasswordPlaceholder": "重新输入密码",
+    "passwordRequired": "密码必须为 8-128 个字符。",
+    "confirmPasswordRequired": "请确认密码。",
+    "passwordMismatch": "两次输入的密码不一致。",
+    "passwordHelp": "工作簿已安全加密。数据库仅存储导出元数据和密码哈希用于审计，不存储明文密码。",
+    "confirm": "导出 XLSX",
+    "cancel": "取消",
+    "success": "已下载受保护的 XLSX 报告。",
+    "failed": "无法导出受保护的 XLSX 报告。",
+    "noFile": "导出的文件为空。"
+  },
+  "messages": {
+    "premiumReportsRequired": "需要 Premium Reports 订阅才能查看月度分析。",
+    "aiCareAssistantRequired": "智能推荐需开通 AI Care Assistant 才能使用。"
+  }
+}

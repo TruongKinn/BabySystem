@@ -1,0 +1,12 @@
+{
+  "pagination": {
+    "total": "合計項目",
+    "range": "{{total}} 件中 {{start}} 〜 {{end}} 件を表示",
+    "prev": "前へ",
+    "next": "次へ",
+    "itemsPerPage": "件/ページ"
+  },
+  "messages": {
+    "loading": "買い物リストを読み込んでいます..."
+  }
+}

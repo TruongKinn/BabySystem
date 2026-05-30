@@ -11,6 +11,13 @@ import {
   TaskOverview
 } from '../models/super-app.model';
 
+export interface PageResponse<T> {
+  page: number;
+  size: number;
+  total: number;
+  items: T[];
+}
+
 export interface InsightDailyBreakdownItem {
   date: string;
   expenseTotal: number;
@@ -30,6 +37,10 @@ export interface InsightMonthlyReport {
   babyFeedings: number;
   diaperChanges: number;
   dailyBreakdown: InsightDailyBreakdownItem[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
 }
 
 export interface InsightMonthlyExportRequest {
@@ -95,6 +106,10 @@ interface InsightMonthlyApi {
   babyFeedings: number;
   diaperChanges: number;
   dailyBreakdown: InsightDailyBreakdownApi[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
 }
 
 interface InsightDailyBreakdownApi {
@@ -158,7 +173,7 @@ interface TaskOverviewApi {
   completionRate: number;
 }
 
-interface ShoppingItemApi {
+export interface ShoppingItemApi {
   id: number;
   listId: number;
   listName: string;
@@ -169,7 +184,7 @@ interface ShoppingItemApi {
   checked: boolean;
 }
 
-interface ShoppingPendingCountApi {
+export interface ShoppingPendingCountApi {
   familyId: number;
   pendingCount: number;
 }
@@ -282,10 +297,14 @@ export class MockSuperAppService {
     }).pipe(map(({ weeklyPlans, meals }) => this.mapWeeklyMeals(weeklyPlans, meals)));
   }
 
-  getInsightMonthlyReport(month?: string): Observable<InsightMonthlyReport> {
+  getInsightMonthlyReport(month?: string, page: number = 0, size: number = 10): Observable<InsightMonthlyReport> {
     const familyId = this.getFamilyId();
     const monthKey = this.normalizeMonthKey(month);
-    const params = new HttpParams().set('familyId', String(familyId)).set('month', monthKey);
+    const params = new HttpParams()
+      .set('familyId', String(familyId))
+      .set('month', monthKey)
+      .set('page', String(page))
+      .set('size', String(size));
 
     return this.get<InsightMonthlyApi>('/insight/insights/monthly', params).pipe(
       map((report) => ({
@@ -306,14 +325,18 @@ export class MockSuperAppService {
             pendingTasks: Math.max(0, Math.trunc(this.asNumber(item.pendingTasks))),
             babySleepHours: this.asNumber(item.babySleepHours)
           }))
-          .sort((left, right) => left.date.localeCompare(right.date))
+          .sort((left, right) => left.date.localeCompare(right.date)),
+        page: report.page ?? page,
+        size: report.size ?? size,
+        totalElements: report.totalElements ?? 0,
+        totalPages: report.totalPages ?? 0
       })),
       catchError((err) => {
         const message = String(err?.message ?? '');
         if (message.includes('PREMIUM_REQUIRED:')) {
             return throwError(() => err);
         }
-        return of(this.emptyInsightMonthlyReport(familyId, monthKey));
+        return of(this.emptyInsightMonthlyReport(familyId, monthKey, page, size));
       })
     );
   }
@@ -413,6 +436,38 @@ export class MockSuperAppService {
     );
   }
 
+  getShoppingItemsPage(page: number, size: number, checked?: boolean | null, search?: string | null): Observable<PageResponse<ShoppingItem>> {
+    const familyId = this.getFamilyId();
+    let params = new HttpParams()
+      .set('familyId', String(familyId))
+      .set('page', String(page))
+      .set('size', String(size));
+
+    if (checked !== undefined && checked !== null) {
+      params = params.set('checked', String(checked));
+    }
+
+    if (search !== undefined && search !== null && search.trim() !== '') {
+      params = params.set('search', search.trim());
+    }
+
+    return this.get<PageResponse<ShoppingItemApi>>('/shopping/shopping-items', params).pipe(
+      map((res) => ({
+        page: res.page,
+        size: res.size,
+        total: res.total,
+        items: res.items.map((item) => ({
+          id: String(item.id),
+          name: item.itemName,
+          quantity: item.quantity?.trim() ?? '',
+          note: item.note?.trim() ?? '',
+          checked: item.checked
+        }))
+      })),
+      catchError(() => of({ page, size, total: 0, items: [] }))
+    );
+  }
+
   getFamilyMembers(): Observable<FamilyMember[]> {
     const familyId = this.getFamilyId();
 
@@ -479,7 +534,7 @@ export class MockSuperAppService {
     return this.get<TaskPendingCountApi>('/task/tasks/pending/count', params);
   }
 
-  private getShoppingPendingCount(familyId: number): Observable<ShoppingPendingCountApi> {
+  getShoppingPendingCount(familyId: number): Observable<ShoppingPendingCountApi> {
     const params = new HttpParams().set('familyId', String(familyId));
     return this.get<ShoppingPendingCountApi>('/shopping/shopping-items/pending/count', params);
   }
@@ -624,7 +679,7 @@ export class MockSuperAppService {
     return this.currentMonth();
   }
 
-  private getFamilyId(): number {
+  getFamilyId(): number {
     if (typeof window === 'undefined') {
       return API_CONFIG.DEFAULT_FAMILY_ID;
     }
@@ -751,7 +806,7 @@ export class MockSuperAppService {
     };
   }
 
-  private emptyInsightMonthlyReport(familyId: number, month: string): InsightMonthlyReport {
+  private emptyInsightMonthlyReport(familyId: number, month: string, page: number = 0, size: number = 10): InsightMonthlyReport {
     return {
       familyId,
       month,
@@ -763,7 +818,11 @@ export class MockSuperAppService {
       babySleepHours: 0,
       babyFeedings: 0,
       diaperChanges: 0,
-      dailyBreakdown: []
+      dailyBreakdown: [],
+      page,
+      size,
+      totalElements: 0,
+      totalPages: 0
     };
   }
 }

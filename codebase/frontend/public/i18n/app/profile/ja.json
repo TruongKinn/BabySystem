@@ -1,29 +1,153 @@
 {
+  "changeAvatar": "アバターの変更",
+  "uploading": "アップロード中...",
+  "uploadHint": "画像ファイルのみ、最大30MB。",
+  "usernameLabel": "ユーザー名",
+  "emailLabel": "メールアドレス",
+  "stats": {
+    "members": "メンバー",
+    "family": "家族",
+    "role": "役割",
+    "active": "アクティブ",
+    "status": "ステータス"
+  },
+  "cards": {
+    "account": {
+      "title": "アカウント情報",
+      "subtitle": "IDとログイン情報",
+      "displayName": "表示名",
+      "status": "ステータス",
+      "activeStatus": "アクティブ"
+    },
+    "familyRole": {
+      "title": "家族内での役割",
+      "subtitle": "世帯内での位置付けと関係性",
+      "primaryRole": "家族における主な役割",
+      "memberCount": "メンバー数",
+      "memberUnit": "人"
+    },
+    "premium": {
+      "title": "Premium アクセス",
+      "subtitle": "この世帯で現在利用可能な高度な機能"
+    },
+    "security": {
+      "title": "セキュリティと設定",
+      "subtitle": "個人アカウントのセキュリティ構成",
+      "password": {
+        "title": "パスワード",
+        "subtitle": "アカウント保護のため定期的にパスワードを変更してください",
+        "status": "保護済み",
+        "changeBtn": "変更する",
+        "oldPasswordLabel": "現在のパスワード",
+        "oldPasswordPlaceholder": "現在のパスワードを入力してください",
+        "oldPasswordError": "現在のパスワードを入力してください",
+        "newPasswordLabel": "新しいパスワード",
+        "newPasswordPlaceholder": "新しいパスワードを入力",
+        "newPasswordError": "パスワードは8〜20文字で、大文字、小文字、数字、特殊文字を含める必要があります",
+        "confirmPasswordLabel": "新しいパスワード（確認）",
+        "confirmPasswordPlaceholder": "新しいパスワードを再入力",
+        "confirmRequired": "新しいパスワードをもう一度入力してください",
+        "confirmMismatch": "パスワードが一致しません",
+        "submit": "パスワードを更新",
+        "successTitle": "パスワードが正常に変更されました！",
+        "changeErrorFallback": "パスワードの変更に失敗しました！"
+      },
+      "session": {
+        "title": "セッション",
+        "subtitle": "サインイン中のデバイスを管理",
+        "status": "安全"
+      },
+      "notifications": {
+        "title": "通知設定",
+        "subtitle": "システムから重要なお知らせを受け取る",
+        "status": "有効"
+      }
+    }
+  },
+  "premium": {
+    "enabled": "有効",
+    "disabled": "無効",
+    "empty": "Premium構成は現在ご利用いただけません。",
+    "expiresAt": "有効期限",
+    "featureLabels": {
+      "advanced_growth_tracking": "高度な成長追跡",
+      "smart_reminders": "スマートリマインダー",
+      "ai_care_assistant": "AIケアアシスタント",
+      "premium_reports": "プレミアムレポート",
+      "family_collaboration_plus": "家族コラボレーションPlus",
+      "baby_journey_plus": "ベビージャーニー+",
+      "medical_vault_export": "医療保管庫エクスポート",
+      "unlimited_memory": "無制限のメモリ",
+      "currency_exchange": "通貨換算",
+      "theme_customization": "テーマのカスタマイズ"
+    }
+  },
+  "familyTree": {
+    "title": "家族ツリー",
+    "subtitle": "世帯内の人間関係の階層構造。",
+    "empty": "この家族の家族ツリーデータは存在しません。",
+    "babyBoy": "息子",
+    "babyGirl": "娘",
+    "babyChild": "子供"
+  },
+  "actions": {
+    "editProfile": "プロフィールの編集",
+    "exportPdf": "PDF出力"
+  },
+  "editProfileModal": {
+    "title": "プロフィールの編集",
+    "subtitle": "個人情報の更新",
+    "displayNameLabel": "表示名",
+    "displayNamePlaceholder": "表示名を入力してください",
+    "displayNameError": "表示名を入力してください",
+    "emailLabel": "メールアドレス",
+    "emailPlaceholder": "メールアドレスを入力してください",
+    "emailRequired": "メールアドレスを入力してください",
+    "emailInvalid": "無効なメール形式です",
+    "dobLabel": "生年月日",
+    "dobPlaceholder": "生年月日を選択",
+    "submit": "変更を保存",
+    "success": "プロフィールが正常に更新されました！",
+    "failed": "プロフィールの更新に失敗しました！"
+  },
+  "pdfModal": {
+    "title": "プロフィールレポート",
+    "subtitle": "公式 PDF レポートプレビュー",
+    "loading": "PDF レポートを準備しています...",
+    "failed": "PDF レポートを読み込めません！"
+  },
   "2fa": {
-    "title": "2段階認証の設定",
+    "title": "2段階認証 (2FA) の設定",
+    "subtitle": "ワンタイムコードでアカウントセキュリティを強化します",
+    "disableSubtitle": "2段階認証（2FA）の無効化を確認",
+    "generateSecretError": "2段階認証のQRコードを生成できませんでした！",
+    "otpLengthWarning": "6桁の認証コードをすべて入力してください！",
+    "invalidOtpError": "OTPコードが無効か、有効期限が切れています！",
+    "disableFailedError": "2段階認証の無効化に失敗しました！",
     "step1": "ステップ 1: 認証アプリのインストール",
-    "step1Desc": "スマートフォンにGoogle AuthenticatorまたはMicrosoft Authenticatorをダウンロードします。",
-    "step2": "ステップ 2: QRコードの読み取り",
-    "step2Desc": "認証アプリを開き、下のQRコードをスキャンします。",
-    "step3": "ステップ 3: 認証コードの入力",
-    "step3Desc": "認証アプリに表示される6桁のコードを入力してください",
+    "step1Desc": "スマートフォンに Google Authenticator または Microsoft Authenticator をダウンロードします。",
+    "step2": "ステップ 2: QR コードの読み取り",
+    "step2Desc": "認証アプリを開き、下の QR コードをスキャンします。",
+    "step3": "ステップ 3: 確認コードの入力",
+    "step3Desc": "認証アプリに表示される 6 桁の確認コードを入力してください",
     "secretLabel": "手動設定キー:",
-    "remainingTime": "新しいコードまで: {time}秒",
+    "remainingTime": "新しいコードの生成まで: {{time}}秒",
     "cancel": "キャンセル",
     "enable": "2段階認証を有効にする",
     "disableTitle": "2段階認証を無効にする",
-    "disableConfirm": "本当に2段階認証（2FA）を無効にしますか？ アカウントのセキュリティが低下します。",
-    "disableSuccess": "2段階認証を無効にしました！",
-    "enableSuccess": "2段階認証を有効にしました！",
+    "disableConfirm": "2段階認証 (2FA) を無効にしてもよろしいですか？ アカウントのセキュリティ強度が低下します。",
+    "disableSuccess": "2段階認証が正常に無効化されました！",
+    "enableSuccess": "2段階認証が正常に有効化されました！",
     "appStore": "App Store",
     "googlePlay": "Google Play",
+    "downloadTitle": "アプリをお持ちでないですか？ Google Authenticator をダウンロード:",
     "status": {
       "title": "2段階認証 (2FA)",
-      "desc": "OTPコードを使用してアカウントのセキュリティを強化します",
+      "desc": "ワンタイムコードでアカウントセキュリティを強化します",
       "enabled": "有効",
-      "disabled": "未有効",
-      "setup": "設定する",
-      "turnOff": "2FAを無効化"
+      "disabled": "無効",
+      "setup": "設定",
+      "turnOff": "2FA を無効化"
     }
   }
 }

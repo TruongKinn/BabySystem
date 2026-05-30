@@ -1,0 +1,24 @@
+{
+  "comments": {
+    "btnTitle": "コメント",
+    "empty": "まだコメントはありません。最初のコメントを書きましょう！",
+    "placeholder": "コメントを入力...（@を入力して家族メンバーをメンション）",
+    "submit": "送信",
+    "reply": "返信",
+    "replyPlaceholder": "返信を入力...（@を入力して家族メンバーをメンション）",
+    "delete": "コメントを削除",
+    "messages": {
+      "createFailed": "コメントの送信に失敗しました",
+      "deleteSuccess": "コメントが正常に削除されました",
+      "deleteFailed": "コメントの削除に失敗しました"
+    },
+    "reactions": {
+      "like": "いいね",
+      "love": "超いいね",
+      "haha": "うけるね",
+      "wow": "すごいね",
+      "sad": "悲しいね",
+      "angry": "ひどいね"
+    }
+  }
+}

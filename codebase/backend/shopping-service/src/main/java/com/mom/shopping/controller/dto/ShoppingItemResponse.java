@@ -1,5 +1,7 @@
 package com.mom.shopping.controller.dto;
 
+import java.io.Serializable;
+
 public record ShoppingItemResponse(
         Long id,
         Long listId,
@@ -9,5 +11,6 @@ public record ShoppingItemResponse(
         String quantity,
         String note,
         boolean checked
-) {
+) implements Serializable {
 }
+

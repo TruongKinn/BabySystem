@@ -326,7 +326,10 @@ public class AsyncImportService {
         for (String key : keys) {
             if (map.containsKey(key) && map.get(key) != null) {
                 try {
-                    return Double.parseDouble(String.valueOf(map.get(key)));
+                    String valStr = String.valueOf(map.get(key))
+                            .replaceAll("[,\\sđVND$]", "") // Xóa dấu phẩy, khoảng trắng, đ, VND, $
+                            .trim();
+                    return Double.parseDouble(valStr);
                 } catch (Exception e) {
                     // skip to next key
                 }
@@ -339,7 +342,10 @@ public class AsyncImportService {
         for (String key : keys) {
             if (map.containsKey(key) && map.get(key) != null) {
                 try {
-                    return new BigDecimal(String.valueOf(map.get(key)));
+                    String valStr = String.valueOf(map.get(key))
+                            .replaceAll("[,\\sđVND$]", "") // Xóa dấu phẩy, khoảng trắng, đ, VND, $
+                            .trim();
+                    return new BigDecimal(valStr);
                 } catch (Exception e) {
                     // skip to next key
                 }

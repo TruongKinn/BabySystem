@@ -18,7 +18,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzStepsModule } from 'ng-zorro-antd/steps';
 import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
-import { ExchangeRateApi, ExpenseApi, ExpenseBudgetApi, ExpenseCategoryApi, ExpenseCategoryReportApi, ExpenseCategoryReportItemApi, ExpenseDailySummaryApi, ExpenseSummaryApi, ExpenseProposalApi, ExpenseProposalPageApi, FamilyMemberProfile, FileMetadata, SuperAppCommandService } from '../core/services/super-app-command.service';
+import { ExchangeRateApi, ExpenseApi, ExpenseBudgetApi, ExpenseCategoryApi, ExpenseCategoryReportApi, ExpenseCategoryReportItemApi, ExpenseDailySummaryApi, ExpenseSummaryApi, ExpenseProposalApi, ExpenseProposalPageApi, PageResponse, FamilyMemberProfile, FileMetadata, SuperAppCommandService } from '../core/services/super-app-command.service';
 import { UserPreferencesService } from '../core/services/user-preferences.service';
 import { I18nService } from '../i18n/i18n.service';
 
@@ -131,6 +131,12 @@ export class ExpensesComponent implements OnInit {
   isUploadingReceipt = false;
   selectedExpense: ExpenseRecord | null = null;
   receiptFiles: FileMetadata[] = [];
+
+  // --- Kho Hóa đơn Phân trang (BE & FE) ---
+  isExpensesListModalVisible = false;
+  expensePageIndex = 1;
+  expensePageSize = 10;
+  expenseTotalCount = 0;
 
   isViewerModalVisible = false;
   selectedViewerFile: FileMetadata | null = null;
@@ -292,7 +298,7 @@ export class ExpensesComponent implements OnInit {
     this.loading = true;
 
     forkJoin({
-      expenses: this.command.getExpenses(month, this.selectedCategoryId).pipe(catchError(() => of([] as ExpenseApi[]))),
+      expenses: this.command.getExpensesPage(month, this.selectedCategoryId, this.expensePageIndex - 1, this.expensePageSize).pipe(catchError(() => of({ page: 0, size: 10, total: 0, items: [] } as PageResponse<ExpenseApi>))),
       summary: this.command.getExpenseMonthlySummary(month).pipe(catchError(() => of(this.emptyMonthlySummary(month)))),
       daily: this.command.getExpenseDailySummary().pipe(catchError(() => of(this.emptyDailySummary()))),
       report: this.command.getExpenseCategoryReport(month).pipe(catchError(() => of(this.emptyCategoryReport(month)))),
@@ -317,7 +323,8 @@ export class ExpensesComponent implements OnInit {
       }))
       .subscribe({
         next: ({ expenses, summary, daily, report, budgets, categories, proposals, members, profile }) => {
-          this.expenseRecords = expenses.map((item) => this.toExpenseRecord(item));
+          this.expenseRecords = expenses.items.map((item: ExpenseApi) => this.toExpenseRecord(item));
+          this.expenseTotalCount = expenses.total;
           this.allBudgets = budgets;
           this.expenseProposals = proposals.items;
           this.proposalTotalCount = proposals.total;
@@ -377,6 +384,7 @@ export class ExpensesComponent implements OnInit {
     }
     this.monthKey = next;
     this.updateMonthDateFromKey();
+    this.expensePageIndex = 1; // Reset pageIndex khi đổi tháng
     this.loadExpenseWorkspace();
   }
 
@@ -386,7 +394,12 @@ export class ExpensesComponent implements OnInit {
       return;
     }
     this.selectedCategoryId = parsed;
-    this.loadExpenseWorkspace();
+    this.expensePageIndex = 1; // Reset pageIndex khi đổi category
+    if (this.isExpensesListModalVisible) {
+      this.loadExpensesPage();
+    } else {
+      this.loadExpenseWorkspace();
+    }
   }
 
   onSortModeChange(rawValue: string): void {
@@ -1007,6 +1020,41 @@ export class ExpensesComponent implements OnInit {
       URL.revokeObjectURL(this.viewerObjectUrl);
       this.viewerObjectUrl = null;
     }
+  }
+
+  openExpensesListModal(): void {
+    this.isExpensesListModalVisible = true;
+    this.expensePageIndex = 1;
+    this.loadExpensesPage();
+  }
+
+  closeExpensesListModal(): void {
+    this.isExpensesListModalVisible = false;
+  }
+
+  onExpensePageChange(pageIndex: number): void {
+    this.expensePageIndex = pageIndex;
+    this.loadExpensesPage();
+  }
+
+  loadExpensesPage(): void {
+    const month = this.normalizeMonthKey(this.monthKey);
+    this.loading = true;
+    this.command.getExpensesPage(month, this.selectedCategoryId, this.expensePageIndex - 1, this.expensePageSize)
+      .pipe(finalize(() => { this.loading = false; }))
+      .subscribe({
+        next: (res) => {
+          this.expenseRecords = res.items.map((item: ExpenseApi) => this.toExpenseRecord(item));
+          this.expenseTotalCount = res.total;
+          this.applyLocalFilters();
+        },
+        error: (err) => {
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            err?.error?.message || 'Không thể tải danh sách chi tiêu'
+          );
+        }
+      });
   }
 
   openProposalsListModal(): void {

@@ -1,29 +1,153 @@
 {
+  "changeAvatar": "更改头像",
+  "uploading": "正在上传...",
+  "uploadHint": "仅限图片文件，最大30MB。",
+  "usernameLabel": "用户名",
+  "emailLabel": "电子邮箱",
+  "stats": {
+    "members": "家庭成员",
+    "family": "家庭",
+    "role": "角色",
+    "active": "活跃状态",
+    "status": "状态"
+  },
+  "cards": {
+    "account": {
+      "title": "账户信息",
+      "subtitle": "身份标识与登录信息",
+      "displayName": "显示名称",
+      "status": "状态",
+      "activeStatus": "活跃"
+    },
+    "familyRole": {
+      "title": "家庭角色",
+      "subtitle": "在家庭中的位置与关系",
+      "primaryRole": "家庭中的主要角色",
+      "memberCount": "成员数量",
+      "memberUnit": "人"
+    },
+    "premium": {
+      "title": "Premium 特权",
+      "subtitle": "本家庭当前可用的高级功能"
+    },
+    "security": {
+      "title": "安全与设置",
+      "subtitle": "个人账户安全配置",
+      "password": {
+        "title": "密码",
+        "subtitle": "定期更改密码以保护账户安全",
+        "status": "受保护",
+        "changeBtn": "修改",
+        "oldPasswordLabel": "旧密码",
+        "oldPasswordPlaceholder": "输入您的旧密码",
+        "oldPasswordError": "请输入旧密码",
+        "newPasswordLabel": "新密码",
+        "newPasswordPlaceholder": "输入新密码",
+        "newPasswordError": "密码必须为8-20位，包含大小写字母、数字和特殊字符",
+        "confirmPasswordLabel": "确认新密码",
+        "confirmPasswordPlaceholder": "再次输入新密码",
+        "confirmRequired": "请确认您的新密码",
+        "confirmMismatch": "两次输入的密码不一致",
+        "submit": "更新密码",
+        "successTitle": "密码修改成功！",
+        "changeErrorFallback": "修改密码失败！"
+      },
+      "session": {
+        "title": "登录会话",
+        "subtitle": "管理已登录的设备",
+        "status": "安全"
+      },
+      "notifications": {
+        "title": "通知设置",
+        "subtitle": "接收系统的重要警告提示",
+        "status": "开启"
+      }
+    }
+  },
+  "premium": {
+    "enabled": "已启用",
+    "disabled": "未启用",
+    "empty": "Premium 配置当前不可用。",
+    "expiresAt": "有效期至",
+    "featureLabels": {
+      "advanced_growth_tracking": "高级成长追踪",
+      "smart_reminders": "智能提醒",
+      "ai_care_assistant": "AI 护理助手",
+      "premium_reports": "高级报告",
+      "family_collaboration_plus": "家庭协作 Plus",
+      "baby_journey_plus": "婴儿旅程+",
+      "medical_vault_export": "医疗保险库导出",
+      "unlimited_memory": "无限内存",
+      "currency_exchange": "货币兑换",
+      "theme_customization": "主题定制"
+    }
+  },
+  "familyTree": {
+    "title": "家庭树",
+    "subtitle": "家庭内部成员关系图谱。",
+    "empty": "暂无该家庭的家庭树数据。",
+    "babyBoy": "儿子",
+    "babyGirl": "女儿",
+    "babyChild": "孩子"
+  },
+  "actions": {
+    "editProfile": "修改个人资料",
+    "exportPdf": "导出 PDF"
+  },
+  "editProfileModal": {
+    "title": "修改个人资料",
+    "subtitle": "更新您的个人信息",
+    "displayNameLabel": "显示名称",
+    "displayNamePlaceholder": "输入您的显示名称",
+    "displayNameError": "请输入显示名称",
+    "emailLabel": "邮箱",
+    "emailPlaceholder": "输入邮箱地址",
+    "emailRequired": "请输入邮箱地址",
+    "emailInvalid": "邮箱格式不正确",
+    "dobLabel": "出生日期",
+    "dobPlaceholder": "选择出生日期",
+    "submit": "保存修改",
+    "success": "个人资料更新成功！",
+    "failed": "个人资料更新失败！"
+  },
+  "pdfModal": {
+    "title": "个人资料报告",
+    "subtitle": "官方 PDF 报告预览",
+    "loading": "正在生成 PDF 报告...",
+    "failed": "无法加载 PDF 报告！"
+  },
   "2fa": {
     "title": "设置双重身份验证 (2FA)",
+    "subtitle": "使用双重验证保护您的账户",
+    "disableSubtitle": "确认停用双重安全机制",
+    "generateSecretError": "无法生成双重验证二维码！",
+    "otpLengthWarning": "请输入完整的6位验证码！",
+    "invalidOtpError": "验证码无效或已过期！",
+    "disableFailedError": "停用双重验证失败！",
     "step1": "步骤 1: 安装身份验证器应用",
     "step1Desc": "在手机上下载 Google Authenticator 或 Microsoft Authenticator。",
     "step2": "步骤 2: 扫描二维码",
-    "step2Desc": "打开身份验证器应用，扫描下方二维码。",
+    "step2Desc": "打开您的身份验证器应用，扫描下方二维码。",
     "step3": "步骤 3: 输入验证码",
     "step3Desc": "输入身份验证器应用中的 6 位数字验证码",
     "secretLabel": "手动设置密钥:",
-    "remainingTime": "新验证码将在：{time}秒后生成",
+    "remainingTime": "新验证码将在 {{time}} 秒后生成",
     "cancel": "取消",
-    "enable": "启用双重身份验证",
+    "enable": "启用双重验证",
     "disableTitle": "停用双重身份验证",
-    "disableConfirm": "您确定要停用双重身份验证 (2FA) 吗？这会降低您账号的安全性。",
-    "disableSuccess": "双重身份验证停用成功！",
-    "enableSuccess": "双重身份验证启用成功！",
+    "disableConfirm": "您确定要停用双重身份验证 (2FA) 吗？这会降低您的账户安全性。",
+    "disableSuccess": "双重验证已成功停用！",
+    "enableSuccess": "双重验证已成功启用！",
     "appStore": "App Store",
     "googlePlay": "Google Play",
+    "downloadTitle": "还没有应用？下载 Google Authenticator:",
     "status": {
       "title": "双重身份验证 (2FA)",
-      "desc": "使用动态口令 (OTP) 增强账号安全性",
+      "desc": "使用动态验证码增强账户安全性",
       "enabled": "已启用",
       "disabled": "未启用",
       "setup": "设置",
-      "turnOff": "停用 2FA"
+      "turnOff": "关闭 2FA"
     }
   }
 }

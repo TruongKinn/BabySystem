@@ -1,0 +1,12 @@
+{
+  "pagination": {
+    "total": "Tổng số mặt hàng",
+    "range": "Hiển thị {{start}}-{{end}} trên tổng số {{total}} mặt hàng",
+    "prev": "Trang trước",
+    "next": "Trang sau",
+    "itemsPerPage": "mặt hàng/trang"
+  },
+  "messages": {
+    "loading": "Đang tải danh sách mua sắm..."
+  }
+}

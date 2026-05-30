@@ -11,14 +11,14 @@
       </button>
       <span class="pill-chip">
         <span nz-icon nzType="shopping-cart"></span>
-        {{ vm.items.length }} {{ 'momApp.shopping.totalLabel' | translate }}
+        {{ vm.allTotalCount }} {{ 'momApp.shopping.totalLabel' | translate }}
       </span>
     </div>
   </div>
 
   <div class="shopping-summary animate-slide-up">
     <div class="shopping-summary-item">
-      <span class="ssm-val" style="color:var(--user-primary)">{{ vm.items.length }}</span>
+      <span class="ssm-val" style="color:var(--user-primary)">{{ vm.allTotalCount }}</span>
       <span class="ssm-lbl">{{ 'momApp.shopping.summary.totalItems' | translate }}</span>
     </div>
     <div class="shopping-summary-divider"></div>
@@ -32,7 +32,7 @@
       <span class="ssm-lbl">{{ 'momApp.shopping.summary.remainingItems' | translate }}</span>
     </div>
 
-    <div class="shopping-progress-wrap" *ngIf="vm.items.length > 0">
+    <div class="shopping-progress-wrap" *ngIf="vm.allTotalCount > 0">
       <div class="user-progress-bar" style="flex:1;margin:0">
         <div class="user-progress-fill" [style.width.%]="vm.completionPercent" style="background: var(--user-grad-3)"></div>
       </div>
@@ -78,7 +78,7 @@
           <span class="filter-count-chip">
             {{
               option.value === 'ALL'
-                ? vm.items.length
+                ? vm.allTotalCount
                 : option.value === 'PENDING'
                   ? vm.remainingCount
                   : vm.checkedCount
@@ -112,18 +112,18 @@
   </nz-card>
 
   <nz-card class="table-card shopping-list-card animate-slide-up" style="animation-delay:.06s">
-    <div class="shopping-loading" *ngIf="isLoading">
+    <div class="shopping-loading" *ngIf="isLoading" style="text-align:center;padding:20px;color:var(--user-primary)">
       <span nz-icon nzType="sync" nzSpin></span>
       {{ 'momApp.shopping.loading' | translate }}
     </div>
 
-    <div class="shopping-error" *ngIf="loadFailed">
+    <div class="shopping-error" *ngIf="loadFailed" style="color:var(--color-error);margin-bottom:16px;text-align:center;">
       {{ 'momApp.shopping.messages.loadFailed' | translate }}
     </div>
 
-    <nz-empty *ngIf="!isLoading && vm.items.length === 0" [nzNotFoundContent]="'momApp.shopping.empty' | translate"></nz-empty>
+    <nz-empty *ngIf="!isLoading && vm.allTotalCount === 0" [nzNotFoundContent]="'momApp.shopping.empty' | translate"></nz-empty>
     <nz-empty
-      *ngIf="!isLoading && vm.items.length > 0 && vm.filteredItems.length === 0"
+      *ngIf="!isLoading && vm.allTotalCount > 0 && vm.totalItems === 0"
       [nzNotFoundContent]="'momApp.shopping.noFilterMatch' | translate">
     </nz-empty>
 
@@ -180,6 +180,23 @@
         </nz-tag>
       </div>
     </ng-container>
+
+    <!-- Bộ phân trang cao cấp (Premium Pagination) -->
+    <div class="shopping-pagination-wrap animate-slide-up" *ngIf="!isLoading && vm.totalItems > 0" style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--color-border); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+      <span class="pagination-range-text" style="color: var(--color-text-secondary); font-size: 14px;">
+        {{ 'app.shopping.pagination.range' | translate:{ start: (vm.currentPage - 1) * vm.pageSize + 1, end: (vm.currentPage * vm.pageSize > vm.totalItems ? vm.totalItems : vm.currentPage * vm.pageSize), total: vm.totalItems } }}
+      </span>
+      <nz-pagination
+        [nzPageIndex]="vm.currentPage"
+        [nzPageSize]="vm.pageSize"
+        [nzTotal]="vm.totalItems"
+        [nzShowSizeChanger]="true"
+        [nzPageSizeOptions]="[10, 20, 50]"
+        (nzPageIndexChange)="onPageChange($event)"
+        (nzPageSizeChange)="onPageSizeChange($event)"
+        style="display: inline-block;">
+      </nz-pagination>
+    </div>
   </nz-card>
 </section>
 

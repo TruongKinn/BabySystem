@@ -1840,21 +1840,7 @@
           "password": {
             "title": "密码",
             "subtitle": "定期更改密码以保护账户安全",
-            "status": "受保护",
-            "changeBtn": "修改",
-            "oldPasswordLabel": "旧密码",
-            "oldPasswordPlaceholder": "输入您的旧密码",
-            "oldPasswordError": "请输入旧密码",
-            "newPasswordLabel": "新密码",
-            "newPasswordPlaceholder": "输入新密码",
-            "newPasswordError": "密码必须为8-20位，包含大小写字母、数字和特殊字符",
-            "confirmPasswordLabel": "确认新密码",
-            "confirmPasswordPlaceholder": "再次输入新密码",
-            "confirmRequired": "请确认您的新密码",
-            "confirmMismatch": "两次输入的密码不一致",
-            "submit": "更新密码",
-            "successTitle": "密码修改成功！",
-            "changeErrorFallback": "修改密码失败！"
+            "status": "受保护"
           },
           "session": {
             "title": "登录会话",
@@ -1872,19 +1858,7 @@
         "enabled": "已启用",
         "disabled": "未启用",
         "empty": "Premium 配置当前不可用。",
-        "expiresAt": "有效期至",
-        "featureLabels": {
-          "advanced_growth_tracking": "高级成长追踪",
-          "smart_reminders": "智能提醒",
-          "ai_care_assistant": "AI 护理助手",
-          "premium_reports": "高级报告",
-          "family_collaboration_plus": "家庭协作 Plus",
-          "baby_journey_plus": "婴儿旅程+",
-          "medical_vault_export": "医疗保险库导出",
-          "unlimited_memory": "无限内存",
-          "currency_exchange": "货币兑换",
-          "theme_customization": "主题定制"
-        }
+        "expiresAt": "有效期至"
       },
       "familyTree": {
         "title": "家庭树",

@@ -1,0 +1,28 @@
+{
+  "drawer": {
+    "proposals": {
+      "title": "待审批支出提案",
+      "loading": "正在加载支出提案...",
+      "assignedApprover": "指定审批人: {{name}}",
+      "actions": {
+        "approve": "批准",
+        "reject": "拒绝"
+      },
+      "rejectForm": {
+        "title": "拒绝提案的原因",
+        "placeholder": "请输入拒绝原因（例如：超出预算限制...）",
+        "confirm": "确认拒绝",
+        "cancel": "取消"
+      },
+      "empty": {
+        "title": "太棒了！没有待处理的提案",
+        "subtitle": "该家庭目前没有需要您处理的支出提案。"
+      }
+    }
+  },
+  "messages": {
+    "approveSuccess": "支出提案批准成功",
+    "rejectSuccess": "支出提案拒绝成功",
+    "rejectReasonRequired": "请输入拒绝原因"
+  }
+}

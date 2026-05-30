@@ -1,0 +1,15 @@
+{
+  "modal": {
+    "hostBadge": "世帯主"
+  },
+  "actions": {
+    "assignHost": "世帯主に指定",
+    "assignHostConfirm": "このメンバーを世帯主に指定してもよろしいですか？",
+    "demoteHost": "世帯主を降格",
+    "demoteHostConfirm": "このメンバーを世帯主から降格してもよろしいですか？"
+  },
+  "messages": {
+    "assignHostSuccess": "世帯主の指定に成功しました！",
+    "demoteHostSuccess": "世帯主の降格に成功しました！"
+  }
+}

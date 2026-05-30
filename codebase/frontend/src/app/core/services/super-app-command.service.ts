@@ -262,6 +262,13 @@ export interface ExpenseProposalPageApi {
   rejectedCount: number;
 }
 
+export interface PageResponse<T> {
+  page: number;
+  size: number;
+  total: number;
+  items: T[];
+}
+
 export interface ExchangeRateApi {
   currency: string;
   buyRate: number | null;
@@ -692,6 +699,18 @@ export class SuperAppCommandService {
       ? params.set('categoryId', String(categoryId))
       : params;
     return this.get<ExpenseApi[]>('/expense/expenses', withCategory);
+  }
+
+  getExpensesPage(month?: string, categoryId?: number | null, page = 0, size = 10): Observable<PageResponse<ExpenseApi>> {
+    let params = new HttpParams()
+      .set('familyId', String(this.getFamilyId()))
+      .set('month', month ?? this.currentMonthKey())
+      .set('page', String(page))
+      .set('size', String(size));
+    if (categoryId && categoryId > 0) {
+      params = params.set('categoryId', String(categoryId));
+    }
+    return this.get<PageResponse<ExpenseApi>>('/expense/expenses', params);
   }
 
   getExpenseMonthlySummary(month?: string): Observable<ExpenseSummaryApi> {

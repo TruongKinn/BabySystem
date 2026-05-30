@@ -126,3 +126,41 @@ Hệ thống ghi nhận quá trình tự động sửa chữa diễn ra thành c
    * Cấu hình chuyển động chuyển đổi `transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1)` cho thẻ hiển thị mật khẩu.
    * Thêm tương tác hover tinh tế cho nút Toggle mắt: đổi màu sắc sang màu xanh biển `#2563eb` và ánh sáng nền nhẹ, tạo trải nghiệm hiện đại.
 
+
+## 5. Nhật Ký Nâng Cấp: Tích Hợp Phân Trang Cho Bảng Chi Tiết Hàng Ngày (Daily Breakdown Pagination) (30/05/2026)
+
+### 5.1. Bối Cảnh & Mục Tiêu
+Bảng "Chi tiết từng ngày" (Daily breakdown) hiển thị danh sách các ngày phân tích trong tháng (lên tới 31 ngày). Việc tải toàn bộ danh sách ngày này cùng lúc lên giao diện có thể gây ảnh hưởng nhẹ đến hiệu năng kết xuất trên thiết bị di động và làm tăng dung lượng dữ liệu truyền tải không cần thiết. Mục tiêu là bổ sung tính năng phân trang (pagination) đồng bộ từ Back-End lên Front-End cho phần bảng này.
+
+### 5.2. Giải Pháp Kỹ Thuật
+
+#### 5.2.1. Nâng cấp Backend (`insight-service`)
+1. **Cập nhật DTO Response:**
+   * Sửa đổi record [`InsightMonthlyResponse.java`](file:///d:/AI-AGENT/BabySystem/codebase/backend/insight-service/src/main/java/com/mom/insight/controller/dto/InsightMonthlyResponse.java) để bổ sung thêm các trường siêu dữ liệu phân trang: `int page`, `int size`, `long totalElements`, `int totalPages`.
+2. **Cập nhật Controller:**
+   * Cập nhật API `GET /api/insights/monthly` trong [`InsightController.java`](file:///d:/AI-AGENT/BabySystem/codebase/backend/insight-service/src/main/java/com/mom/insight/controller/InsightController.java) tiếp nhận thêm hai tham số tùy chọn: `page` (mặc định là `0`) và `size` (mặc định là `10`).
+3. **Cập nhật Service:**
+   * Sửa đổi phương thức `getMonthly` trong [`InsightService.java`](file:///d:/AI-AGENT/BabySystem/codebase/backend/insight-service/src/main/java/com/mom/insight/service/InsightService.java):
+     * Vẫn truy vấn toàn bộ dữ liệu của cả tháng từ DB để đảm bảo tính toán chính xác tổng chi tiêu trong tháng (`expenseTotal`, `expenseCount`, v.v.).
+     * Thực hiện phân trang danh sách `dailyBreakdown` trong bộ nhớ (In-memory pagination bằng `subList`) do dữ liệu tối đa của một tháng rất nhỏ (31 phần tử), giúp tối ưu hóa hiệu năng, giảm số lần gọi DB phức tạp.
+     * Trả về danh sách ngày đã được cắt theo trang cùng với các trường siêu dữ liệu phân trang tương ứng.
+4. **Xử lý Xuất Báo Cáo:**
+   * Trong [`InsightExportService.java`](file:///d:/AI-AGENT/BabySystem/codebase/backend/insight-service/src/main/java/com/mom/insight/service/InsightExportService.java), khi gọi dịch vụ `getMonthly` để tạo workbook Excel, truyền tham số `page = 0` và `size = 31` để đảm bảo báo cáo xuất ra luôn chứa đầy đủ 100% dữ liệu ngày trong tháng.
+
+#### 5.2.2. Nâng Cấp Frontend (`super-app-frontend`)
+1. **Cấu hình Service:**
+   * Cập nhật các interface `InsightMonthlyReport` và `InsightMonthlyApi` trong [`mock-super-app.service.ts`](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/app/core/services/mock-super-app.service.ts) để đón nhận các trường phân trang mới từ Backend.
+   * Cập nhật phương thức `getInsightMonthlyReport(month?, page?, size?)` để truyền tham số phân trang qua `HttpParams` lên REST API.
+2. **Cập nhật Component:**
+   * Cập nhật [`insights.component.ts`](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/app/insights/insights.component.ts):
+     * Thêm các biến state quản lý phân trang: `pageIndex = 1` (dùng dạng 1-indexed của Ant Design), `pageSize = 10`, `totalElements = 0`.
+     * Cập nhật lệnh gọi trong `loadInsights` để truyền `pageIndex - 1` (0-indexed) và `pageSize`.
+     * Bổ sung các trình xử lý sự kiện đổi trang: `onPageIndexChange(page)` và `onPageSizeChange(size)`.
+     * Tích hợp `NzPaginationModule` vào phần imports của component standalone.
+3. **Cải tiến Template & Giao Diện:**
+   * Tại [`insights.component.html`](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/app/insights/insights.component.html):
+     * Sửa đổi phần hiển thị tổng số ngày báo cáo: sử dụng `totalElements` thay cho `dailyRows.length` để luôn hiển thị đúng tổng số ngày trong tháng.
+     * Tích hợp component `<nz-pagination>` của Ng-Zorro bên dưới bảng kết quả hiển thị, hỗ trợ người dùng chuyển trang linh hoạt và thay đổi kích thước trang (5, 10, 15, 20 ngày/trang).
+   * Tối ưu hóa CSS tại [`insights.component.css`](file:///d:/AI-AGENT/BabySystem/codebase/frontend/src/app/insights/insights.component.css) cho `.pagination-wrap` để căn lề phải chuẩn xác, thêm khoảng cách và đường phân cách thanh mảnh, tạo độ sâu và chiều rộng giao diện hài hòa theo đúng triết lý Web Design Backbone.
+
+

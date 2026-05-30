@@ -1865,3 +1865,76 @@
   background: rgba(99, 102, 241, 0.1);
   color: #818cf8;
 }
+
+/* ============================================================================
+   Family Expense Receipts Vault Banner & Dialog (Premium Fintech Theme)
+   ============================================================================ */
+.receipts-vault-banner {
+  background: var(--surface-bg);
+  background-image: radial-gradient(120% 120% at 0% 0%, rgba(20, 184, 166, 0.04) 0%, rgba(139, 92, 246, 0.01) 50%, transparent 100%) !important;
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.015);
+  transition: all 0.3s ease;
+}
+
+.receipts-vault-banner:hover {
+  border-color: rgba(20, 184, 166, 0.2);
+  box-shadow: 0 8px 30px rgba(20, 184, 166, 0.04);
+}
+
+.banner-icon-container--teal {
+  background: rgba(20, 184, 166, 0.08) !important;
+  color: #0d9488 !important;
+}
+
+.expenses-list-body {
+  padding: 8px 4px;
+}
+
+.expense-row-hover:hover {
+  background: rgba(15, 118, 110, 0.02) !important;
+  transition: background 0.2s ease;
+}
+
+/* Modal styling adaptations */
+::ng-deep .expenses-list-modal .ant-modal-content {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid var(--border-color) !important;
+  background: var(--surface-bg) !important;
+}
+
+::ng-deep .expenses-list-modal .ant-modal-header {
+  background: var(--surface-bg) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  padding: 20px 24px !important;
+}
+
+::ng-deep .expenses-list-modal .ant-modal-footer {
+  background: var(--surface-bg) !important;
+  border-top: 1px solid var(--border-color) !important;
+  padding: 16px 24px !important;
+}
+
+/* Dark Mode adaptation for receipts vault */
+:host-context(.dark-theme) .receipts-vault-banner {
+  background: #1e293b;
+  border-color: rgba(255, 255, 255, 0.05);
+}
+
+:host-context(.dark-theme) .receipts-vault-banner:hover {
+  border-color: rgba(20, 184, 166, 0.35);
+}
+
+:host-context(.dark-theme) .banner-icon-container--teal {
+  background: rgba(20, 184, 166, 0.15) !important;
+  color: #2dd4bf !important;
+}
+
+:host-context(.dark-theme) .expense-row-hover:hover {
+  background: rgba(255, 255, 255, 0.02) !important;
+}

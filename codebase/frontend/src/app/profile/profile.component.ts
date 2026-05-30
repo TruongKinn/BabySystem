@@ -3,7 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject, OnDestroy, ViewChildren, QueryList, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, catchError, combineLatest, finalize, map, of, switchMap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, finalize, map, of, Subject, switchMap, takeUntil } from 'rxjs';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
@@ -110,6 +110,7 @@ export class ProfileComponent implements OnDestroy {
   private readonly message = inject(NzMessageService);
   private readonly fb = inject(FormBuilder);
   private readonly profileReload$ = new BehaviorSubject<void>(undefined);
+  private readonly destroy$ = new Subject<void>();
 
   is2faEnabled = false;
   is2faVisible = false;
@@ -209,11 +210,11 @@ export class ProfileComponent implements OnDestroy {
       .pipe(finalize(() => (this.isChangingPassword = false)))
       .subscribe({
         next: () => {
-          this.message.success(this.i18n.translate('auth.passwordCenter.change.successTitle'));
+          this.message.success(this.i18n.translate('app.profile.cards.security.password.successTitle'));
           this.isChangePasswordVisible = false;
         },
         error: (err) => {
-          this.message.error(this.resolveUploadErrorMessage(err) || this.i18n.translate('auth.passwordCenter.change.changeErrorFallback'));
+          this.message.error(this.resolveUploadErrorMessage(err) || this.i18n.translate('app.profile.cards.security.password.changeErrorFallback'));
         }
       });
   }
@@ -296,7 +297,8 @@ export class ProfileComponent implements OnDestroy {
     });
   }
 
-  readonly profile$ = this.profileReload$.pipe(
+  // rawData$: chỉ gọi API khi profileReload$ emit, cache kết quả lại
+  private readonly rawData$ = this.profileReload$.pipe(
     switchMap(() =>
       combineLatest({
         profile: this.command.getProfile(),
@@ -312,8 +314,15 @@ export class ProfileComponent implements OnDestroy {
           catchError(() => of(false))
         )
       })
-    ),
-    map(({ profile, familyMembers, premiumFeatures, babies, is2faEnabled }): ProfileViewModel => {
+    )
+  );
+
+  // profile$: combine rawData + currentLanguage để rebuild labels khi đổi ngôn ngữ mà không gọi lại API
+  readonly profile$ = combineLatest({
+    raw: this.rawData$,
+    _lang: this.i18n.currentLanguage$
+  }).pipe(
+    map(({ raw: { profile, familyMembers, premiumFeatures, babies, is2faEnabled } }): ProfileViewModel => {
       this.is2faEnabled = is2faEnabled;
       const currentMember = this.resolveCurrentFamilyMember(profile.userId, familyMembers);
       const enrichedMembers = familyMembers.map((member) => ({
@@ -688,7 +697,7 @@ export class ProfileComponent implements OnDestroy {
   }
 
   private premiumFeatureLabel(featureKey: string): string {
-    const key = `momApp.profile.premium.featureLabels.${featureKey}`;
+    const key = `app.profile.premium.featureLabels.${featureKey}`;
     const translated = this.i18n.translate(key);
     return translated === key ? featureKey : translated;
   }
@@ -757,12 +766,12 @@ export class ProfileComponent implements OnDestroy {
       .pipe(finalize(() => (this.isSavingProfile = false)))
       .subscribe({
         next: () => {
-          this.message.success('Cập nhật profile thành công!');
+          this.message.success(this.i18n.translate('app.profile.editProfileModal.success'));
           this.isEditProfileVisible = false;
           this.profileReload$.next();
         },
         error: (err) => {
-          this.message.error(err.message || 'Cập nhật profile thất bại!');
+          this.message.error(err.message || this.i18n.translate('app.profile.editProfileModal.failed'));
         }
       });
   }
@@ -784,7 +793,7 @@ export class ProfileComponent implements OnDestroy {
           this.pdfSafeUrl = this.sanitizer.bypassSecurityTrustResourceUrl(blobUrl);
         },
         error: (err) => {
-          this.message.error(err.message || 'Không thể tải báo cáo PDF!');
+          this.message.error(err.message || this.i18n.translate('app.profile.pdfModal.failed'));
           this.isPdfVisible = false;
         }
       });
@@ -801,6 +810,8 @@ export class ProfileComponent implements OnDestroy {
 
   ngOnDestroy(): void {
     this.stopTimer();
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private startTimer(): void {
@@ -857,7 +868,7 @@ export class ProfileComponent implements OnDestroy {
           this.startTimer();
         },
         error: (err) => {
-          this.message.error(err.message || 'Không thể khởi tạo mã QR xác thực 2 bước!');
+          this.message.error(err.message || this.i18n.translate('app.profile.2fa.generateSecretError'));
           this.close2faModal();
         }
       });
@@ -1030,7 +1041,7 @@ export class ProfileComponent implements OnDestroy {
   submit2faVerify(): void {
     const otp = this.otpDigits.join('');
     if (otp.length < 6) {
-      this.message.warning('Vui lòng nhập đầy đủ mã xác thực 6 chữ số!');
+      this.message.warning(this.i18n.translate('app.profile.2fa.otpLengthWarning'));
       return;
     }
 
@@ -1039,13 +1050,13 @@ export class ProfileComponent implements OnDestroy {
       .pipe(finalize(() => this.isVerifyingOtp = false))
       .subscribe({
         next: () => {
-          this.message.success(this.i18n.translate('app.profile.2fa.enableSuccess') || 'Kích hoạt xác thực 2 bước thành công!');
+          this.message.success(this.i18n.translate('app.profile.2fa.enableSuccess'));
           this.is2faEnabled = true;
           this.close2faModal();
           this.profileReload$.next();
         },
         error: (err) => {
-          this.message.error(err.message || 'Mã xác thực OTP không hợp lệ hoặc đã hết hạn!');
+          this.message.error(err.message || this.i18n.translate('app.profile.2fa.invalidOtpError'));
         }
       });
   }
@@ -1056,13 +1067,13 @@ export class ProfileComponent implements OnDestroy {
       .pipe(finalize(() => this.isDisabling2fa = false))
       .subscribe({
         next: () => {
-          this.message.success(this.i18n.translate('app.profile.2fa.disableSuccess') || 'Đã tắt xác thực 2 bước thành công!');
+          this.message.success(this.i18n.translate('app.profile.2fa.disableSuccess'));
           this.is2faEnabled = false;
           this.closeDisable2faModal();
           this.profileReload$.next();
         },
         error: (err) => {
-          this.message.error(err.message || 'Tắt xác thực 2 bước thất bại!');
+          this.message.error(err.message || this.i18n.translate('app.profile.2fa.disableFailedError'));
         }
       });
   }

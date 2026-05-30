@@ -90,11 +90,16 @@ public class ExpenseController {
     }
 
     @GetMapping("/expenses")
-    public ApiResponse<List<ExpenseResponse>> getExpenses(
+    public ApiResponse<?> getExpenses(
             @RequestParam("familyId") Long familyId,
             @RequestParam(value = "month", required = false) String month,
-            @RequestParam(value = "categoryId", required = false) Long categoryId
+            @RequestParam(value = "categoryId", required = false) Long categoryId,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size
     ) {
+        if (page != null && size != null) {
+            return ApiResponse.ok("Success", expenseService.getExpensesPage(familyId, month, categoryId, page, size));
+        }
         return ApiResponse.ok("Success", expenseService.getExpenses(familyId, month, categoryId));
     }
 

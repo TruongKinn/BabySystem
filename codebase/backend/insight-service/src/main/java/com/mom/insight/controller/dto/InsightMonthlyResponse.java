@@ -14,7 +14,11 @@ public record InsightMonthlyResponse(
         BigDecimal babySleepHours,
         long babyFeedings,
         long diaperChanges,
-        List<DailyItem> dailyBreakdown
+        List<DailyItem> dailyBreakdown,
+        int page,
+        int size,
+        long totalElements,
+        int totalPages
 ) {
     public record DailyItem(
             String date,

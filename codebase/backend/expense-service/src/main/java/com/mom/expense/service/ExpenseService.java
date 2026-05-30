@@ -173,6 +173,39 @@ public class ExpenseService {
                 .toList();
     }
 
+    public PageResponse<ExpenseResponse> getExpensesPage(Long familyId, String month, Long categoryId, int page, int size) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+        
+        PageRequest pageRequest = PageRequest.of(Math.max(page, 0), Math.max(size, 1));
+        Page<ExpenseEntity> resultPage;
+        
+        if (month == null || month.isBlank()) {
+            resultPage = categoryId == null
+                    ? expenseRepository.findByFamilyIdOrderBySpentAtDesc(familyId, pageRequest)
+                    : expenseRepository.findByFamilyIdAndCategoryIdOrderBySpentAtDesc(familyId, categoryId, pageRequest);
+        } else {
+            YearMonth yearMonth = MonthUtils.parse(month);
+            OffsetDateTime from = yearMonth.atDay(1).atStartOfDay().atOffset(ZoneOffset.UTC);
+            OffsetDateTime to = yearMonth.plusMonths(1).atDay(1).atStartOfDay().atOffset(ZoneOffset.UTC).minusNanos(1);
+            
+            resultPage = categoryId == null
+                    ? expenseRepository.findByFamilyIdAndSpentAtBetweenOrderBySpentAtDesc(familyId, from, to, pageRequest)
+                    : expenseRepository.findByFamilyIdAndCategoryIdAndSpentAtBetweenOrderBySpentAtDesc(familyId, categoryId, from, to, pageRequest);
+        }
+        
+        Map<Long, String> categoryNameMap = loadCategoryNames(resultPage.getContent());
+        List<ExpenseResponse> items = resultPage.getContent().stream()
+                .map(expense -> toExpenseResponse(expense, categoryNameMap.getOrDefault(expense.getCategoryId(), "Unknown")))
+                .toList();
+                
+        return PageResponse.<ExpenseResponse>builder()
+                .page(resultPage.getNumber())
+                .size(resultPage.getSize())
+                .total(resultPage.getTotalElements())
+                .items(items)
+                .build();
+    }
+
     @Transactional
     @CacheEvict(value = "expense-summary", allEntries = true)
     public ExpenseResponse updateExpense(Long expenseId, UpdateExpenseRequest request) {

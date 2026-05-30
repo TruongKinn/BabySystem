@@ -56,10 +56,12 @@ public class InsightController {
     @GetMapping("/insights/monthly")
     public ApiResponse<InsightMonthlyResponse> getMonthly(
             @RequestParam("familyId") Long familyId,
-            @RequestParam(value = "month", required = false) String month
+            @RequestParam(value = "month", required = false) String month,
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size
     ) {
         YearMonth parsedMonth = (month == null || month.isBlank()) ? null : YearMonth.parse(month);
-        return ApiResponse.ok("Success", insightService.getMonthly(familyId, parsedMonth));
+        return ApiResponse.ok("Success", insightService.getMonthly(familyId, parsedMonth, page, size));
     }
 
     @PostMapping(value = "/insights/monthly/export", produces = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")

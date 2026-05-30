@@ -9,12 +9,18 @@ import com.mom.shopping.controller.dto.ShoppingPendingCountResponse;
 import com.mom.shopping.controller.dto.UpdateShoppingItemCheckedRequest;
 import com.mom.shopping.controller.dto.UpdateShoppingItemRequest;
 import com.mom.shopping.controller.dto.UpdateShoppingListRequest;
+import com.mom.shopping.controller.dto.PageResponse;
 import com.mom.shopping.domain.ShoppingItemEntity;
 import com.mom.shopping.domain.ShoppingListEntity;
 import com.mom.shopping.repository.ShoppingItemRepository;
 import com.mom.shopping.repository.ShoppingListRepository;
 import com.mom.common.security.DataIsolationUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +38,7 @@ public class ShoppingService {
     private final ShoppingItemRepository shoppingItemRepository;
 
     @Transactional
+    @CacheEvict(value = "shopping-items", allEntries = true)
     public ShoppingListResponse createList(CreateShoppingListRequest request) {
         DataIsolationUtil.validateFamilyAccess(request.familyId());
 
@@ -56,6 +63,7 @@ public class ShoppingService {
     }
 
     @Transactional
+    @CacheEvict(value = "shopping-items", allEntries = true)
     public ShoppingListResponse updateList(Long listId, UpdateShoppingListRequest request) {
         ShoppingListEntity list = getListEntity(listId);
         if (request.name() != null) {
@@ -68,12 +76,14 @@ public class ShoppingService {
     }
 
     @Transactional
+    @CacheEvict(value = "shopping-items", allEntries = true)
     public void deleteList(Long listId) {
         ShoppingListEntity list = getListEntity(listId);
         shoppingListRepository.delete(list);
     }
 
     @Transactional
+    @CacheEvict(value = "shopping-items", allEntries = true)
     public ShoppingItemResponse createItem(Long listId, CreateShoppingItemRequest request) {
         ShoppingListEntity list = getListEntity(listId);
         ShoppingItemEntity item = new ShoppingItemEntity();
@@ -123,7 +133,49 @@ public class ShoppingService {
                 .toList();
     }
 
+    @Cacheable(value = "shopping-items", key = "#familyId + ':' + (#checked != null ? #checked : 'all') + ':' + (#search != null ? #search : '') + ':' + #page + ':' + #size")
+    public PageResponse<ShoppingItemResponse> getFamilyItemsPage(Long familyId, Boolean checked, String search, int page, int size) {
+        DataIsolationUtil.validateFamilyAccess(familyId);
+
+        List<Long> listIds = shoppingListRepository.findIdsByFamilyId(familyId);
+        if (listIds.isEmpty()) {
+            return new PageResponse<>(page, size, 0L, Collections.emptyList());
+        }
+
+        List<ShoppingListEntity> lists = shoppingListRepository.findAllById(listIds);
+        Map<Long, ShoppingListEntity> listMap = lists.stream()
+                .collect(Collectors.toMap(ShoppingListEntity::getId, Function.identity()));
+
+        Pageable pageable = PageRequest.of(page, size);
+        
+        Page<ShoppingItemEntity> itemPage;
+        String trimmedSearch = search != null ? search.trim() : "";
+        if (!trimmedSearch.isEmpty()) {
+            itemPage = checked == null
+                    ? shoppingItemRepository.findByListIdInAndItemNameContainingIgnoreCaseOrderByCreatedAtDesc(listIds, trimmedSearch, pageable)
+                    : shoppingItemRepository.findByListIdInAndCheckedAndItemNameContainingIgnoreCaseOrderByCreatedAtDesc(listIds, checked, trimmedSearch, pageable);
+        } else {
+            itemPage = checked == null
+                    ? shoppingItemRepository.findByListIdInOrderByCreatedAtDesc(listIds, pageable)
+                    : shoppingItemRepository.findByListIdInAndCheckedOrderByCreatedAtDesc(listIds, checked, pageable);
+        }
+
+        List<ShoppingItemResponse> items = itemPage.getContent().stream()
+                .map(item -> {
+                    ShoppingListEntity list = listMap.get(item.getListId());
+                    return toShoppingItemResponse(
+                            item,
+                            list != null ? list.getName() : "Unknown",
+                            list != null ? list.getFamilyId() : familyId
+                    );
+                })
+                .toList();
+
+        return new PageResponse<>(page, size, itemPage.getTotalElements(), items);
+    }
+
     @Transactional
+    @CacheEvict(value = "shopping-items", allEntries = true)
     public ShoppingItemResponse updateItem(Long itemId, UpdateShoppingItemRequest request) {
         ShoppingItemEntity item = getItemEntity(itemId);
         ShoppingListEntity list = getListEntity(item.getListId());
@@ -145,6 +197,7 @@ public class ShoppingService {
     }
 
     @Transactional
+    @CacheEvict(value = "shopping-items", allEntries = true)
     public ShoppingItemResponse updateItemChecked(Long itemId, UpdateShoppingItemCheckedRequest request) {
         ShoppingItemEntity item = getItemEntity(itemId);
         ShoppingListEntity list = getListEntity(item.getListId());
@@ -154,6 +207,7 @@ public class ShoppingService {
     }
 
     @Transactional
+    @CacheEvict(value = "shopping-items", allEntries = true)
     public void deleteItem(Long itemId) {
         ShoppingItemEntity item = getItemEntity(itemId);
         shoppingItemRepository.delete(item);
@@ -214,3 +268,4 @@ public class ShoppingService {
         );
     }
 }
+

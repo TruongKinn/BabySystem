@@ -1,6 +1,129 @@
 {
+  "changeAvatar": "Change avatar",
+  "uploading": "Uploading...",
+  "uploadHint": "Image files only, maximum size 30MB.",
+  "usernameLabel": "Username",
+  "emailLabel": "Email address",
+  "stats": {
+    "members": "Members",
+    "family": "Family",
+    "role": "Role",
+    "active": "Active",
+    "status": "Status"
+  },
+  "cards": {
+    "account": {
+      "title": "Account details",
+      "subtitle": "Sign-in and identity information",
+      "displayName": "Display name",
+      "status": "Status",
+      "activeStatus": "Active"
+    },
+    "familyRole": {
+      "title": "Family role",
+      "subtitle": "Position and relationship in family",
+      "primaryRole": "Primary role in the family",
+      "memberCount": "Member count",
+      "memberUnit": "people"
+    },
+    "premium": {
+      "title": "Premium access",
+      "subtitle": "Features currently available for this household"
+    },
+    "security": {
+      "title": "Security & settings",
+      "subtitle": "Account security configuration",
+      "password": {
+        "title": "Password",
+        "subtitle": "Change password regularly to protect your account",
+        "status": "Protected",
+        "changeBtn": "Change",
+        "oldPasswordLabel": "Old password",
+        "oldPasswordPlaceholder": "Enter your old password",
+        "oldPasswordError": "Please enter your old password",
+        "newPasswordLabel": "New password",
+        "newPasswordPlaceholder": "Enter new password",
+        "newPasswordError": "Password must be 8-20 characters with uppercase, lowercase, number, and special character",
+        "confirmPasswordLabel": "Confirm new password",
+        "confirmPasswordPlaceholder": "Re-enter new password",
+        "confirmRequired": "Please confirm your new password",
+        "confirmMismatch": "Confirm password does not match",
+        "submit": "Update password",
+        "successTitle": "Password changed successfully!",
+        "changeErrorFallback": "Failed to change password!"
+      },
+      "session": {
+        "title": "Session",
+        "subtitle": "Manage signed-in devices",
+        "status": "Safe"
+      },
+      "notifications": {
+        "title": "Notifications",
+        "subtitle": "Receive important alerts from system",
+        "status": "On"
+      }
+    }
+  },
+  "premium": {
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "empty": "Premium configuration is not available right now.",
+    "expiresAt": "Expires on",
+    "featureLabels": {
+      "advanced_growth_tracking": "Advanced growth tracking",
+      "smart_reminders": "Smart reminders",
+      "ai_care_assistant": "AI care assistant",
+      "premium_reports": "Premium reports",
+      "family_collaboration_plus": "Family collaboration Plus",
+      "baby_journey_plus": "Baby Journey+",
+      "medical_vault_export": "Medical vault export",
+      "unlimited_memory": "Unlimited memory",
+      "currency_exchange": "Currency exchange",
+      "theme_customization": "Theme customization"
+    }
+  },
+  "familyTree": {
+    "title": "Family tree",
+    "subtitle": "Relationship hierarchy within the household.",
+    "empty": "No family tree data available for this family.",
+    "babyBoy": "Son",
+    "babyGirl": "Daughter",
+    "babyChild": "Child"
+  },
+  "actions": {
+    "editProfile": "Edit Profile",
+    "exportPdf": "Export PDF"
+  },
+  "editProfileModal": {
+    "title": "Edit Profile",
+    "subtitle": "Update your personal information",
+    "displayNameLabel": "Display name",
+    "displayNamePlaceholder": "Enter your display name",
+    "displayNameError": "Please enter display name",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Enter email address",
+    "emailRequired": "Please enter email address",
+    "emailInvalid": "Please enter a valid email",
+    "dobLabel": "Birth date",
+    "dobPlaceholder": "Select birth date",
+    "submit": "Save changes",
+    "success": "Profile updated successfully!",
+    "failed": "Unable to update profile!"
+  },
+  "pdfModal": {
+    "title": "Personal Profile Report",
+    "subtitle": "Preview of official PDF report",
+    "loading": "Preparing PDF report...",
+    "failed": "Unable to load PDF report!"
+  },
   "2fa": {
     "title": "Set Up 2FA",
+    "subtitle": "Protect your account with 2-step verification",
+    "disableSubtitle": "Confirm disabling 2-step security",
+    "generateSecretError": "Unable to generate 2FA QR code!",
+    "otpLengthWarning": "Please enter the complete 6-digit verification code!",
+    "invalidOtpError": "OTP code is invalid or has expired!",
+    "disableFailedError": "Failed to disable 2-step verification!",
     "step1": "Step 1: Install Authenticator App",
     "step1Desc": "Download Google Authenticator or Microsoft Authenticator on your phone.",
     "step2": "Step 2: Scan QR Code",
@@ -8,7 +131,7 @@
     "step3": "Step 3: Enter Verification Code",
     "step3Desc": "Enter the 6-digit code from your authenticator app",
     "secretLabel": "Manual setup key:",
-    "remainingTime": "New code in: {time}s",
+    "remainingTime": "New code in: {{time}}s",
     "cancel": "Cancel",
     "enable": "Enable Two-Factor Authentication",
     "disableTitle": "Disable Two-Factor Authentication",
@@ -17,6 +140,7 @@
     "enableSuccess": "Two-factor authentication enabled successfully!",
     "appStore": "App Store",
     "googlePlay": "Google Play",
+    "downloadTitle": "Don't have the app? Download Google Authenticator:",
     "status": {
       "title": "Two-Factor Auth (2FA)",
       "desc": "Enhance account security using OTP codes",

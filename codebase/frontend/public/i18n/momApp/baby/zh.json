@@ -1,0 +1,24 @@
+{
+  "comments": {
+    "btnTitle": "评论",
+    "empty": "暂无评论。留下第一条评论吧！",
+    "placeholder": "写下您的评论...（输入 @ 以提及家庭成员）",
+    "submit": "发送",
+    "reply": "回复",
+    "replyPlaceholder": "写下您的回复...（输入 @ 以提及家庭成员）",
+    "delete": "删除评论",
+    "messages": {
+      "createFailed": "评论发送失败",
+      "deleteSuccess": "评论删除成功",
+      "deleteFailed": "评论删除失败"
+    },
+    "reactions": {
+      "like": "赞",
+      "love": "爱心",
+      "haha": "哈哈",
+      "wow": "哇",
+      "sad": "伤心",
+      "angry": "生气"
+    }
+  }
+}

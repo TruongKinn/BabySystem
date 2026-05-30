@@ -1,8 +1,8 @@
 <section class="page-container insights-page">
   <div class="header-actions">
     <div>
-      <h1 class="page-title">{{ 'momApp.insights.title' | translate }}</h1>
-      <p class="page-subtitle">{{ 'momApp.insights.subtitle' | translate }}</p>
+      <h1 class="page-title">{{ 'app.insights.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'app.insights.subtitle' | translate }}</p>
     </div>
 
     <div class="header-buttons">
@@ -30,22 +30,22 @@
         [disabled]="dailyRows.length === 0 || premiumReportsLocked || exporting"
       >
         <span nz-icon nzType="download"></span>
-        {{ 'momApp.insights.export.action' | translate }}
+        {{ 'app.insights.export.action' | translate }}
       </button>
     </div>
   </div>
 
   <div *ngIf="premiumReportsLocked" class="premium-lock-panel">
     <span nz-icon nzType="lock"></span>
-    <p>{{ 'momApp.insights.messages.premiumReportsRequired' | translate }}</p>
+    <p>{{ 'app.insights.messages.premiumReportsRequired' | translate }}</p>
   </div>
 
   <ng-container *ngIf="!premiumReportsLocked">
-  <div class="loading-state" *ngIf="loading">Loading insight report...</div>
+  <div class="loading-state" *ngIf="loading">{{ 'app.insights.loading' | translate }}</div>
 
   <ng-container *ngIf="!loading">
     <div class="insight-grid animate-slide-up">
-      <nz-card [nzTitle]="'momApp.insights.sleepScore' | translate" class="table-card insight-card">
+      <nz-card [nzTitle]="'app.insights.sleepScore' | translate" class="table-card insight-card">
         <div class="insight-score-row">
           <span class="insight-score-value tone-blue">{{ sleepScore }}</span>
           <span class="insight-score-label">/ 100</span>
@@ -55,7 +55,7 @@
         </div>
       </nz-card>
 
-      <nz-card [nzTitle]="'momApp.insights.budgetScore' | translate" class="table-card insight-card">
+      <nz-card [nzTitle]="'app.insights.budgetScore' | translate" class="table-card insight-card">
         <div class="insight-score-row">
           <span class="insight-score-value tone-cyan">{{ budgetScore }}</span>
           <span class="insight-score-label">/ 100</span>
@@ -65,7 +65,7 @@
         </div>
       </nz-card>
 
-      <nz-card [nzTitle]="'momApp.insights.workloadScore' | translate" class="table-card insight-card">
+      <nz-card [nzTitle]="'app.insights.workloadScore' | translate" class="table-card insight-card">
         <div class="insight-score-row">
           <span class="insight-score-value" [class.tone-volcano]="workloadScore < 40">{{ workloadScore }}</span>
           <span class="insight-score-label">/ 100</span>
@@ -75,7 +75,7 @@
         </div>
       </nz-card>
 
-      <nz-card nzTitle="Task completion rate" class="table-card insight-card">
+      <nz-card [nzTitle]="'app.insights.taskCompletionRate' | translate" class="table-card insight-card">
         <div class="insight-score-row">
           <span class="insight-score-value tone-green">{{ taskCompletionRate }}</span>
           <span class="insight-score-label">%</span>
@@ -87,52 +87,52 @@
     </div>
 
     <div class="report-grid">
-      <nz-card nzTitle="Report summary" class="table-card insight-card">
+      <nz-card [nzTitle]="'app.insights.summary.title' | translate" class="table-card insight-card">
         <div class="summary-grid">
           <div class="summary-item">
-            <p>Family</p>
+            <p>{{ 'app.insights.summary.family' | translate }}</p>
             <strong>{{ familyName || 'N/A' }}</strong>
           </div>
           <div class="summary-item">
-            <p>Mood score</p>
+            <p>{{ 'app.insights.summary.moodScore' | translate }}</p>
             <strong>{{ moodScore }} / 100</strong>
           </div>
           <div class="summary-item">
-            <p>Monthly expense</p>
+            <p>{{ 'app.insights.summary.monthlyExpense' | translate }}</p>
             <strong>{{ monthlyExpenseTotal | currency : userCurrency : 'symbol' : '1.0-0' }}</strong>
           </div>
           <div class="summary-item">
-            <p>Expense count</p>
+            <p>{{ 'app.insights.summary.expenseCount' | translate }}</p>
             <strong>{{ monthlyExpenseCount }}</strong>
           </div>
           <div class="summary-item">
-            <p>Meals planned</p>
+            <p>{{ 'app.insights.summary.mealsPlanned' | translate }}</p>
             <strong>{{ monthlyMealsPlanned }}</strong>
           </div>
           <div class="summary-item">
-            <p>Sleep hours</p>
+            <p>{{ 'app.insights.summary.sleepHours' | translate }}</p>
             <strong>{{ monthlySleepHours | number : '1.0-1' }}</strong>
           </div>
           <div class="summary-item">
-            <p>Feedings</p>
+            <p>{{ 'app.insights.summary.feedings' | translate }}</p>
             <strong>{{ monthlyFeedings }}</strong>
           </div>
           <div class="summary-item">
-            <p>Diaper changes</p>
+            <p>{{ 'app.insights.summary.diaperChanges' | translate }}</p>
             <strong>{{ monthlyDiaperChanges }}</strong>
           </div>
         </div>
 
         <div class="budget-row">
-          <span class="pill-chip">Budget used: {{ budgetPercent }}%</span>
-          <span class="pill-chip">Pending task gap: {{ pendingTaskGap }}</span>
+          <span class="pill-chip">{{ 'app.insights.summary.budgetUsed' | translate: { percent: budgetPercent } }}</span>
+          <span class="pill-chip">{{ 'app.insights.summary.pendingTaskGap' | translate: { gap: pendingTaskGap } }}</span>
         </div>
       </nz-card>
 
-      <nz-card nzTitle="Recommended actions" class="table-card insight-card">
+      <nz-card [nzTitle]="'app.insights.recommendations.title' | translate" class="table-card insight-card">
         <div *ngIf="aiCareAssistantLocked" class="ai-lock-note">
           <span nz-icon nzType="lock"></span>
-          {{ 'momApp.insights.messages.aiCareAssistantRequired' | translate }}
+          {{ 'app.insights.messages.aiCareAssistantRequired' | translate }}
         </div>
 
         <div class="recommendation-list" *ngIf="!aiCareAssistantLocked">
@@ -144,27 +144,27 @@
       </nz-card>
     </div>
 
-    <nz-card nzTitle="Daily breakdown" class="table-card insight-card">
+    <nz-card [nzTitle]="'app.insights.daily.title' | translate" class="table-card insight-card">
       <div class="table-summary-row">
         <span class="table-summary-item">
-          {{ dailyRows.length }} day(s) in report
+          {{ 'app.insights.daily.daysInReport' | translate: { count: totalElements } }}
         </span>
         <span class="table-summary-item">
-          Month: {{ monthKey }}
+          {{ 'app.insights.daily.monthLabel' | translate: { month: monthKey } }}
         </span>
       </div>
 
-      <div class="empty-state" *ngIf="dailyRows.length === 0">No daily insight data in this period.</div>
+      <div class="empty-state" *ngIf="dailyRows.length === 0">{{ 'app.insights.daily.empty' | translate }}</div>
 
       <div class="report-table-wrap" *ngIf="dailyRows.length > 0">
         <table class="report-table">
           <thead>
             <tr>
-              <th>Date</th>
-              <th>Expense</th>
-              <th>Pending tasks</th>
-              <th>Sleep hours</th>
-              <th>Risk level</th>
+              <th>{{ 'app.insights.daily.columns.date' | translate }}</th>
+              <th>{{ 'app.insights.daily.columns.expense' | translate }}</th>
+              <th>{{ 'app.insights.daily.columns.pendingTasks' | translate }}</th>
+              <th>{{ 'app.insights.daily.columns.sleepHours' | translate }}</th>
+              <th>{{ 'app.insights.daily.columns.riskLevel' | translate }}</th>
             </tr>
           </thead>
           <tbody>
@@ -182,6 +182,18 @@
           </tbody>
         </table>
       </div>
+
+      <div class="pagination-wrap" *ngIf="dailyRows.length > 0">
+        <nz-pagination
+          [nzPageIndex]="pageIndex"
+          [nzPageSize]="pageSize"
+          [nzTotal]="totalElements"
+          [nzShowSizeChanger]="true"
+          [nzPageSizeOptions]="[5, 10, 15, 20]"
+          (nzPageIndexChange)="onPageIndexChange($event)"
+          (nzPageSizeChange)="onPageSizeChange($event)"
+        ></nz-pagination>
+      </div>
     </nz-card>
   </ng-container>
   </ng-container>
@@ -189,8 +201,8 @@
   <nz-modal
     [(nzVisible)]="isExportPasswordModalVisible"
     [nzTitle]="exportPasswordTitleTpl"
-    [nzOkText]="'momApp.insights.export.confirm' | translate"
-    [nzCancelText]="'momApp.insights.export.cancel' | translate"
+    [nzOkText]="'app.insights.export.confirm' | translate"
+    [nzCancelText]="'app.insights.export.cancel' | translate"
     [nzOkLoading]="exporting"
     [nzOkDisabled]="exportPasswordForm.invalid || exporting"
     [nzMaskClosable]="!exporting"
@@ -202,50 +214,50 @@
     <ng-template #exportPasswordTitleTpl>
       <div class="export-modal-title">
         <span nz-icon nzType="file-protect"></span>
-        <span>{{ 'momApp.insights.export.passwordTitle' | translate }}</span>
+        <span>{{ 'app.insights.export.passwordTitle' | translate }}</span>
       </div>
     </ng-template>
 
     <ng-container *nzModalContent>
       <form class="export-password-form" [formGroup]="exportPasswordForm" (ngSubmit)="submitXlsxExport()">
-        <p class="export-password-subtitle">{{ 'momApp.insights.export.passwordSubtitle' | translate }}</p>
+        <p class="export-password-subtitle">{{ 'app.insights.export.passwordSubtitle' | translate }}</p>
         <div class="export-file-rule">
           <span nz-icon nzType="file-excel"></span>
-          <span>{{ 'momApp.insights.export.filenameRule' | translate }}</span>
+          <span>{{ 'app.insights.export.filenameRule' | translate }}</span>
         </div>
 
-        <label class="field-label" for="insight-export-password">{{ 'momApp.insights.export.passwordLabel' | translate }}</label>
+        <label class="field-label" for="insight-export-password">{{ 'app.insights.export.passwordLabel' | translate }}</label>
         <input
           nz-input
           id="insight-export-password"
           type="password"
           autocomplete="new-password"
           formControlName="password"
-          [placeholder]="'momApp.insights.export.passwordPlaceholder' | translate"
+          [placeholder]="'app.insights.export.passwordPlaceholder' | translate"
         />
         <p class="field-error" *ngIf="showPasswordError('password')">
-          {{ 'momApp.insights.export.passwordRequired' | translate }}
+          {{ 'app.insights.export.passwordRequired' | translate }}
         </p>
 
-        <label class="field-label" for="insight-export-confirm-password">{{ 'momApp.insights.export.confirmPasswordLabel' | translate }}</label>
+        <label class="field-label" for="insight-export-confirm-password">{{ 'app.insights.export.confirmPasswordLabel' | translate }}</label>
         <input
           nz-input
           id="insight-export-confirm-password"
           type="password"
           autocomplete="new-password"
           formControlName="confirmPassword"
-          [placeholder]="'momApp.insights.export.confirmPasswordPlaceholder' | translate"
+          [placeholder]="'app.insights.export.confirmPasswordPlaceholder' | translate"
         />
         <p class="field-error" *ngIf="showPasswordError('confirmPassword')">
-          {{ 'momApp.insights.export.confirmPasswordRequired' | translate }}
+          {{ 'app.insights.export.confirmPasswordRequired' | translate }}
         </p>
         <p class="field-error" *ngIf="passwordsDoNotMatch()">
-          {{ 'momApp.insights.export.passwordMismatch' | translate }}
+          {{ 'app.insights.export.passwordMismatch' | translate }}
         </p>
 
         <div class="export-password-note">
           <span nz-icon nzType="safety-certificate"></span>
-          <span>{{ 'momApp.insights.export.passwordHelp' | translate }}</span>
+          <span>{{ 'app.insights.export.passwordHelp' | translate }}</span>
         </div>
 
         <p class="field-error export-error" *ngIf="exportErrorMessage">{{ exportErrorMessage }}</p>

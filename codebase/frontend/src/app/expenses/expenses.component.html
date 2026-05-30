@@ -300,6 +300,188 @@
     </div>
   </div>
 
+  <!-- =========================================================
+       FAMILY EXPENSE RECEIPTS VAULT BANNER (Premium Fintech Style)
+       ========================================================= -->
+  <div class="receipts-vault-banner animate-fade-in" style="margin-top: 16px;">
+    <div class="banner-body">
+      <div class="banner-left">
+        <div class="banner-icon-container banner-icon-container--teal">
+          <span nz-icon nzType="file-done" class="banner-icon"></span>
+          <span class="badge-pulsing" *ngIf="expenseTotalCount > 0">{{ expenseTotalCount }}</span>
+        </div>
+        <div class="banner-text">
+          <h3 class="banner-title">{{ 'app.expenses.receipts.vaultBannerTitle' | translate }}</h3>
+          <p class="banner-subtitle">{{ 'app.expenses.receipts.vaultBannerSub' | translate }}</p>
+          
+          <div class="banner-quick-stats">
+            <span class="stat-pill stat-pill--total">
+              <span class="dot"></span>
+              {{ 'momApp.expenses.expenseRecords' | translate }}: <strong>{{ expenseTotalCount }}</strong>
+            </span>
+            <span class="stat-pill stat-pill--approved" style="background: rgba(20, 184, 166, 0.08); color: #0d9488;">
+              <span class="dot" style="background: #0d9488;"></span>
+              {{ 'momApp.expenses.spentToday' | translate }}: <strong>{{ todaySpent | currency : userCurrency : 'symbol' : '1.0-0' }}</strong>
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="banner-right">
+        <button nz-button nzType="primary" class="btn-user-primary btn-banner-manage glow-effect" style="background: var(--user-grad-2);" (click)="openExpensesListModal()">
+          <span nz-icon nzType="folder-open" style="margin-right: 6px;"></span>
+          {{ 'app.expenses.receipts.vaultBannerBtn' | translate }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Kho Hóa đơn & Chứng từ Chi tiêu (Phân trang BE & FE) -->
+  <nz-modal [(nzVisible)]="isExpensesListModalVisible" [nzTitle]="expensesListTitleTpl" nzClassName="user-role-modal expenses-list-modal"
+    [nzWidth]="1050" [nzFooter]="expensesListFooterTpl" (nzOnCancel)="closeExpensesListModal()">
+    
+    <ng-template #expensesListTitleTpl>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="modal-title-icon-wrap modal-title-icon-wrap--teal">
+          <span nz-icon nzType="file-done"></span>
+        </span>
+        <span class="modal-title-text">
+          <span class="modal-title-main">{{ 'app.expenses.receipts.vaultModalTitle' | translate }}</span>
+          <span class="modal-title-sub">{{ 'app.expenses.receipts.vaultModalSub' | translate }}</span>
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-container *nzModalContent>
+      <div class="expenses-list-body" style="padding: 8px 0;">
+        <!-- Compact Filters inside Dialog -->
+        <div class="filter-row filter-row--compact" style="margin-bottom: 20px; display: grid; grid-template-columns: 1.2fr 1.5fr 1fr; gap: 12px; align-items: end;">
+          <div class="filter-field" style="display: flex; flex-direction: column;">
+            <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; display: block;">{{ 'momApp.expenses.filters.category' | translate }}</label>
+            <nz-select 
+              [ngModel]="selectedCategoryId" 
+              (ngModelChange)="onCategoryFilterChange($event !== null ? $event : '')" 
+              nzShowSearch 
+              nzAllowClear
+              [nzPlaceHolder]="'momApp.expenses.filters.allCategories' | translate"
+              class="user-filter-select"
+              style="width: 100%;">
+              <nz-option [nzValue]="null" [nzLabel]="'momApp.expenses.filters.allCategories' | translate"></nz-option>
+              <nz-option *ngFor="let option of categoryFilters" [nzValue]="option.id" [nzLabel]="option.name"></nz-option>
+            </nz-select>
+          </div>
+
+          <div class="filter-field" style="display: flex; flex-direction: column;">
+            <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; display: block;">{{ 'momApp.expenses.filters.search' | translate }}</label>
+            <nz-input-group [nzPrefix]="prefixIconSearchModal" class="user-search-input-group">
+              <input nz-input [value]="searchKeyword" (input)="onSearchKeywordChange($any($event.target).value)"
+                [placeholder]="'momApp.expenses.filters.searchPlaceholder' | translate" style="height: 38px; border-radius: 8px;" />
+            </nz-input-group>
+            <ng-template #prefixIconSearchModal>
+              <span nz-icon nzType="search" style="color: var(--user-primary);"></span>
+            </ng-template>
+          </div>
+
+          <div class="filter-field" style="display: flex; flex-direction: column;">
+            <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; display: block;">{{ 'momApp.expenses.filters.sortLabel' | translate }}</label>
+            <nz-select 
+              [ngModel]="sortMode" 
+              (ngModelChange)="onSortModeChange($event)" 
+              class="user-filter-select"
+              style="width: 100%;">
+              <nz-option *ngFor="let option of sortOptions" [nzValue]="option.value" [nzLabel]="option.labelKey | translate"></nz-option>
+            </nz-select>
+          </div>
+        </div>
+
+        <div class="table-summary-row" style="margin-bottom: 12px; background: rgba(15, 118, 110, 0.04); border-left: 3px solid var(--color-primary); padding: 10px 16px; border-radius: 4px; display: flex; gap: 24px; font-size: 13px; color: var(--text-main);">
+          <span class="table-summary-item">
+            {{ 'app.expenses.receipts.showing' | translate }}
+            <strong>{{ filteredExpenseRecords.length }}</strong> / {{ expenseTotalCount }} {{ 'app.expenses.receipts.records' | translate }}
+          </span>
+          <span class="table-summary-item">
+            {{ 'app.expenses.receipts.filter' | translate }}: <strong>{{ currentCategoryLabel }}</strong>
+          </span>
+          <span class="table-summary-item">
+            {{ 'app.expenses.receipts.visibleTotal' | translate }}:
+            <strong style="color: var(--user-primary);">{{ visibleSpentTotal | currency : userCurrency : 'symbol' : '1.0-0' }}</strong>
+          </span>
+        </div>
+
+        <div class="empty-state" *ngIf="loading" style="padding: 64px 0; text-align: center;">
+          <span nz-icon nzType="loading" style="font-size: 24px; color: var(--user-primary); margin-bottom: 8px;"></span>
+          <p>{{ 'momApp.expenses.table.loading' | translate }}</p>
+        </div>
+
+        <div class="empty-state" *ngIf="!loading && filteredExpenseRecords.length === 0" style="padding: 64px 0; text-align: center;">
+          <span nz-icon nzType="inbox" style="font-size: 40px; color: var(--text-muted); margin-bottom: 12px; display: block;"></span>
+          {{ expenseTotalCount === 0 ? ('momApp.expenses.receipts.emptyExpenses' | translate) : ('momApp.expenses.table.noFilterMatch' | translate) }}
+        </div>
+
+        <!-- Table inside Dialog -->
+        <div class="expense-table-wrap" *ngIf="!loading && filteredExpenseRecords.length > 0" style="border: 1px solid var(--border-color); border-radius: 12px; overflow: hidden; background: var(--surface-bg);">
+          <table class="expense-table" style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: rgba(15, 118, 110, 0.05); border-bottom: 1px solid var(--border-color);">
+                <th style="padding: 14px 16px; text-align: left; font-weight: 700;">#</th>
+                <th style="padding: 14px 16px; text-align: left; font-weight: 700;">{{ 'momApp.expenses.receipts.columns.category' | translate }}</th>
+                <th style="padding: 14px 16px; text-align: left; font-weight: 700;">{{ 'momApp.expenses.receipts.columns.amount' | translate }}</th>
+                <th style="padding: 14px 16px; text-align: left; font-weight: 700;">{{ 'momApp.expenses.receipts.columns.spentAt' | translate }}</th>
+                <th style="padding: 14px 16px; text-align: left; font-weight: 700;">{{ 'momApp.expenses.receipts.columns.note' | translate }}</th>
+                <th style="padding: 14px 16px; text-align: center; font-weight: 700;">{{ 'momApp.expenses.receipts.columns.actions' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of filteredExpenseRecords; let idx = index; trackBy: trackByExpenseId" style="border-bottom: 1px solid var(--border-color);" class="expense-row-hover">
+                <td style="padding: 12px 16px;">{{ (expensePageIndex - 1) * expensePageSize + idx + 1 }}</td>
+                <td style="padding: 12px 16px;">
+                  <div class="category-cell" style="display: flex; align-items: center; gap: 8px;">
+                    <span class="category-dot" [style.background]="resolveCategoryColor(item.categoryId)">
+                    </span>
+                    {{ item.categoryName }}
+                  </div>
+                </td>
+                <td style="padding: 12px 16px; font-weight: 650; color: var(--text-main);">{{ item.amount | currency : item.currency : 'symbol' : '1.0-0' }}</td>
+                <td style="padding: 12px 16px; color: var(--text-secondary);">{{ formatSpentAt(item.spentAt) }}</td>
+                <td style="padding: 12px 16px; color: var(--text-muted);">{{ item.note || '-' }}</td>
+                <td style="padding: 12px 16px; text-align: center;">
+                  <button nz-button nzType="default" class="btn-user-secondary" (click)="openReceiptModal(item)">
+                    <span nz-icon nzType="file-protect" style="margin-right: 4px;"></span>
+                    {{ 'momApp.expenses.receipts.actions.manage' | translate }}
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </ng-container>
+
+    <ng-template #expensesListFooterTpl>
+      <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+        <!-- Backend-driven Pagination -->
+        <nz-pagination
+          [(nzPageIndex)]="expensePageIndex"
+          [nzPageSize]="expensePageSize"
+          [nzTotal]="expenseTotalCount"
+          (nzPageIndexChange)="onExpensePageChange($event)"
+          [nzHideOnSinglePage]="false"
+          class="user-pagination">
+        </nz-pagination>
+        
+        <div style="display:flex;gap:8px">
+          <button nz-button nzType="primary" class="btn-user-primary glow-effect" (click)="openCreateModal()">
+            <span nz-icon nzType="plus-circle"></span>
+            {{ 'momApp.expenses.actions.create' | translate }}
+          </button>
+          <button nz-button nzType="default" class="btn-user-outline" (click)="closeExpensesListModal()">
+            Đóng
+          </button>
+        </div>
+      </div>
+    </ng-template>
+  </nz-modal>
+
   <!-- Modal: Quản lý Đề xuất & Phê duyệt Chi tiêu Gia đình -->
   <nz-modal [(nzVisible)]="isProposalsListModalVisible" [nzTitle]="proposalsListTitleTpl" nzClassName="user-role-modal proposals-list-modal"
     [nzWidth]="960" [nzFooter]="proposalsListFooterTpl" (nzOnCancel)="closeProposalsListModal()">
@@ -458,65 +640,6 @@
       </div>
     </ng-template>
   </nz-modal>
-
-  <nz-card class="table-card expense-history-card" [nzTitle]="'momApp.expenses.receipts.title' | translate">
-    <div class="table-summary-row">
-      <span class="table-summary-item">
-        {{ 'momApp.expenses.table.showing' | translate }}
-        <strong>{{ visibleExpenseCount }}</strong> / {{ totalExpenseCount }} {{ 'momApp.expenses.table.records' |
-        translate }}
-      </span>
-      <span class="table-summary-item">
-        {{ 'momApp.expenses.table.filter' | translate }}: <strong>{{ currentCategoryLabel }}</strong>
-      </span>
-      <span class="table-summary-item">
-        {{ 'momApp.expenses.table.visibleTotal' | translate }}:
-        <strong>{{ visibleSpentTotal | currency : userCurrency : 'symbol' : '1.0-0' }}</strong>
-      </span>
-    </div>
-
-    <div class="empty-state" *ngIf="loading">{{ 'momApp.expenses.table.loading' | translate }}</div>
-
-    <div class="empty-state" *ngIf="!loading && filteredExpenseRecords.length === 0">
-      {{ totalExpenseCount === 0 ? ('momApp.expenses.receipts.emptyExpenses' | translate) :
-      ('momApp.expenses.table.noFilterMatch' | translate) }}
-    </div>
-
-    <div class="expense-table-wrap" *ngIf="!loading && filteredExpenseRecords.length > 0">
-      <table class="expense-table">
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>{{ 'momApp.expenses.receipts.columns.category' | translate }}</th>
-            <th>{{ 'momApp.expenses.receipts.columns.amount' | translate }}</th>
-            <th>{{ 'momApp.expenses.receipts.columns.spentAt' | translate }}</th>
-            <th>{{ 'momApp.expenses.receipts.columns.note' | translate }}</th>
-            <th>{{ 'momApp.expenses.receipts.columns.actions' | translate }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of filteredExpenseRecords; let idx = index; trackBy: trackByExpenseId">
-            <td>{{ idx + 1 }}</td>
-            <td>
-              <div class="category-cell">
-                <span class="category-dot" [style.background]="resolveCategoryColor(item.categoryId)">
-                </span>
-                {{ item.categoryName }}
-              </div>
-            </td>
-            <td>{{ item.amount | currency : item.currency : 'symbol' : '1.0-0' }}</td>
-            <td>{{ formatSpentAt(item.spentAt) }}</td>
-            <td>{{ item.note || '-' }}</td>
-            <td>
-              <button nz-button nzType="default" class="btn-user-secondary" (click)="openReceiptModal(item)">
-                {{ 'momApp.expenses.receipts.actions.manage' | translate }}
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </nz-card>
 </section>
 
 <nz-modal [(nzVisible)]="isCreateModalVisible" [nzTitle]="expenseCreateTitleTpl" nzClassName="user-role-modal"

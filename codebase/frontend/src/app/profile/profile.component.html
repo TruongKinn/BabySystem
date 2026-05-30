@@ -22,10 +22,10 @@
         <input #avatarInput type="file" accept="image/*" (change)="onAvatarFileSelected($event)" hidden />
         <button class="btn-upload" [class.btn-upload--loading]="isUploadingAvatar" (click)="avatarInput.click()">
           <span nz-icon nzType="camera" nzTheme="outline"></span>
-          <span *ngIf="!isUploadingAvatar">{{ 'momApp.profile.changeAvatar' | translate }}</span>
-          <span *ngIf="isUploadingAvatar">{{ 'momApp.profile.uploading' | translate }}</span>
+          <span *ngIf="!isUploadingAvatar">{{ 'app.profile.changeAvatar' | translate }}</span>
+          <span *ngIf="isUploadingAvatar">{{ 'app.profile.uploading' | translate }}</span>
         </button>
-        <p class="upload-hint">{{ 'momApp.profile.uploadHint' | translate }}</p>
+        <p class="upload-hint">{{ 'app.profile.uploadHint' | translate }}</p>
       </div>
 
       <div class="hero-identity">
@@ -56,7 +56,7 @@
           </span>
           <div class="stat-text">
             <span class="stat-value">{{ profile.familyMembers.length }}</span>
-            <span class="stat-label">{{ 'momApp.profile.stats.members' | translate }}</span>
+            <span class="stat-label">{{ 'app.profile.stats.members' | translate }}</span>
           </div>
         </div>
         <div class="stat-pill">
@@ -64,8 +64,8 @@
             <span nz-icon nzType="heart" nzTheme="fill"></span>
           </span>
           <div class="stat-text">
-            <span class="stat-value">{{ 'momApp.profile.stats.family' | translate }}</span>
-            <span class="stat-label">{{ 'momApp.profile.stats.role' | translate }}</span>
+            <span class="stat-value">{{ 'app.profile.stats.family' | translate }}</span>
+            <span class="stat-label">{{ 'app.profile.stats.role' | translate }}</span>
           </div>
         </div>
         <div class="stat-pill">
@@ -73,8 +73,8 @@
             <span nz-icon nzType="safety-certificate" nzTheme="fill"></span>
           </span>
           <div class="stat-text">
-            <span class="stat-value">{{ 'momApp.profile.stats.active' | translate }}</span>
-            <span class="stat-label">{{ 'momApp.profile.stats.status' | translate }}</span>
+            <span class="stat-value">{{ 'app.profile.stats.active' | translate }}</span>
+            <span class="stat-label">{{ 'app.profile.stats.status' | translate }}</span>
           </div>
         </div>
       </div>
@@ -88,52 +88,51 @@
           <span nz-icon nzType="idcard" nzTheme="outline"></span>
         </div>
         <div>
-          <h2 class="detail-card__title">{{ 'momApp.profile.cards.account.title' | translate }}</h2>
-          <p class="detail-card__sub">{{ 'momApp.profile.cards.account.subtitle' | translate }}</p>
+          <h2 class="detail-card__title">{{ 'app.profile.cards.account.title' | translate }}</h2>
+          <p class="detail-card__sub">{{ 'app.profile.cards.account.subtitle' | translate }}</p>
         </div>
       </div>
       <div class="detail-card__body">
         <div class="info-row">
           <span class="info-label">
             <span nz-icon nzType="user" nzTheme="outline"></span>
-            {{ 'momApp.profile.cards.account.displayName' | translate }}
+            {{ 'app.profile.cards.account.displayName' | translate }}
           </span>
           <span class="info-value">{{ profile.displayName }}</span>
         </div>
         <div class="info-row">
           <span class="info-label">
             <span nz-icon nzType="key" nzTheme="outline"></span>
-            {{ 'momApp.profile.usernameLabel' | translate }}
+            {{ 'app.profile.usernameLabel' | translate }}
           </span>
           <span class="info-value info-value--mono">{{ profile.username }}</span>
         </div>
         <div class="info-row">
           <span class="info-label">
             <span nz-icon nzType="mail" nzTheme="outline"></span>
-            {{ 'momApp.profile.emailLabel' | translate }}
+            {{ 'app.profile.emailLabel' | translate }}
           </span>
           <span class="info-value">{{ profile.email }}</span>
         </div>
         <div class="info-row">
           <span class="info-label">
             <span nz-icon nzType="check-circle" nzTheme="outline"></span>
-            {{ 'momApp.profile.cards.account.status' | translate }}
+            {{ 'app.profile.cards.account.status' | translate }}
           </span>
           <span class="info-value">
             <span class="status-badge status-badge--active">
-              <i class="status-dot"></i> {{ 'momApp.profile.cards.account.activeStatus' | translate }}
+              <i class="status-dot"></i> {{ 'app.profile.cards.account.activeStatus' | translate }}
             </span>
           </span>
         </div>
-
         <div class="account-actions" style="display: flex; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px dashed rgba(249, 115, 22, 0.15); justify-content: flex-end;">
           <button nz-button nzType="default" class="btn-user-outline" nzSize="default" (click)="openEditProfile(profile)">
             <span nz-icon nzType="edit" nzTheme="outline"></span>
-            Chỉnh sửa Profile
+            {{ 'app.profile.actions.editProfile' | translate }}
           </button>
           <button nz-button nzType="primary" class="btn-user-primary" nzSize="default" (click)="viewProfilePdf(profile.userId)">
             <span nz-icon nzType="file-pdf" nzTheme="outline"></span>
-            Xuất PDF
+            {{ 'app.profile.actions.exportPdf' | translate }}
           </button>
         </div>
       </div>
@@ -145,8 +144,8 @@
           <span nz-icon nzType="home" nzTheme="fill"></span>
         </div>
         <div>
-          <h2 class="detail-card__title">{{ 'momApp.profile.cards.familyRole.title' | translate }}</h2>
-          <p class="detail-card__sub">{{ 'momApp.profile.cards.familyRole.subtitle' | translate }}</p>
+          <h2 class="detail-card__title">{{ 'app.profile.cards.familyRole.title' | translate }}</h2>
+          <p class="detail-card__sub">{{ 'app.profile.cards.familyRole.subtitle' | translate }}</p>
         </div>
       </div>
       <div class="detail-card__body">
@@ -156,18 +155,18 @@
           </div>
           <div class="role-showcase__info">
             <p class="role-showcase__name">{{ profile.roleLabel }}</p>
-            <p class="role-showcase__desc">{{ 'momApp.profile.cards.familyRole.primaryRole' | translate }}</p>
+            <p class="role-showcase__desc">{{ 'app.profile.cards.familyRole.primaryRole' | translate }}</p>
           </div>
         </div>
         <div class="info-row" style="margin-top: 12px">
           <span class="info-label">
             <span nz-icon nzType="team" nzTheme="outline"></span>
-            {{ 'momApp.profile.cards.familyRole.memberCount' | translate }}
+            {{ 'app.profile.cards.familyRole.memberCount' | translate }}
           </span>
           <span class="info-value">
             <strong style="color: var(--user-primary); font-size: 18px">{{ profile.familyMembers.length }}</strong>
             <span style="color: var(--text-secondary); font-size: 13px; margin-left: 4px">
-              {{ 'momApp.profile.cards.familyRole.memberUnit' | translate }}
+              {{ 'app.profile.cards.familyRole.memberUnit' | translate }}
             </span>
           </span>
         </div>
@@ -196,28 +195,27 @@
           <span nz-icon nzType="crown" nzTheme="fill"></span>
         </div>
         <div>
-          <h2 class="detail-card__title">{{ 'momApp.profile.cards.premium.title' | translate }}</h2>
-          <p class="detail-card__sub">{{ 'momApp.profile.cards.premium.subtitle' | translate }}</p>
+          <h2 class="detail-card__title">{{ 'app.profile.cards.premium.title' | translate }}</h2>
+          <p class="detail-card__sub">{{ 'app.profile.cards.premium.subtitle' | translate }}</p>
         </div>
       </div>
       <div class="detail-card__body">
         <div class="premium-empty" *ngIf="profile.premiumFeatures.length === 0">
-          {{ 'momApp.profile.premium.empty' | translate }}
+          {{ 'app.profile.premium.empty' | translate }}
         </div>
-
         <div class="premium-feature-list" *ngIf="profile.premiumFeatures.length > 0">
           <div class="premium-feature-row" *ngFor="let feature of profile.premiumFeatures">
             <div class="premium-feature-main">
               <p class="premium-feature-name">{{ feature.label }}</p>
               <p class="premium-feature-meta" *ngIf="feature.expiresAt">
-                {{ 'momApp.profile.premium.expiresAt' | translate }}: {{ formatPremiumExpiry(feature.expiresAt) }}
+                {{ 'app.profile.premium.expiresAt' | translate }}: {{ formatPremiumExpiry(feature.expiresAt) }}
               </p>
             </div>
             <span class="feature-chip" [class.feature-chip--enabled]="feature.enabled" [class.feature-chip--disabled]="!feature.enabled">
               {{
                 feature.enabled
-                  ? ('momApp.profile.premium.enabled' | translate)
-                  : ('momApp.profile.premium.disabled' | translate)
+                  ? ('app.profile.premium.enabled' | translate)
+                  : ('app.profile.premium.disabled' | translate)
               }}
             </span>
           </div>
@@ -231,8 +229,8 @@
           <span nz-icon nzType="safety" nzTheme="outline"></span>
         </div>
         <div>
-          <h2 class="detail-card__title">{{ 'momApp.profile.cards.security.title' | translate }}</h2>
-          <p class="detail-card__sub">{{ 'momApp.profile.cards.security.subtitle' | translate }}</p>
+          <h2 class="detail-card__title">{{ 'app.profile.cards.security.title' | translate }}</h2>
+          <p class="detail-card__sub">{{ 'app.profile.cards.security.subtitle' | translate }}</p>
         </div>
       </div>
       <div class="detail-card__body">
@@ -240,34 +238,34 @@
           <div class="security-item__info">
             <span nz-icon nzType="lock" nzTheme="outline" class="security-item__icon"></span>
             <div>
-              <p class="security-item__title">{{ 'momApp.profile.cards.security.password.title' | translate }}</p>
-              <p class="security-item__sub">{{ 'momApp.profile.cards.security.password.subtitle' | translate }}</p>
+              <p class="security-item__title">{{ 'app.profile.cards.security.password.title' | translate }}</p>
+              <p class="security-item__sub">{{ 'app.profile.cards.security.password.subtitle' | translate }}</p>
             </div>
           </div>
           <div class="security-item__actions" style="display: flex; gap: 12px; align-items: center;">
-            <span class="security-badge security-badge--ok">{{ 'momApp.profile.cards.security.password.status' | translate }}</span>
-            <button nz-button nzType="default" nzSize="small" class="btn-user-outline" (click)="openChangePassword()">{{ 'auth.passwordCenter.tabs.change' | translate }}</button>
+            <span class="security-badge security-badge--ok">{{ 'app.profile.cards.security.password.status' | translate }}</span>
+            <button nz-button nzType="default" nzSize="small" class="btn-user-outline" (click)="openChangePassword()">{{ 'app.profile.cards.security.password.changeBtn' | translate }}</button>
           </div>
         </div>
         <div class="security-item">
           <div class="security-item__info">
             <span nz-icon nzType="desktop" nzTheme="outline" class="security-item__icon"></span>
             <div>
-              <p class="security-item__title">{{ 'momApp.profile.cards.security.session.title' | translate }}</p>
-              <p class="security-item__sub">{{ 'momApp.profile.cards.security.session.subtitle' | translate }}</p>
+              <p class="security-item__title">{{ 'app.profile.cards.security.session.title' | translate }}</p>
+              <p class="security-item__sub">{{ 'app.profile.cards.security.session.subtitle' | translate }}</p>
             </div>
           </div>
-          <span class="security-badge security-badge--ok">{{ 'momApp.profile.cards.security.session.status' | translate }}</span>
+          <span class="security-badge security-badge--ok">{{ 'app.profile.cards.security.session.status' | translate }}</span>
         </div>
         <div class="security-item">
           <div class="security-item__info">
             <span nz-icon nzType="bell" nzTheme="outline" class="security-item__icon"></span>
             <div>
-              <p class="security-item__title">{{ 'momApp.profile.cards.security.notifications.title' | translate }}</p>
-              <p class="security-item__sub">{{ 'momApp.profile.cards.security.notifications.subtitle' | translate }}</p>
+              <p class="security-item__title">{{ 'app.profile.cards.security.notifications.title' | translate }}</p>
+              <p class="security-item__sub">{{ 'app.profile.cards.security.notifications.subtitle' | translate }}</p>
             </div>
           </div>
-          <span class="security-badge security-badge--on">{{ 'momApp.profile.cards.security.notifications.status' | translate }}</span>
+          <span class="security-badge security-badge--on">{{ 'app.profile.cards.security.notifications.status' | translate }}</span>
         </div>
         <div class="security-item">
           <div class="security-item__info">
@@ -293,8 +291,8 @@
 
   <nz-card class="table-card family-tree-card">
     <div class="tree-header">
-      <h3>{{ 'momApp.profile.familyTree.title' | translate }}</h3>
-      <p>{{ 'momApp.profile.familyTree.subtitle' | translate }}</p>
+      <h3>{{ 'app.profile.familyTree.title' | translate }}</h3>
+      <p>{{ 'app.profile.familyTree.subtitle' | translate }}</p>
     </div>
 
     <div class="fg-wrap" *ngIf="treeNodes.length > 0; else emptyFamilyTree">
@@ -449,7 +447,7 @@
     </ng-template>
 
     <ng-template #emptyFamilyTree>
-      <div class="fg-empty">{{ 'momApp.profile.familyTree.empty' | translate }}</div>
+      <div class="fg-empty">{{ 'app.profile.familyTree.empty' | translate }}</div>
     </ng-template>
   </nz-card>
 
@@ -466,8 +464,8 @@
           <span nz-icon nzType="lock"></span>
         </span>
         <span class="modal-title-text">
-          <span class="modal-title-main">{{ 'auth.passwordCenter.tabs.change' | translate }}</span>
-          <span class="modal-title-sub">{{ 'momApp.profile.cards.security.password.subtitle' | translate }}</span>
+          <span class="modal-title-main">{{ 'app.profile.cards.security.password.title' | translate }}</span>
+          <span class="modal-title-sub">{{ 'app.profile.cards.security.password.subtitle' | translate }}</span>
         </span>
       </div>
     </ng-template>
@@ -475,19 +473,19 @@
     <ng-container *nzModalContent>
       <form nz-form [formGroup]="changePasswordForm" nzLayout="vertical" class="user-modal-form-grid">
         <nz-form-item class="modal-field-full">
-          <nz-form-label nzRequired>{{ 'auth.passwordCenter.change.oldPasswordLabel' | translate }}</nz-form-label>
-          <nz-form-control [nzErrorTip]="'auth.passwordCenter.change.oldPasswordError' | translate">
+          <nz-form-label nzRequired>{{ 'app.profile.cards.security.password.oldPasswordLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'app.profile.cards.security.password.oldPasswordError' | translate">
             <nz-input-group [nzPrefix]="prefixLock" class="premium-text-input">
-              <input nz-input type="password" formControlName="oldPassword" [placeholder]="'auth.passwordCenter.change.oldPasswordPlaceholder' | translate" />
+              <input nz-input type="password" formControlName="oldPassword" [placeholder]="'app.profile.cards.security.password.oldPasswordPlaceholder' | translate" />
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
         
         <nz-form-item class="modal-field-full" style="margin-bottom: 0;">
-          <nz-form-label nzRequired>{{ 'auth.passwordCenter.change.newPasswordLabel' | translate }}</nz-form-label>
-          <nz-form-control [nzErrorTip]="'auth.passwordCenter.change.newPasswordError' | translate">
+          <nz-form-label nzRequired>{{ 'app.profile.cards.security.password.newPasswordLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'app.profile.cards.security.password.newPasswordError' | translate">
             <nz-input-group [nzPrefix]="prefixLock" class="premium-text-input">
-              <input nz-input type="password" formControlName="newPassword" [placeholder]="'auth.passwordCenter.change.newPasswordPlaceholder' | translate" />
+              <input nz-input type="password" formControlName="newPassword" [placeholder]="'app.profile.cards.security.password.newPasswordPlaceholder' | translate" />
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
@@ -497,14 +495,14 @@
         </div>
 
         <nz-form-item class="modal-field-full" style="margin-top: 16px; margin-bottom: 0;">
-          <nz-form-label nzRequired>{{ 'auth.passwordCenter.change.confirmPasswordLabel' | translate }}</nz-form-label>
+          <nz-form-label nzRequired>{{ 'app.profile.cards.security.password.confirmPasswordLabel' | translate }}</nz-form-label>
           <nz-form-control [nzErrorTip]="confirmErrorTpl">
             <nz-input-group [nzPrefix]="prefixLock" class="premium-text-input">
-              <input nz-input type="password" formControlName="confirmPassword" [placeholder]="'auth.passwordCenter.change.confirmPasswordPlaceholder' | translate" />
+              <input nz-input type="password" formControlName="confirmPassword" [placeholder]="'app.profile.cards.security.password.confirmPasswordPlaceholder' | translate" />
             </nz-input-group>
             <ng-template #confirmErrorTpl let-control>
-              <ng-container *ngIf="control.hasError('required')">{{ 'auth.passwordCenter.change.confirmRequired' | translate }}</ng-container>
-              <ng-container *ngIf="control.hasError('mismatch')">{{ 'auth.passwordCenter.change.confirmMismatch' | translate }}</ng-container>
+              <ng-container *ngIf="control.hasError('required')">{{ 'app.profile.cards.security.password.confirmRequired' | translate }}</ng-container>
+              <ng-container *ngIf="control.hasError('mismatch')">{{ 'app.profile.cards.security.password.confirmMismatch' | translate }}</ng-container>
             </ng-template>
           </nz-form-control>
         </nz-form-item>
@@ -513,7 +511,7 @@
     
     <ng-template #changePasswordFooterTpl>
       <button nz-button nzType="default" class="btn-user-outline" (click)="handleCancelChangePassword()">{{ 'commonActions.cancel' | translate }}</button>
-      <button nz-button nzType="primary" class="btn-user-primary" (click)="submitChangePassword()" [nzLoading]="isChangingPassword">{{ 'auth.passwordCenter.change.submit' | translate }}</button>
+      <button nz-button nzType="primary" class="btn-user-primary" (click)="submitChangePassword()" [nzLoading]="isChangingPassword">{{ 'app.profile.cards.security.password.submit' | translate }}</button>
     </ng-template>
   </nz-modal>
 
@@ -533,8 +531,8 @@
           <span nz-icon nzType="edit"></span>
         </span>
         <span class="modal-title-text">
-          <span class="modal-title-main">Chỉnh sửa Profile</span>
-          <span class="modal-title-sub">Cập nhật thông tin cá nhân của bạn</span>
+          <span class="modal-title-main">{{ 'app.profile.editProfileModal.title' | translate }}</span>
+          <span class="modal-title-sub">{{ 'app.profile.editProfileModal.subtitle' | translate }}</span>
         </span>
       </div>
     </ng-template>
@@ -542,34 +540,34 @@
     <ng-container *nzModalContent>
       <form nz-form [formGroup]="profileForm" nzLayout="vertical" class="user-modal-form-grid">
         <nz-form-item class="modal-field-full">
-          <nz-form-label nzRequired>Tên hiển thị</nz-form-label>
-          <nz-form-control nzErrorTip="Vui lòng nhập tên hiển thị">
+          <nz-form-label nzRequired>{{ 'app.profile.editProfileModal.displayNameLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'app.profile.editProfileModal.displayNameError' | translate">
             <nz-input-group [nzPrefix]="prefixUser" class="premium-text-input">
-              <input nz-input formControlName="displayName" placeholder="Nhập tên hiển thị của bạn" />
+              <input nz-input formControlName="displayName" [placeholder]="'app.profile.editProfileModal.displayNamePlaceholder' | translate" />
             </nz-input-group>
           </nz-form-control>
         </nz-form-item>
 
         <nz-form-item class="modal-field-full">
-          <nz-form-label nzRequired>Email</nz-form-label>
+          <nz-form-label nzRequired>{{ 'app.profile.editProfileModal.emailLabel' | translate }}</nz-form-label>
           <nz-form-control [nzErrorTip]="emailErrorTpl">
             <nz-input-group [nzPrefix]="prefixMail" class="premium-text-input">
-              <input nz-input formControlName="email" placeholder="Nhập địa chỉ email" />
+              <input nz-input formControlName="email" [placeholder]="'app.profile.editProfileModal.emailPlaceholder' | translate" />
             </nz-input-group>
             <ng-template #emailErrorTpl let-control>
-              <ng-container *ngIf="control.hasError('required')">Vui lòng nhập địa chỉ email</ng-container>
-              <ng-container *ngIf="control.hasError('email')">Định dạng email không hợp lệ</ng-container>
+              <ng-container *ngIf="control.hasError('required')">{{ 'app.profile.editProfileModal.emailRequired' | translate }}</ng-container>
+              <ng-container *ngIf="control.hasError('email')">{{ 'app.profile.editProfileModal.emailInvalid' | translate }}</ng-container>
             </ng-template>
           </nz-form-control>
         </nz-form-item>
 
         <nz-form-item class="modal-field-full">
-          <nz-form-label>Ngày sinh</nz-form-label>
+          <nz-form-label>{{ 'app.profile.editProfileModal.dobLabel' | translate }}</nz-form-label>
           <nz-form-control>
             <nz-date-picker
               formControlName="dateOfBirth"
               nzFormat="yyyy-MM-dd"
-              [nzPlaceHolder]="'Chọn ngày sinh'"
+              [nzPlaceHolder]="'app.profile.editProfileModal.dobPlaceholder' | translate"
               style="width: 100%"
               class="premium-date-picker"
             ></nz-date-picker>
@@ -583,7 +581,7 @@
         {{ 'commonActions.cancel' | translate }}
       </button>
       <button nz-button nzType="primary" class="btn-user-primary" (click)="submitEditProfile(profile.userId)" [nzLoading]="isSavingProfile">
-        Lưu thay đổi
+        {{ 'app.profile.editProfileModal.submit' | translate }}
       </button>
     </ng-template>
   </nz-modal>
@@ -604,8 +602,8 @@
             <span nz-icon nzType="file-pdf"></span>
           </span>
           <span class="modal-title-text">
-            <span class="modal-title-main">Báo cáo Profile cá nhân</span>
-            <span class="modal-title-sub">Bản xem trước tài liệu PDF chính thức</span>
+            <span class="modal-title-main">{{ 'app.profile.pdfModal.title' | translate }}</span>
+            <span class="modal-title-sub">{{ 'app.profile.pdfModal.subtitle' | translate }}</span>
           </span>
         </div>
       </div>
@@ -615,7 +613,7 @@
       <div class="pdf-viewer-container" style="position: relative; width: 100%; height: 75vh; background: #f3f4f6; border-radius: 12px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
         <div *ngIf="isLoadingPdf" style="display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--text-secondary);">
           <span nz-icon nzType="loading" nzTheme="outline" style="font-size: 32px; color: var(--user-primary);"></span>
-          <p>Đang chuẩn bị báo cáo PDF...</p>
+          <p>{{ 'app.profile.pdfModal.loading' | translate }}</p>
         </div>
         <iframe
           *ngIf="!isLoadingPdf && pdfSafeUrl"
@@ -625,7 +623,7 @@
         ></iframe>
         <div *ngIf="!isLoadingPdf && !pdfSafeUrl" style="display: flex; flex-direction: column; align-items: center; gap: 12px; color: var(--color-error);">
           <span nz-icon nzType="exclamation-circle" nzTheme="outline" style="font-size: 32px;"></span>
-          <p>Không thể tải hoặc hiển thị file PDF.</p>
+          <p>{{ 'app.profile.pdfModal.failed' | translate }}</p>
         </div>
       </div>
     </ng-container>
@@ -651,7 +649,7 @@
         </span>
         <span class="modal-title-text">
           <span class="modal-title-main">{{ 'app.profile.2fa.title' | translate }}</span>
-          <span class="modal-title-sub">Bảo vệ tài khoản với xác thực 2 bước</span>
+          <span class="modal-title-sub">{{ 'app.profile.2fa.subtitle' | translate }}</span>
         </span>
       </div>
     </ng-template>
@@ -711,7 +709,7 @@
         </div>
 
         <div class="app-downloads">
-          <p class="download-title">Don't have the app? Download Google Authenticator:</p>
+          <p class="download-title">{{ 'app.profile.2fa.downloadTitle' | translate }}</p>
           <div class="download-buttons">
             <a href="https://apps.apple.com/us/app/google-authenticator/id388497605" target="_blank" class="download-btn download-btn--appstore">
               <span nz-icon nzType="apple" nzTheme="fill" class="btn-icon"></span>
@@ -759,7 +757,7 @@
         </span>
         <span class="modal-title-text">
           <span class="modal-title-main">{{ 'app.profile.2fa.disableTitle' | translate }}</span>
-          <span class="modal-title-sub">Xác nhận huỷ bảo mật 2 lớp</span>
+          <span class="modal-title-sub">{{ 'app.profile.2fa.disableSubtitle' | translate }}</span>
         </span>
       </div>
     </ng-template>

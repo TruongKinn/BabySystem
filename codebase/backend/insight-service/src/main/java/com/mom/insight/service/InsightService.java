@@ -100,7 +100,7 @@ public class InsightService {
         );
     }
 
-    public InsightMonthlyResponse getMonthly(Long familyId, YearMonth month) {
+    public InsightMonthlyResponse getMonthly(Long familyId, YearMonth month, int page, int size) {
         DataIsolationUtil.validateFamilyAccess(familyId);
         premiumAccessService.requireFeature(familyId, PremiumFeatures.PREMIUM_REPORTS);
 
@@ -132,6 +132,12 @@ public class InsightService {
                 ))
                 .toList();
 
+        int totalElements = dailyItems.size();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+        int fromIndex = Math.min(page * size, totalElements);
+        int toIndex = Math.min((page + 1) * size, totalElements);
+        List<InsightMonthlyResponse.DailyItem> paginatedDailyItems = dailyItems.subList(fromIndex, toIndex);
+
         return new InsightMonthlyResponse(
                 familyId,
                 yearMonth.toString(),
@@ -143,7 +149,11 @@ public class InsightService {
                 babySleepHours,
                 babyFeedings,
                 diaperChanges,
-                dailyItems
+                paginatedDailyItems,
+                page,
+                size,
+                totalElements,
+                totalPages
         );
     }
 

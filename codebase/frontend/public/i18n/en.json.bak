@@ -1840,21 +1840,7 @@
           "password": {
             "title": "Password",
             "subtitle": "Change password regularly to protect your account",
-            "status": "Protected",
-            "changeBtn": "Change",
-            "oldPasswordLabel": "Old password",
-            "oldPasswordPlaceholder": "Enter your old password",
-            "oldPasswordError": "Please enter your old password",
-            "newPasswordLabel": "New password",
-            "newPasswordPlaceholder": "Enter new password",
-            "newPasswordError": "Password must be 8-20 characters with uppercase, lowercase, number, and special character",
-            "confirmPasswordLabel": "Confirm new password",
-            "confirmPasswordPlaceholder": "Re-enter new password",
-            "confirmRequired": "Please confirm your new password",
-            "confirmMismatch": "Confirm password does not match",
-            "submit": "Update password",
-            "successTitle": "Password changed successfully!",
-            "changeErrorFallback": "Failed to change password!"
+            "status": "Protected"
           },
           "session": {
             "title": "Session",
@@ -1872,19 +1858,7 @@
         "enabled": "Enabled",
         "disabled": "Disabled",
         "empty": "Premium configuration is not available right now.",
-        "expiresAt": "Expires on",
-        "featureLabels": {
-          "advanced_growth_tracking": "Advanced growth tracking",
-          "smart_reminders": "Smart reminders",
-          "ai_care_assistant": "AI care assistant",
-          "premium_reports": "Premium reports",
-          "family_collaboration_plus": "Family collaboration Plus",
-          "baby_journey_plus": "Baby Journey+",
-          "medical_vault_export": "Medical vault export",
-          "unlimited_memory": "Unlimited memory",
-          "currency_exchange": "Currency exchange",
-          "theme_customization": "Theme customization"
-        }
+        "expiresAt": "Expires on"
       },
       "familyTree": {
         "title": "Family tree",

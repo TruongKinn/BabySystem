@@ -1,0 +1,28 @@
+{
+  "drawer": {
+    "proposals": {
+      "title": "承認待ちの支出提案",
+      "loading": "支出提案を読み込んでいます...",
+      "assignedApprover": "指定された承認者: {{name}}",
+      "actions": {
+        "approve": "承認",
+        "reject": "却下"
+      },
+      "rejectForm": {
+        "title": "提案を却下する理由",
+        "placeholder": "却下の理由を入力してください (例: 予算超過など...)",
+        "confirm": "却下を確認",
+        "cancel": "キャンセル"
+      },
+      "empty": {
+        "title": "素晴らしい！承認待ちの提案はありません",
+        "subtitle": "この世帯には現在、対応が必要な支出提案はありません。"
+      }
+    }
+  },
+  "messages": {
+    "approveSuccess": "支出提案が承認されました",
+    "rejectSuccess": "支出提案が却下されました",
+    "rejectReasonRequired": "却下の理由を入力してください"
+  }
+}

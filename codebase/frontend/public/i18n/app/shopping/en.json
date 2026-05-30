@@ -1,0 +1,12 @@
+{
+  "pagination": {
+    "total": "Total items",
+    "range": "Showing {{start}}-{{end}} of {{total}} items",
+    "prev": "Previous page",
+    "next": "Next page",
+    "itemsPerPage": "items/page"
+  },
+  "messages": {
+    "loading": "Loading shopping list..."
+  }
+}

@@ -331,7 +331,7 @@ public class IntegrationService {
         try {
             RestClient.RequestHeadersSpec<?> requestSpec = restClientBuilder.build()
                     .get()
-                    .uri(expenseServiceUri + "/api/expenses/categories?familyId=" + familyId);
+                    .uri(expenseServiceUri + "/api/categories?familyId=" + familyId);
 
             requestSpec = injectSecurityHeaders(requestSpec, userId, familyIdsHeader, isAdmin);
 

@@ -1,0 +1,82 @@
+{
+  "title": "Phân tích Gia đình",
+  "subtitle": "Chỉ số nhanh về giấc ngủ, ngân sách và khối lượng công việc",
+  "loading": "Đang tải báo cáo phân tích...",
+  "sleepScore": "Điểm giấc ngủ của bé",
+  "budgetScore": "Điểm an toàn ngân sách",
+  "workloadScore": "Cân bằng công việc",
+  "taskCompletionRate": "Tỷ lệ hoàn thành công việc",
+  "summary": {
+    "title": "Tóm tắt báo cáo",
+    "family": "Gia đình",
+    "moodScore": "Chỉ số cảm xúc",
+    "monthlyExpense": "Chi tiêu trong tháng",
+    "expenseCount": "Số khoản chi",
+    "mealsPlanned": "Bữa ăn đã lên lịch",
+    "sleepHours": "Giờ ngủ của bé",
+    "feedings": "Số lần cho ăn",
+    "diaperChanges": "Số lần thay tã",
+    "budgetUsed": "Ngân sách đã dùng: {{percent}}%",
+    "pendingTaskGap": "Công việc chưa hoàn thành: {{gap}}"
+  },
+  "recommendations": {
+    "title": "Hành động đề xuất",
+    "sleepRoutine": {
+      "title": "Ổn định thói quen ngủ của bé",
+      "detail": "Thời gian ngủ hôm nay là {{hours}} giờ. Hãy duy trì giờ ngủ cố định và giảm kích thích vào buổi tối."
+    },
+    "budgetRisk": {
+      "title": "Kiểm soát rủi ro chi tiêu vượt ngân sách",
+      "detail": "Ngân sách đã sử dụng là {{percent}}%. Hãy xem xét các danh mục có chi phí cao và hoãn các khoản chi không khẩn cấp."
+    },
+    "workload": {
+      "title": "Cân đối lại khối lượng công việc gia đình",
+      "detail": "Số công việc tồn đọng là {{gap}}. Hãy phân bổ lại người thực hiện và ưu tiên xử lý các việc quá hạn trước."
+    },
+    "stable": {
+      "title": "Hoạt động gia đình hiện tại ổn định",
+      "detail": "Hãy tiếp tục duy trì lịch trình hiện tại và đánh giá hàng tuần để duy trì hiệu suất tốt."
+    }
+  },
+  "daily": {
+    "title": "Chi tiết từng ngày",
+    "daysInReport": "Báo cáo trong {{count}} ngày",
+    "monthLabel": "Tháng: {{month}}",
+    "empty": "Không có dữ liệu phân tích hàng ngày trong khoảng thời gian này.",
+    "columns": {
+      "date": "Ngày",
+      "expense": "Chi tiêu",
+      "pendingTasks": "Việc chờ xử lý",
+      "sleepHours": "Giờ ngủ",
+      "riskLevel": "Mức độ rủi ro"
+    }
+  },
+  "risk": {
+    "good": "An toàn",
+    "warning": "Cảnh báo",
+    "critical": "Nguy hiểm"
+  },
+  "export": {
+    "action": "Xuất báo cáo XLSX bảo mật",
+    "passwordTitle": "Bảo vệ tệp xuất XLSX",
+    "passwordSubtitle": "Nhập mật khẩu cho tệp báo cáo này. Excel sẽ yêu cầu mật khẩu trước khi mở tệp đã tải xuống.",
+    "filenameRule": "Tên tệp được tạo tự động từ hệ thống: MOM_INSIGHTS_F{familyId}_{yyyymm}_{timestamp}_{code}.xlsx",
+    "passwordLabel": "Mật khẩu tệp",
+    "confirmPasswordLabel": "Xác nhận mật khẩu",
+    "passwordPlaceholder": "Tối thiểu 8 ký tự",
+    "confirmPasswordPlaceholder": "Nhập lại mật khẩu",
+    "passwordRequired": "Mật khẩu phải từ 8 đến 128 ký tự.",
+    "confirmPasswordRequired": "Vui lòng xác nhận lại mật khẩu.",
+    "passwordMismatch": "Mật khẩu xác nhận không khớp.",
+    "passwordHelp": "Tệp báo cáo được mã hóa an toàn. Hệ thống lưu trữ lịch sử xuất tệp và mã băm mật khẩu để kiểm toán, không lưu trữ mật khẩu văn bản thô.",
+    "confirm": "Xuất XLSX",
+    "cancel": "Hủy bỏ",
+    "success": "Đã tải xuống tệp báo cáo XLSX được bảo vệ.",
+    "failed": "Không thể xuất báo cáo XLSX bảo mật.",
+    "noFile": "Tệp xuất rỗng, không có dữ liệu."
+  },
+  "messages": {
+    "premiumReportsRequired": "Yêu cầu gói Premium Reports để xem báo cáo phân tích hàng tháng.",
+    "aiCareAssistantRequired": "Đề xuất thông minh chỉ khả dụng với tính năng AI Care Assistant."
+  }
+}

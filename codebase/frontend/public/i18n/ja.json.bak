@@ -1840,21 +1840,7 @@
           "password": {
             "title": "パスワード",
             "subtitle": "アカウント保護のため定期的にパスワードを変更してください",
-            "status": "保護済み",
-            "changeBtn": "変更する",
-            "oldPasswordLabel": "現在のパスワード",
-            "oldPasswordPlaceholder": "現在のパスワードを入力してください",
-            "oldPasswordError": "現在のパスワードを入力してください",
-            "newPasswordLabel": "新しいパスワード",
-            "newPasswordPlaceholder": "新しいパスワードを入力",
-            "newPasswordError": "パスワードは8〜20文字で、大文字、小文字、数字、特殊文字を含める必要があります",
-            "confirmPasswordLabel": "新しいパスワード（確認）",
-            "confirmPasswordPlaceholder": "新しいパスワードを再入力",
-            "confirmRequired": "新しいパスワードをもう一度入力してください",
-            "confirmMismatch": "パスワードが一致しません",
-            "submit": "パスワードを更新",
-            "successTitle": "パスワードが正常に変更されました！",
-            "changeErrorFallback": "パスワードの変更に失敗しました！"
+            "status": "保護済み"
           },
           "session": {
             "title": "セッション",
@@ -1872,19 +1858,7 @@
         "enabled": "有効",
         "disabled": "無効",
         "empty": "Premium構成は現在ご利用いただけません。",
-        "expiresAt": "有効期限",
-        "featureLabels": {
-          "advanced_growth_tracking": "高度な成長追跡",
-          "smart_reminders": "スマートリマインダー",
-          "ai_care_assistant": "AIケアアシスタント",
-          "premium_reports": "プレミアムレポート",
-          "family_collaboration_plus": "家族コラボレーションPlus",
-          "baby_journey_plus": "ベビージャーニー+",
-          "medical_vault_export": "医療保管庫エクスポート",
-          "unlimited_memory": "無制限のメモリ",
-          "currency_exchange": "通貨換算",
-          "theme_customization": "テーマのカスタマイズ"
-        }
+        "expiresAt": "有効期限"
       },
       "familyTree": {
         "title": "家族ツリー",

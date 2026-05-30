@@ -1,0 +1,65 @@
+{
+  "proposals": {
+    "title": "家族支出の提案と承認",
+    "createBtn": "新規提案作成",
+    "banner": {
+      "subtitle": "他のメンバー의 承認が必要な支出提案を送信し、その進捗状況を追跡します。",
+      "manageBtn": "提案の管理",
+      "pendingLabel": "承認待ち",
+      "approvedLabel": "承認済み",
+      "rejectedLabel": "却下済み",
+      "totalLabel": "提案の総数"
+    },
+    "table": {
+      "title": "提案内容",
+      "amount": "提案額",
+      "proposer": "提案者",
+      "approver": "承認者",
+      "status": "ステータス",
+      "actions": "操作"
+    },
+    "status": {
+      "pending": "承認待ち",
+      "approved": "承認済み",
+      "rejected": "却下済み"
+    },
+    "steps": {
+      "submit": "提案送信",
+      "review": "審査",
+      "result": "結果"
+    },
+    "actions": {
+      "approve": "承認",
+      "reject": "却下",
+      "resubmit": "編集して再送信"
+    },
+    "modal": {
+      "createTitle": "新規支出提案の作成",
+      "editTitle": "提案の編集と再送信",
+      "titleLabel": "支出項目名",
+      "titlePlaceholder": "例: 赤ちゃん用搾乳器の購入",
+      "amountLabel": "金額 (VND)",
+      "categoryLabel": "支出カテゴリ",
+      "approverLabel": "承認するメンバー",
+      "approverPlaceholder": "承認を担当するメンバーを選択",
+      "rejectTitle": "支出提案の却下",
+      "rejectReasonLabel": "却下の理由",
+      "rejectReasonPlaceholder": "詳細な却下理由を入力してください...",
+      "successCreate": "家族支出提案が正常に送信されました！",
+      "successApprove": "提案が承認されました！支出が家族ウォレットに追加されました。",
+      "successReject": "支出提案が却下されました。",
+      "successResubmit": "提案が更新され、正常に再送信されました！"
+    }
+  },
+  "receipts": {
+    "vaultBannerTitle": "領収書・証憑保管庫",
+    "vaultBannerSub": "すべての家族の支出領収書を保存および検索します。100%の財務透明性。",
+    "vaultBannerBtn": "領収書の管理",
+    "vaultModalTitle": "支出領収書・取引書類保管庫",
+    "vaultModalSub": "ページネーションと同期された支出記録と添付領収書のリスト。",
+    "showing": "表示中",
+    "records": "件のレコード",
+    "filter": "フィルター",
+    "visibleTotal": "表示件数"
+  }
+}

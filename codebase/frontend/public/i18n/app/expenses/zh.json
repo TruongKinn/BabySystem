@@ -1,0 +1,65 @@
+{
+  "proposals": {
+    "title": "家庭支出提案与审批",
+    "createBtn": "新建提案",
+    "banner": {
+      "subtitle": "提交需要其他成员审批的支出提案，并跟踪审批进度。",
+      "manageBtn": "管理提案",
+      "pendingLabel": "待审批",
+      "approvedLabel": "已批准",
+      "rejectedLabel": "已拒绝",
+      "totalLabel": "提案总数"
+    },
+    "table": {
+      "title": "提案内容",
+      "amount": "建议金额",
+      "proposer": "提案人",
+      "approver": "审批人",
+      "status": "状态",
+      "actions": "操作"
+    },
+    "status": {
+      "pending": "等待审批",
+      "approved": "已批准",
+      "rejected": "已拒绝"
+    },
+    "steps": {
+      "submit": "提交提案",
+      "review": "审查",
+      "result": "结果"
+    },
+    "actions": {
+      "approve": "批准",
+      "reject": "拒绝",
+      "resubmit": "修改并重新提交"
+    },
+    "modal": {
+      "createTitle": "创建新支出提案",
+      "editTitle": "修改并重新提交提案",
+      "titleLabel": "支出名称",
+      "titlePlaceholder": "例如：购买婴儿吸奶器",
+      "amountLabel": "金额 (VND)",
+      "categoryLabel": "支出类别",
+      "approverLabel": "审批成员",
+      "approverPlaceholder": "选择负责审批的成员",
+      "rejectTitle": "拒绝支出提案",
+      "rejectReasonLabel": "拒绝提案的原因",
+      "rejectReasonPlaceholder": "输入详细的拒绝原因...",
+      "successCreate": "家庭支出提案提交成功！",
+      "successApprove": "提案已批准！支出已成功添加到家庭钱包中。",
+      "successReject": "已拒绝该支出提案。",
+      "successResubmit": "提案更新并重新提交成功！"
+    }
+  },
+  "receipts": {
+    "vaultBannerTitle": "收据与凭证库",
+    "vaultBannerSub": "存储和查询所有家庭支出收据。100% 财务透明度。",
+    "vaultBannerBtn": "管理收据",
+    "vaultModalTitle": "支出收据与凭证库",
+    "vaultModalSub": "分页同步显示的支出记录及附加收据凭证列表。",
+    "showing": "显示",
+    "records": "条记录",
+    "filter": "过滤器",
+    "visibleTotal": "总显示数"
+  }
+}

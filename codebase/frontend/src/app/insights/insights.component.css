@@ -363,3 +363,12 @@
     grid-template-columns: 1fr;
   }
 }
+
+.pagination-wrap {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 12px;
+  border-top: 1px dashed var(--border-color);
+}

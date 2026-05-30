@@ -50,5 +50,16 @@
       "successReject": "Đã từ chối đề xuất chi tiêu.",
       "successResubmit": "Đã cập nhật và gửi lại đề xuất thành công!"
     }
+  },
+  "receipts": {
+    "vaultBannerTitle": "Kho Hóa đơn & Chứng từ",
+    "vaultBannerSub": "Lưu trữ và tra cứu toàn bộ hóa đơn chi tiêu gia đình. Minh bạch tài chính 100%.",
+    "vaultBannerBtn": "Quản lý Hóa đơn",
+    "vaultModalTitle": "Kho Hóa đơn & Chứng từ Chi tiêu",
+    "vaultModalSub": "Danh sách các khoản chi tiêu và hóa đơn chứng từ giao dịch được phân trang đồng bộ.",
+    "showing": "Hiển thị",
+    "records": "bản ghi",
+    "filter": "Bộ lọc",
+    "visibleTotal": "Tổng hiển thị"
   }
 }

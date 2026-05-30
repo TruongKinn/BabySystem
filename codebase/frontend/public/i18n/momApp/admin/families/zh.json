@@ -1,0 +1,15 @@
+{
+  "modal": {
+    "hostBadge": "户主"
+  },
+  "actions": {
+    "assignHost": "指定为主户",
+    "assignHostConfirm": "您确定要将该成员指定为户主吗？",
+    "demoteHost": "取消户主",
+    "demoteHostConfirm": "您确定要取消该成员的户主身份吗？"
+  },
+  "messages": {
+    "assignHostSuccess": "户主指定成功！",
+    "demoteHostSuccess": "户主取消成功！"
+  }
+}

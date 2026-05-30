@@ -9,6 +9,7 @@ import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
 import { DashboardSnapshot } from '../core/models/super-app.model';
@@ -45,7 +46,8 @@ interface InsightRecommendation {
     NzButtonModule,
     NzIconModule,
     NzInputModule,
-    NzModalModule
+    NzModalModule,
+    NzPaginationModule
   ],
   templateUrl: './insights.component.html',
   styleUrl: './insights.component.css'
@@ -109,12 +111,28 @@ export class InsightsComponent implements OnInit {
     this.loadPremiumFeatures();
   }
 
+  pageIndex = 1;
+  pageSize = 10;
+  totalElements = 0;
+
   onMonthChange(rawMonth: string): void {
     const nextMonth = this.normalizeMonthKey(rawMonth);
     if (nextMonth === this.monthKey) {
       return;
     }
     this.monthKey = nextMonth;
+    this.pageIndex = 1;
+    this.loadInsights();
+  }
+
+  onPageIndexChange(page: number): void {
+    this.pageIndex = page;
+    this.loadInsights();
+  }
+
+  onPageSizeChange(size: number): void {
+    this.pageSize = size;
+    this.pageIndex = 1;
     this.loadInsights();
   }
 
@@ -132,7 +150,7 @@ export class InsightsComponent implements OnInit {
 
     forkJoin({
       snapshot: this.data.getDashboard(),
-      monthly: this.data.getInsightMonthlyReport(month)
+      monthly: this.data.getInsightMonthlyReport(month, this.pageIndex - 1, this.pageSize)
     })
       .pipe(finalize(() => {
         this.loading = false;
@@ -190,7 +208,7 @@ export class InsightsComponent implements OnInit {
       .subscribe({
         next: (response) => this.handleExportResponse(response),
         error: (err) => {
-          const fallback = this.t('momApp.insights.export.failed', 'Unable to export protected XLSX report.');
+          const fallback = this.t('app.insights.export.failed', 'Unable to export protected XLSX report.');
           this.exportErrorMessage = err?.error?.message || fallback;
           this.notification.error(this.t('common.errorTitle', 'Error'), this.exportErrorMessage);
         }
@@ -212,12 +230,12 @@ export class InsightsComponent implements OnInit {
 
   riskLabel(level: InsightRiskLevel): string {
     if (level === 'CRITICAL') {
-      return this.t('momApp.insights.risk.critical', 'Critical');
+      return this.t('app.insights.risk.critical', 'Critical');
     }
     if (level === 'WARNING') {
-      return this.t('momApp.insights.risk.warning', 'Warning');
+      return this.t('app.insights.risk.warning', 'Warning');
     }
-    return this.t('momApp.insights.risk.good', 'Good');
+    return this.t('app.insights.risk.good', 'Good');
   }
 
   showPasswordError(controlName: 'password' | 'confirmPassword'): boolean {
@@ -237,7 +255,7 @@ export class InsightsComponent implements OnInit {
   private handleExportResponse(response: HttpResponse<Blob>): void {
     const file = response.body;
     if (!file) {
-      this.exportErrorMessage = this.t('momApp.insights.export.noFile', 'The export file is empty.');
+      this.exportErrorMessage = this.t('app.insights.export.noFile', 'The export file is empty.');
       return;
     }
 
@@ -246,7 +264,7 @@ export class InsightsComponent implements OnInit {
     this.exportPasswordForm.reset();
     this.notification.success(
       this.t('momApp.common.success', 'Success'),
-      this.t('momApp.insights.export.success', 'Protected XLSX report downloaded.')
+      this.t('app.insights.export.success', 'Protected XLSX report downloaded.')
     );
   }
 
@@ -276,14 +294,15 @@ export class InsightsComponent implements OnInit {
     this.monthlyFeedings = monthly.babyFeedings;
     this.monthlyDiaperChanges = monthly.diaperChanges;
     this.pendingTaskGap = Math.max(0, monthly.tasksCreated - monthly.tasksCompleted);
+    this.totalElements = monthly.totalElements;
 
     const baseRows = monthly.dailyBreakdown.length > 0
       ? monthly.dailyBreakdown
       : [this.buildFallbackDailyRow(snapshot)];
 
-    const averageExpense = baseRows.length > 0
-      ? baseRows.reduce((sum, row) => sum + row.expenseTotal, 0) / baseRows.length
-      : 0;
+    const averageExpense = monthly.totalElements > 0
+      ? monthly.expenseTotal / monthly.totalElements
+      : (baseRows.length > 0 ? baseRows.reduce((sum, row) => sum + row.expenseTotal, 0) / baseRows.length : 0);
 
     this.dailyRows = baseRows.map((item) => ({
       ...item,
@@ -299,32 +318,32 @@ export class InsightsComponent implements OnInit {
     if (this.sleepScore < 65) {
       items.push({
         tone: 'critical',
-        title: 'Stabilize baby sleep routine',
-        detail: `Today sleep is ${Number(todaySleepHours.toFixed(1))}h. Keep fixed bedtime and reduce evening stimulation.`
+        title: this.t('app.insights.recommendations.sleepRoutine.title', 'Stabilize baby sleep routine'),
+        detail: this.t('app.insights.recommendations.sleepRoutine.detail', `Today sleep is ${Number(todaySleepHours.toFixed(1))}h. Keep fixed bedtime and reduce evening stimulation.`, { hours: Number(todaySleepHours.toFixed(1)) })
       });
     }
 
     if (this.budgetPercent > 90) {
       items.push({
         tone: this.budgetPercent > 110 ? 'critical' : 'warning',
-        title: 'Control budget overspending risk',
-        detail: `Budget usage is ${this.budgetPercent}%. Review high-cost categories and postpone non-urgent expenses.`
+        title: this.t('app.insights.recommendations.budgetRisk.title', 'Control budget overspending risk'),
+        detail: this.t('app.insights.recommendations.budgetRisk.detail', `Budget usage is ${this.budgetPercent}%. Review high-cost categories and postpone non-urgent expenses.`, { percent: this.budgetPercent })
       });
     }
 
     if (this.pendingTaskGap > 3 || this.taskCompletionRate < 65) {
       items.push({
         tone: 'warning',
-        title: 'Rebalance family workload',
-        detail: `Pending task gap is ${this.pendingTaskGap}. Re-assign owners and close overdue tasks first.`
+        title: this.t('app.insights.recommendations.workload.title', 'Rebalance family workload'),
+        detail: this.t('app.insights.recommendations.workload.detail', `Pending task gap is ${this.pendingTaskGap}. Re-assign owners and close overdue tasks first.`, { gap: this.pendingTaskGap })
       });
     }
 
     if (items.length === 0) {
       items.push({
         tone: 'good',
-        title: 'Current operations are stable',
-        detail: 'Keep current routine and continue weekly review to maintain performance.'
+        title: this.t('app.insights.recommendations.stable.title', 'Current operations are stable'),
+        detail: this.t('app.insights.recommendations.stable.detail', 'Keep current routine and continue weekly review to maintain performance.')
       });
     }
 

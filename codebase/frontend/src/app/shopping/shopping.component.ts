@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { BehaviorSubject, catchError, combineLatest, finalize, map, of, startWith, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, catchError, combineLatest, debounceTime, distinctUntilChanged, finalize, map, of, startWith, switchMap, tap } from 'rxjs';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { NzCardModule } from 'ng-zorro-antd/card';
 import { NzFormModule } from 'ng-zorro-antd/form';
@@ -12,6 +12,7 @@ import { NzModalModule } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzEmptyModule } from 'ng-zorro-antd/empty';
+import { NzPaginationModule } from 'ng-zorro-antd/pagination';
 import { ShoppingItem } from '../core/models/super-app.model';
 import { MockSuperAppService } from '../core/services/mock-super-app.service';
 import { SuperAppCommandService } from '../core/services/super-app-command.service';
@@ -28,6 +29,10 @@ interface ShoppingViewModel {
   checkedCount: number;
   remainingCount: number;
   completionPercent: number;
+  totalItems: number;
+  allTotalCount: number;
+  currentPage: number;
+  pageSize: number;
 }
 
 @Component({
@@ -44,7 +49,8 @@ interface ShoppingViewModel {
     NzModalModule,
     NzFormModule,
     NzInputModule,
-    NzEmptyModule
+    NzEmptyModule,
+    NzPaginationModule
   ],
   templateUrl: './shopping.component.html',
   styleUrl: './shopping.component.css'
@@ -59,6 +65,7 @@ export class ShoppingComponent {
   private readonly refresh$ = new BehaviorSubject<void>(undefined);
   private readonly filter$ = new BehaviorSubject<ShoppingFilter>('ALL');
   private readonly sort$ = new BehaviorSubject<ShoppingSort>('SMART');
+  readonly page$ = new BehaviorSubject<{ index: number; size: number }>({ index: 1, size: 10 });
 
   readonly searchControl = this.fb.nonNullable.control('', [Validators.maxLength(120)]);
 
@@ -94,31 +101,99 @@ export class ShoppingComponent {
     { value: 'NAME_DESC', labelKey: 'momApp.shopping.sort.nameDesc' }
   ];
 
-  readonly items$ = this.refresh$.pipe(
+  // Debounced search term
+  readonly searchDebounced$ = this.searchControl.valueChanges.pipe(
+    startWith(this.searchControl.value),
+    debounceTime(300),
+    distinctUntilChanged()
+  );
+
+  // Thống kê số lượng chưa mua (pendingCount)
+  readonly pendingCount$ = this.refresh$.pipe(
+    switchMap(() => this.data.getShoppingPendingCount(this.data.getFamilyId()).pipe(
+      map(res => res.pendingCount),
+      catchError(() => of(0))
+    ))
+  );
+
+  // Thống kê tổng số lượng (totalCount)
+  readonly totalCount$ = this.refresh$.pipe(
+    switchMap(() => this.data.getShoppingItemsPage(0, 1, null, '').pipe(
+      map(res => res.total),
+      catchError(() => of(0))
+    ))
+  );
+
+  readonly stats$ = combineLatest([this.totalCount$, this.pendingCount$]).pipe(
+    map(([total, pending]) => ({
+      totalCount: total,
+      pendingCount: pending,
+      checkedCount: Math.max(0, total - pending),
+      completionPercent: total === 0 ? 0 : Math.round((Math.max(0, total - pending) / total) * 100)
+    })),
+    startWith({ totalCount: 0, pendingCount: 0, checkedCount: 0, completionPercent: 0 })
+  );
+
+  // Khi filter hoặc search thay đổi, reset trang về 1
+  readonly filterOrSearch$ = combineLatest([this.filter$, this.searchDebounced$]).pipe(
+    tap(() => {
+      const current = this.page$.value;
+      if (current.index !== 1) {
+        this.page$.next({ index: 1, size: current.size });
+      }
+    })
+  );
+
+  readonly itemsPage$ = combineLatest([
+    this.refresh$,
+    this.filterOrSearch$,
+    this.page$
+  ]).pipe(
     tap(() => {
       this.isLoading = true;
       this.loadFailed = false;
     }),
-    switchMap(() =>
-      this.data.getShoppingItems().pipe(
+    switchMap(([, [filter, searchText], page]) => {
+      const checkedParam = filter === 'ALL' ? null : filter === 'BOUGHT';
+      return this.data.getShoppingItemsPage(page.index - 1, page.size, checkedParam, searchText).pipe(
         catchError(() => {
           this.loadFailed = true;
-          return of([] as ShoppingItem[]);
+          return of({ page: page.index - 1, size: page.size, total: 0, items: [] as ShoppingItem[] });
         }),
         finalize(() => {
           this.isLoading = false;
         })
-      )
-    )
+      );
+    })
   );
 
   readonly viewModel$ = combineLatest([
-    this.items$,
-    this.searchControl.valueChanges.pipe(startWith(this.searchControl.value)),
+    this.itemsPage$,
+    this.stats$,
     this.filter$,
-    this.sort$
+    this.sort$,
+    this.page$
   ]).pipe(
-    map(([items, searchText, filter, sort]) => this.buildViewModel(items, searchText, filter, sort))
+    map(([itemsPage, stats, filter, sort, page]) => {
+      const items = itemsPage.items;
+      const sorted = this.sortItems(items, sort);
+      const pendingItems = sorted.filter((item) => !item.checked);
+      const boughtItems = sorted.filter((item) => item.checked);
+
+      return {
+        items: sorted,
+        filteredItems: sorted,
+        pendingItems,
+        boughtItems,
+        checkedCount: stats.checkedCount,
+        remainingCount: stats.pendingCount,
+        completionPercent: stats.completionPercent,
+        totalItems: itemsPage.total,
+        allTotalCount: stats.totalCount,
+        currentPage: page.index,
+        pageSize: page.size
+      };
+    })
   );
 
   openCreateModal(): void {
@@ -226,60 +301,22 @@ export class ShoppingComponent {
     this.sort$.next(nextSort);
   }
 
+  onPageChange(pageIndex: number): void {
+    const current = this.page$.value;
+    this.page$.next({ index: pageIndex, size: current.size });
+  }
+
+  onPageSizeChange(pageSize: number): void {
+    const current = this.page$.value;
+    this.page$.next({ index: 1, size: pageSize });
+  }
+
   clearSearch(): void {
     this.searchControl.setValue('');
   }
 
   trackByItemId(_: number, item: ShoppingItem): string {
     return item.id;
-  }
-
-  private buildViewModel(
-    items: ReadonlyArray<ShoppingItem>,
-    rawSearchText: string,
-    filter: ShoppingFilter,
-    sort: ShoppingSort
-  ): ShoppingViewModel {
-    const searchText = this.normalizeText(rawSearchText);
-    const filtered = items
-      .filter((item) => this.matchFilter(item, filter))
-      .filter((item) => this.matchSearch(item, searchText));
-
-    const sorted = this.sortItems(filtered, sort);
-    const pendingItems = sorted.filter((item) => !item.checked);
-    const boughtItems = sorted.filter((item) => item.checked);
-    const checkedCount = items.filter((item) => item.checked).length;
-    const remainingCount = items.length - checkedCount;
-    const completionPercent = items.length === 0 ? 0 : Math.round((checkedCount / items.length) * 100);
-
-    return {
-      items: [...items],
-      filteredItems: sorted,
-      pendingItems,
-      boughtItems,
-      checkedCount,
-      remainingCount,
-      completionPercent
-    };
-  }
-
-  private matchFilter(item: ShoppingItem, filter: ShoppingFilter): boolean {
-    if (filter === 'PENDING') {
-      return !item.checked;
-    }
-    if (filter === 'BOUGHT') {
-      return item.checked;
-    }
-    return true;
-  }
-
-  private matchSearch(item: ShoppingItem, searchText: string): boolean {
-    if (!searchText) {
-      return true;
-    }
-
-    const haystack = this.normalizeText(`${item.name} ${item.quantity} ${item.note}`);
-    return haystack.includes(searchText);
   }
 
   private sortItems(items: ReadonlyArray<ShoppingItem>, sort: ShoppingSort): ShoppingItem[] {
@@ -334,3 +371,4 @@ export class ShoppingComponent {
     return this.i18n.translate(fallbackKey);
   }
 }
+

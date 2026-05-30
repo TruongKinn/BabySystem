@@ -80,7 +80,7 @@ public class InsightExportService {
     public InsightExportResult exportMonthly(InsightExportRequest request) {
         YearMonth month = parseMonth(request.month());
         String password = validatePassword(request.password());
-        InsightMonthlyResponse report = insightService.getMonthly(request.familyId(), month);
+        InsightMonthlyResponse report = insightService.getMonthly(request.familyId(), month, 0, 31);
         List<DailyExportItem> dailyItems = buildDailyItems(report.dailyBreakdown());
         String fileName = buildFileName(report.familyId(), month);
 

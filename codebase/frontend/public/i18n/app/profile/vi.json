@@ -1,6 +1,129 @@
 {
+  "changeAvatar": "Thay đổi ảnh đại diện",
+  "uploading": "Đang tải lên...",
+  "uploadHint": "Chỉ chấp nhận tệp ảnh, dung lượng tối đa 30MB.",
+  "usernameLabel": "Tên tài khoản",
+  "emailLabel": "Địa chỉ Email",
+  "stats": {
+    "members": "Thành viên",
+    "family": "Gia đình",
+    "role": "Vai trò",
+    "active": "Hoạt động",
+    "status": "Trạng thái"
+  },
+  "cards": {
+    "account": {
+      "title": "Thông tin tài khoản",
+      "subtitle": "Thông tin định danh và đăng nhập",
+      "displayName": "Tên hiển thị",
+      "status": "Trạng thái",
+      "activeStatus": "Đang hoạt động"
+    },
+    "familyRole": {
+      "title": "Vai trò gia đình",
+      "subtitle": "Vị trí và mối quan hệ trong hộ gia đình",
+      "primaryRole": "Vai trò chính trong gia đình",
+      "memberCount": "Số lượng thành viên",
+      "memberUnit": "người"
+    },
+    "premium": {
+      "title": "Đặc quyền Premium",
+      "subtitle": "Các tính năng cao cấp hiện có của hộ gia đình"
+    },
+    "security": {
+      "title": "Bảo mật & Cài đặt",
+      "subtitle": "Cấu hình bảo mật tài khoản cá nhân",
+      "password": {
+        "title": "Mật khẩu",
+        "subtitle": "Thay đổi mật khẩu định kỳ để bảo vệ tài khoản",
+        "status": "Được bảo vệ",
+        "changeBtn": "Thay đổi",
+        "oldPasswordLabel": "Mật khẩu cũ",
+        "oldPasswordPlaceholder": "Nhập mật khẩu cũ của bạn",
+        "oldPasswordError": "Vui lòng nhập mật khẩu cũ",
+        "newPasswordLabel": "Mật khẩu mới",
+        "newPasswordPlaceholder": "Nhập mật khẩu mới",
+        "newPasswordError": "Mật khẩu phải từ 8-20 ký tự, gồm chữ hoa, chữ thường, số và ký tự đặc biệt",
+        "confirmPasswordLabel": "Xác nhận mật khẩu mới",
+        "confirmPasswordPlaceholder": "Nhập lại mật khẩu mới",
+        "confirmRequired": "Vui lòng xác nhận mật khẩu mới của bạn",
+        "confirmMismatch": "Xác nhận mật khẩu mới không khớp",
+        "submit": "Cập nhật mật khẩu",
+        "successTitle": "Thay đổi mật khẩu thành công!",
+        "changeErrorFallback": "Thay đổi mật khẩu thất bại!"
+      },
+      "session": {
+        "title": "Phiên đăng nhập",
+        "subtitle": "Quản lý các thiết bị đang đăng nhập",
+        "status": "An toàn"
+      },
+      "notifications": {
+        "title": "Thông báo",
+        "subtitle": "Nhận các cảnh báo quan trọng từ hệ thống",
+        "status": "Đang bật"
+      }
+    }
+  },
+  "premium": {
+    "enabled": "Đã kích hoạt",
+    "disabled": "Chưa kích hoạt",
+    "empty": "Cấu hình Premium hiện chưa khả dụng.",
+    "expiresAt": "Hạn dùng đến",
+    "featureLabels": {
+      "advanced_growth_tracking": "Theo dõi tăng trưởng nâng cao",
+      "smart_reminders": "Nhắc việc thông minh",
+      "ai_care_assistant": "Trợ lý chăm sóc AI",
+      "premium_reports": "Báo cáo Premium",
+      "family_collaboration_plus": "Cộng tác gia đình Plus",
+      "baby_journey_plus": "Baby Journey+",
+      "medical_vault_export": "Xuất hồ sơ y tế",
+      "unlimited_memory": "Bộ nhớ không giới hạn",
+      "currency_exchange": "Chuyển đổi tiền tệ",
+      "theme_customization": "Tùy biến giao diện"
+    }
+  },
+  "familyTree": {
+    "title": "Cây gia đình",
+    "subtitle": "Sơ đồ phả hệ mối quan hệ trong hộ gia đình.",
+    "empty": "Chưa có dữ liệu cây phả hệ cho gia đình này.",
+    "babyBoy": "Con trai",
+    "babyGirl": "Con gái",
+    "babyChild": "Con"
+  },
+  "actions": {
+    "editProfile": "Chỉnh sửa Profile",
+    "exportPdf": "Xuất PDF"
+  },
+  "editProfileModal": {
+    "title": "Chỉnh sửa Profile",
+    "subtitle": "Cập nhật thông tin cá nhân của bạn",
+    "displayNameLabel": "Tên hiển thị",
+    "displayNamePlaceholder": "Nhập tên hiển thị của bạn",
+    "displayNameError": "Vui lòng nhập tên hiển thị",
+    "emailLabel": "Email",
+    "emailPlaceholder": "Nhập địa chỉ email",
+    "emailRequired": "Vui lòng nhập địa chỉ email",
+    "emailInvalid": "Định dạng email không hợp lệ",
+    "dobLabel": "Ngày sinh",
+    "dobPlaceholder": "Chọn ngày sinh",
+    "submit": "Lưu thay đổi",
+    "success": "Cập nhật profile thành công!",
+    "failed": "Cập nhật profile thất bại!"
+  },
+  "pdfModal": {
+    "title": "Báo cáo Profile cá nhân",
+    "subtitle": "Bản xem trước tài liệu PDF chính thức",
+    "loading": "Đang chuẩn bị báo cáo PDF...",
+    "failed": "Không thể tải báo cáo PDF!"
+  },
   "2fa": {
     "title": "Thiết lập 2FA",
+    "subtitle": "Bảo vệ tài khoản với xác thực 2 bước",
+    "disableSubtitle": "Xác nhận huỷ bảo mật 2 lớp",
+    "generateSecretError": "Không thể khởi tạo mã QR xác thực 2 bước!",
+    "otpLengthWarning": "Vui lòng nhập đầy đủ mã xác thực 6 chữ số!",
+    "invalidOtpError": "Mã xác thực OTP không hợp lệ hoặc đã hết hạn!",
+    "disableFailedError": "Tắt xác thực 2 bước thất bại!",
     "step1": "Bước 1: Cài ứng dụng xác thực",
     "step1Desc": "Tải Google Authenticator hoặc Microsoft Authenticator trên điện thoại.",
     "step2": "Bước 2: Quét mã QR",
@@ -8,7 +131,7 @@
     "step3": "Bước 3: Nhập mã xác thực",
     "step3Desc": "Nhập mã 6 số từ ứng dụng xác thực của bạn",
     "secretLabel": "Mã thiết lập thủ công:",
-    "remainingTime": "Mã mới sau: {time}s",
+    "remainingTime": "Mã mới sau: {{time}}s",
     "cancel": "Huỷ bỏ",
     "enable": "Kích hoạt xác thực 2 bước",
     "disableTitle": "Tắt xác thực 2 bước",
@@ -17,6 +140,7 @@
     "enableSuccess": "Kích hoạt xác thực 2 bước thành công!",
     "appStore": "App Store",
     "googlePlay": "Google Play",
+    "downloadTitle": "Chưa có ứng dụng? Tải Google Authenticator tại:",
     "status": {
       "title": "Xác thực 2 bước (2FA)",
       "desc": "Tăng cường bảo mật cho tài khoản bằng mã OTP",
