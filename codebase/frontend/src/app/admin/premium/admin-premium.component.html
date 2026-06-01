@@ -184,12 +184,13 @@
 
             <div class="form-item">
               <label>{{ 'admin.premium.entitlements.expiresAtLabel' | translate }}</label>
-              <input
-                nz-input
-                type="datetime-local"
+              <nz-date-picker
                 [(ngModel)]="item.expiresAtInput"
-                [disabled]="item.status !== 'ALLOW'"
-              />
+                [nzShowTime]="true"
+                nzFormat="yyyy-MM-dd HH:mm"
+                [nzDisabled]="item.status !== 'ALLOW'"
+                style="width: 100%"
+              ></nz-date-picker>
             </div>
           </div>
 

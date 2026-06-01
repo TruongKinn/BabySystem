@@ -41,11 +41,29 @@ public class GatewayApiCatalogService {
 
     public List<DiscoveredApiEndpoint> discoverApiEndpoints(String authorizationHeader) {
         Optional<JsonNode> configNode = fetchJson(swaggerConfigPath, authorizationHeader);
+        List<ApiDocTarget> targets;
+        
         if (configNode.isEmpty()) {
-            return List.of();
+            log.info("Gateway swagger-config is unavailable, falling back to static local services discovery");
+            targets = List.of(
+                new ApiDocTarget("Authentication Service", "http://localhost:4953/auth/v3/api-docs"),
+                new ApiDocTarget("Account Service", "http://localhost:4953/account/v3/api-docs"),
+                new ApiDocTarget("Expense Service", "http://localhost:4953/expense/v3/api-docs"),
+                new ApiDocTarget("Baby Service", "http://localhost:4953/baby/v3/api-docs"),
+                new ApiDocTarget("Task Service", "http://localhost:4953/task/v3/api-docs"),
+                new ApiDocTarget("Meal Service", "http://localhost:4953/meal/v3/api-docs"),
+                new ApiDocTarget("Shopping Service", "http://localhost:4953/shopping/v3/api-docs"),
+                new ApiDocTarget("Insight Service", "http://localhost:4953/insight/v3/api-docs"),
+                new ApiDocTarget("File Service", "http://localhost:4953/file/v3/api-docs"),
+                new ApiDocTarget("AI Service", "http://localhost:4953/ai/v3/api-docs"),
+                new ApiDocTarget("Notification Service", "http://localhost:4953/notification/api/v3/api-docs"),
+                new ApiDocTarget("Todo Service", "http://localhost:4953/todo/v3/api-docs"),
+                new ApiDocTarget("Finance Service", "http://localhost:4953/finance/v3/api-docs")
+            );
+        } else {
+            targets = extractTargets(configNode.get());
         }
 
-        List<ApiDocTarget> targets = extractTargets(configNode.get());
         if (targets.isEmpty()) {
             return List.of();
         }
@@ -181,7 +199,7 @@ public class GatewayApiCatalogService {
     }
 
     private Optional<JsonNode> fetchJson(String pathOrUrl, String authorizationHeader) {
-        String uri = toAbsoluteUri(pathOrUrl);
+        String uri = mapToLocalUri(toAbsoluteUri(pathOrUrl));
         try {
             JsonNode node = webClientBuilder.build()
                     .get()
@@ -200,6 +218,52 @@ public class GatewayApiCatalogService {
             log.warn("Unable to load OpenAPI payload from {}: {}", uri, exception.getMessage());
             return Optional.empty();
         }
+    }
+
+    private String mapToLocalUri(String uri) {
+        if (!StringUtils.hasText(uri)) {
+            return uri;
+        }
+        if (uri.contains("/auth/v3/api-docs")) {
+            return "http://localhost:8081/v3/api-docs";
+        }
+        if (uri.contains("/account/v3/api-docs")) {
+            return "http://localhost:8082/api/v3/api-docs";
+        }
+        if (uri.contains("/expense/v3/api-docs")) {
+            return "http://localhost:8083/api/v3/api-docs";
+        }
+        if (uri.contains("/baby/v3/api-docs")) {
+            return "http://localhost:8087/api/v3/api-docs";
+        }
+        if (uri.contains("/task/v3/api-docs")) {
+            return "http://localhost:8086/api/v3/api-docs";
+        }
+        if (uri.contains("/meal/v3/api-docs")) {
+            return "http://localhost:8084/api/v3/api-docs";
+        }
+        if (uri.contains("/shopping/v3/api-docs")) {
+            return "http://localhost:8088/api/v3/api-docs";
+        }
+        if (uri.contains("/insight/v3/api-docs")) {
+            return "http://localhost:8089/api/v3/api-docs";
+        }
+        if (uri.contains("/file/v3/api-docs")) {
+            return "http://localhost:8092/api/v3/api-docs";
+        }
+        if (uri.contains("/ai/v3/api-docs")) {
+            return "http://localhost:8104/api/v3/api-docs";
+        }
+        if (uri.contains("/notification/api/v3/api-docs")) {
+            return "http://localhost:8098/api/v3/api-docs";
+        }
+        if (uri.contains("/todo/v3/api-docs")) {
+            return "http://localhost:8102/v3/api-docs";
+        }
+        if (uri.contains("/finance/v3/api-docs")) {
+            return "http://localhost:8103/v3/api-docs";
+        }
+        return uri;
     }
 
     private String toAbsoluteUri(String pathOrUrl) {

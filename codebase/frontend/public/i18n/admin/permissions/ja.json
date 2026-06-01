@@ -1,0 +1,74 @@
+{
+  "momApp": {
+    "admin": {
+      "permissions": {
+        "hero": {
+          "kicker": "システム設定",
+          "title": "アクセス制御とメニュー管理",
+          "subtitle": "ナビゲーションメニューの宣言、システムAPIエンドポイントの管理、および不足している権限の自動検出を行います。"
+        },
+        "stats": {
+          "total": "総権限数",
+          "menu": "メニュー権限",
+          "api": "API権限"
+        },
+        "searchPlaceholder": "権限名、メニューキー、APIメソッド、パスで検索...",
+        "actions": {
+          "createMenuPermission": "+ メニュー権限を追加",
+          "createApiPermission": "+ API権限を追加",
+          "deleteConfirm": "この権限を削除してもよろしいですか？これにより、すべての役割からこの権限が剥奪されます。"
+        },
+        "filters": {
+          "all": "すべて",
+          "menu": "メニュー",
+          "api": "API"
+        },
+        "table": {
+          "id": "ID",
+          "name": "権限名 / 説明",
+          "type": "タイプ",
+          "summary": "メニューキー / APIルート",
+          "usedByRoles": "使用している役割数",
+          "actions": "操作"
+        },
+        "missingApis": {
+          "title": "未登録の API エンドポイント",
+          "subtitle": "ゲートウェイの OpenAPI ドキュメントから自動検出されましたが、権限データベースで定義されていません。",
+          "addAction": "権限を登録",
+          "empty": "素晴らしい！不足しているAPI権限は検出されませんでした。"
+        },
+        "modal": {
+          "createTitle": "アクセス権限の作成",
+          "editTitle": "アクセス権限の編集",
+          "name": "権限名",
+          "namePlaceholder": "例: API:GET:USER_PROFILE または MENU:DASHBOARD",
+          "description": "詳細説明",
+          "descriptionPlaceholder": "この権限の目的と適用範囲を説明してください...",
+          "menuKey": "メニューキーのパス",
+          "menuKeyPlaceholder": "例: /admin/dashboard",
+          "apiMethod": "API HTTP メソッド",
+          "apiMethodPlaceholder": "GET, POST, PUT, DELETE, PATCH...",
+          "apiPath": "API エンドポイントのパス",
+          "apiPathPlaceholder": "例: /api/users/{id}"
+        },
+        "messages": {
+          "loadFailed": "権限リストの読み込みに失敗しました！",
+          "loadMissingApiFailed": "未登録APIの読み込みに失敗しました！",
+          "nameRequired": "権限名は必須項目です！",
+          "menuKeyRequired": "メニューキーは必須項目です！",
+          "apiFieldRequired": "APIメソッドとパスの両方が必要です！",
+          "createSuccess": "権限が正常に作成されました！",
+          "createFailed": "権限の作成に失敗しました！",
+          "updateSuccess": "権限が正常に更新されました！",
+          "updateFailed": "権限の更新に失敗しました！",
+          "deleteSuccess": "権限が正常に削除されました！",
+          "deleteFailed": "権限の削除に失敗しました！"
+        },
+        "types": {
+          "menu": "メニュー",
+          "api": "API"
+        }
+      }
+    }
+  }
+}

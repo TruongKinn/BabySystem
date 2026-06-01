@@ -132,6 +132,14 @@ export class ExpensesComponent implements OnInit {
   selectedExpense: ExpenseRecord | null = null;
   receiptFiles: FileMetadata[] = [];
 
+  // ---- AI OCR Receipt Scanner ----
+  isOcrModalVisible = false;
+  isOcrScanning = false;
+  ocrPreviewUrl: SafeUrl | string | null = null;
+  uploadedFileIdForOcr: number | null = null;
+  ocrItems: any[] = [];
+  ocrConfidence: number | null = null;
+
   // --- Kho Hóa đơn Phân trang (BE & FE) ---
   isExpensesListModalVisible = false;
   expensePageIndex = 1;
@@ -184,6 +192,13 @@ export class ExpensesComponent implements OnInit {
     amount: [null as number | null, [Validators.required, Validators.min(1)]],
     categoryName: ['', [Validators.required, Validators.maxLength(100)]],
     note: ['', [Validators.maxLength(500)]]
+  });
+
+  readonly ocrDraftForm = this.fb.group({
+    amount: [null as number | null, [Validators.required, Validators.min(1)]],
+    categoryName: ['', [Validators.required, Validators.maxLength(100)]],
+    note: ['', [Validators.maxLength(500)]],
+    date: [null as Date | string | null, [Validators.required]]
   });
 
   isBudgetModalVisible = false;
@@ -1277,5 +1292,121 @@ export class ExpensesComponent implements OnInit {
   private isPremiumRequired(err: any, featureKey: string): boolean {
     const message = String(err?.message ?? '');
     return message.includes(`PREMIUM_REQUIRED:${featureKey}`);
+  }
+
+  // ---- AI OCR Receipt Scanner Operations ----
+  openOcrModal(): void {
+    this.isOcrModalVisible = true;
+  }
+
+  closeOcrModal(): void {
+    this.isOcrModalVisible = false;
+    this.isOcrScanning = false;
+    this.uploadedFileIdForOcr = null;
+    this.ocrPreviewUrl = null;
+    this.ocrItems = [];
+    this.ocrConfidence = null;
+    this.ocrDraftForm.reset({
+      amount: null,
+      categoryName: '',
+      note: '',
+      date: null
+    });
+  }
+
+  onOcrFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      this.notification.error('Lỗi tệp tin', 'Tệp tin quá lớn. Giới hạn tối đa là 10MB.');
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(file);
+    this.ocrPreviewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+
+    this.isOcrScanning = true;
+    this.command.uploadFile(file, this.expenseReceiptBucket, 'ocr-temp').subscribe({
+      next: (metadata) => {
+        this.uploadedFileIdForOcr = metadata.id;
+        const lang = this.i18n.getCurrentLanguage();
+        this.command.ocrReceipt(metadata.id, lang).subscribe({
+          next: (ocrResult) => {
+            this.ocrConfidence = ocrResult.confidenceScore;
+            this.ocrItems = ocrResult.items || [];
+            
+            this.ocrDraftForm.reset({
+              amount: ocrResult.amount,
+              categoryName: ocrResult.category,
+              note: ocrResult.note,
+              date: ocrResult.date ? new Date(ocrResult.date) : new Date()
+            });
+            this.isOcrScanning = false;
+            this.notification.success('AI OCR', this.i18n.translate('app.expenses.ocr.ocrSuccess'));
+          },
+          error: (err) => {
+            this.isOcrScanning = false;
+            this.notification.error('AI OCR Error', err?.message || this.i18n.translate('app.expenses.ocr.ocrError'));
+          }
+        });
+      },
+      error: (err) => {
+        this.isOcrScanning = false;
+        this.notification.error('Upload Error', this.i18n.translate('app.expenses.ocr.uploadError'));
+      }
+    });
+  }
+
+  submitOcrExpense(): void {
+    if (this.ocrDraftForm.invalid) {
+      this.ocrDraftForm.markAllAsTouched();
+      return;
+    }
+
+    const amount = Number(this.ocrDraftForm.value.amount);
+    const categoryName = this.ocrDraftForm.value.categoryName || '';
+    const note = this.ocrDraftForm.value.note || '';
+    const dateStr = this.ocrDraftForm.value.date;
+
+    if (!amount || amount <= 0) return;
+
+    this.isSubmitting = true;
+    
+    this.command.createExpenseWithDate({
+      amount,
+      categoryName,
+      note,
+      currency: this.userCurrency,
+      spentAt: dateStr ? new Date(dateStr).toISOString() : new Date().toISOString()
+    }).subscribe({
+      next: (newExpense) => {
+        if (this.uploadedFileIdForOcr) {
+          this.command.updateFileTag(this.uploadedFileIdForOcr, `expense:${newExpense.id}`).subscribe({
+            next: () => {
+              this.finalizeOcrExpenseSuccess();
+            },
+            error: () => {
+              this.finalizeOcrExpenseSuccess();
+            }
+          });
+        } else {
+          this.finalizeOcrExpenseSuccess();
+        }
+      },
+      error: (err) => {
+        this.isSubmitting = false;
+        this.notification.error('Error', err?.message || 'Không thể lưu chi tiêu');
+      }
+    });
+  }
+
+  private finalizeOcrExpenseSuccess(): void {
+    this.isSubmitting = false;
+    this.closeOcrModal();
+    this.loadExpenseWorkspace();
+    this.notification.success('Thành công', this.i18n.translate('app.expenses.ocr.saveSuccess'));
   }
 }

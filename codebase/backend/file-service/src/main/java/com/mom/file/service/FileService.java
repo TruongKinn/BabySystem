@@ -63,7 +63,7 @@ public class FileService {
                 );
             }
         } catch (Exception ex) {
-            throw new IllegalStateException("Failed to upload file to object storage", ex);
+            throw new IllegalStateException("Failed to upload file to object storage: " + ex.getMessage(), ex);
         }
 
         FileMetadataEntity entity = new FileMetadataEntity();
@@ -160,6 +160,13 @@ public class FileService {
                 log.warn("Failed to delete object {} from bucket {}", entity.getObjectKey(), entity.getBucketName(), ex);
             }
         }
+    }
+
+    @Transactional
+    public FileMetadataResponse updateTag(Long fileId, String tag) {
+        FileMetadataEntity entity = getEntity(fileId);
+        entity.setFileTag(trimToNull(tag));
+        return toResponse(fileMetadataRepository.save(entity));
     }
 
     private FileMetadataEntity getEntity(Long fileId) {

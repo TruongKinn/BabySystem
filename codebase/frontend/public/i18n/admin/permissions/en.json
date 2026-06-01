@@ -1,0 +1,74 @@
+{
+  "momApp": {
+    "admin": {
+      "permissions": {
+        "hero": {
+          "kicker": "System Settings",
+          "title": "Access Control & Menu Management",
+          "subtitle": "Declare navigation menus, manage system API endpoints, and automatically detect missing permissions."
+        },
+        "stats": {
+          "total": "Total Permissions",
+          "menu": "Menu Permissions",
+          "api": "API Permissions"
+        },
+        "searchPlaceholder": "Search by name, menu key, API method, path...",
+        "actions": {
+          "createMenuPermission": "+ Add Menu Permission",
+          "createApiPermission": "+ Add API Permission",
+          "deleteConfirm": "Are you sure you want to delete this permission? This will revoke it from all roles."
+        },
+        "filters": {
+          "all": "All",
+          "menu": "Menu",
+          "api": "API"
+        },
+        "table": {
+          "id": "ID",
+          "name": "Permission Name / Description",
+          "type": "Type",
+          "summary": "Menu Key / API Route",
+          "usedByRoles": "Used by Roles",
+          "actions": "Actions"
+        },
+        "missingApis": {
+          "title": "Unregistered API Endpoints",
+          "subtitle": "Automatically discovered from Gateway OpenAPI Docs but not defined in the permissions DB.",
+          "addAction": "Register Permission",
+          "empty": "Excellent! No missing API permissions detected."
+        },
+        "modal": {
+          "createTitle": "Create Access Permission",
+          "editTitle": "Edit Access Permission",
+          "name": "Permission Name",
+          "namePlaceholder": "e.g., API:GET:USER_PROFILE or MENU:DASHBOARD",
+          "description": "Description",
+          "descriptionPlaceholder": "Describe the purpose and scope of this permission...",
+          "menuKey": "Menu Key Path",
+          "menuKeyPlaceholder": "e.g., /admin/dashboard",
+          "apiMethod": "API HTTP Method",
+          "apiMethodPlaceholder": "GET, POST, PUT, DELETE, PATCH...",
+          "apiPath": "API Endpoint Path",
+          "apiPathPlaceholder": "e.g., /api/users/{id}"
+        },
+        "messages": {
+          "loadFailed": "Failed to load permissions!",
+          "loadMissingApiFailed": "Failed to load unregistered APIs!",
+          "nameRequired": "Permission name is required!",
+          "menuKeyRequired": "Menu key is required!",
+          "apiFieldRequired": "Both API method and path are required!",
+          "createSuccess": "Permission created successfully!",
+          "createFailed": "Failed to create permission!",
+          "updateSuccess": "Permission updated successfully!",
+          "updateFailed": "Failed to update permission!",
+          "deleteSuccess": "Permission deleted successfully!",
+          "deleteFailed": "Failed to delete permission!"
+        },
+        "types": {
+          "menu": "MENU",
+          "api": "API"
+        }
+      }
+    }
+  }
+}

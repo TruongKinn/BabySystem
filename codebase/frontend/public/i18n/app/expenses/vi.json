@@ -61,5 +61,29 @@
     "records": "bản ghi",
     "filter": "Bộ lọc",
     "visibleTotal": "Tổng hiển thị"
+  },
+  "ocr": {
+    "btnScan": "Quét hóa đơn bằng AI",
+    "btnScanDesc": "Tải lên ảnh hoặc PDF hóa đơn để tự động trích xuất chi tiêu",
+    "scanning": "AI đang quét và trích xuất hóa đơn...",
+    "modalTitle": "Trợ lý Quét Hóa đơn AI",
+    "modalSub": "Hệ thống sử dụng Gemini Multimodal để tự động trích xuất dữ liệu chi tiêu",
+    "formTitle": "Thông tin hóa đơn trích xuất",
+    "confirmSave": "Xác nhận & Lưu chi tiêu",
+    "saveSuccess": "Đã lưu giao dịch chi tiêu thành công!",
+    "ocrSuccess": "AI đã trích xuất dữ liệu thành công! Hãy kiểm tra lại trước khi lưu.",
+    "uploadError": "Tải hóa đơn lên thất bại.",
+    "ocrError": "AI không thể trích xuất hóa đơn này. Vui lòng nhập tay.",
+    "dragDropText": "Kéo thả ảnh hóa đơn hoặc click để chọn tệp",
+    "dragDropSub": "Hỗ trợ JPG, PNG, WEBP, PDF tối đa 10MB",
+    "amountLabel": "Số tiền",
+    "categoryLabel": "Danh mục",
+    "categoryPlaceholder": "Chọn hoặc nhập danh mục",
+    "dateLabel": "Ngày giao dịch",
+    "noteLabel": "Ghi chú",
+    "notePlaceholder": "Nhập ghi chú chi tiêu...",
+    "confidence": "Độ tin cậy AI",
+    "extractedItemsTitle": "Danh sách mặt hàng trích xuất:",
+    "cancelBtn": "Hủy"
   }
 }

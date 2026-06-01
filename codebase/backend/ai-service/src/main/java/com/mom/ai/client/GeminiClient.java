@@ -161,4 +161,90 @@ public class GeminiClient {
         String responseId = "gemini-" + System.currentTimeMillis();
         return new OpenAiResponsesResponse(responseId, model, outputText, usage);
     }
+
+    public String ocrReceipt(String base64Data, String mimeType, String promptText) {
+        String apiKey = properties.getApiKey();
+        if (!StringUtils.hasText(apiKey)) {
+            throw new OpenAiConfigurationException("GEMINI/OPENAI_API_KEY is not configured");
+        }
+
+        String geminiModel = properties.getModel();
+        if (geminiModel.contains("gpt-") || geminiModel.equals("gpt-5.4-mini") || "gemini-1.5-flash".equals(geminiModel)) {
+            geminiModel = "gemini-3.5-flash";
+        }
+
+        String url = String.format("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s",
+                geminiModel, apiKey);
+
+        try {
+            ObjectNode root = objectMapper.createObjectNode();
+            ArrayNode contentsNode = root.putArray("contents");
+            ObjectNode turnNode = contentsNode.addObject();
+            turnNode.put("role", "user");
+            ArrayNode partsNode = turnNode.putArray("parts");
+            
+            // Text part
+            partsNode.addObject().put("text", promptText);
+            
+            // InlineData part
+            ObjectNode inlineDataNode = partsNode.addObject().putObject("inlineData");
+            inlineDataNode.put("mimeType", mimeType);
+            inlineDataNode.put("data", base64Data);
+
+            // Generation config
+            ObjectNode generationConfig = root.putObject("generationConfig");
+            generationConfig.put("responseMimeType", "application/json");
+            
+            // Schema
+            ObjectNode schemaNode = generationConfig.putObject("responseSchema");
+            schemaNode.put("type", "OBJECT");
+            ObjectNode propertiesNode = schemaNode.putObject("properties");
+            
+            propertiesNode.putObject("amount").put("type", "INTEGER");
+            propertiesNode.putObject("date").put("type", "STRING");
+            propertiesNode.putObject("category").put("type", "STRING");
+            propertiesNode.putObject("note").put("type", "STRING");
+            
+            ArrayNode requiredNode = schemaNode.putArray("required");
+            requiredNode.add("amount");
+            requiredNode.add("category");
+            requiredNode.add("note");
+
+            Duration timeout = properties.getTimeout();
+            log.info("Calling Gemini OCR API with model: {}", geminiModel);
+            
+            JsonNode responseJson = WebClient.create()
+                    .post()
+                    .uri(url)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(root)
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
+                            .defaultIfEmpty("Gemini OCR request failed")
+                            .flatMap(body -> Mono.error(new OpenAiApiException(response.statusCode().value(), "Gemini OCR API error: " + body))))
+                    .bodyToMono(JsonNode.class)
+                    .timeout(timeout)
+                    .block();
+
+            if (responseJson == null) {
+                throw new OpenAiApiException(502, "Empty response from Gemini OCR API");
+            }
+
+            String outputText = "";
+            JsonNode candidates = responseJson.path("candidates");
+            if (candidates.isArray() && candidates.size() > 0) {
+                JsonNode firstCandidate = candidates.get(0);
+                JsonNode parts = firstCandidate.path("content").path("parts");
+                if (parts.isArray() && parts.size() > 0) {
+                    outputText = parts.get(0).path("text").asText();
+                }
+            }
+            return outputText;
+        } catch (OpenAiApiException ex) {
+            throw ex;
+        } catch (RuntimeException ex) {
+            log.error("Gemini OCR API call failed", ex);
+            throw new OpenAiApiException(502, "Gemini OCR API request failed: " + ex.getMessage());
+        }
+    }
 }

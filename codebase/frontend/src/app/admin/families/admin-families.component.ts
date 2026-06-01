@@ -17,6 +17,7 @@ import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTabsModule } from 'ng-zorro-antd/tabs';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzIconModule } from 'ng-zorro-antd/icon';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { AuthService } from '../../auth/auth.service';
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
@@ -86,7 +87,8 @@ interface UpcomingBirthdayApi {
     NzSpinModule,
     NzTabsModule,
     NzToolTipModule,
-    NzIconModule
+    NzIconModule,
+    NzDatePickerModule
   ],
   templateUrl: './admin-families.component.html',
   styleUrl: './admin-families.component.css'
@@ -123,7 +125,7 @@ export class AdminFamiliesComponent implements OnInit {
   newMemberRole: string = 'CAREGIVER';
   newMemberRelation: string = 'THANH_VIEN_KHAC';
   newMemberParentId: number | null = null;
-  newMemberDateOfBirth = '';
+  newMemberDateOfBirth: Date | null = null;
   addingMember = false;
 
   // Form Tạo mới thành viên
@@ -136,7 +138,7 @@ export class AdminFamiliesComponent implements OnInit {
   editingMemberDisplayName = '';
   editingMemberUsername = '';
   editingMemberEmail = '';
-  editingMemberDateOfBirth = '';
+  editingMemberDateOfBirth: Date | null = null;
   editingMemberRole = '';
   editingMemberRelation = '';
   editingMemberParentId: number | null = null;
@@ -495,7 +497,7 @@ export class AdminFamiliesComponent implements OnInit {
     this.newMemberRole = 'CAREGIVER';
     this.newMemberRelation = 'THANH_VIEN_KHAC';
     this.newMemberParentId = null;
-    this.newMemberDateOfBirth = '';
+    this.newMemberDateOfBirth = null;
     this.newMemberDisplayName = '';
     this.newMemberUsername = '';
     this.newMemberEmail = '';
@@ -602,7 +604,7 @@ export class AdminFamiliesComponent implements OnInit {
     this.editingMemberRole = member.role;
     this.editingMemberRelation = member.relation;
     this.editingMemberParentId = member.parentUserId;
-    this.editingMemberDateOfBirth = member.dateOfBirth ?? '';
+    this.editingMemberDateOfBirth = member.dateOfBirth ? new Date(member.dateOfBirth) : null;
 
     this.membersLoading = true;
     this.http.get<ApiEnvelope<any>>(`${API_CONFIG.GATEWAY_URL}/account/users/${member.userId}`).subscribe({
@@ -611,7 +613,8 @@ export class AdminFamiliesComponent implements OnInit {
         if (response.data) {
           this.editingMemberUsername = response.data.username;
           this.editingMemberEmail = response.data.email;
-          this.editingMemberDateOfBirth = response.data.dateOfBirth || member.dateOfBirth || '';
+          const dob = response.data.dateOfBirth || member.dateOfBirth;
+          this.editingMemberDateOfBirth = dob ? new Date(dob) : null;
         }
       },
       error: () => {
@@ -627,7 +630,7 @@ export class AdminFamiliesComponent implements OnInit {
     this.editingMemberDisplayName = '';
     this.editingMemberUsername = '';
     this.editingMemberEmail = '';
-    this.editingMemberDateOfBirth = '';
+    this.editingMemberDateOfBirth = null;
     this.editingMemberRole = '';
     this.editingMemberRelation = '';
     this.editingMemberParentId = null;
@@ -800,8 +803,15 @@ export class AdminFamiliesComponent implements OnInit {
       });
   }
 
-  private normalizeDateInput(raw: string | null | undefined): string | null {
-    const value = raw?.trim() ?? '';
+  private normalizeDateInput(raw: any): string | null {
+    if (!raw) return null;
+    if (raw instanceof Date) {
+      const year = raw.getFullYear();
+      const month = String(raw.getMonth() + 1).padStart(2, '0');
+      const date = String(raw.getDate()).padStart(2, '0');
+      return `${year}-${month}-${date}`;
+    }
+    const value = String(raw).trim();
     return value ? value : null;
   }
 

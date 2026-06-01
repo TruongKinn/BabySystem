@@ -3,6 +3,8 @@ package com.mom.ai.controller;
 import com.mom.ai.controller.dto.AiChatRequest;
 import com.mom.ai.controller.dto.AiChatResponse;
 import com.mom.ai.controller.dto.AiStatusResponse;
+import com.mom.ai.controller.dto.OcrReceiptRequest;
+import com.mom.ai.controller.dto.OcrReceiptResponse;
 import com.mom.ai.service.FamilyCopilotService;
 import com.mom.ai.service.UserAccessContext;
 import com.mom.common.dto.ApiResponse;
@@ -31,6 +33,17 @@ public class AiController {
     ) {
         UserAccessContext accessContext = new UserAccessContext(userId, familyIds, admin);
         return ApiResponse.ok("Success", familyCopilotService.chat(request, accessContext));
+    }
+
+    @PostMapping("/ocr-receipt")
+    public ApiResponse<OcrReceiptResponse> ocrReceipt(
+            @Valid @RequestBody OcrReceiptRequest request,
+            @RequestHeader(value = "X-User-Id", required = false) Long userId,
+            @RequestHeader(value = "X-Family-Ids", required = false) String familyIds,
+            @RequestHeader(value = "X-User-Admin", required = false, defaultValue = "false") boolean admin
+    ) {
+        UserAccessContext accessContext = new UserAccessContext(userId, familyIds, admin);
+        return ApiResponse.ok("OCR extraction complete", familyCopilotService.ocrReceipt(request, accessContext));
     }
 
     @GetMapping("/status")

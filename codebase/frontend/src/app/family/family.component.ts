@@ -1,4 +1,4 @@
-﻿import { CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
@@ -16,6 +16,7 @@ import { NzPopconfirmModule } from 'ng-zorro-antd/popconfirm';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzTooltipModule } from 'ng-zorro-antd/tooltip';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { PREMIUM_FEATURE_KEYS } from '../core/constants/premium-feature.constants';
 import {
   FamilyMemberProfile,
@@ -45,7 +46,8 @@ import { I18nService } from '../i18n/i18n.service';
     NzSelectModule,
     NzTooltipModule,
     NzDividerModule,
-    NzPopconfirmModule
+    NzPopconfirmModule,
+    NzDatePickerModule
   ],
   templateUrl: './family.component.html',
   styleUrl: './family.component.css'
@@ -99,7 +101,7 @@ export class FamilyComponent implements OnInit {
     displayName: ['', [Validators.required, Validators.maxLength(120)]],
     username: ['', [Validators.required, Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email]],
-    dateOfBirth: [''],
+    dateOfBirth: [null as Date | null],
     role: ['CAREGIVER' as FamilyRole, [Validators.required]],
     relation: ['BAO_MAU' as FamilyRelation, [Validators.required]],
     parentUserId: [null as number | null]
@@ -109,7 +111,7 @@ export class FamilyComponent implements OnInit {
     username: ['', [Validators.required, Validators.maxLength(100)]],
     email: ['', [Validators.required, Validators.email]],
     displayName: ['', [Validators.required, Validators.maxLength(120)]],
-    dateOfBirth: [''],
+    dateOfBirth: [null as Date | null],
     role: ['CAREGIVER' as FamilyRole, [Validators.required]],
     relation: ['BAO_MAU' as FamilyRelation, [Validators.required]],
     parentUserId: [null as number | null]
@@ -133,7 +135,7 @@ export class FamilyComponent implements OnInit {
       username: '',
       email: '',
       displayName: '',
-      dateOfBirth: '',
+      dateOfBirth: null,
       role: 'CAREGIVER',
       relation: 'BAO_MAU',
       parentUserId: null
@@ -230,7 +232,7 @@ export class FamilyComponent implements OnInit {
       displayName: member.displayName,
       username: member.username !== '-' ? member.username : '',
       email: member.email !== '-' ? member.email : '',
-      dateOfBirth: member.dateOfBirth ?? '',
+      dateOfBirth: member.dateOfBirth ? new Date(member.dateOfBirth) : null,
       role: member.role,
       relation: member.relation,
       parentUserId: member.parentUserId
@@ -372,8 +374,15 @@ export class FamilyComponent implements OnInit {
     return this.i18n.translate('momApp.family.birthdays.inDays', { days: item.daysUntilBirthday });
   }
 
-  private normalizeDateInput(raw: string | null | undefined): string | null {
-    const value = raw?.trim() ?? '';
+  private normalizeDateInput(raw: any): string | null {
+    if (!raw) return null;
+    if (raw instanceof Date) {
+      const year = raw.getFullYear();
+      const month = String(raw.getMonth() + 1).padStart(2, '0');
+      const date = String(raw.getDate()).padStart(2, '0');
+      return `${year}-${month}-${date}`;
+    }
+    const value = String(raw).trim();
     return value ? value : null;
   }
 

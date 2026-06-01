@@ -118,4 +118,11 @@ public class RolePermissionController {
             @RequestParam(required = false) PermissionType type) {
         return ResponseEntity.ok(rolePermissionService.getPermissionsPage(page, size, searchText, type));
     }
+
+    @GetMapping("/test-missing-permission-real")
+    @Operation(summary = "Temporary API to test missing permissions feature")
+    public ResponseEntity<String> testMissingPermission() {
+        return ResponseEntity.ok("Test missing permission function");
+    }
 }
+

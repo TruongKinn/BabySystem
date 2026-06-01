@@ -61,5 +61,29 @@
     "records": "件のレコード",
     "filter": "フィルター",
     "visibleTotal": "表示件数"
+  },
+  "ocr": {
+    "btnScan": "AI レシートスキャン",
+    "btnScanDesc": "レシート画像またはPDFをアップロードして経費を自動抽出",
+    "scanning": "AIがレシートをスキャン中...",
+    "modalTitle": "AI OCR レシートスキャナー",
+    "modalSub": "Gemini Multimodalを使用して経費詳細を自动抽出",
+    "formTitle": "抽出された経費情報",
+    "confirmSave": "確認して経費を保存",
+    "saveSuccess": "経費が正常に保存されました！",
+    "ocrSuccess": "AI抽出に成功しました！保存する前に確認してください。",
+    "uploadError": "レシートのアップロードに失敗しました。",
+    "ocrError": "AIはこのレシートから抽出できませんでした。手動で入力してください。",
+    "dragDropText": "ここにレシートをドラッグ＆ドロップするか、クリックしてアップロード",
+    "dragDropSub": "最大10MBのJPG、PNG、WEBP、PDFに対応",
+    "amountLabel": "金額",
+    "categoryLabel": "カテゴリー",
+    "categoryPlaceholder": "カテゴリーを選択または入力",
+    "dateLabel": "取引日",
+    "noteLabel": "メモ",
+    "notePlaceholder": "支出メモを入力...",
+    "confidence": "AI 信頼度",
+    "extractedItemsTitle": "抽出された商品リスト:",
+    "cancelBtn": "キャンセル"
   }
 }

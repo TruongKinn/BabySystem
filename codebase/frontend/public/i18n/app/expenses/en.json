@@ -61,5 +61,29 @@
     "records": "records",
     "filter": "Filters",
     "visibleTotal": "Visible Total"
+  },
+  "ocr": {
+    "btnScan": "AI Receipt Scan",
+    "btnScanDesc": "Upload receipt image or PDF to auto-extract expenses",
+    "scanning": "AI is scanning & extracting receipt...",
+    "modalTitle": "AI OCR Receipt Scanner",
+    "modalSub": "Uses Gemini Multimodal to automatically extract expense details",
+    "formTitle": "Extracted Expense Info",
+    "confirmSave": "Confirm & Save Expense",
+    "saveSuccess": "Expense saved successfully!",
+    "ocrSuccess": "AI extraction successful! Please review before saving.",
+    "uploadError": "Receipt upload failed.",
+    "ocrError": "AI could not extract from this receipt. Please enter manually.",
+    "dragDropText": "Drag and drop receipt here, or click to upload",
+    "dragDropSub": "Supports JPG, PNG, WEBP, PDF up to 10MB",
+    "amountLabel": "Amount",
+    "categoryLabel": "Category",
+    "categoryPlaceholder": "Select or enter category",
+    "dateLabel": "Transaction Date",
+    "noteLabel": "Note",
+    "notePlaceholder": "Enter expense notes...",
+    "confidence": "AI Confidence",
+    "extractedItemsTitle": "Extracted items list:",
+    "cancelBtn": "Cancel"
   }
 }

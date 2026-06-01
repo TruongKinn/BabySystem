@@ -1,0 +1,74 @@
+{
+  "momApp": {
+    "admin": {
+      "permissions": {
+        "hero": {
+          "kicker": "Hệ Thống",
+          "title": "Quản Lý Quyền Truy Cập & Menu",
+          "subtitle": "Khai báo menu điều hướng, quản lý các endpoint API hệ thống và tự động phát hiện API thiếu permission."
+        },
+        "stats": {
+          "total": "Tổng Số Quyền",
+          "menu": "Quyền Menu",
+          "api": "Quyền API"
+        },
+        "searchPlaceholder": "Tìm kiếm theo tên quyền, menu key, API method, path...",
+        "actions": {
+          "createMenuPermission": "+ Thêm Quyền Menu",
+          "createApiPermission": "+ Thêm Quyền API",
+          "deleteConfirm": "Bạn có chắc chắn muốn xóa quyền này? Hành động này sẽ thu hồi quyền của tất cả vai trò đang gán quyền này."
+        },
+        "filters": {
+          "all": "Tất Cả",
+          "menu": "Quyền Menu",
+          "api": "Quyền API"
+        },
+        "table": {
+          "id": "ID",
+          "name": "Tên Quyền / Mô Tả",
+          "type": "Loại Quyền",
+          "summary": "Menu Key / API Route",
+          "usedByRoles": "Vai Trò Sử Dụng",
+          "actions": "Hành Động"
+        },
+        "missingApis": {
+          "title": "Danh Sách API Chưa Được Đăng Ký Permission",
+          "subtitle": "Được tự động phát hiện từ các Gateway OpenAPI Docs nhưng chưa được định nghĩa trong DB permission.",
+          "addAction": "Khai Báo & Đăng Ký",
+          "empty": "Tuyệt vời! Không còn API nào thiếu cấu hình permission."
+        },
+        "modal": {
+          "createTitle": "Thêm Mới Quyền Truy Cập",
+          "editTitle": "Cập Nhật Quyền Truy Cập",
+          "name": "Tên Quyền (Name)",
+          "namePlaceholder": "Ví dụ: API:GET:USER_PROFILE hoặc MENU:DASHBOARD",
+          "description": "Mô Tả Chi Tiết",
+          "descriptionPlaceholder": "Mô tả mục đích và phạm vi sử dụng của quyền này...",
+          "menuKey": "Đường dẫn Menu Key",
+          "menuKeyPlaceholder": "Ví dụ: /admin/dashboard",
+          "apiMethod": "API HTTP Method",
+          "apiMethodPlaceholder": "GET, POST, PUT, DELETE, PATCH...",
+          "apiPath": "API Endpoint Path",
+          "apiPathPlaceholder": "Ví dụ: /api/users/{id}"
+        },
+        "messages": {
+          "loadFailed": "Tải danh sách permissions thất bại!",
+          "loadMissingApiFailed": "Tải danh sách API chưa đăng ký thất bại!",
+          "nameRequired": "Vui lòng nhập tên quyền!",
+          "menuKeyRequired": "Vui lòng nhập menu key!",
+          "apiFieldRequired": "Vui lòng nhập đầy đủ API method và path!",
+          "createSuccess": "Tạo quyền mới thành công!",
+          "createFailed": "Tạo quyền mới thất bại!",
+          "updateSuccess": "Cập nhật quyền thành công!",
+          "updateFailed": "Cập nhật quyền thất bại!",
+          "deleteSuccess": "Xóa quyền thành công!",
+          "deleteFailed": "Xóa quyền thất bại!"
+        },
+        "types": {
+          "menu": "MENU",
+          "api": "API"
+        }
+      }
+    }
+  }
+}

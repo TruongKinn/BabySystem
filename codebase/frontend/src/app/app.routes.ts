@@ -24,6 +24,7 @@ import { ForbiddenComponent } from './shared/forbidden/forbidden.component';
 import { TasksComponent } from './tasks/tasks.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { AiCopilotComponent } from './ai-copilot/ai-copilot.component';
+import { InvoicesComponent } from './invoices/invoices.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'admin/login' },
@@ -52,7 +53,8 @@ export const routes: Routes = [
       { path: 'settings', component: SettingsComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'documents', component: DocumentsComponent },
-      { path: 'copilot', component: AiCopilotComponent }
+      { path: 'copilot', component: AiCopilotComponent },
+      { path: 'invoices', component: InvoicesComponent }
     ]
   },
 
@@ -90,6 +92,7 @@ export const routes: Routes = [
   { path: 'profile', redirectTo: 'app/profile', pathMatch: 'full' },
   { path: 'documents', redirectTo: 'app/documents', pathMatch: 'full' },
   { path: 'copilot', redirectTo: 'app/copilot', pathMatch: 'full' },
+  { path: 'invoices', redirectTo: 'app/invoices', pathMatch: 'full' },
 
   { path: '**', redirectTo: 'admin/login' }
 ];

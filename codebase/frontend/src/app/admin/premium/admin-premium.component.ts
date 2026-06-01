@@ -13,6 +13,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { catchError, forkJoin, map, of } from 'rxjs';
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
@@ -54,7 +55,7 @@ interface PremiumEntitlementApi {
 }
 
 interface PremiumEntitlementView extends PremiumEntitlementApi {
-  expiresAtInput: string;
+  expiresAtInput: Date | null;
 }
 
 interface PremiumEntitlementAuditApi {
@@ -112,7 +113,8 @@ interface GrantFamilyQuestPointsResponseApi {
     NzSelectModule,
     NzSpinModule,
     NzTableModule,
-    NzTagModule
+    NzTagModule,
+    NzDatePickerModule
   ],
   templateUrl: './admin-premium.component.html',
   styleUrl: './admin-premium.component.css'
@@ -498,7 +500,7 @@ export class AdminPremiumComponent implements OnInit {
 
   onEntitlementStatusChange(item: PremiumEntitlementView): void {
     if (item.status !== 'ALLOW') {
-      item.expiresAtInput = '';
+      item.expiresAtInput = null;
     }
   }
 
@@ -639,7 +641,7 @@ export class AdminPremiumComponent implements OnInit {
         this.premiumLoading = false;
         this.premiumEntitlements = (entitlements.data ?? []).map((item) => ({
           ...item,
-          expiresAtInput: this.toDateTimeLocalInput(item.expiresAt)
+          expiresAtInput: item.expiresAt ? new Date(item.expiresAt) : null
         }));
         this.premiumAudit = (audit.data ?? []).slice(0, 20);
         this.questState = questState.data ?? null;
@@ -728,12 +730,14 @@ export class AdminPremiumComponent implements OnInit {
     return `${year}-${month}-${day}T${hour}:${minute}`;
   }
 
-  private toIsoOffset(value: string | null | undefined): string | null {
-    const normalized = value?.trim() ?? '';
-    if (!normalized) {
+  private toIsoOffset(value: any): string | null {
+    if (!value) {
       return null;
     }
-    const parsed = new Date(normalized);
+    if (value instanceof Date) {
+      return value.toISOString();
+    }
+    const parsed = new Date(value);
     if (Number.isNaN(parsed.getTime())) {
       return null;
     }

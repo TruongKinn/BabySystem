@@ -1,0 +1,916 @@
+/* ==========================================================================
+   Invoice Page Layout & Styling (Premium Glassmorphism & Micro-animations)
+   ========================================================================== */
+
+.invoice-page {
+  /* Kế thừa page-container của hệ thống */
+}
+
+/* 2. Workspace Grid */
+.invoice-workspace-grid {
+  display: grid;
+  grid-template-columns: 460px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1200px) {
+  .invoice-workspace-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 3. Form Input Panel (Left Column) */
+.invoice-form-panel {
+  border-radius: 20px;
+}
+
+.form-card {
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+}
+
+::ng-deep .form-card .ant-card-body {
+  max-height: calc(100vh - 230px);
+  overflow-y: auto;
+  padding: 24px;
+}
+
+/* Tinh chỉnh thanh cuộn mỏng tinh tế cho nội dung form bên dưới header */
+::ng-deep .form-card .ant-card-body::-webkit-scrollbar {
+  width: 6px;
+}
+::ng-deep .form-card .ant-card-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+::ng-deep .form-card .ant-card-body::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+::ng-deep .form-card .ant-card-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.panel-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.panel-card-title .title-icon {
+  color: var(--color-primary, #f97316);
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+
+/* Styling các hàng sản phẩm trong form */
+.items-form-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.item-form-row {
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  padding: 12px;
+  position: relative;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.item-form-row:hover {
+  border-color: rgba(249, 115, 22, 0.2);
+  background: rgba(249, 115, 22, 0.01);
+}
+
+.item-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-weight: 700;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.btn-remove-item {
+  padding: 0;
+  height: auto;
+  line-height: 1;
+}
+
+.btn-add-item {
+  border-radius: 12px;
+  height: 40px;
+  border-style: dashed;
+}
+
+/* 4. Live Invoice Paper Preview (Right Column) */
+.invoice-preview-panel {
+  display: flex;
+  justify-content: center;
+  background: #e5e7eb;
+  padding: 32px;
+  border-radius: 20px;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.06);
+  min-height: calc(100vh - 180px);
+  overflow: auto;
+}
+
+/* Layout tờ giấy hóa đơn A4 chuẩn */
+.invoice-paper-container {
+  width: 210mm;
+  min-height: 297mm;
+  background: white;
+  padding: 24mm;
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1), 0 5px 15px rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+  font-family: 'Inter', sans-serif;
+  color: #1f2937;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Mẫu Header Giấy */
+.paper-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.header-left {
+  flex: 1;
+}
+
+.paper-logo-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.paper-logo-badge .logo-icon {
+  font-size: 32px;
+  color: #111827;
+}
+
+.paper-logo-badge .logo-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.paper-logo-badge .logo-text .brand {
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #111827;
+}
+
+.paper-logo-badge .logo-text .sub {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #6b7280;
+}
+
+.seller-details h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 6px;
+  color: #111827;
+}
+
+.seller-details p {
+  font-size: 12px;
+  color: #4b5563;
+  margin: 0 0 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.header-right {
+  text-align: right;
+  min-width: 220px;
+}
+
+.header-right .invoice-title {
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+.invoice-meta-grid {
+  display: inline-block;
+}
+
+.invoice-meta-grid .meta-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  margin-bottom: 6px;
+  gap: 16px;
+}
+
+.invoice-meta-grid .meta-row .meta-label {
+  color: #6b7280;
+}
+
+.invoice-meta-grid .meta-row .meta-value {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.invoice-meta-grid .meta-row .meta-value.due {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.paper-divider {
+  margin: 20px 0;
+  border-top-color: #e5e7eb;
+}
+
+/* Thông tin Khách hàng trên giấy */
+.paper-buyer-section {
+  margin-bottom: 24px;
+}
+
+.paper-buyer-section .section-title {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  margin: 0 0 8px;
+}
+
+.buyer-details h3 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 4px;
+  color: #111827;
+}
+
+.buyer-details p {
+  font-size: 12px;
+  color: #4b5563;
+  margin: 0 0 3px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* Bảng sản phẩm trên giấy */
+.paper-table-container {
+  flex: 1;
+  margin-bottom: 24px;
+}
+
+.paper-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.paper-table th {
+  border-bottom: 2px solid #111827;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #111827;
+  text-align: left;
+}
+
+.paper-table td {
+  border-bottom: 1px solid #f3f4f6;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #1f2937;
+}
+
+.paper-table tbody tr:last-child td {
+  border-bottom: 1px solid #111827;
+}
+
+.paper-table .text-right {
+  text-align: right;
+}
+
+.paper-table .col-no {
+  width: 30px;
+  color: #9ca3af;
+}
+
+.paper-table .col-qty {
+  width: 60px;
+}
+
+.paper-table .col-price {
+  width: 110px;
+}
+
+.paper-table .col-tax {
+  width: 70px;
+}
+
+.paper-table .col-amount {
+  width: 120px;
+  font-weight: 600;
+}
+
+.empty-placeholder {
+  color: #9ca3af;
+  font-style: italic;
+  padding: 32px !important;
+}
+
+/* Tổng kết & Mộc đóng dấu */
+.paper-summary-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: auto;
+}
+
+.summary-left {
+  width: 50%;
+}
+
+.notes-wrap h4 {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #9ca3af;
+  margin: 0 0 6px;
+}
+
+.notes-wrap p {
+  font-size: 11px;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.5;
+  white-space: pre-line;
+}
+
+/* Dấu mộc số đỏ & Ký tên */
+.signature-wrap {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.seal-circle {
+  width: 72px;
+  height: 72px;
+  flex-shrink: 0;
+  border: 3px double #dc2626;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #dc2626;
+  font-weight: 800;
+  font-size: 9px;
+  transform: rotate(-10deg);
+  opacity: 0.85;
+  user-select: none;
+}
+
+.seal-circle span {
+  font-size: 10px;
+  letter-spacing: 0.02em;
+}
+
+.seal-circle small {
+  font-size: 8px;
+  border-top: 1px solid #dc2626;
+  padding-top: 1px;
+  margin-top: 1px;
+}
+
+.sig-line {
+  border-top: 1px dashed #9ca3af;
+  padding-top: 8px;
+  margin-top: 20px;
+  min-width: 180px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.sig-line p {
+  font-size: 10px;
+  font-weight: 600;
+  color: #4b5563;
+  margin: 0 0 2px;
+}
+
+.sig-line small {
+  font-size: 8px;
+  color: #9ca3af;
+}
+
+.summary-right {
+  width: 40%;
+}
+
+.calc-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.calc-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #4b5563;
+}
+
+.calc-row.grand-total {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+}
+
+.summary-divider {
+  margin: 4px 0;
+  border-top-color: #e5e7eb;
+}
+
+/* ==========================================================================
+   CSS PRINT MEDIA - ĐỊNH DẠNG IN ẤN VECTOR HOÀN HẢO (BẮT BUỘC)
+   ========================================================================== */
+
+@media print {
+  /* 1. Ẩn toàn bộ giao diện app */
+  body, html {
+    background: white !important;
+    color: black !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* 2. Chỉ hiện duy nhất tờ giấy hóa đơn */
+  #invoice-paper, #invoice-paper * {
+    visibility: visible !important;
+  }
+
+  #invoice-paper {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    margin: 0 !important;
+    padding: 20mm !important;
+    box-shadow: none !important;
+    border: none !important;
+    background: white !important;
+  }
+
+  /* Tránh in màu xám mờ của trình duyệt */
+  .paper-logo-badge .logo-icon {
+    color: black !important;
+  }
+  .paper-divider {
+    border-top: 1px solid black !important;
+  }
+  .paper-table th {
+    border-bottom: 2px solid black !important;
+  }
+  .paper-table tbody tr:last-child td {
+    border-bottom: 1px solid black !important;
+  }
+
+  /* Ẩn phần lịch sử khi in */
+  .invoice-history-section, .invoice-history-section * {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+/* ==========================================================================
+   5. Invoice History Section (Bento Grid Style)
+   ========================================================================== */
+.invoice-history-section {
+  margin-top: 32px;
+}
+
+.history-card {
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.history-header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 16px;
+  width: 100%;
+}
+
+.history-search-wrap {
+  min-width: 320px;
+}
+
+.history-search-wrap input {
+  border-radius: 12px;
+  height: 40px;
+  border-color: rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.history-search-wrap input:focus {
+  border-color: var(--color-primary, #f97316);
+  box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.15);
+}
+
+/* Custom Table Styles */
+::ng-deep .history-card .ant-table {
+  background: transparent !important;
+}
+
+::ng-deep .history-card .ant-table-thead > tr > th {
+  background: rgba(0, 0, 0, 0.02) !important;
+  color: #374151 !important;
+  font-weight: 700 !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06) !important;
+}
+
+::ng-deep .history-card .ant-table-tbody > tr > td {
+  border-bottom: 1px solid rgba(0, 0, 0, 0.04) !important;
+  padding: 14px 16px !important;
+}
+
+::ng-deep .history-card .ant-table-tbody > tr {
+  transition: all 0.2s ease;
+}
+
+::ng-deep .history-card .ant-table-tbody > tr:hover > td {
+  background: rgba(249, 115, 22, 0.02) !important;
+}
+
+.inv-code {
+  color: #111827;
+  font-size: 14px;
+}
+
+.buyer-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.buyer-info-col .buyer-name {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.buyer-info-col .buyer-email {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.grand-total-amount {
+  font-weight: 700;
+  color: var(--color-primary, #f97316);
+  font-size: 14px;
+}
+
+.created-date {
+  color: #6b7280;
+  font-size: 13px;
+}
+
+.action-buttons-wrap {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-view-pdf {
+  color: #3b82f6;
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  transition: all 0.2s ease;
+}
+
+.btn-view-pdf:hover {
+  background: rgba(59, 130, 246, 0.1) !important;
+  color: #2563eb !important;
+  transform: translateY(-1px);
+}
+
+.btn-delete-invoice {
+  color: #ef4444;
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  width: 32px;
+  height: 32px;
+  transition: all 0.2s ease;
+}
+
+.btn-delete-invoice:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #dc2626 !important;
+  transform: translateY(-1px);
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .history-header-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .history-search-wrap {
+    width: 100%;
+    min-width: unset;
+  }
+}
+
+/* ==========================================================================
+   6. Premium Document Viewer Modal (Glassmorphism & Micro-animations)
+   ========================================================================== */
+::ng-deep .premium-view-modal .ant-modal-content {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(20px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15) !important;
+  overflow: hidden;
+}
+
+::ng-deep .premium-view-modal .ant-modal-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+  padding: 16px 24px !important;
+}
+
+::ng-deep .premium-view-modal .ant-modal-close-x {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+::ng-deep .premium-view-modal .ant-modal-close-icon {
+  color: #6b7280;
+  transition: color 0.3s;
+}
+
+::ng-deep .premium-view-modal .ant-modal-close-icon:hover {
+  color: #ef4444;
+}
+
+.view-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1f2937;
+}
+
+.view-modal-title .pdf-icon {
+  color: #ef4444;
+  font-size: 20px;
+}
+
+.pdf-view-container {
+  width: 100%;
+  height: 75vh;
+  min-height: 550px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #f3f4f6;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.pdf-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 12px;
+}
+
+.pdf-error-placeholder {
+  text-align: center;
+  color: #9ca3af;
+}
+
+.pdf-error-placeholder [nz-icon] {
+  font-size: 40px;
+  color: #f59e0b;
+  margin-bottom: 12px;
+}
+
+/* ==========================================================================
+   7. Premium Digital Signature OTP Modal Styles & Unsigned Seal
+   ========================================================================== */
+.seal-circle.unsigned-seal {
+  border-color: #9ca3af !important;
+  color: #9ca3af !important;
+}
+
+.seal-circle.unsigned-seal small {
+  border-top-color: #9ca3af !important;
+  color: #9ca3af !important;
+}
+
+::ng-deep .premium-otp-modal .ant-modal-content {
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.4) !important;
+  border-radius: 20px !important;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2) !important;
+  overflow: hidden;
+}
+
+::ng-deep .premium-otp-modal .ant-modal-header {
+  background: transparent !important;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+  padding: 20px 24px !important;
+}
+
+.otp-modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 16px;
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: -0.01em;
+}
+
+.otp-modal-title .shield-icon {
+  color: #10b981;
+  font-size: 22px;
+}
+
+.otp-modal-content {
+  padding: 8px 0;
+}
+
+.otp-description {
+  background: rgba(16, 185, 129, 0.06);
+  border: 1px solid rgba(16, 185, 129, 0.15);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #065f46;
+  line-height: 1.5;
+}
+
+.otp-description strong {
+  color: #047857;
+}
+
+.otp-demo-badge {
+  margin-top: 8px;
+  background: #10b981;
+  color: white;
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.otp-inputs-row {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px 0 8px;
+}
+
+.otp-digit-input {
+  width: 46px;
+  height: 46px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(0, 0, 0, 0.12);
+  background: #fff;
+  font-size: 20px;
+  font-weight: 700;
+  color: #1f2937;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.otp-digit-input:focus {
+  outline: none;
+  border-color: #10b981 !important;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15), 0 4px 12px rgba(16, 185, 129, 0.1);
+  transform: translateY(-1px);
+}
+
+.otp-countdown-text {
+  text-align: center;
+  margin-top: 14px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.otp-countdown-text strong {
+  color: #111827;
+}
+
+.btn-resend-otp {
+  padding: 0;
+  height: auto;
+  font-size: 12px;
+  color: #10b981;
+  font-weight: 600;
+}
+
+.btn-resend-otp:hover {
+  color: #059669;
+}
+
+.otp-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  width: 100%;
+}
+
+.btn-verify-otp {
+  background: #10b981 !important;
+  border-color: #10b981 !important;
+  border-radius: 10px;
+  height: 38px;
+  font-weight: 600;
+  color: white !important;
+}
+
+.btn-verify-otp:hover {
+  background: #059669 !important;
+  border-color: #059669 !important;
+}
+
+.btn-verify-otp:disabled {
+  background: #d1d5db !important;
+  border-color: #d1d5db !important;
+  color: #9ca3af !important;
+}
+
+/* Responsive cho chữ ký & tổng kết hóa đơn A4 */
+@media (max-width: 768px) {
+  .paper-summary-section {
+    flex-direction: column-reverse !important;
+    gap: 24px;
+    align-items: stretch !important;
+  }
+  .summary-left, .summary-right {
+    width: 100% !important;
+  }
+  .calc-grid {
+    width: 100% !important;
+  }
+}
+

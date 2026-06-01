@@ -1,7 +1,7 @@
 # User UI/UX & Modal Design System
 
 > Tổng hợp kiến thức về hệ thống giao diện và chuẩn hóa nút bấm, popup cho vai trò User trong dự án.
-> Cập nhật lần cuối: 2026-05-18
+> Cập nhật lần cuối: 2026-06-01
 
 ---
 
@@ -57,6 +57,15 @@
   4. Bên trong phần body modal (`*nzModalContent`), nếu sử dụng form thì dùng lưới `class="user-modal-form-grid"` để các ô nhập liệu tự động chia cột gọn gàng và có focus glow màu cam óng ả.
 - **Files liên quan**: `codebase/frontend/src/app/baby/baby.component.html`, `codebase/frontend/src/app/expenses/expenses.component.html`
 
+### Cách thay thế input date native sang Ant Design Date Picker
+- **Ngày**: 2026-06-01
+- **Bước thực hiện**:
+  1. Đảm bảo import `NzDatePickerModule` từ `'ng-zorro-antd/date-picker'` vào thuộc tính `imports` của **standalone component**.
+  2. Trong HTML, thay thế `<input nz-input type="date">` hoặc `type="datetime-local"` bằng `<nz-date-picker>` và chỉ định định dạng hiển thị `nzFormat="yyyy-MM-dd"` hoặc `nzFormat="yyyy-MM-dd HH:mm"`.
+  3. Với trường nhập thời gian (datetime-local), sử dụng thêm directive `[nzShowTime]="true"` để người dùng chọn cả giờ.
+  4. Áp dụng `style="width: 100%"` để component hiển thị vừa vặn với ô lưới hoặc bảng.
+- **Files liên quan**: `admin-families.component.html`, `family.component.html`, `admin-premium.component.html`
+
 ---
 
 ## Patterns
@@ -69,11 +78,17 @@
   - `.btn-user-secondary` (Nút nhẹ): Nền cam cực mờ `rgba(249, 115, 22, 0.06)`, viền cam siêu nhạt, chữ cam.
 - **Files liên quan**: `codebase/frontend/src/styles.css`
 
----
-
 ### Bento Grid & Fintech Receipt Card Design Pattern
 - **Ngày**: 2026-05-18
 - **Task**: Nâng cấp popup Quản lý hóa đơn Bento Grid.
 - **Chi tiết**:
   Áp dụng layout bento 2 cột để quản lý hóa đơn. Một thẻ giao dịch dạng Fintech Slip (nền gradient mờ, viền cam nhạt, chữ to) làm điểm nhấn visual. Thẻ upload (Dropzone) dạng lớn viền đứt nét, có icon cloud-upload bay nhẹ khi hover. Các thẻ hóa đơn dạng bento card, icon đổi màu theo định dạng tệp (PDF/Ảnh) kèm tooltip hướng dẫn rê chuột.
 - **Files liên quan**: `codebase/frontend/src/app/expenses/expenses.component.html`, `codebase/frontend/src/app/expenses/expenses.component.css`
+
+### Đồng bộ dữ liệu Date Picker và API (String vs Date)
+- **Ngày**: 2026-06-01
+- **Chi tiết**: Component `nz-date-picker` của Ng-Zorro yêu cầu dữ liệu liên kết `[(ngModel)]` hoặc `formControl` là một đối tượng `Date` (hoặc `null`/`undefined`). Để đồng bộ mượt mà với API lưu trữ dữ liệu dạng chuỗi (`yyyy-MM-dd` hoặc ISO string) mà không phải thay đổi các cấu trúc/hàm gọi API lớn, áp dụng pattern:
+  1. Khởi tạo trường dữ liệu trong form/biến là `Date | null = null`.
+  2. Khi nhận dữ liệu từ API, chuyển chuỗi sang `Date`: `dob ? new Date(dob) : null`.
+  3. Khi gửi dữ liệu lên API, sử dụng hàm chuẩn hóa tập trung `normalizeDateInput` hoặc `toIsoOffset` để chuyển `Date` object về chuỗi `'yyyy-MM-dd'` hoặc chuỗi ISO thích hợp.
+- **Files liên quan**: `admin-families.component.ts`, `family.component.ts`, `admin-premium.component.ts`

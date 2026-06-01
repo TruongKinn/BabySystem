@@ -59,7 +59,8 @@
         "profile": "Hồ sơ",
         "settings": "Cài đặt",
         "themeSettings": "Cài đặt giao diện",
-        "documents": "Tài liệu"
+        "documents": "Tài liệu",
+        "invoices": "Tạo Hóa đơn"
       }
     },
     "admin": {
@@ -2041,6 +2042,30 @@
         "records": "bản ghi",
         "filter": "Bộ lọc",
         "visibleTotal": "Tổng hiển thị"
+      },
+      "ocr": {
+        "btnScan": "Quét hóa đơn bằng AI",
+        "btnScanDesc": "Tải lên ảnh hoặc PDF hóa đơn để tự động trích xuất chi tiêu",
+        "scanning": "AI đang quét và trích xuất hóa đơn...",
+        "modalTitle": "Trợ lý Quét Hóa đơn AI",
+        "modalSub": "Hệ thống sử dụng Gemini Multimodal để tự động trích xuất dữ liệu chi tiêu",
+        "formTitle": "Thông tin hóa đơn trích xuất",
+        "confirmSave": "Xác nhận & Lưu chi tiêu",
+        "saveSuccess": "Đã lưu giao dịch chi tiêu thành công!",
+        "ocrSuccess": "AI đã trích xuất dữ liệu thành công! Hãy kiểm tra lại trước khi lưu.",
+        "uploadError": "Tải hóa đơn lên thất bại.",
+        "ocrError": "AI không thể trích xuất hóa đơn này. Vui lòng nhập tay.",
+        "dragDropText": "Kéo thả ảnh hóa đơn hoặc click để chọn tệp",
+        "dragDropSub": "Hỗ trợ JPG, PNG, WEBP, PDF tối đa 10MB",
+        "amountLabel": "Số tiền",
+        "categoryLabel": "Danh mục",
+        "categoryPlaceholder": "Chọn hoặc nhập danh mục",
+        "dateLabel": "Ngày giao dịch",
+        "noteLabel": "Ghi chú",
+        "notePlaceholder": "Nhập ghi chú chi tiêu...",
+        "confidence": "Độ tin cậy AI",
+        "extractedItemsTitle": "Danh sách mặt hàng trích xuất:",
+        "cancelBtn": "Hủy"
       }
     },
     "journey": {
@@ -2381,6 +2406,72 @@
         "premiumReportsRequired": "Yêu cầu gói Premium Reports để xem báo cáo phân tích hàng tháng.",
         "aiCareAssistantRequired": "Đề xuất thông minh chỉ khả dụng với tính năng AI Care Assistant."
       }
+    },
+    "invoices": {
+      "title": "Trình tạo Hóa đơn PDF",
+      "subtitle": "Nhập dữ liệu để tạo live preview hóa đơn, in hoặc lưu trực tiếp vào danh mục tài liệu.",
+      "invoiceInfo": "Thông tin hóa đơn",
+      "invoiceNo": "Số hóa đơn",
+      "issueDate": "Ngày phát hành",
+      "dueDate": "Hạn thanh toán",
+      "currency": "Tiền tệ",
+      "sellerInfo": "Đơn vị phát hành (Seller)",
+      "buyerInfo": "Khách hàng (Buyer)",
+      "name": "Tên đơn vị / Cá nhân",
+      "email": "Địa chỉ Email",
+      "phone": "Số điện thoại",
+      "address": "Địa chỉ liên hệ",
+      "itemsList": "Danh sách sản phẩm / dịch vụ",
+      "itemName": "Tên sản phẩm / dịch vụ",
+      "quantity": "Số lượng",
+      "price": "Đơn giá",
+      "tax": "Thuế (%)",
+      "amount": "Thành tiền",
+      "addItem": "Thêm sản phẩm",
+      "subtotal": "Tổng phụ",
+      "discount": "Chiết khấu (%)",
+      "vat": "Thuế VAT (%)",
+      "totalAmount": "Tổng thanh toán",
+      "notes": "Ghi chú & Điều khoản",
+      "notesPlaceholder": "Vd: Hóa đơn đã bao gồm VAT. Vui lòng thanh toán chuyển khoản trước hạn...",
+      "actions": "Thao tác hành động",
+      "downloadPdf": "Tải PDF",
+      "print": "In Hóa đơn",
+      "saveToDocs": "Lưu vào Tài liệu",
+      "saveSuccess": "Đã lưu hóa đơn vào Danh mục Tài liệu gia đình thành công!",
+      "saveFailed": "Lỗi: Không thể lưu hóa đơn vào Tài liệu.",
+      "generating": "Đang sinh file PDF...",
+      "uploading": "Đang tải lên hệ thống tài liệu...",
+      "emptyItems": "Danh sách sản phẩm trống. Vui lòng bấm 'Thêm sản phẩm' để cập nhật.",
+      "historyTitle": "Lịch sử hóa đơn đã tạo",
+      "searchPlaceholder": "Tìm theo mã hóa đơn, tên khách hàng...",
+      "colInvoiceNo": "Mã Hóa Đơn",
+      "colBuyer": "Khách Hàng",
+      "colTotal": "Tổng Thanh Toán",
+      "colDate": "Ngày Tạo",
+      "colActions": "Thao Tác",
+      "actionView": "Xem PDF",
+      "actionDelete": "Xóa hóa đơn",
+      "deleteConfirm": "Bạn có chắc chắn muốn xóa hóa đơn này khỏi hệ thống? File đính kèm cũng sẽ bị xóa vĩnh viễn.",
+      "deleteSuccess": "Xóa hóa đơn thành công!",
+      "deleteFailed": "Xóa hóa đơn thất bại.",
+      "noData": "Chưa có hóa đơn nào được tạo",
+      "invalidForm": "Vui lòng kiểm tra và điền đầy đủ thông tin hóa đơn hợp lệ.",
+      "viewInvoicePdfTitle": "Xem Chi Tiết Hóa Đơn PDF",
+      "authorizedSigner": "Người ký tên phát hành",
+      "requireOtpLabel": "Bảo mật Ký số bằng OTP (2FA)",
+      "securityConfigTitle": "OTP Ký số điện tử (2FA)",
+      "securityConfigDesc": "Bắt buộc OTP gửi qua Notification trước khi ký phát hành",
+      "securityConfigSwitchOn": "Bật",
+      "securityConfigSwitchOff": "Tắt",
+      "otpModalTitle": "XÁC THỰC KÝ SỐ ĐIỆN TỬ",
+      "otpModalDesc": "Hệ thống yêu cầu xác thực OTP để tiến hành đóng dấu mộc <strong>FAMILY OS VERIFIED</strong> và hoàn tất giao dịch ký số hóa đơn điện tử.",
+      "otpModalDemoBadge": "Mã OTP thử nghiệm:",
+      "otpModalInputLabel": "Nhập mã xác thực OTP (6 chữ số)",
+      "otpModalCountdownText": "Gửi lại mã sau",
+      "otpModalResendBtn": "Gửi lại OTP",
+      "otpModalVerifyBtn": "Ký số & Xác nhận",
+      "otpModalCancelBtn": "Hủy"
     }
   },
   "auth": {
@@ -2696,6 +2787,80 @@
         "theme_customization": {
           "name": "Tùy biến giao diện",
           "description": "Tùy chỉnh màu sắc, theme và giao diện ứng dụng theo sở thích cá nhân"
+        }
+      }
+    },
+    "permissions": {
+      "momApp": {
+        "admin": {
+          "permissions": {
+            "hero": {
+              "kicker": "Hệ Thống",
+              "title": "Quản Lý Quyền Truy Cập & Menu",
+              "subtitle": "Khai báo menu điều hướng, quản lý các endpoint API hệ thống và tự động phát hiện API thiếu permission."
+            },
+            "stats": {
+              "total": "Tổng Số Quyền",
+              "menu": "Quyền Menu",
+              "api": "Quyền API"
+            },
+            "searchPlaceholder": "Tìm kiếm theo tên quyền, menu key, API method, path...",
+            "actions": {
+              "createMenuPermission": "+ Thêm Quyền Menu",
+              "createApiPermission": "+ Thêm Quyền API",
+              "deleteConfirm": "Bạn có chắc chắn muốn xóa quyền này? Hành động này sẽ thu hồi quyền của tất cả vai trò đang gán quyền này."
+            },
+            "filters": {
+              "all": "Tất Cả",
+              "menu": "Quyền Menu",
+              "api": "Quyền API"
+            },
+            "table": {
+              "id": "ID",
+              "name": "Tên Quyền / Mô Tả",
+              "type": "Loại Quyền",
+              "summary": "Menu Key / API Route",
+              "usedByRoles": "Vai Trò Sử Dụng",
+              "actions": "Hành Động"
+            },
+            "missingApis": {
+              "title": "Danh Sách API Chưa Được Đăng Ký Permission",
+              "subtitle": "Được tự động phát hiện từ các Gateway OpenAPI Docs nhưng chưa được định nghĩa trong DB permission.",
+              "addAction": "Khai Báo & Đăng Ký",
+              "empty": "Tuyệt vời! Không còn API nào thiếu cấu hình permission."
+            },
+            "modal": {
+              "createTitle": "Thêm Mới Quyền Truy Cập",
+              "editTitle": "Cập Nhật Quyền Truy Cập",
+              "name": "Tên Quyền (Name)",
+              "namePlaceholder": "Ví dụ: API:GET:USER_PROFILE hoặc MENU:DASHBOARD",
+              "description": "Mô Tả Chi Tiết",
+              "descriptionPlaceholder": "Mô tả mục đích và phạm vi sử dụng của quyền này...",
+              "menuKey": "Đường dẫn Menu Key",
+              "menuKeyPlaceholder": "Ví dụ: /admin/dashboard",
+              "apiMethod": "API HTTP Method",
+              "apiMethodPlaceholder": "GET, POST, PUT, DELETE, PATCH...",
+              "apiPath": "API Endpoint Path",
+              "apiPathPlaceholder": "Ví dụ: /api/users/{id}"
+            },
+            "messages": {
+              "loadFailed": "Tải danh sách permissions thất bại!",
+              "loadMissingApiFailed": "Tải danh sách API chưa đăng ký thất bại!",
+              "nameRequired": "Vui lòng nhập tên quyền!",
+              "menuKeyRequired": "Vui lòng nhập menu key!",
+              "apiFieldRequired": "Vui lòng nhập đầy đủ API method và path!",
+              "createSuccess": "Tạo quyền mới thành công!",
+              "createFailed": "Tạo quyền mới thất bại!",
+              "updateSuccess": "Cập nhật quyền thành công!",
+              "updateFailed": "Cập nhật quyền thất bại!",
+              "deleteSuccess": "Xóa quyền thành công!",
+              "deleteFailed": "Xóa quyền thất bại!"
+            },
+            "types": {
+              "menu": "MENU",
+              "api": "API"
+            }
+          }
         }
       }
     }

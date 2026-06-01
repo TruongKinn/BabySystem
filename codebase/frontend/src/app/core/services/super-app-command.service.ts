@@ -284,6 +284,21 @@ export interface ConvertCurrencyResponseApi {
   rateUpdatedAt: string;
 }
 
+export interface OcrItem {
+  name: string;
+  quantity: number;
+  price: number;
+}
+
+export interface OcrReceiptResponse {
+  amount: number;
+  date: string;
+  category: string;
+  note: string;
+  items: OcrItem[];
+  confidenceScore: number;
+}
+
 interface NotificationSettings {
   notificationEnabled: boolean;
   reminderHour: string;
@@ -409,6 +424,82 @@ export interface JourneyEventApi {
   recipient: string | null;
   createdAt: string;
   createdBy: string | null;
+}
+
+export interface CreateInvoiceItemRequest {
+  name: string;
+  quantity: number;
+  price: number;
+  tax: number;
+}
+
+export interface CreateInvoiceRequest {
+  familyId: number;
+  invoiceNo: string;
+  issueDate: string;
+  dueDate: string;
+  currency: string;
+  sellerName: string;
+  sellerEmail?: string;
+  sellerPhone?: string;
+  sellerAddress?: string;
+  buyerName: string;
+  buyerEmail?: string;
+  buyerPhone?: string;
+  buyerAddress?: string;
+  discountPercent: number;
+  vatPercent: number;
+  totalAmount: number;
+  notes?: string;
+  fileMetadataId?: string;
+  authorizedSigner?: string;
+  isDigitallySigned?: boolean;
+  signatureOtp?: string;
+  signedAt?: string;
+  items: CreateInvoiceItemRequest[];
+}
+
+export interface InvoiceItemResponse {
+  id: number;
+  name: string;
+  quantity: number;
+  price: number;
+  tax: number;
+}
+
+export interface InvoiceResponse {
+  id: number;
+  familyId: number;
+  invoiceNo: string;
+  issueDate: string;
+  dueDate: string;
+  currency: string;
+  sellerName: string;
+  sellerEmail: string;
+  sellerPhone: string;
+  sellerAddress: string;
+  buyerName: string;
+  buyerEmail: string;
+  buyerPhone: string;
+  buyerAddress: string;
+  discountPercent: number;
+  vatPercent: number;
+  totalAmount: number;
+  notes: string;
+  fileMetadataId: string;
+  createdAt: string;
+  authorizedSigner?: string;
+  isDigitallySigned?: boolean;
+  signatureOtp?: string;
+  signedAt?: string;
+  items: InvoiceItemResponse[];
+}
+
+export interface InvoicePageResponse {
+  items: InvoiceResponse[];
+  total: number;
+  page: number;
+  size: number;
 }
 
 @Injectable({
@@ -691,6 +782,22 @@ export class SuperAppCommandService {
     );
   }
 
+  createExpenseWithDate(input: { amount: number; note: string; categoryName: string; currency?: string; spentAt?: string }): Observable<ExpenseApi> {
+    const familyId = this.getFamilyId();
+    return this.ensureExpenseCategory(familyId, input.categoryName).pipe(
+      switchMap((category) =>
+        this.post<ExpenseApi>('/expense/expenses', {
+          familyId,
+          categoryId: category.id,
+          amount: input.amount,
+          currency: (input.currency ?? 'VND').toUpperCase(),
+          note: input.note,
+          spentAt: input.spentAt ?? new Date().toISOString()
+        })
+      )
+    );
+  }
+
   getExpenses(month?: string, categoryId?: number | null): Observable<ExpenseApi[]> {
     const params = new HttpParams()
       .set('familyId', String(this.getFamilyId()))
@@ -878,6 +985,26 @@ export class SuperAppCommandService {
       fromCurrency: input.fromCurrency,
       amount: input.amount
     });
+  }
+
+  createInvoice(request: CreateInvoiceRequest): Observable<InvoiceResponse> {
+    return this.post<InvoiceResponse>('/expense/invoices', request);
+  }
+
+  getInvoices(page: number, size: number, keyword?: string): Observable<InvoicePageResponse> {
+    let params = new HttpParams()
+      .set('familyId', String(this.getFamilyId()))
+      .set('page', String(page))
+      .set('size', String(size));
+    if (keyword?.trim()) {
+      params = params.set('keyword', keyword.trim());
+    }
+    return this.get<InvoicePageResponse>('/expense/invoices', params);
+  }
+
+  deleteInvoice(id: number): Observable<void> {
+    return this.http.delete<ApiEnvelope<void>>(`${this.apiBase}/expense/invoices/${id}`)
+      .pipe(map(() => undefined));
   }
 
   createTask(input: {
@@ -1295,6 +1422,12 @@ export class SuperAppCommandService {
       .pipe(map((response) => response.data));
   }
 
+  updateFileTag(fileId: number, tag: string): Observable<FileMetadata> {
+    const params = new HttpParams().set('tag', tag);
+    return this.http.post<ApiEnvelope<FileMetadata>>(`${this.apiBase}/file/files/${fileId}/tag`, {}, { params })
+      .pipe(map((response) => response.data));
+  }
+
   getFiles(bucket: string, tag?: string): Observable<FileMetadata[]> {
     let params = new HttpParams().set('familyId', String(this.getFamilyId()));
     if (bucket.trim()) {
@@ -1306,10 +1439,14 @@ export class SuperAppCommandService {
     return this.get<FileMetadata[]>('/file/files', params);
   }
 
-  getFileDownloadUrl(fileId: number): Observable<string> {
+  getFileDownloadUrl(fileId: number, disposition?: string): Observable<string> {
+    let params = new HttpParams().set('expirySeconds', '900');
+    if (disposition?.trim()) {
+      params = params.set('disposition', disposition.trim());
+    }
     return this.get<{ fileId: number; downloadUrl: string; expirySeconds: number }>(
       `/file/files/${fileId}/download-url`,
-      new HttpParams().set('expirySeconds', '900')
+      params
     ).pipe(map((data) => data.downloadUrl));
   }
 
@@ -1654,6 +1791,24 @@ export class SuperAppCommandService {
         }),
         catchError(this.handleError)
       );
+  }
+
+  ocrReceipt(fileId: number, language?: string): Observable<OcrReceiptResponse> {
+    const familyId = this.getFamilyId();
+    return this.http.post<ApiEnvelope<OcrReceiptResponse>>(`${this.apiBase}/ai/copilot/ocr-receipt`, {
+      familyId,
+      fileId,
+      language: language ?? 'vi'
+    }).pipe(
+      map(resp => {
+        if (!resp.success) throw new Error(resp.message || 'API error');
+        return resp.data;
+      }),
+      catchError((err) => {
+        const message = err.error?.message || err.message || 'An unexpected error occurred';
+        return throwError(() => new Error(message));
+      })
+    );
   }
 
   private put<T>(path: string, body: unknown): Observable<T> {

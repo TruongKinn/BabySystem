@@ -1,0 +1,560 @@
+<div class="page-container invoice-page">
+  <div class="header-actions">
+    <div class="header-left">
+      <h1 class="page-title">{{ 'app.invoices.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'app.invoices.subtitle' | translate }}</p>
+    </div>
+
+    <!-- Nút hành động chính -->
+    <div class="header-right-actions" style="display: flex; gap: 8px;">
+      <button nz-button nzType="default" class="btn-user-outline" [nzLoading]="isGenerating" (click)="downloadPdf()">
+        <span nz-icon nzType="download"></span>
+        {{ 'app.invoices.downloadPdf' | translate }}
+      </button>
+      <button nz-button nzType="default" class="btn-user-outline" (click)="printInvoice()">
+        <span nz-icon nzType="printer"></span>
+        {{ 'app.invoices.print' | translate }}
+      </button>
+      <button nz-button nzType="primary" class="btn-user-primary" [nzLoading]="isSaving" (click)="saveToDocuments()">
+        <span nz-icon nzType="cloud-upload"></span>
+        {{ 'app.invoices.saveToDocs' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <div class="invoice-workspace-grid">
+    <!-- CỘT 1: FORM CẤU HÌNH (BÊN TRÁI) -->
+    <div class="invoice-form-panel">
+      <nz-card [nzTitle]="formCardTitleTpl" class="form-card">
+        <ng-template #formCardTitleTpl>
+          <div class="panel-card-title">
+            <span nz-icon nzType="edit" class="title-icon"></span>
+            <span>{{ 'app.invoices.invoiceInfo' | translate }}</span>
+          </div>
+        </ng-template>
+
+        <!-- Cấu hình bảo mật ký số tương tự Authen Service -->
+        <div class="security-config-banner" style="margin-bottom: 20px; padding: 12px 16px; background: rgba(249, 115, 22, 0.04); border: 1px solid rgba(249, 115, 22, 0.12); border-radius: 12px; display: flex; align-items: center; justify-content: space-between;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span nz-icon nzType="safety-certificate" style="font-size: 18px; color: var(--color-primary, #f97316);"></span>
+            <div>
+              <div style="font-weight: 600; font-size: 13px; color: #111827;">{{ 'app.invoices.securityConfigTitle' | translate }}</div>
+              <div style="font-size: 11px; color: #6b7280;">{{ 'app.invoices.securityConfigDesc' | translate }}</div>
+            </div>
+          </div>
+          <nz-switch [(ngModel)]="requireOtpForSigning" [ngModelOptions]="{standalone: true}" [nzCheckedChildren]="'app.invoices.securityConfigSwitchOn' | translate" [nzUnCheckedChildren]="'app.invoices.securityConfigSwitchOff' | translate"></nz-switch>
+        </div>
+
+        <form [formGroup]="invoiceForm" nz-form nzLayout="vertical">
+          <!-- 1.1 Thông tin chung -->
+          <div class="form-grid-2">
+            <nz-form-item>
+              <nz-form-label nzRequired>{{ 'app.invoices.invoiceNo' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="'Mã số hóa đơn bắt buộc nhập'">
+                <input nz-input formControlName="invoiceNo" placeholder="INV-123456" />
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label nzRequired>{{ 'app.invoices.currency' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="'Đơn vị tiền tệ bắt buộc chọn'">
+                <nz-select formControlName="currency">
+                  <nz-option *ngFor="let curr of currencies" [nzValue]="curr" [nzLabel]="curr"></nz-option>
+                </nz-select>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <div class="form-grid-2">
+            <nz-form-item>
+              <nz-form-label nzRequired>{{ 'app.invoices.issueDate' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="'Ngày phát hành bắt buộc chọn'">
+                <nz-date-picker formControlName="issueDate" nzFormat="yyyy-MM-dd" style="width: 100%"></nz-date-picker>
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label nzRequired>{{ 'app.invoices.dueDate' | translate }}</nz-form-label>
+              <nz-form-control [nzErrorTip]="'Hạn thanh toán bắt buộc chọn'">
+                <nz-date-picker formControlName="dueDate" nzFormat="yyyy-MM-dd" style="width: 100%"></nz-date-picker>
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <nz-divider nzText="{{ 'app.invoices.sellerInfo' | translate }}" nzOrientation="left"></nz-divider>
+
+          <!-- 1.2 Thông tin đơn vị phát hành -->
+          <nz-form-item>
+            <nz-form-label nzRequired>{{ 'app.invoices.name' | translate }}</nz-form-label>
+            <nz-form-control [nzErrorTip]="'Tên đơn vị phát hành bắt buộc nhập'">
+              <input nz-input formControlName="sellerName" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <div class="form-grid-2">
+            <nz-form-item>
+              <nz-form-label>{{ 'app.invoices.email' | translate }}</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="sellerEmail" placeholder="email@example.com" />
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label>{{ 'app.invoices.phone' | translate }}</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="sellerPhone" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <nz-form-item>
+            <nz-form-label>{{ 'app.invoices.address' | translate }}</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="sellerAddress" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-divider nzText="{{ 'app.invoices.buyerInfo' | translate }}" nzOrientation="left"></nz-divider>
+
+          <!-- 1.3 Thông tin khách hàng -->
+          <nz-form-item>
+            <nz-form-label nzRequired>{{ 'app.invoices.name' | translate }}</nz-form-label>
+            <nz-form-control [nzErrorTip]="'Tên khách hàng bắt buộc nhập'">
+              <input nz-input formControlName="buyerName" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <div class="form-grid-2">
+            <nz-form-item>
+              <nz-form-label>{{ 'app.invoices.email' | translate }}</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="buyerEmail" placeholder="customer@example.com" />
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label>{{ 'app.invoices.phone' | translate }}</nz-form-label>
+              <nz-form-control>
+                <input nz-input formControlName="buyerPhone" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <nz-form-item>
+            <nz-form-label>{{ 'app.invoices.address' | translate }}</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="buyerAddress" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-divider nzText="{{ 'app.invoices.itemsList' | translate }}" nzOrientation="left"></nz-divider>
+
+          <!-- 1.4 Danh sách sản phẩm -->
+          <div formArrayName="items" class="items-form-list">
+            <div *ngFor="let item of items.controls; let i = index" [formGroupName]="i" class="item-form-row">
+              <div class="item-header-row">
+                <span>#{{ i + 1 }}</span>
+                <button nz-button nzType="text" nzDanger nzSize="small" (click)="removeItem(i)" class="btn-remove-item">
+                  <span nz-icon nzType="delete"></span>
+                </button>
+              </div>
+
+              <div class="form-grid-1">
+                <nz-form-item>
+                  <nz-form-label nzRequired>{{ 'app.invoices.itemName' | translate }}</nz-form-label>
+                  <nz-form-control [nzErrorTip]="'Tên sản phẩm/dịch vụ bắt buộc nhập'">
+                    <input nz-input formControlName="name" placeholder="Tên sản phẩm / Dịch vụ" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+
+              <div class="form-grid-3">
+                <nz-form-item>
+                  <nz-form-label nzRequired>{{ 'app.invoices.quantity' | translate }}</nz-form-label>
+                  <nz-form-control [nzErrorTip]="'Số lượng tối thiểu là 1'">
+                    <input nz-input type="number" formControlName="quantity" min="1" />
+                  </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item>
+                  <nz-form-label nzRequired>{{ 'app.invoices.price' | translate }}</nz-form-label>
+                  <nz-form-control [nzErrorTip]="'Đơn giá bắt buộc nhập và không âm'">
+                    <input nz-input type="number" formControlName="price" min="0" />
+                  </nz-form-control>
+                </nz-form-item>
+
+                <nz-form-item>
+                  <nz-form-label>{{ 'app.invoices.tax' | translate }}</nz-form-label>
+                  <nz-form-control>
+                    <input nz-input type="number" formControlName="tax" min="0" max="100" />
+                  </nz-form-control>
+                </nz-form-item>
+              </div>
+            </div>
+
+            <button nz-button nzType="dashed" nzBlock (click)="addItem()" class="btn-add-item">
+              <span nz-icon nzType="plus"></span>
+              {{ 'app.invoices.addItem' | translate }}
+            </button>
+          </div>
+
+          <nz-divider nzText="Tổng & Điều khoản" nzOrientation="left"></nz-divider>
+
+          <!-- 1.5 VAT & Chiết khấu tổng -->
+          <div class="form-grid-2">
+            <nz-form-item>
+              <nz-form-label>{{ 'app.invoices.discount' | translate }}</nz-form-label>
+              <nz-form-control>
+                <input nz-input type="number" formControlName="discount" min="0" max="100" />
+              </nz-form-control>
+            </nz-form-item>
+
+            <nz-form-item>
+              <nz-form-label>{{ 'app.invoices.vat' | translate }}</nz-form-label>
+              <nz-form-control>
+                <input nz-input type="number" formControlName="vat" min="0" max="100" />
+              </nz-form-control>
+            </nz-form-item>
+          </div>
+
+          <nz-form-item>
+            <nz-form-label>{{ 'app.invoices.notes' | translate }}</nz-form-label>
+            <nz-form-control>
+              <textarea nz-input formControlName="notes" rows="3" [placeholder]="'app.invoices.notesPlaceholder' | translate"></textarea>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzRequired>{{ 'app.invoices.authorizedSigner' | translate }}</nz-form-label>
+            <nz-form-control [nzErrorTip]="'Người ký tên bắt buộc nhập'">
+              <input nz-input formControlName="authorizedSigner" placeholder="Vd: Nguyễn Văn A - Chủ hộ" />
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+      </nz-card>
+    </div>
+
+    <!-- CỘT 2: LIVE PREVIEW SLIP (BÊN PHẢI) -->
+    <div class="invoice-preview-panel">
+      <!-- Mẫu giấy hóa đơn A4 chất lượng cao -->
+      <div id="invoice-paper" class="invoice-paper-container">
+        <!-- Header Hóa đơn -->
+        <div class="paper-header">
+          <div class="header-left">
+            <div class="paper-logo-badge">
+              <span nz-icon nzType="file-text" class="logo-icon"></span>
+              <div class="logo-text">
+                <strong class="brand">FAMILY OS</strong>
+                <span class="sub">Finance Engine</span>
+              </div>
+            </div>
+            <div class="seller-details">
+              <h3>{{ invoiceForm.value.sellerName }}</h3>
+              <p *ngIf="invoiceForm.value.sellerAddress"><span nz-icon nzType="environment"></span> {{ invoiceForm.value.sellerAddress }}</p>
+              <p *ngIf="invoiceForm.value.sellerEmail || invoiceForm.value.sellerPhone">
+                <span nz-icon nzType="mail" *ngIf="invoiceForm.value.sellerEmail"></span> {{ invoiceForm.value.sellerEmail }}
+                <span nz-icon nzType="phone" style="margin-left: 8px;" *ngIf="invoiceForm.value.sellerPhone"></span> {{ invoiceForm.value.sellerPhone }}
+              </p>
+            </div>
+          </div>
+
+          <div class="header-right">
+            <div class="invoice-title">HÓA ĐƠN / INVOICE</div>
+            <div class="invoice-meta-grid">
+              <div class="meta-row">
+                <span class="meta-label">{{ 'app.invoices.invoiceNo' | translate }}:</span>
+                <strong class="meta-value">{{ invoiceForm.value.invoiceNo }}</strong>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">{{ 'app.invoices.issueDate' | translate }}:</span>
+                <span class="meta-value">{{ invoiceForm.value.issueDate | date:'yyyy-MM-dd' }}</span>
+              </div>
+              <div class="meta-row">
+                <span class="meta-label">{{ 'app.invoices.dueDate' | translate }}:</span>
+                <span class="meta-value due">{{ invoiceForm.value.dueDate | date:'yyyy-MM-dd' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <nz-divider class="paper-divider"></nz-divider>
+
+        <!-- Thông tin Khách hàng -->
+        <div class="paper-buyer-section">
+          <h4 class="section-title">{{ 'app.invoices.buyerInfo' | translate }}</h4>
+          <div class="buyer-details">
+            <h3>{{ invoiceForm.value.buyerName }}</h3>
+            <p *ngIf="invoiceForm.value.buyerAddress"><span nz-icon nzType="environment"></span> {{ invoiceForm.value.buyerAddress }}</p>
+            <p *ngIf="invoiceForm.value.buyerEmail || invoiceForm.value.buyerPhone">
+              <span nz-icon nzType="mail" *ngIf="invoiceForm.value.buyerEmail"></span> {{ invoiceForm.value.buyerEmail }}
+              <span nz-icon nzType="phone" style="margin-left: 8px;" *ngIf="invoiceForm.value.buyerPhone"></span> {{ invoiceForm.value.buyerPhone }}
+            </p>
+          </div>
+        </div>
+
+        <!-- Bảng danh sách hàng hóa -->
+        <div class="paper-table-container">
+          <table class="paper-table">
+            <thead>
+              <tr>
+                <th class="col-no">#</th>
+                <th class="col-desc">{{ 'app.invoices.itemName' | translate }}</th>
+                <th class="col-qty text-right">{{ 'app.invoices.quantity' | translate }}</th>
+                <th class="col-price text-right">{{ 'app.invoices.price' | translate }}</th>
+                <th class="col-tax text-right">{{ 'app.invoices.tax' | translate }}</th>
+                <th class="col-amount text-right">{{ 'app.invoices.amount' | translate }}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of items.controls; let i = index">
+                <td class="col-no">{{ i + 1 }}</td>
+                <td class="col-desc"><strong>{{ item.value.name || 'Sản phẩm ' + (i + 1) }}</strong></td>
+                <td class="col-qty text-right">{{ item.value.quantity | number }}</td>
+                <td class="col-price text-right">{{ item.value.price | number }}</td>
+                <td class="col-tax text-right">{{ item.value.tax }}%</td>
+                <td class="col-amount text-right">{{ getItemAmount(i) | number }}</td>
+              </tr>
+              <tr *ngIf="items.length === 0">
+                <td colspan="6" class="empty-placeholder text-center">
+                  {{ 'app.invoices.emptyItems' | translate }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Chân trang & Tổng kết hóa đơn -->
+        <div class="paper-summary-section">
+          <div class="summary-left">
+            <div class="notes-wrap" *ngIf="invoiceForm.value.notes">
+              <h4>{{ 'app.invoices.notes' | translate }}</h4>
+              <p>{{ invoiceForm.value.notes }}</p>
+            </div>
+            <!-- Dấu mộc / Chữ ký Mockup -->
+            <div class="signature-wrap">
+              <div class="seal-circle" *ngIf="isVerified">
+                <span>FAMILY OS</span>
+                <small>VERIFIED</small>
+              </div>
+              <div class="seal-circle unsigned-seal" *ngIf="!isVerified" style="border-color: #9ca3af; color: #9ca3af;">
+                <span>CHƯA KÝ</span>
+                <small style="border-top-color: #9ca3af; color: #9ca3af;">UNSIGNED</small>
+              </div>
+              <div class="sig-line">
+                <p>{{ invoiceForm.value.authorizedSigner || 'Người ký tên / Signer' }}</p>
+                <small>Ký tên / Authorized Signature</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-right">
+            <div class="calc-grid">
+              <div class="calc-row">
+                <span class="label">{{ 'app.invoices.subtotal' | translate }}:</span>
+                <span class="value">{{ subtotal | number }} {{ invoiceForm.value.currency }}</span>
+              </div>
+              <div class="calc-row discount-row" *ngIf="invoiceForm.value.discount > 0">
+                <span class="label">{{ 'app.invoices.discount' | translate }} ({{ invoiceForm.value.discount }}%):</span>
+                <span class="value">-{{ discountAmount | number }} {{ invoiceForm.value.currency }}</span>
+              </div>
+              <div class="calc-row tax-row" *ngIf="invoiceForm.value.vat > 0">
+                <span class="label">{{ 'app.invoices.vat' | translate }} ({{ invoiceForm.value.vat }}%):</span>
+                <span class="value">+{{ vatAmount | number }} {{ invoiceForm.value.currency }}</span>
+              </div>
+              <nz-divider class="summary-divider"></nz-divider>
+              <div class="calc-row grand-total">
+                <span class="label">{{ 'app.invoices.totalAmount' | translate }}:</span>
+                <span class="value">{{ totalAmount | number }} {{ invoiceForm.value.currency }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- BỔ SUNG: BẢNG LỊCH SỬ HÓA ĐƠN ĐÃ TẠO -->
+  <div class="invoice-history-section">
+    <nz-card [nzTitle]="historyCardTitleTpl" class="history-card">
+      <ng-template #historyCardTitleTpl>
+        <div class="history-header-container">
+          <div class="panel-card-title">
+            <span nz-icon nzType="history" class="title-icon"></span>
+            <span>{{ 'app.invoices.historyTitle' | translate }}</span>
+          </div>
+          <!-- Tìm kiếm -->
+          <div class="history-search-wrap">
+            <nz-input-group [nzSuffix]="suffixIconSearch">
+              <input type="text" nz-input [(ngModel)]="searchKeyword" (ngModelChange)="onSearch()" [placeholder]="'app.invoices.searchPlaceholder' | translate" />
+            </nz-input-group>
+            <ng-template #suffixIconSearch>
+              <span nz-icon nzType="search"></span>
+            </ng-template>
+          </div>
+        </div>
+      </ng-template>
+
+      <nz-table
+        #historyTable
+        [nzData]="invoicesList"
+        [nzLoading]="isLoadingHistory"
+        [nzTotal]="totalInvoices"
+        [(nzPageIndex)]="currentPage"
+        [nzPageSize]="pageSize"
+        [nzFrontPagination]="false"
+        (nzPageIndexChange)="onPageChange($event)"
+        nzSize="middle"
+      >
+        <thead>
+          <tr>
+            <th>{{ 'app.invoices.colInvoiceNo' | translate }}</th>
+            <th>{{ 'app.invoices.colBuyer' | translate }}</th>
+            <th class="text-right">{{ 'app.invoices.colTotal' | translate }}</th>
+            <th>{{ 'app.invoices.colDate' | translate }}</th>
+            <th class="text-center">{{ 'app.invoices.colActions' | translate }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of historyTable.data">
+            <td>
+              <strong class="inv-code">{{ data.invoiceNo }}</strong>
+            </td>
+            <td>
+              <div class="buyer-info-col">
+                <span class="buyer-name">{{ data.buyerName }}</span>
+                <small class="buyer-email" *ngIf="data.buyerEmail">{{ data.buyerEmail }}</small>
+              </div>
+            </td>
+            <td class="text-right">
+              <span class="grand-total-amount">{{ data.totalAmount | number }} {{ data.currency }}</span>
+            </td>
+            <td>
+              <span class="created-date">{{ data.createdAt | date:'yyyy-MM-dd HH:mm' }}</span>
+            </td>
+            <td class="text-center">
+              <div class="action-buttons-wrap">
+                <!-- Nút xem PDF -->
+                <button
+                  nz-button
+                  nzType="text"
+                  nz-tooltip
+                  [nzTooltipTitle]="'app.invoices.actionView' | translate"
+                  (click)="viewInvoicePdf(data.fileMetadataId)"
+                  class="btn-view-pdf"
+                >
+                  <span nz-icon nzType="file-pdf"></span>
+                </button>
+                <!-- Nút xóa hóa đơn -->
+                <button
+                  nz-button
+                  nzType="text"
+                  nzDanger
+                  nz-popconfirm
+                  [nzPopconfirmTitle]="'app.invoices.deleteConfirm' | translate"
+                  (nzOnConfirm)="deleteInvoice(data.id, data.fileMetadataId)"
+                  nz-tooltip
+                  [nzTooltipTitle]="'app.invoices.actionDelete' | translate"
+                  class="btn-delete-invoice"
+                >
+                  <span nz-icon nzType="delete"></span>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </nz-table>
+    </nz-card>
+  </div>
+
+  <!-- Modal Xem trực tiếp PDF Hóa đơn -->
+  <nz-modal
+    [(nzVisible)]="isViewModalVisible"
+    [nzTitle]="modalTitleTpl"
+    [nzContent]="modalContentTpl"
+    [nzFooter]="null"
+    (nzOnCancel)="closeViewModal()"
+    [nzWidth]="1200"
+    class="premium-view-modal"
+  >
+    <ng-template #modalTitleTpl>
+      <div class="view-modal-title">
+        <span nz-icon nzType="file-pdf" class="pdf-icon"></span>
+        <span>{{ 'app.invoices.viewInvoicePdfTitle' | translate }}</span>
+      </div>
+    </ng-template>
+    <ng-template #modalContentTpl>
+      <nz-spin [nzSpinning]="isViewLoading" style="width: 100%;">
+        <div class="pdf-view-container">
+          <iframe
+            *ngIf="safePdfUrl"
+            [src]="safePdfUrl"
+            width="100%"
+            height="100%"
+            frameborder="0"
+            class="pdf-iframe"
+          ></iframe>
+          <div *ngIf="!safePdfUrl && !isViewLoading" class="pdf-error-placeholder">
+            <span nz-icon nzType="warning"></span>
+            <p>Không thể tải file PDF hóa đơn.</p>
+          </div>
+        </div>
+      </nz-spin>
+    </ng-template>
+  </nz-modal>
+
+  <!-- Modal Xác thực Ký số OTP -->
+  <nz-modal
+    [(nzVisible)]="isOtpModalVisible"
+    [nzTitle]="otpTitleTpl"
+    [nzContent]="otpContentTpl"
+    [nzFooter]="otpFooterTpl"
+    (nzOnCancel)="closeOtpModal()"
+    [nzWidth]="450"
+    nzClassName="user-role-modal"
+    class="premium-otp-modal"
+  >
+    <ng-template #otpTitleTpl>
+      <div class="otp-modal-title">
+        <span nz-icon nzType="safety-certificate" class="shield-icon"></span>
+        <span>{{ 'app.invoices.otpModalTitle' | translate }}</span>
+      </div>
+    </ng-template>
+    <ng-template #otpContentTpl>
+      <div class="otp-modal-content">
+        <div class="otp-description">
+          <p [innerHTML]="'app.invoices.otpModalDesc' | translate"></p>
+        </div>
+        
+        <nz-form-item style="margin-bottom: 0;">
+          <nz-form-label nzRequired>{{ 'app.invoices.otpModalInputLabel' | translate }}</nz-form-label>
+          <nz-form-control>
+            <div class="otp-inputs-row">
+              <input
+                *ngFor="let digit of otpDigits; let i = index; trackBy: trackByIndex"
+                #otpInput
+                type="text"
+                class="otp-digit-input"
+                maxlength="1"
+                [value]="otpDigits[i]"
+                (input)="onOtpInput($event, i)"
+                (keydown)="onOtpKeyDown($event, i)"
+                (paste)="onOtpPaste($event)"
+                autocomplete="one-time-code"
+              />
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+        
+        <div class="otp-countdown-text">
+          <span *ngIf="countdown > 0">{{ 'app.invoices.otpModalCountdownText' | translate }} <strong>{{ countdown }}s</strong></span>
+          <button nz-button nzType="link" *ngIf="countdown === 0" (click)="resendOtp()" class="btn-resend-otp">{{ 'app.invoices.otpModalResendBtn' | translate }}</button>
+        </div>
+      </div>
+    </ng-template>
+    <ng-template #otpFooterTpl>
+      <div class="otp-modal-footer" style="display: flex; justify-content: flex-end; gap: 12px; width: 100%;">
+        <button nz-button nzType="default" class="btn-user-outline" (click)="closeOtpModal()" style="height: 38px; border-radius: 10px;">{{ 'app.invoices.otpModalCancelBtn' | translate }}</button>
+        <button nz-button nzType="primary" [disabled]="otpDigits.join('').length !== 6" (click)="verifyOtp()" class="btn-user-primary" style="height: 38px; border-radius: 10px; font-weight: 600;">{{ 'app.invoices.otpModalVerifyBtn' | translate }}</button>
+      </div>
+    </ng-template>
+  </nz-modal>
+</div>

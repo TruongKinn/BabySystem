@@ -1,110 +1,92 @@
-# Tài liệu Thiết kế Hệ thống: Phân hệ Quản trị Tài chính Gia đình (Admin Finance Workspace)
+# Expense Service - Quy Trình Xác Thực Ký Số Điện Tử (2FA OTP) Hóa Đơn & Lưu DB Kiểm Chứng
 
-Tài liệu này đặc tả kiến trúc kỹ thuật, luồng tích hợp đa dịch vụ, thiết lập kiểm soát quyền truy cập (IAM), và thiết kế giao diện cao cấp dành cho tính năng **Quản lý Tài chính Hộ gia đình theo tháng** tích hợp trong bảng điều khiển Admin (`momApp.admin`).
-
----
-
-## 1. Tổng quan Nghiệp vụ (Business Overview)
-
-Phân hệ Quản trị Tài chính cung cấp cho Quản trị viên (`ADMIN`) và Chủ sở hữu hệ thống (`OWNER`) khả năng giám sát toàn diện sức khỏe tài chính của tất cả các hộ gia đình đang hoạt động:
-*   **Theo dõi Ngân sách & Thực chi:** Đối soát hạn mức ngân sách tháng đã thiết lập với tổng chi tiêu thực tế của từng gia đình.
-*   **Cảnh báo Đỏ tự động (Anomaly Detection):** Phân loại trạng thái chi tiêu trực quan thành 4 nhóm:
-    *   `GOOD` (An toàn): Thực chi chiếm dưới 80% ngân sách.
-    *   `WARNING` (Cảnh báo): Thực chi chiếm từ 80% đến 100% ngân sách.
-    *   `OVER` (Vượt hạn mức): Thực chi vượt quá 100% ngân sách cấp phát.
-    *   `NOT_SET` (Chưa đặt): Gia đình chưa cấu hình ngân sách chung cho tháng.
-*   **Phân rã Chi tiết (Granular Insights):** Xem báo cáo phần trăm cơ cấu danh mục chi tiêu (Meals, Baby care, Shopping,...) và danh sách lịch sử giao dịch phát sinh trong tháng của từng hộ gia đình.
+Tài liệu này hướng dẫn chi tiết về cơ chế xác thực ký số điện tử (Digital Signature) bằng mã OTP thật trên phân hệ Quản lý Hóa đơn của `expense-service`, bao gồm giao diện cấu hình bật/tắt (tương tự như `authentication-service`) và cơ chế lưu trữ thông tin kiểm chứng (audit trail) trực tiếp vào Cơ sở dữ liệu.
 
 ---
 
-## 2. Kiến trúc Tích hợp Hệ thống (Integration Architecture)
+## 1. Tổng Quan Quy Trình Ký Số & Lưu DB Kiểm Chứng
 
-Phân hệ này hoạt động như một trung tâm điều phối tổng hợp dữ liệu (Aggregator) từ hai vi dịch vụ cốt lõi thông qua **API Gateway**:
+Để đảm bảo tính pháp lý và an toàn cho các giao dịch tài chính gia đình, hệ thống áp dụng cơ chế xác thực đa yếu tố (2FA) trước khi cho phép người dùng thực hiện các thao tác: In, Tải PDF, và Lưu Hóa đơn. Đặc biệt, **mã OTP thật cùng với toàn bộ thông tin chứng thực ký số sẽ được lưu trữ trực tiếp vào Cơ sở dữ liệu (DB)** phục vụ mục đích hậu kiểm (auditing) và kiểm chứng sau này.
 
 ```mermaid
-sequenceDiagram
-    autonumber
-    actor Admin as Trình duyệt Admin
-    participant Gateway as API Gateway (Port 8080)
-    participant Auth as Authentication Service (Port 8081)
-    participant Account as Account Service (Port 8082)
-    participant Expense as Expense Service (Port 8083)
-
-    Admin->>Gateway: GET /account/admin/families (Lấy ds hộ)
-    Gateway->>Auth: Xác thực token & vai trò Admin
-    Auth-->>Gateway: Hợp lệ (admin = true)
-    Gateway->>Account: Chuyển tiếp request lấy ds gia đình
-    Account-->>Admin: Danh sách gia đình & thành viên
-
-    Note over Admin, Expense: Dùng RxJS forkJoin gọi song song cho từng hộ gia đình:
-    
-    par Gọi API Ngân sách
-        Admin->>Gateway: GET /expense/budgets?familyId={id}
-        Gateway->>Expense: Lấy ds ngân sách
-        Expense-->>Admin: Danh sách ngân sách các tháng
-    and Gọi API Tổng hợp chi tiêu
-        Admin->>Gateway: GET /expense/expenses/summary?familyId={id}&month={month}
-        Gateway->>Expense: Tổng hợp báo cáo chi tiêu tháng
-        Expense-->>Admin: Tổng số tiền & nhóm theo danh mục
-    and Gọi API Nhật ký giao dịch
-        Admin->>Gateway: GET /expense/expenses?familyId={id}&month={month}
-        Gateway->>Expense: Lấy lịch sử chi tiêu
-        Expense-->>Admin: Mảng chi tiết giao dịch chi tiêu
-    end
-
-    Note over Admin: Tổng hợp dữ liệu (Reduce) hiển thị lên bảng Bento UI
+graph TD
+    A[Người dùng click In/Tải/Lưu] --> B{requireOtpForSigning == true?}
+    B -- Không --> C[Thực hiện hành động trực tiếp]
+    B -- Có --> D{isVerified == true?}
+    D -- Có --> C
+    D -- Không --> E[Kích hoạt Modal OTP & Sinh mã 6 số]
+    E --> F[Gửi Notification chứa OTP thật tới chuông thông báo]
+    F --> G[Người dùng nhập OTP vào 6 ô độc lập]
+    G --> H{Mã khớp?}
+    H -- Không --> I[Báo đỏ / Yêu cầu nhập lại]
+    H -- Có --> J[Đặt isVerified = true & Đóng dấu mộc đỏ FAMILY OS VERIFIED]
+    J --> K[Gộp thông tin OTP, Người ký, Thời gian ký gửi lên API]
+    K --> L[Lưu thông tin chứng thực ký số vào invoices table ở DB]
+    L --> C
 ```
 
-### Chi tiết các API Endpoint sử dụng:
-1.  **Dịch vụ Tài khoản (`account-service`):**
-    *   `GET /account/admin/families`: Lấy tất cả các gia đình và danh sách thành viên của họ.
-2.  **Dịch vụ Chi tiêu (`expense-service`):**
-    *   `GET /expense/budgets?familyId={id}`: Lấy danh sách ngân sách (hạn mức) thiết lập qua các tháng.
-    *   `GET /expense/expenses/summary?familyId={id}&month={month}`: Lấy báo cáo tổng hợp chi tiêu theo tháng và danh mục.
-    *   `GET /expense/expenses?familyId={id}&month={month}`: Lấy danh sách chi tiết các khoản chi tiêu thực tế.
+---
+
+## 2. Thiết Kế Cơ Sở Dữ Liệu & Audit Trail
+
+### 2.1 Cập Nhật Schema Migration SQL
+Chúng ta đã tạo thêm một file migration SQL mới **`V7__add_invoice_digital_signature_fields.sql`** để mở rộng cấu trúc bảng `invoices`, phục vụ lưu trữ thông tin kiểm chứng ký số:
+
+```sql
+-- Migration to add digital signature verification fields to invoices table for auditing
+ALTER TABLE invoices ADD COLUMN authorized_signer VARCHAR(100);
+ALTER TABLE invoices ADD COLUMN is_digitally_signed BOOLEAN NOT NULL DEFAULT FALSE;
+ALTER TABLE invoices ADD COLUMN signature_otp VARCHAR(6);
+ALTER TABLE invoices ADD COLUMN signed_at TIMESTAMPTZ;
+```
+
+### 2.2 Ý Nghĩa Các Trường Kiểm Chứng (Audit Columns)
+- **`authorized_signer`** (Người ký tên phát hành): Tên của chủ tài khoản thực hiện ký phát hành hóa đơn (ví dụ: *"Chủ hộ Family OS"* hoặc tên người dùng cụ thể nhập từ form).
+- **`is_digitally_signed`** (Đã ký số điện tử): Cờ đánh dấu hóa đơn này đã được xác thực ký số qua OTP thật thành công (`true` hoặc `false`).
+- **`signature_otp`** (Mã OTP xác thực): Lưu vết chính xác mã OTP 6 chữ số ngẫu nhiên thật đã được sinh ra và gửi cho người dùng để xác nhận thao tác ký số hóa đơn này.
+- **`signed_at`** (Thời gian ký số): Ghi nhận chính xác ngày giờ (múi giờ UTC offset) người dùng xác nhận OTP thành công.
 
 ---
 
-## 3. Thiết lập Kiểm soát Quyền truy cập (IAM & Security Configuration)
+## 3. Chi Tiết Các Thành Phần Triển Khai (Frontend & Backend)
 
-Hệ thống áp dụng chính sách bảo mật đa lớp tại **API Gateway** và **Authentication Service**:
+### 3.1 Cấu Hình Bật/Tắt OTP Ký Số (Security Switch Banner)
+Giao diện được cấu hình ngay trên phần thông tin của hóa đơn (phía trên form nhập liệu) tương tự như trang thiết lập bảo mật của `authentication-service` (Profile):
+- **Cờ trạng thái:** `requireOtpForSigning` (mặc định: `true`).
+- **Giao diện:** Switch Ant Design (`nz-switch`) nằm trong banner bảo mật màu cam óng ánh, có logo khiên bảo vệ và chú thích trực quan.
+- **Bypass OTP:** Khi tắt switch (`requireOtpForSigning = false`), hệ thống tự động gán `isVerified = true` cho phép người dùng In/Tải/Lưu ngay lập tức mà không cần qua Modal xác thực. Trạng thái lưu DB sẽ ghi nhận `is_digitally_signed = false`, `signature_otp = null`, `signed_at = null`.
 
-### 3.1. Cơ chế Lọc Quyền tại Gateway (`ApiPermissionFilter`) và Cô lập Dữ liệu (Data Isolation)
-*   **Tại Gateway (`ApiPermissionFilter`):** Gateway giải mã JWT và gọi API nội bộ `GET /roles/users/{userId}/access` từ `authentication-service` để phân tích quyền. Ngoài ra, Gateway sẽ đính kèm thêm Header `X-User-Admin` (chứa giá trị `true/false` đại diện cho quyền quản trị của tài khoản) khi chuyển tiếp request xuống các vi dịch vụ con.
-*   **Tại thư viện chung (`common-lib`):**
-    *   `UserContextInterceptor` tự động phân tách Header `X-User-Admin` từ request và lưu trữ vào ThreadLocal của `UserContext`.
-    *   `DataIsolationUtil.validateFamilyAccess(familyId)` tự động bỏ qua (bypass) bước kiểm tra cô lập thành viên gia đình đối với tài khoản có quyền Admin/Owner (`UserContext.isAdmin() == true`). Nhờ đó, Quản trị viên hệ thống có thể quan sát, tổng hợp dữ liệu chi tiêu của toàn bộ hộ gia đình mà không bị chặn lỗi 403 Forbidden, trong khi vẫn bảo mật tuyệt đối dữ liệu giữa các người dùng thông thường (`USER`).
+### 3.2 Giao Diện Nhập OTP 6 Ô Độc Lập (Focus Leap & Paste)
+Nâng cấp ô nhập liệu đơn thành 6 ô độc lập tương tự như authen service để gia tăng tính thẩm mỹ và trải nghiệm cao cấp:
+- **Chế độ nhảy focus mượt mà (Focus Leap):** Nhập 1 số tự động nhảy focus sang ô kế tiếp. Nhấn phím `Backspace` tự động xóa và nhảy lùi focus về ô trước.
+- **Hỗ trợ điều hướng:** Cho phép dùng phím mũi tên `Trái` / `Phải` để di chuyển nhanh giữa các ô.
+- **Hỗ trợ Paste mã số (Clipboard Paste):** Copy mã OTP 6 số (ví dụ từ Notification) và paste vào ô đầu tiên, hệ thống sẽ tự động phân tách và điền đầy đủ cả 6 ô, sau đó tự động focus vào ô cuối cùng.
+- **Chặn ký tự lạ:** Chỉ cho phép nhập số (`0-9`), chặn hoàn toàn các phím chữ cái hoặc ký tự đặc biệt khác.
 
-### 3.2. Script gieo mầm Phân quyền (Flyway Database Migration)
-Chúng tôi tạo file di trú cơ sở dữ liệu `V19__admin_finance_permissions.sql` để định nghĩa quyền lực và gán cứng cho nhóm vai trò `ADMIN` và `OWNER`:
-*   **Quyền Giao diện (`MENU:ADMIN_FINANCE`):** Đăng ký quyền truy cập menu phụ quản lý tài chính `/admin/finance`.
-*   **Quyền API (`API:GET:ADMIN_FAMILY_LIST`):** Đăng ký quyền gọi dịch vụ lấy danh sách hộ gia đình phục vụ đối soát tài chính (`GET /account/admin/families`).
+### 3.3 Backend Mapping & DTOs (Java Backend)
+- **`InvoiceEntity.java`:** Thêm các trường `@Column` tương ứng với schema DB: `authorizedSigner`, `isDigitallySigned`, `signatureOtp`, `signedAt`.
+- **`CreateInvoiceRequest.java`:** Mở rộng record để nhận thêm 4 tham số chứng thực ký số từ Frontend.
+- **`InvoiceResponse.java`:** Trả về đầy đủ các thông tin ký số kèm method mapping static `fromEntity()` để phục vụ hiển thị lịch sử hoặc hậu kiểm.
+- **`InvoiceServiceImpl.java`:** Thực hiện gán (set) các trường chứng thực từ request DTO sang entity và lưu trữ an toàn xuống cơ sở dữ liệu qua `InvoiceRepository.save()`.
 
 ---
 
-## 4. Đặc tả Giao diện Người dùng (UI/UX Specification)
+## 4. Hướng Dẫn Kiểm Thử & Kiểm Chứng (Auditing Test)
 
-Giao diện tuân thủ tuyệt đối quy định **Web Design Backbone Rule** với các tiêu chuẩn mỹ thuật cao cấp:
-
-### 4.1. Hệ thống Chỉ số KPI Động (System-wide KPIs)
-Đặt trên cùng gồm 4 thẻ Bento Card bóng đổ mượt mà, cung cấp cái nhìn 360 độ về ngân sách hệ thống:
-*   **Gia đình giám sát:** Tổng số hộ gia đình.
-*   **Tổng ngân sách cấp:** Tổng số tiền hạn mức được set trên hệ thống của tháng được chọn.
-*   **Tổng chi tiêu thực:** Cộng dồn chi tiêu của tất cả các hộ gia đình.
-*   **Tỷ lệ sử dụng quỹ:** Phần trăm chi tiêu thực so với tổng ngân sách cấp, phản ánh độ phủ tài chính.
-
-### 4.2. Bảng Thống kê Bento Đối soát (Bento Comparison Table)
-*   **Hiển thị dữ liệu thực chất:** Không dùng chữ giả (Lorem ipsum).
-*   **Bộ lọc thông minh:** Cho phép chọn tháng (`input type="month"`) để lọc dữ liệu lịch sử và thanh tìm kiếm tức thời theo Tên/ID gia đình và Tên chủ hộ.
-*   **Trạng thái trực quan (Visual Badges):**
-    *   `Vượt hạn mức` (Đỏ neon, hiệu ứng phát sáng nhẹ).
-    *   `Cảnh báo` (Vàng hổ phách).
-    *   `An toàn` (Xanh lục bảo).
-*   **Thanh tiến độ lồng ghép (Inline Progress Bar):** Hiển thị phần trăm sử dụng ngân sách trực quan, co giãn mềm mại khi đổi tháng.
-
-### 4.3. Drawer Chi tiết Tài chính Chuyên sâu (Premium Side-Drawer)
-Sử dụng hiệu ứng kính mờ (Glassmorphism backdrop-blur) trượt êm ái từ lề phải:
-*   **Bento Grid thu nhỏ:** 3 thẻ tổng quan: Ngân sách, Thực chi, Còn lại.
-*   **Thanh chỉ số trực quan:** Đưa ra thông tin chi tiết bằng emoji (🚨 Cảnh báo chi tiêu quá tay / ✅ Chi tiêu thông minh) dựa trên trạng thái thực tế.
-*   **Báo cáo phân rã danh mục:** Thể hiện chi tiết các khoản chi lớn nhất tập trung vào danh mục nào (ví dụ: Sữa, tã bỉm chiếm 60% tổng chi) dưới dạng các thẻ bo tròn và thanh phần trăm mini.
-*   **Bảng nhật ký giao dịch:** Liệt kê đầy đủ lịch sử mua sắm trong tháng, sắp xếp theo trình tự thời gian giảm dần, có thanh cuộn tùy biến (`custom-scrollbar`) tinh tế.
+1.  **Thực hiện Ký số:** Bật Switch OTP 2FA lên, điền hóa đơn, nhấn **Lưu vào Tài liệu**.
+2.  **Nhập OTP thành công:** Nhập đúng mã OTP sinh ra gửi qua Notification (hoặc badge demo) -> Hóa đơn được ký số và lưu DB thành công.
+3.  **Kiểm chứng DB:**
+    *   Truy cập cơ sở dữ liệu và thực hiện truy vấn bảng `invoices`:
+        ```sql
+        SELECT invoice_no, authorized_signer, is_digitally_signed, signature_otp, signed_at 
+        FROM invoices 
+        ORDER BY created_at DESC LIMIT 1;
+        ```
+    *   **Kết quả mong đợi:**
+        *   `is_digitally_signed` có giá trị `true`.
+        *   `signature_otp` hiển thị chính xác mã 6 chữ số ngẫu nhiên thật vừa nhập.
+        *   `authorized_signer` ghi nhận tên người ký.
+        *   `signed_at` ghi nhận thời gian ký số chính xác.
+4.  **Kiểm chứng khi tắt bảo mật:** Tắt Switch OTP 2FA, lưu hóa đơn trực tiếp, sau đó truy vấn DB:
+    *   `is_digitally_signed` có giá trị `false`.
+    *   `signature_otp` và `signed_at` có giá trị `null` (do không thực hiện ký số OTP).

@@ -59,7 +59,8 @@
         "profile": "プロフィール",
         "settings": "設定",
         "themeSettings": "テーマ設定",
-        "documents": "ドキュメント"
+        "documents": "ドキュメント",
+        "invoices": "請求書作成"
       }
     },
     "admin": {
@@ -2281,6 +2282,30 @@
         "records": "件のレコード",
         "filter": "フィルター",
         "visibleTotal": "表示件数"
+      },
+      "ocr": {
+        "btnScan": "AI レシートスキャン",
+        "btnScanDesc": "レシート画像またはPDFをアップロードして経費を自動抽出",
+        "scanning": "AIがレシートをスキャン中...",
+        "modalTitle": "AI OCR レシートスキャナー",
+        "modalSub": "Gemini Multimodalを使用して経費詳細を自动抽出",
+        "formTitle": "抽出された経費情報",
+        "confirmSave": "確認して経費を保存",
+        "saveSuccess": "経費が正常に保存されました！",
+        "ocrSuccess": "AI抽出に成功しました！保存する前に確認してください。",
+        "uploadError": "レシートのアップロードに失敗しました。",
+        "ocrError": "AIはこのレシートから抽出できませんでした。手動で入力してください。",
+        "dragDropText": "ここにレシートをドラッグ＆ドロップするか、クリックしてアップロード",
+        "dragDropSub": "最大10MBのJPG、PNG、WEBP、PDFに対応",
+        "amountLabel": "金額",
+        "categoryLabel": "カテゴリー",
+        "categoryPlaceholder": "カテゴリーを選択または入力",
+        "dateLabel": "取引日",
+        "noteLabel": "メモ",
+        "notePlaceholder": "支出メモを入力...",
+        "confidence": "AI 信頼度",
+        "extractedItemsTitle": "抽出された商品リスト:",
+        "cancelBtn": "キャンセル"
       }
     },
     "shopping": {
@@ -2376,6 +2401,72 @@
         "premiumReportsRequired": "月次インサイトを表示するには Premium Reports が必要です。",
         "aiCareAssistantRequired": "スマート推奨アクションを表示するには AI Care Assistant が必要です。"
       }
+    },
+    "invoices": {
+      "title": "PDF 請求書作成ジェネレーター",
+      "subtitle": "データを入力してリアルタイムプレビューを生成し、印刷または家族のドキュメントフォルダに直接保存します。",
+      "invoiceInfo": "請求書基本情報",
+      "invoiceNo": "請求書番号",
+      "issueDate": "発行日",
+      "dueDate": "お支払期限",
+      "currency": "通貨",
+      "sellerInfo": "発行元情報 (売り手)",
+      "buyerInfo": "請求先情報 (買い手)",
+      "name": "会社名 / 個人名",
+      "email": "メールアドレス",
+      "phone": "電話番号",
+      "address": "住所",
+      "itemsList": "品目・サービス明細リスト",
+      "itemName": "品名 / サービス内容",
+      "quantity": "数量",
+      "price": "単価",
+      "tax": "税率 (%)",
+      "amount": "金額",
+      "addItem": "行を追加する",
+      "subtotal": "小計金額",
+      "discount": "割引 (%)",
+      "vat": "消費税 (VAT %)",
+      "totalAmount": "ご請求総額",
+      "notes": "備考・支払条件",
+      "notesPlaceholder": "例：請求金額には消費税が含まれています。お支払期限までに指定口座へお振込みください。ご利用ありがとうございました...",
+      "actions": "アクション実行",
+      "downloadPdf": "PDFダウンロード",
+      "print": "請求書印刷",
+      "saveToDocs": "ドキュメントに保存",
+      "saveSuccess": "生成された PDF 請求書が家族用ドキュメントフォルダに正常に保存されました！",
+      "saveFailed": "エラー：請求書 PDF をドキュメントシステムにアップロードできませんでした。",
+      "generating": "PDF請求書を生成中...",
+      "uploading": "ファイルストレージシステムへアップロード中...",
+      "emptyItems": "明細がありません。「行を追加する」をクリックして請求書の作成を開始してください。",
+      "historyTitle": "作成済み請求書履歴",
+      "searchPlaceholder": "請求書番号、顧客名で検索...",
+      "colInvoiceNo": "請求書番号",
+      "colBuyer": "顧客",
+      "colTotal": "請求総額",
+      "colDate": "作成日時",
+      "colActions": "操作",
+      "actionView": "PDFを表示",
+      "actionDelete": "請求書を削除",
+      "deleteConfirm": "この請求書を削除してもよろしいですか？添付ファイルも永久に削除されます。",
+      "deleteSuccess": "請求書が正常に削除されました！",
+      "deleteFailed": "請求書の削除に失敗しました。",
+      "noData": "作成済みの請求書はありません",
+      "invalidForm": "有効な請求書情報をすべて確認して入力してください。",
+      "viewInvoicePdfTitle": "PDF請求書の詳細を表示",
+      "authorizedSigner": "承認された署名者名",
+      "requireOtpLabel": "OTP (2FA) でデジタル署名をセキュアに保護",
+      "securityConfigTitle": "電子署名 OTP (2FA)",
+      "securityConfigDesc": "署名および発行前に、通知経由で送信される OTP が必要です",
+      "securityConfigSwitchOn": "有効",
+      "securityConfigSwitchOff": "無効",
+      "otpModalTitle": "デジタル署名認証",
+      "otpModalDesc": "システムは <strong>FAMILY OS VERIFIED</strong> スタンプを押印し、電子請求書署名取引を完了するために OTP 認証を要求します。",
+      "otpModalDemoBadge": "テスト OTP コード：",
+      "otpModalInputLabel": "OTP 認証コードを入力してください (6桁 of number)",
+      "otpModalCountdownText": "秒後に再送信",
+      "otpModalResendBtn": "OTPを再送信",
+      "otpModalVerifyBtn": "署名して確認",
+      "otpModalCancelBtn": "キャンセル"
     }
   },
   "auth": {
@@ -2691,6 +2782,80 @@
         "theme_customization": {
           "name": "テーマカスタマイズ",
           "description": "個人の好みに合わせてアプリの色、テーマ、インターフェースをカスタマイズ"
+        }
+      }
+    },
+    "permissions": {
+      "momApp": {
+        "admin": {
+          "permissions": {
+            "hero": {
+              "kicker": "システム設定",
+              "title": "アクセス制御とメニュー管理",
+              "subtitle": "ナビゲーションメニューの宣言、システムAPIエンドポイントの管理、および不足している権限の自動検出を行います。"
+            },
+            "stats": {
+              "total": "総権限数",
+              "menu": "メニュー権限",
+              "api": "API権限"
+            },
+            "searchPlaceholder": "権限名、メニューキー、APIメソッド、パスで検索...",
+            "actions": {
+              "createMenuPermission": "+ メニュー権限を追加",
+              "createApiPermission": "+ API権限を追加",
+              "deleteConfirm": "この権限を削除してもよろしいですか？これにより、すべての役割からこの権限が剥奪されます。"
+            },
+            "filters": {
+              "all": "すべて",
+              "menu": "メニュー",
+              "api": "API"
+            },
+            "table": {
+              "id": "ID",
+              "name": "権限名 / 説明",
+              "type": "タイプ",
+              "summary": "メニューキー / APIルート",
+              "usedByRoles": "使用している役割数",
+              "actions": "操作"
+            },
+            "missingApis": {
+              "title": "未登録の API エンドポイント",
+              "subtitle": "ゲートウェイの OpenAPI ドキュメントから自動検出されましたが、権限データベースで定義されていません。",
+              "addAction": "権限を登録",
+              "empty": "素晴らしい！不足しているAPI権限は検出されませんでした。"
+            },
+            "modal": {
+              "createTitle": "アクセス権限の作成",
+              "editTitle": "アクセス権限の編集",
+              "name": "権限名",
+              "namePlaceholder": "例: API:GET:USER_PROFILE または MENU:DASHBOARD",
+              "description": "詳細説明",
+              "descriptionPlaceholder": "この権限の目的と適用範囲を説明してください...",
+              "menuKey": "メニューキーのパス",
+              "menuKeyPlaceholder": "例: /admin/dashboard",
+              "apiMethod": "API HTTP メソッド",
+              "apiMethodPlaceholder": "GET, POST, PUT, DELETE, PATCH...",
+              "apiPath": "API エンドポイントのパス",
+              "apiPathPlaceholder": "例: /api/users/{id}"
+            },
+            "messages": {
+              "loadFailed": "権限リストの読み込みに失敗しました！",
+              "loadMissingApiFailed": "未登録APIの読み込みに失敗しました！",
+              "nameRequired": "権限名は必須項目です！",
+              "menuKeyRequired": "メニューキーは必須項目です！",
+              "apiFieldRequired": "APIメソッドとパスの両方が必要です！",
+              "createSuccess": "権限が正常に作成されました！",
+              "createFailed": "権限の作成に失敗しました！",
+              "updateSuccess": "権限が正常に更新されました！",
+              "updateFailed": "権限の更新に失敗しました！",
+              "deleteSuccess": "権限が正常に削除されました！",
+              "deleteFailed": "権限の削除に失敗しました！"
+            },
+            "types": {
+              "menu": "メニュー",
+              "api": "API"
+            }
+          }
         }
       }
     }

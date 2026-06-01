@@ -61,5 +61,29 @@
     "records": "条记录",
     "filter": "过滤器",
     "visibleTotal": "总显示数"
+  },
+  "ocr": {
+    "btnScan": "AI 发票扫描",
+    "btnScanDesc": "上传发票图片或 PDF 以自动提取费用",
+    "scanning": "AI 正在扫描并提取发票...",
+    "modalTitle": "AI OCR 发票扫描器",
+    "modalSub": "使用 Gemini Multimodal 自动提取费用详情",
+    "formTitle": "提取的费用信息",
+    "confirmSave": "确认并保存费用",
+    "saveSuccess": "费用保存成功！",
+    "ocrSuccess": "AI 提取成功！请在保存前进行核对。",
+    "uploadError": "发票上传失败。",
+    "ocrError": "AI 无法从此发票中提取。请手动输入。",
+    "dragDropText": "将发票拖放到此处，或点击上传",
+    "dragDropSub": "支持最高 10MB 的 JPG、PNG、WEBP、PDF",
+    "amountLabel": "金额",
+    "categoryLabel": "类别",
+    "categoryPlaceholder": "选择或输入类别",
+    "dateLabel": "交易日期",
+    "noteLabel": "备注",
+    "notePlaceholder": "输入支出备注...",
+    "confidence": "AI 可信度",
+    "extractedItemsTitle": "提取的商品列表:",
+    "cancelBtn": "取消"
   }
 }

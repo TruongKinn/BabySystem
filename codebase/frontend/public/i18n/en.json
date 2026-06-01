@@ -59,7 +59,8 @@
         "profile": "Profile",
         "settings": "Settings",
         "themeSettings": "Theme settings",
-        "documents": "Documents"
+        "documents": "Documents",
+        "invoices": "Invoice Generator"
       }
     },
     "admin": {
@@ -2043,6 +2044,30 @@
         "records": "records",
         "filter": "Filters",
         "visibleTotal": "Visible Total"
+      },
+      "ocr": {
+        "btnScan": "AI Receipt Scan",
+        "btnScanDesc": "Upload receipt image or PDF to auto-extract expenses",
+        "scanning": "AI is scanning & extracting receipt...",
+        "modalTitle": "AI OCR Receipt Scanner",
+        "modalSub": "Uses Gemini Multimodal to automatically extract expense details",
+        "formTitle": "Extracted Expense Info",
+        "confirmSave": "Confirm & Save Expense",
+        "saveSuccess": "Expense saved successfully!",
+        "ocrSuccess": "AI extraction successful! Please review before saving.",
+        "uploadError": "Receipt upload failed.",
+        "ocrError": "AI could not extract from this receipt. Please enter manually.",
+        "dragDropText": "Drag and drop receipt here, or click to upload",
+        "dragDropSub": "Supports JPG, PNG, WEBP, PDF up to 10MB",
+        "amountLabel": "Amount",
+        "categoryLabel": "Category",
+        "categoryPlaceholder": "Select or enter category",
+        "dateLabel": "Transaction Date",
+        "noteLabel": "Note",
+        "notePlaceholder": "Enter expense notes...",
+        "confidence": "AI Confidence",
+        "extractedItemsTitle": "Extracted items list:",
+        "cancelBtn": "Cancel"
       }
     },
     "journey": {
@@ -2383,6 +2408,72 @@
         "premiumReportsRequired": "Premium Reports is required to view monthly insights.",
         "aiCareAssistantRequired": "AI recommendations are available with AI Care Assistant."
       }
+    },
+    "invoices": {
+      "title": "PDF Invoice Generator",
+      "subtitle": "Enter invoice data to generate live preview, print or save directly into your family documents.",
+      "invoiceInfo": "Invoice Metadata",
+      "invoiceNo": "Invoice Number",
+      "issueDate": "Issue Date",
+      "dueDate": "Due Date",
+      "currency": "Currency",
+      "sellerInfo": "Issuer Information (Seller)",
+      "buyerInfo": "Customer Information (Buyer)",
+      "name": "Company / Individual Name",
+      "email": "Email Address",
+      "phone": "Phone Number",
+      "address": "Postal Address",
+      "itemsList": "Products & Services Items List",
+      "itemName": "Description / Item Name",
+      "quantity": "Qty",
+      "price": "Unit Price",
+      "tax": "Tax (%)",
+      "amount": "Amount",
+      "addItem": "Add Item Row",
+      "subtotal": "Subtotal",
+      "discount": "Discount (%)",
+      "vat": "VAT (%)",
+      "totalAmount": "Total Due",
+      "notes": "Notes & Payment Terms",
+      "notesPlaceholder": "E.g., Payment is due within 15 days of invoice date. Thank you for your business...",
+      "actions": "Workflow Actions",
+      "downloadPdf": "Download PDF",
+      "print": "Print Invoice",
+      "saveToDocs": "Save to Documents",
+      "saveSuccess": "Successfully saved generated PDF to your Family Documents!",
+      "saveFailed": "Error: Failed to upload generated PDF invoice to documents.",
+      "generating": "Generating PDF document...",
+      "uploading": "Uploading to file storage system...",
+      "emptyItems": "No items added. Click 'Add Item Row' to start building your invoice.",
+      "historyTitle": "Created Invoices History",
+      "searchPlaceholder": "Search by invoice no, customer name...",
+      "colInvoiceNo": "Invoice No",
+      "colBuyer": "Customer",
+      "colTotal": "Total Amount",
+      "colDate": "Created At",
+      "colActions": "Actions",
+      "actionView": "View PDF",
+      "actionDelete": "Delete Invoice",
+      "deleteConfirm": "Are you sure you want to delete this invoice? The attached file will also be permanently deleted.",
+      "deleteSuccess": "Successfully deleted the invoice!",
+      "deleteFailed": "Failed to delete the invoice.",
+      "noData": "No invoices created yet",
+      "invalidForm": "Please check and fill in all valid invoice information.",
+      "viewInvoicePdfTitle": "View Invoice PDF Details",
+      "authorizedSigner": "Authorized Signer Name",
+      "requireOtpLabel": "Secure Digital Signature with OTP (2FA)",
+      "securityConfigTitle": "Electronic Signature OTP (2FA)",
+      "securityConfigDesc": "Requires OTP sent via Notification before signing & issuing",
+      "securityConfigSwitchOn": "ON",
+      "securityConfigSwitchOff": "OFF",
+      "otpModalTitle": "DIGITAL SIGNATURE VERIFICATION",
+      "otpModalDesc": "The system requires OTP verification to stamp the <strong>FAMILY OS VERIFIED</strong> seal and complete the electronic invoice signing transaction.",
+      "otpModalDemoBadge": "Demo OTP Code:",
+      "otpModalInputLabel": "Enter OTP Verification Code (6 digits)",
+      "otpModalCountdownText": "Resend code in",
+      "otpModalResendBtn": "Resend OTP",
+      "otpModalVerifyBtn": "Sign & Confirm",
+      "otpModalCancelBtn": "Cancel"
     }
   },
   "auth": {
@@ -2698,6 +2789,80 @@
         "theme_customization": {
           "name": "Theme Customization",
           "description": "Customize app colors, themes and interface to personal preferences"
+        }
+      }
+    },
+    "permissions": {
+      "momApp": {
+        "admin": {
+          "permissions": {
+            "hero": {
+              "kicker": "System Settings",
+              "title": "Access Control & Menu Management",
+              "subtitle": "Declare navigation menus, manage system API endpoints, and automatically detect missing permissions."
+            },
+            "stats": {
+              "total": "Total Permissions",
+              "menu": "Menu Permissions",
+              "api": "API Permissions"
+            },
+            "searchPlaceholder": "Search by name, menu key, API method, path...",
+            "actions": {
+              "createMenuPermission": "+ Add Menu Permission",
+              "createApiPermission": "+ Add API Permission",
+              "deleteConfirm": "Are you sure you want to delete this permission? This will revoke it from all roles."
+            },
+            "filters": {
+              "all": "All",
+              "menu": "Menu",
+              "api": "API"
+            },
+            "table": {
+              "id": "ID",
+              "name": "Permission Name / Description",
+              "type": "Type",
+              "summary": "Menu Key / API Route",
+              "usedByRoles": "Used by Roles",
+              "actions": "Actions"
+            },
+            "missingApis": {
+              "title": "Unregistered API Endpoints",
+              "subtitle": "Automatically discovered from Gateway OpenAPI Docs but not defined in the permissions DB.",
+              "addAction": "Register Permission",
+              "empty": "Excellent! No missing API permissions detected."
+            },
+            "modal": {
+              "createTitle": "Create Access Permission",
+              "editTitle": "Edit Access Permission",
+              "name": "Permission Name",
+              "namePlaceholder": "e.g., API:GET:USER_PROFILE or MENU:DASHBOARD",
+              "description": "Description",
+              "descriptionPlaceholder": "Describe the purpose and scope of this permission...",
+              "menuKey": "Menu Key Path",
+              "menuKeyPlaceholder": "e.g., /admin/dashboard",
+              "apiMethod": "API HTTP Method",
+              "apiMethodPlaceholder": "GET, POST, PUT, DELETE, PATCH...",
+              "apiPath": "API Endpoint Path",
+              "apiPathPlaceholder": "e.g., /api/users/{id}"
+            },
+            "messages": {
+              "loadFailed": "Failed to load permissions!",
+              "loadMissingApiFailed": "Failed to load unregistered APIs!",
+              "nameRequired": "Permission name is required!",
+              "menuKeyRequired": "Menu key is required!",
+              "apiFieldRequired": "Both API method and path are required!",
+              "createSuccess": "Permission created successfully!",
+              "createFailed": "Failed to create permission!",
+              "updateSuccess": "Permission updated successfully!",
+              "updateFailed": "Failed to update permission!",
+              "deleteSuccess": "Permission deleted successfully!",
+              "deleteFailed": "Failed to delete permission!"
+            },
+            "types": {
+              "menu": "MENU",
+              "api": "API"
+            }
+          }
         }
       }
     }

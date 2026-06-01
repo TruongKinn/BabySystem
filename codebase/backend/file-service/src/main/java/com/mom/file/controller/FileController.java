@@ -62,6 +62,14 @@ public class FileController {
         return ApiResponse.ok("Success", fileService.getDownloadUrl(fileId, expirySeconds, disposition));
     }
 
+    @PostMapping("/files/{id}/tag")
+    public ApiResponse<FileMetadataResponse> updateTag(
+            @PathVariable("id") Long fileId,
+            @RequestParam("tag") String tag
+    ) {
+        return ApiResponse.ok("File tag updated", fileService.updateTag(fileId, tag));
+    }
+
     @DeleteMapping("/files/{id}")
     public ApiResponse<Object> deleteFile(
             @PathVariable("id") Long fileId,

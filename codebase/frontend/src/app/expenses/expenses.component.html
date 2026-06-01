@@ -25,6 +25,11 @@
         {{ 'commonActions.refresh' | translate }}
       </button>
 
+      <button nz-button nzType="primary" (click)="openOcrModal()" class="btn-user-primary animate-pulse-orange" style="background: var(--user-grad-2); margin-right: 8px;">
+        <span nz-icon nzType="scan"></span>
+        {{ 'app.expenses.ocr.btnScan' | translate }}
+      </button>
+
       <button nz-button nzType="primary" (click)="openCreateModal()" class="btn-user-primary">
         <span nz-icon nzType="plus"></span>
         {{ 'momApp.expenses.actions.create' | translate }}
@@ -1137,4 +1142,127 @@
       </nz-form-item>
     </form>
   </ng-container>
+</nz-modal>
+
+<!-- Modal: AI OCR Receipt Scanner (Fintech side-by-side style) -->
+<nz-modal [(nzVisible)]="isOcrModalVisible" [nzTitle]="ocrTitleTpl" nzClassName="user-role-modal ocr-scanner-modal"
+  [nzWidth]="1080" [nzFooter]="ocrFooterTpl" (nzOnCancel)="closeOcrModal()">
+  <ng-template #ocrTitleTpl>
+    <div style="display:flex;align-items:center;gap:12px">
+      <span class="modal-title-icon-wrap modal-title-icon-wrap--teal" style="background: var(--user-grad-2);">
+        <span nz-icon nzType="scan"></span>
+      </span>
+      <span class="modal-title-text">
+        <span class="modal-title-main">{{ 'app.expenses.ocr.modalTitle' | translate }}</span>
+        <span class="modal-title-sub">{{ 'app.expenses.ocr.modalSub' | translate }}</span>
+      </span>
+    </div>
+  </ng-template>
+
+  <ng-container *nzModalContent>
+    <div class="ocr-scanner-layout">
+      <!-- Cột bên trái: Ảnh hóa đơn & Preview/Laser Scan -->
+      <div class="ocr-preview-panel">
+        <div *ngIf="!ocrPreviewUrl" class="ocr-dropzone" (click)="ocrFileInput.click()">
+          <input #ocrFileInput type="file" accept="image/*,.pdf" (change)="onOcrFileSelected($event)" hidden />
+          <span nz-icon nzType="cloud-upload" class="dropzone-icon"></span>
+          <span class="dropzone-text">{{ 'app.expenses.ocr.dragDropText' | translate }}</span>
+          <span class="dropzone-sub">{{ 'app.expenses.ocr.dragDropSub' | translate }}</span>
+        </div>
+
+        <div *ngIf="ocrPreviewUrl" class="ocr-image-preview-container">
+          <img [src]="ocrPreviewUrl" class="ocr-image-preview" alt="Hóa đơn quét" />
+          
+          <!-- Hoạt ảnh quét Laser Pulse VisionOS -->
+          <div class="ocr-laser-scanner" *ngIf="isOcrScanning">
+            <div class="laser-beam"></div>
+            <div class="laser-overlay">
+              <span nz-icon nzType="loading" class="laser-loading-icon"></span>
+              <p class="laser-text">{{ 'app.expenses.ocr.scanning' | translate }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cột bên phải: Form đối soát dữ liệu nháp -->
+      <div class="ocr-form-panel">
+        <h3 class="form-panel-title">{{ 'app.expenses.ocr.formTitle' | translate }}</h3>
+        
+        <!-- Skeleton Loading khi đang quét AI -->
+        <div class="ocr-skeleton" *ngIf="isOcrScanning">
+          <div class="skeleton-item skeleton-input"></div>
+          <div class="skeleton-item skeleton-input"></div>
+          <div class="skeleton-item skeleton-input"></div>
+          <div class="skeleton-item skeleton-textarea"></div>
+        </div>
+
+        <!-- Form thực tế để người dùng đối soát -->
+        <form nz-form [formGroup]="ocrDraftForm" nzLayout="vertical" class="user-modal-form-grid" *ngIf="!isOcrScanning">
+          <nz-form-item>
+            <nz-form-label nzRequired>{{ 'app.expenses.ocr.amountLabel' | translate }}</nz-form-label>
+            <nz-form-control>
+              <input nz-input type="number" formControlName="amount" placeholder="0" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzRequired>{{ 'app.expenses.ocr.categoryLabel' | translate }}</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="categoryName" placeholder="{{ 'app.expenses.ocr.categoryPlaceholder' | translate }}" [nzAutocomplete]="ocrAuto" />
+              <nz-autocomplete #ocrAuto [nzBackfill]="true">
+                <nz-auto-option *ngFor="let cat of categoryFilters" [nzValue]="cat.name" [nzLabel]="cat.name">
+                  <span class="category-dot" [style.background]="cat.colorCode || '#8b5cf6'" style="display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px"></span>
+                  <span>{{ cat.name }}</span>
+                </nz-auto-option>
+              </nz-autocomplete>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzRequired>{{ 'app.expenses.ocr.dateLabel' | translate }}</nz-form-label>
+            <nz-form-control>
+              <nz-date-picker formControlName="date" style="width: 100%; border-radius: 8px; height: 38px;" [nzFormat]="'yyyy-MM-dd'"></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item class="modal-field-full">
+            <nz-form-label>{{ 'app.expenses.ocr.noteLabel' | translate }}</nz-form-label>
+            <nz-form-control>
+              <textarea nz-input rows="3" formControlName="note" placeholder="{{ 'app.expenses.ocr.notePlaceholder' | translate }}"></textarea>
+            </nz-form-control>
+          </nz-form-item>
+        </form>
+
+        <!-- Hiển thị confidence score và items chi tiết nếu quét thành công -->
+        <div class="ocr-additional-info animate-fade-in" *ngIf="!isOcrScanning && ocrConfidence !== null">
+          <div class="confidence-badge" style="background: rgba(16, 185, 129, 0.08); padding: 8px 12px; border-radius: 6px; font-weight: 500; display: inline-flex; align-items: center; font-size: 13px; color: #059669; margin-bottom: 12px;">
+            <span nz-icon nzType="check-circle" style="color: #10b981; margin-right: 6px; font-size: 16px;"></span>
+            {{ 'app.expenses.ocr.confidence' | translate }}: <strong style="margin-left: 4px;">{{ ocrConfidence * 100 | number: '1.0-0' }}%</strong>
+          </div>
+
+          <div class="extracted-items" *ngIf="ocrItems.length > 0" style="background: rgba(249, 115, 22, 0.04); border: 1px solid rgba(249, 115, 22, 0.1); border-radius: 8px; padding: 12px;">
+            <div class="extracted-items-title" style="font-weight: 700; color: var(--user-primary); font-size: 12px; text-transform: uppercase; margin-bottom: 8px;">{{ 'app.expenses.ocr.extractedItemsTitle' | translate }}</div>
+            <div class="item-row" *ngFor="let item of ocrItems" style="display: flex; justify-content: space-between; border-bottom: 1px dashed rgba(0,0,0,0.06); padding: 6px 0; font-size: 13px; color: var(--text-main);">
+              <span class="item-name" style="flex: 1; font-weight: 500;">{{ item.name }}</span>
+              <span class="item-qty" style="color: var(--text-secondary); margin: 0 16px;">x{{ item.quantity }}</span>
+              <span class="item-price" style="font-weight: 600; color: var(--user-primary);">{{ item.price | number: '1.0-0' }} ₫</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+
+  <ng-template #ocrFooterTpl>
+    <div style="display: flex; justify-content: flex-end; gap: 8px; width: 100%;">
+      <button nz-button nzType="default" class="btn-user-outline" (click)="closeOcrModal()">
+        {{ 'app.expenses.ocr.cancelBtn' | translate }}
+      </button>
+      <button nz-button nzType="primary" class="btn-user-primary glow-effect" style="background: var(--user-grad-2);"
+        [nzLoading]="isSubmitting" [disabled]="isOcrScanning || ocrDraftForm.invalid || !ocrPreviewUrl" (click)="submitOcrExpense()">
+        <span nz-icon nzType="save" style="margin-right: 6px;"></span>
+        {{ 'app.expenses.ocr.confirmSave' | translate }}
+      </button>
+    </div>
+  </ng-template>
 </nz-modal>

@@ -79,7 +79,8 @@ export class App implements OnInit, OnDestroy {
       children: [
         { labelKey: 'momApp.layout.menu.expenses', icon: 'wallet', route: '/app/expenses' },
         { labelKey: 'momApp.layout.menu.shopping', icon: 'shopping-cart', route: '/app/shopping' },
-        { labelKey: 'momApp.layout.menu.insights', icon: 'bar-chart-2', route: '/app/insights' }
+        { labelKey: 'momApp.layout.menu.insights', icon: 'bar-chart-2', route: '/app/insights' },
+        { labelKey: 'momApp.layout.menu.invoices', icon: 'file-done', route: '/app/invoices' }
       ]
     },
     {

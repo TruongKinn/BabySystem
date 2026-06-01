@@ -1,0 +1,74 @@
+{
+  "momApp": {
+    "admin": {
+      "permissions": {
+        "hero": {
+          "kicker": "系统设置",
+          "title": "访问控制与菜单管理",
+          "subtitle": "声明导航菜单，管理系统 API 端点，并自动检测缺少的权限。"
+        },
+        "stats": {
+          "total": "总权限数",
+          "menu": "菜单权限",
+          "api": "API 权限"
+        },
+        "searchPlaceholder": "按名称、菜单键、API 方法、路径搜索...",
+        "actions": {
+          "createMenuPermission": "+ 添加菜单权限",
+          "createApiPermission": "+ 添加 API 权限",
+          "deleteConfirm": "您确定要删除此权限吗？这将撤销所有拥有该权限角色的访问资格。"
+        },
+        "filters": {
+          "all": "全部",
+          "menu": "菜单",
+          "api": "API"
+        },
+        "table": {
+          "id": "ID",
+          "name": "权限名称 / 描述",
+          "type": "类型",
+          "summary": "菜单键 / API 路由",
+          "usedByRoles": "被角色使用",
+          "actions": "操作"
+        },
+        "missingApis": {
+          "title": "未注册的 API 端点",
+          "subtitle": "从网关 OpenAPI 文档中自动检测到，但尚未在权限数据库中定义。",
+          "addAction": "注册权限",
+          "empty": "太棒了！未检测到缺少的 API 权限。"
+        },
+        "modal": {
+          "createTitle": "创建访问权限",
+          "editTitle": "编辑访问权限",
+          "name": "权限名称",
+          "namePlaceholder": "例如 API:GET:USER_PROFILE 或 MENU:DASHBOARD",
+          "description": "详细描述",
+          "descriptionPlaceholder": "描述此权限的用途和范围...",
+          "menuKey": "菜单键路径",
+          "menuKeyPlaceholder": "例如 /admin/dashboard",
+          "apiMethod": "API HTTP 方法",
+          "apiMethodPlaceholder": "GET, POST, PUT, DELETE, PATCH...",
+          "apiPath": "API 端点路径",
+          "apiPathPlaceholder": "例如 /api/users/{id}"
+        },
+        "messages": {
+          "loadFailed": "加载权限失败！",
+          "loadMissingApiFailed": "加载未注册 API 失败！",
+          "nameRequired": "权限名称是必填项！",
+          "menuKeyRequired": "菜单键是必填项！",
+          "apiFieldRequired": "API 方法和路径都是必填项！",
+          "createSuccess": "创建权限成功！",
+          "createFailed": "创建权限失败！",
+          "updateSuccess": "更新权限成功！",
+          "updateFailed": "更新权限失败！",
+          "deleteSuccess": "删除权限成功！",
+          "deleteFailed": "删除权限失败！"
+        },
+        "types": {
+          "menu": "菜单",
+          "api": "API"
+        }
+      }
+    }
+  }
+}
