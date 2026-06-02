@@ -126,7 +126,7 @@
           </span>
         </div>
         <div class="account-actions" style="display: flex; gap: 12px; margin-top: 24px; padding-top: 16px; border-top: 1px dashed rgba(249, 115, 22, 0.15); justify-content: flex-end;">
-          <button nz-button nzType="default" class="btn-user-outline" nzSize="default" (click)="openEditProfile(profile)">
+          <button nz-button nzType="primary" class="btn-user-primary" nzSize="default" (click)="openEditProfile(profile)">
             <span nz-icon nzType="edit" nzTheme="outline"></span>
             {{ 'app.profile.actions.editProfile' | translate }}
           </button>
@@ -244,7 +244,10 @@
           </div>
           <div class="security-item__actions" style="display: flex; gap: 12px; align-items: center;">
             <span class="security-badge security-badge--ok">{{ 'app.profile.cards.security.password.status' | translate }}</span>
-            <button nz-button nzType="default" nzSize="small" class="btn-user-outline" (click)="openChangePassword()">{{ 'app.profile.cards.security.password.changeBtn' | translate }}</button>
+            <button nz-button nzType="primary" nzSize="small" class="btn-user-primary" (click)="openChangePassword()">
+              <span nz-icon nzType="key" nzTheme="outline"></span>
+              {{ 'app.profile.cards.security.password.changeBtn' | translate }}
+            </button>
           </div>
         </div>
         <div class="security-item">
@@ -279,7 +282,8 @@
             <span class="security-badge" [class.security-badge--ok]="is2faEnabled" [class.security-badge--warn]="!is2faEnabled">
               {{ (is2faEnabled ? 'app.profile.2fa.status.enabled' : 'app.profile.2fa.status.disabled') | translate }}
             </span>
-            <button nz-button nzType="default" nzSize="small" class="btn-user-outline" (click)="open2faSetup()">
+            <button nz-button nzType="primary" nzSize="small" class="btn-user-primary" (click)="open2faSetup()">
+              <span nz-icon nzType="safety" nzTheme="outline"></span>
               {{ (is2faEnabled ? 'app.profile.2fa.status.turnOff' : 'app.profile.2fa.status.setup') | translate }}
             </button>
           </div>
