@@ -120,10 +120,15 @@ public class FamilyCopilotService {
         
         log.info("Fetching file metadata for fileId: {} from file-service with context", fileId);
         
+        // Tạo WebClient với cấu hình buffer size lớn (10MB) để tránh lỗi DataBufferLimitException khi tải file lớn
+        WebClient webClient = WebClient.builder()
+                .baseUrl(fileServiceUrl)
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
+                .build();
+        
         JsonNode fileMetadata;
         try {
-            org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec<?> requestSpec = WebClient.create(fileServiceUrl)
-                    .get()
+            org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec<?> requestSpec = webClient.get()
                     .uri("/api/files/" + fileId);
             
             if (accessContext.userId() != null) {
@@ -153,8 +158,7 @@ public class FamilyCopilotService {
         log.info("Fetching file content for fileId: {} from file-service with context", fileId);
         byte[] fileBytes;
         try {
-            org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec<?> requestSpec = WebClient.create(fileServiceUrl)
-                    .get()
+            org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec<?> requestSpec = webClient.get()
                     .uri("/api/files/" + fileId + "/view");
             
             if (accessContext.userId() != null) {

@@ -380,7 +380,7 @@
             <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; display: block;">{{ 'momApp.expenses.filters.search' | translate }}</label>
             <nz-input-group [nzPrefix]="prefixIconSearchModal" class="user-search-input-group">
               <input nz-input [value]="searchKeyword" (input)="onSearchKeywordChange($any($event.target).value)"
-                [placeholder]="'momApp.expenses.filters.searchPlaceholder' | translate" style="height: 38px; border-radius: 8px;" />
+                [placeholder]="'momApp.expenses.filters.searchPlaceholder' | translate" />
             </nz-input-group>
             <ng-template #prefixIconSearchModal>
               <span nz-icon nzType="search" style="color: var(--user-primary);"></span>
@@ -1171,7 +1171,16 @@
         </div>
 
         <div *ngIf="ocrPreviewUrl" class="ocr-image-preview-container">
-          <img [src]="ocrPreviewUrl" class="ocr-image-preview" alt="Hóa đơn quét" />
+          <!-- PDF Viewer using iframe -->
+          <iframe *ngIf="isOcrPdf"
+            [src]="ocrPreviewUrl"
+            width="100%"
+            style="border: none; background: #fff; height: 100%; min-height: 420px; display: block;"
+            title="PDF Document OCR Preview">
+          </iframe>
+          
+          <!-- Image Viewer -->
+          <img *ngIf="!isOcrPdf" [src]="ocrPreviewUrl" class="ocr-image-preview" alt="Hóa đơn quét" />
           
           <!-- Hoạt ảnh quét Laser Pulse VisionOS -->
           <div class="ocr-laser-scanner" *ngIf="isOcrScanning">

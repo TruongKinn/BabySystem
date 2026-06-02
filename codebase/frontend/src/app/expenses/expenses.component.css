@@ -106,54 +106,7 @@
   color: var(--text-secondary);
 }
 
-::ng-deep .user-filter-select.ant-select {
-  width: 100% !important;
-}
 
-::ng-deep .user-filter-select.ant-select .ant-select-selector {
-  height: 38px !important;
-  border-radius: 10px !important;
-  border: 1.5px solid var(--border-color) !important;
-  background: var(--surface-bg) !important;
-  display: flex !important;
-  align-items: center !important;
-  transition: all 0.3s ease !important;
-  color: var(--text-main) !important;
-}
-
-::ng-deep .user-filter-select.ant-select:hover .ant-select-selector {
-  border-color: rgba(249, 115, 22, 0.5) !important;
-}
-
-::ng-deep .user-filter-select.ant-select-focused .ant-select-selector {
-  border-color: var(--user-primary) !important;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
-}
-
-.user-search-input-group.ant-input-affix-wrapper {
-  height: 38px !important;
-  border-radius: 10px !important;
-  border: 1.5px solid var(--border-color) !important;
-  background: var(--surface-bg) !important;
-  padding: 0 12px !important;
-  transition: all 0.3s ease !important;
-}
-
-.user-search-input-group.ant-input-affix-wrapper:hover {
-  border-color: rgba(249, 115, 22, 0.5) !important;
-}
-
-.user-search-input-group.ant-input-affix-wrapper-focused {
-  border-color: var(--user-primary) !important;
-  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
-}
-
-.user-search-input-group input.ant-input {
-  background: transparent !important;
-  color: var(--text-main) !important;
-  height: 34px !important;
-  border: none !important;
-}
 
 .filter-actions {
   display: flex;

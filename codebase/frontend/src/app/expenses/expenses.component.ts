@@ -135,10 +135,12 @@ export class ExpensesComponent implements OnInit {
   // ---- AI OCR Receipt Scanner ----
   isOcrModalVisible = false;
   isOcrScanning = false;
-  ocrPreviewUrl: SafeUrl | string | null = null;
+  ocrPreviewUrl: SafeResourceUrl | SafeUrl | string | null = null;
+  isOcrPdf = false;
   uploadedFileIdForOcr: number | null = null;
   ocrItems: any[] = [];
   ocrConfidence: number | null = null;
+  private ocrObjectUrl: string | null = null;
 
   // --- Kho Hóa đơn Phân trang (BE & FE) ---
   isExpensesListModalVisible = false;
@@ -1295,6 +1297,13 @@ export class ExpensesComponent implements OnInit {
   }
 
   // ---- AI OCR Receipt Scanner Operations ----
+  private revokeOcrObjectUrl(): void {
+    if (this.ocrObjectUrl) {
+      URL.revokeObjectURL(this.ocrObjectUrl);
+      this.ocrObjectUrl = null;
+    }
+  }
+
   openOcrModal(): void {
     this.isOcrModalVisible = true;
   }
@@ -1303,7 +1312,9 @@ export class ExpensesComponent implements OnInit {
     this.isOcrModalVisible = false;
     this.isOcrScanning = false;
     this.uploadedFileIdForOcr = null;
+    this.revokeOcrObjectUrl();
     this.ocrPreviewUrl = null;
+    this.isOcrPdf = false;
     this.ocrItems = [];
     this.ocrConfidence = null;
     this.ocrDraftForm.reset({
@@ -1325,8 +1336,16 @@ export class ExpensesComponent implements OnInit {
       return;
     }
 
+    this.revokeOcrObjectUrl();
+    this.isOcrPdf = file.name.toLowerCase().endsWith('.pdf');
     const objectUrl = URL.createObjectURL(file);
-    this.ocrPreviewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+    this.ocrObjectUrl = objectUrl;
+
+    if (this.isOcrPdf) {
+      this.ocrPreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(objectUrl);
+    } else {
+      this.ocrPreviewUrl = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+    }
 
     this.isOcrScanning = true;
     this.command.uploadFile(file, this.expenseReceiptBucket, 'ocr-temp').subscribe({
