@@ -1007,6 +1007,14 @@ export class SuperAppCommandService {
       .pipe(map(() => undefined));
   }
 
+  sendInvoiceOtp(invoiceNo: string): Observable<any> {
+    return this.post<any>(`/expense/invoices/otp/send?invoiceNo=${encodeURIComponent(invoiceNo)}`, {});
+  }
+
+  verifyInvoiceOtp(invoiceNo: string, otpCode: string): Observable<any> {
+    return this.post<any>(`/expense/invoices/otp/verify?invoiceNo=${encodeURIComponent(invoiceNo)}&otpCode=${encodeURIComponent(otpCode)}`, {});
+  }
+
   createTask(input: {
     title: string;
     description: string;

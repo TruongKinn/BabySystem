@@ -74,7 +74,6 @@ export class InvoicesComponent implements OnInit {
   countdownTimer: any;
   pendingAction: 'save' | 'download' | 'print' | null = null;
   requireOtpForSigning = true;
-  generatedOtp = '';
 
   // Lịch sử hóa đơn
   invoicesList: InvoiceResponse[] = [];
@@ -324,7 +323,7 @@ export class InvoicesComponent implements OnInit {
             fileMetadataId: String(fileMeta.id),
             authorizedSigner: formVal.authorizedSigner,
             isDigitallySigned: this.isVerified && this.requireOtpForSigning,
-            signatureOtp: this.isVerified && this.requireOtpForSigning ? this.generatedOtp : undefined,
+            signatureOtp: undefined,
             signedAt: this.isVerified && this.requireOtpForSigning ? new Date().toISOString() : undefined,
             items: formVal.items.map((it: any) => ({
               name: it.name ? it.name.trim() : 'Sản phẩm',
@@ -466,26 +465,19 @@ export class InvoicesComponent implements OnInit {
   // Xử lý OTP Ký Số Điện Tử (Digital Signature Verify)
   // ==========================================================================
   openOtpModal(): void {
-    const randomOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    this.generatedOtp = randomOtp;
+    const invoiceNo = this.invoiceForm.value.invoiceNo;
     this.isOtpModalVisible = true;
     this.otpDigits = ['', '', '', '', '', ''];
     this.startCountdown();
     this.focusFirstOtpInput();
  
-    // Gửi notification thật vào hệ thống Family OS
-    this.command.createNotification({
-      userId: this.command.getUserId(),
-      title: 'MÃ OTP XÁC THỰC KÝ SỐ - FAMILY OS',
-      message: `Mã OTP xác thực ký số cho hóa đơn ${this.invoiceForm.value.invoiceNo} của bạn là: ${randomOtp}. Mã có hiệu lực trong 60 giây.`,
-      type: 'EXPENSE'
-    }).subscribe({
+    this.command.sendInvoiceOtp(invoiceNo).subscribe({
       next: () => {
-        this.message.success('Mã OTP xác thực đã được gửi tới hệ thống thông báo gia đình!');
+        this.message.success(this.i18n.translate('app.invoices.otpSentSuccess') || 'Mã OTP xác thực đã được gửi tới hệ thống thông báo!');
       },
       error: (err) => {
-        console.error('Failed to send OTP notification:', err);
-        this.message.warning(`Không thể kết nối notification-service. Mã OTP của bạn là: ${randomOtp}`);
+        console.error('Failed to send OTP:', err);
+        this.message.error(err?.error?.message || 'Không thể gửi mã OTP ký số. Vui lòng thử lại.');
       }
     });
   }
@@ -513,24 +505,18 @@ export class InvoicesComponent implements OnInit {
   }
  
   resendOtp(): void {
-    const randomOtp = Math.floor(100000 + Math.random() * 900000).toString();
-    this.generatedOtp = randomOtp;
+    const invoiceNo = this.invoiceForm.value.invoiceNo;
     this.otpDigits = ['', '', '', '', '', ''];
     this.startCountdown();
     this.focusFirstOtpInput();
  
-    this.command.createNotification({
-      userId: this.command.getUserId(),
-      title: 'MÃ OTP XÁC THỰC KÝ SỐ - FAMILY OS',
-      message: `Mã OTP mới xác thực ký số cho hóa đơn ${this.invoiceForm.value.invoiceNo} của bạn là: ${randomOtp}. Vui lòng không chia sẻ mã này.`,
-      type: 'EXPENSE'
-    }).subscribe({
+    this.command.sendInvoiceOtp(invoiceNo).subscribe({
       next: () => {
-        this.message.success('Đã gửi lại mã OTP mới tới hệ thống thông báo!');
+        this.message.success(this.i18n.translate('app.invoices.otpResentSuccess') || 'Đã gửi lại mã OTP mới tới hệ thống thông báo!');
       },
       error: (err) => {
-        console.error('Failed to resend OTP notification:', err);
-        this.message.warning(`Đã sinh lại mã OTP mới! Mã của bạn: ${randomOtp}`);
+        console.error('Failed to resend OTP:', err);
+        this.message.error(err?.error?.message || 'Không thể gửi lại mã OTP. Vui lòng thử lại.');
       }
     });
   }
@@ -538,35 +524,41 @@ export class InvoicesComponent implements OnInit {
   verifyOtp(): void {
     const otp = this.otpDigits.join('');
     if (otp.length < 6) {
-      this.message.warning('Vui lòng nhập đủ 6 chữ số OTP.');
+      this.message.warning(this.i18n.translate('app.invoices.otpIncomplete') || 'Vui lòng nhập đủ 6 chữ số OTP.');
       return;
     }
 
-    if (otp === this.generatedOtp) {
-      this.isVerified = true;
-      this.isOtpModalVisible = false;
-      this.message.success('Ký số điện tử thành công! Dấu mộc Family Verify đã được kích hoạt.');
-      
-      if (this.countdownTimer) {
-        clearInterval(this.countdownTimer);
-      }
- 
-      // Tiếp tục thực hiện hành động đang chờ
-      const action = this.pendingAction;
-      this.pendingAction = null;
-      
-      setTimeout(() => {
-        if (action === 'save') {
-          this.saveToDocuments();
-        } else if (action === 'download') {
-          this.downloadPdf();
-        } else if (action === 'print') {
-          this.printInvoice();
+    const invoiceNo = this.invoiceForm.value.invoiceNo;
+
+    this.command.verifyInvoiceOtp(invoiceNo, otp).subscribe({
+      next: () => {
+        this.isVerified = true;
+        this.isOtpModalVisible = false;
+        this.message.success(this.i18n.translate('app.invoices.otpVerifySuccess') || 'Ký số điện tử thành công! Dấu mộc Family Verify đã được kích hoạt.');
+        
+        if (this.countdownTimer) {
+          clearInterval(this.countdownTimer);
         }
-      }, 500);
-    } else {
-      this.message.error('Mã OTP không chính xác. Vui lòng kiểm tra lại trong chuông thông báo.');
-    }
+   
+        // Tiếp tục thực hiện hành động đang chờ
+        const action = this.pendingAction;
+        this.pendingAction = null;
+        
+        setTimeout(() => {
+          if (action === 'save') {
+            this.saveToDocuments();
+          } else if (action === 'download') {
+            this.downloadPdf();
+          } else if (action === 'print') {
+            this.printInvoice();
+          }
+        }, 500);
+      },
+      error: (err) => {
+        console.error('Failed to verify OTP:', err);
+        this.message.error(err?.error?.message || this.i18n.translate('app.invoices.otpVerifyFailed') || 'Mã OTP không chính xác. Vui lòng kiểm tra lại trong chuông thông báo.');
+      }
+    });
   }
 
   onOtpInput(event: Event, index: number): void {

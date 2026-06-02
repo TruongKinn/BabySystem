@@ -4,47 +4,78 @@ Tài liệu này hướng dẫn chi tiết về cơ chế xác thực ký số �
 
 ---
 
-## 1. Tổng Quan Quy Trình Ký Số & Lưu DB Kiểm Chứng
+## 1. Tổng Quan Quy Trình Ký Số & Lưu DB Kiểm Chứng (2FA DB-Backed OTP)
 
-Để đảm bảo tính pháp lý và an toàn cho các giao dịch tài chính gia đình, hệ thống áp dụng cơ chế xác thực đa yếu tố (2FA) trước khi cho phép người dùng thực hiện các thao tác: In, Tải PDF, và Lưu Hóa đơn. Đặc biệt, **mã OTP thật cùng với toàn bộ thông tin chứng thực ký số sẽ được lưu trữ trực tiếp vào Cơ sở dữ liệu (DB)** phục vụ mục đích hậu kiểm (auditing) và kiểm chứng sau này.
+Để đảm bảo tính pháp lý, bảo mật cao và chống hoàn toàn việc bypass từ Client-side, hệ thống áp dụng cơ chế xác thực đa yếu tố (2FA) sử dụng Database để sinh, lưu trữ và xác thực mã OTP trước khi cho phép người dùng thực hiện thao tác: In, Tải PDF, và Lưu Hóa đơn.
 
 ```mermaid
-graph TD
-    A[Người dùng click In/Tải/Lưu] --> B{requireOtpForSigning == true?}
-    B -- Không --> C[Thực hiện hành động trực tiếp]
-    B -- Có --> D{isVerified == true?}
-    D -- Có --> C
-    D -- Không --> E[Kích hoạt Modal OTP & Sinh mã 6 số]
-    E --> F[Gửi Notification chứa OTP thật tới chuông thông báo]
-    F --> G[Người dùng nhập OTP vào 6 ô độc lập]
-    G --> H{Mã khớp?}
-    H -- Không --> I[Báo đỏ / Yêu cầu nhập lại]
-    H -- Có --> J[Đặt isVerified = true & Đóng dấu mộc đỏ FAMILY OS VERIFIED]
-    J --> K[Gộp thông tin OTP, Người ký, Thời gian ký gửi lên API]
-    K --> L[Lưu thông tin chứng thực ký số vào invoices table ở DB]
-    L --> C
+sequenceDiagram
+    autonumber
+    actor User as Người dùng
+    participant FE as Angular Frontend
+    participant BE as Expense Microservice
+    participant DB as PostgreSQL Database
+    participant NS as Notification Service
+
+    User->>FE: Bật "Yêu cầu ký số" & Click "Lưu/Tải/In"
+    FE->>BE: POST /api/invoices/otp/send?invoiceNo=INV-XXXX
+    Note over BE: Sinh OTP 6 số ngẫu nhiên & thời gian hết hạn 60s
+    BE->>DB: Lưu bản ghi OTP (is_verified = false)
+    BE->>NS: REST POST /api/notifications (chứa mã OTP)
+    BE-->>FE: Trả về 200 OK (Không kèm OTP)
+    NS-->>User: Gửi PUSH Notification chứa mã OTP
+    User->>FE: Xem Notification & Điền 6 chữ số OTP
+    FE->>BE: POST /api/invoices/otp/verify?invoiceNo=INV-XXXX&otpCode=YYYYYY
+    BE->>DB: Lấy OTP mới nhất theo invoiceNo & So khớp
+    BE->>DB: Cập nhật is_verified = true
+    BE-->>FE: Trả về 200 OK (Xác thực thành công)
+    FE->>FE: Set isVerified = true, tự động trigger lưu hóa đơn
+    FE->>BE: POST /api/invoices (isDigitallySigned=true)
+    Note over BE: Kiểm tra chéo bảng otp_signatures xem invoiceNo đã verify chưa
+    BE->>DB: Lấy OTP đã verify trong vòng 10 phút gần đây
+    alt OTP chưa verify hoặc quá hạn
+        BE-->>FE: Trả về 400 Bad Request (OTP chưa xác thực)
+    else OTP đã verify hợp lệ
+        BE->>BE: Lấy mã OTP gán vào signature_otp của hóa đơn
+        BE->>DB: Xóa bản ghi OTP đó để chống replay attack
+        BE->>DB: INSERT INTO invoices (Lưu hóa đơn kèm chữ ký số hoàn chỉnh)
+        BE-->>FE: Trả về 201 Created (Thành công)
+    end
 ```
 
 ---
 
 ## 2. Thiết Kế Cơ Sở Dữ Liệu & Audit Trail
 
-### 2.1 Cập Nhật Schema Migration SQL
-Chúng ta đã tạo thêm một file migration SQL mới **`V7__add_invoice_digital_signature_fields.sql`** để mở rộng cấu trúc bảng `invoices`, phục vụ lưu trữ thông tin kiểm chứng ký số:
-
-```sql
--- Migration to add digital signature verification fields to invoices table for auditing
-ALTER TABLE invoices ADD COLUMN authorized_signer VARCHAR(100);
-ALTER TABLE invoices ADD COLUMN is_digitally_signed BOOLEAN NOT NULL DEFAULT FALSE;
-ALTER TABLE invoices ADD COLUMN signature_otp VARCHAR(6);
-ALTER TABLE invoices ADD COLUMN signed_at TIMESTAMPTZ;
-```
-
-### 2.2 Ý Nghĩa Các Trường Kiểm Chứng (Audit Columns)
+### 2.1 Cấu Trúc Bảng invoices (Audit Trail)
+Chúng ta sử dụng file migration SQL **`V7__add_invoice_digital_signature_fields.sql`** để mở rộng cấu trúc bảng `invoices`, phục vụ lưu trữ thông tin kiểm chứng ký số:
 - **`authorized_signer`** (Người ký tên phát hành): Tên của chủ tài khoản thực hiện ký phát hành hóa đơn (ví dụ: *"Chủ hộ Family OS"* hoặc tên người dùng cụ thể nhập từ form).
 - **`is_digitally_signed`** (Đã ký số điện tử): Cờ đánh dấu hóa đơn này đã được xác thực ký số qua OTP thật thành công (`true` hoặc `false`).
 - **`signature_otp`** (Mã OTP xác thực): Lưu vết chính xác mã OTP 6 chữ số ngẫu nhiên thật đã được sinh ra và gửi cho người dùng để xác nhận thao tác ký số hóa đơn này.
-- **`signed_at`** (Thời gian ký số): Ghi nhận chính xác ngày giờ (múi giờ UTC offset) người dùng xác nhận OTP thành công.
+- **`signed_at`** (Thời gian ký số): Ghi nhận chính xác ngày giờ người dùng xác nhận OTP thành công.
+
+### 2.2 Cấu Trúc Bảng otp_signatures (OTP Tạm Thời)
+Để quản lý và xác thực mã OTP an toàn ở phía Backend, chúng ta thiết lập bảng **`otp_signatures`** thông qua file migration **`V8__create_otp_signatures_table.sql`**:
+
+```sql
+CREATE TABLE IF NOT EXISTS otp_signatures (
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    invoice_no VARCHAR(50) NOT NULL,
+    otp_code VARCHAR(6) NOT NULL,
+    expired_at TIMESTAMPTZ NOT NULL,
+    is_verified BOOLEAN NOT NULL DEFAULT FALSE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+CREATE INDEX IF NOT EXISTS idx_otp_signatures_invoice_no ON otp_signatures(invoice_no);
+```
+
+Các trường thông tin bao gồm:
+- **`user_id`**: ID của người dùng yêu cầu sinh mã OTP.
+- **`invoice_no`**: Mã số hóa đơn điện tử liên kết.
+- **`otp_code`**: Mã xác thực OTP 6 chữ số sinh ngẫu nhiên.
+- **`expired_at`**: Thời điểm hết hạn của OTP (sau 60 giây).
+- **`is_verified`**: Đánh dấu OTP đã được đối chiếu và xác thực thành công trong DB.
 
 ---
 

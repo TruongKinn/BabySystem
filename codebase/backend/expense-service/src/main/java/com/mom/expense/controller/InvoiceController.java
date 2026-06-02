@@ -28,6 +28,21 @@ public class InvoiceController {
         return ApiResponse.ok("Invoice created", invoiceService.createInvoice(request));
     }
 
+    @PostMapping("/otp/send")
+    public ApiResponse<Object> sendOtp(@RequestParam("invoiceNo") String invoiceNo) {
+        invoiceService.sendSignatureOtp(invoiceNo);
+        return ApiResponse.ok("OTP sent successfully", null);
+    }
+
+    @PostMapping("/otp/verify")
+    public ApiResponse<Object> verifyOtp(
+            @RequestParam("invoiceNo") String invoiceNo,
+            @RequestParam("otpCode") String otpCode
+    ) {
+        invoiceService.verifySignatureOtp(invoiceNo, otpCode);
+        return ApiResponse.ok("OTP verified successfully", null);
+    }
+
     @GetMapping("/{id}")
     public ApiResponse<InvoiceResponse> getInvoice(@PathVariable("id") Long id) {
         return ApiResponse.ok("Success", invoiceService.getInvoice(id));

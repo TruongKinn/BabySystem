@@ -62,5 +62,10 @@
   "otpModalCountdownText": "秒后重新发送",
   "otpModalResendBtn": "重新发送 OTP",
   "otpModalVerifyBtn": "签署并确认",
-  "otpModalCancelBtn": "取消"
+  "otpModalCancelBtn": "取消",
+  "otpSentSuccess": "验证码已发送至通知系统！",
+  "otpResentSuccess": "新的验证码已重新发送至通知系统！",
+  "otpIncomplete": "请输入完整的6位OTP验证码。",
+  "otpVerifySuccess": "数字签名成功！Family Verify印章已激活。",
+  "otpVerifyFailed": "验证码错误。请检查您的通知并重试。"
 }

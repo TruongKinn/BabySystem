@@ -2473,7 +2473,12 @@
       "otpModalCountdownText": "Resend code in",
       "otpModalResendBtn": "Resend OTP",
       "otpModalVerifyBtn": "Sign & Confirm",
-      "otpModalCancelBtn": "Cancel"
+      "otpModalCancelBtn": "Cancel",
+      "otpSentSuccess": "OTP verification code has been sent to notifications!",
+      "otpResentSuccess": "A new OTP code has been resent to notifications!",
+      "otpIncomplete": "Please enter all 6 digits of the OTP code.",
+      "otpVerifySuccess": "Digital signature successful! Family Verify seal has been activated.",
+      "otpVerifyFailed": "Incorrect OTP code. Please check your notifications and try again."
     }
   },
   "auth": {

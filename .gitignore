@@ -23,3 +23,6 @@ documents/authentication-service-secrets.md
 # Local scratch files
 scratch/
 
+# Backup files
+*.bak
+

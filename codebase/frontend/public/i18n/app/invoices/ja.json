@@ -62,5 +62,10 @@
   "otpModalCountdownText": "秒後に再送信",
   "otpModalResendBtn": "OTPを再送信",
   "otpModalVerifyBtn": "署名して確認",
-  "otpModalCancelBtn": "キャンセル"
+  "otpModalCancelBtn": "キャンセル",
+  "otpSentSuccess": "OTP認証コードが通知に送信されました！",
+  "otpResentSuccess": "新しいOTPコードが通知に再送信されました！",
+  "otpIncomplete": "6桁のOTPコードをすべて入力してください。",
+  "otpVerifySuccess": "デジタル署名が成功しました！Family Verifyスタンプが有効化されました。",
+  "otpVerifyFailed": "OTPコードが正しくありません。通知を確認してもう一度お試しください。"
 }

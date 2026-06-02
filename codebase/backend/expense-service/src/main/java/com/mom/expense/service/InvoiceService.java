@@ -9,4 +9,6 @@ public interface InvoiceService {
     InvoiceResponse getInvoice(Long id);
     InvoicePageResponse getInvoicesPage(Long familyId, String keyword, int page, int size);
     void deleteInvoice(Long id);
+    void sendSignatureOtp(String invoiceNo);
+    void verifySignatureOtp(String invoiceNo, String otpCode);
 }

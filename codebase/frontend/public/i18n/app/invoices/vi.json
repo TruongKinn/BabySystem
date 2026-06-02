@@ -62,5 +62,10 @@
   "otpModalCountdownText": "Gửi lại mã sau",
   "otpModalResendBtn": "Gửi lại OTP",
   "otpModalVerifyBtn": "Ký số & Xác nhận",
-  "otpModalCancelBtn": "Hủy"
+  "otpModalCancelBtn": "Hủy",
+  "otpSentSuccess": "Mã OTP xác thực đã được gửi tới hệ thống thông báo!",
+  "otpResentSuccess": "Đã gửi lại mã OTP mới tới hệ thống thông báo!",
+  "otpIncomplete": "Vui lòng nhập đủ 6 chữ số OTP.",
+  "otpVerifySuccess": "Ký số điện tử thành công! Dấu mộc Family Verify đã được kích hoạt.",
+  "otpVerifyFailed": "Mã OTP không chính xác. Vui lòng kiểm tra lại trong chuông thông báo."
 }
