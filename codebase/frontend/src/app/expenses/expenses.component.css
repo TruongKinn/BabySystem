@@ -101,9 +101,14 @@
 }
 
 .filter-field label {
+  display: block !important;
+  height: 18px !important;
+  line-height: 18px !important;
   font-size: 12px;
   font-weight: 600;
   color: var(--text-secondary);
+  margin-bottom: 6px !important;
+  padding: 0 !important;
 }
 
 

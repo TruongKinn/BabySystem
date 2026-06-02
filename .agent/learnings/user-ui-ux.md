@@ -1,7 +1,7 @@
 # User UI/UX & Modal Design System
 
 > Tổng hợp kiến thức về hệ thống giao diện và chuẩn hóa nút bấm, popup cho vai trò User trong dự án.
-> Cập nhật lần cuối: 2026-06-01
+> Cập nhật lần cuối: 2026-06-02
 
 ---
 
@@ -29,6 +29,30 @@
 - **Root cause**: Cả 2 sự kiện `keydown` và `input` cùng xử lý việc chèn giá trị và nhảy focus. Khi người dùng gõ phím số, sự kiện `keydown` chặn mặc định (`preventDefault`) và chuyển focus bằng `setTimeout` sang ô tiếp theo rất nhanh. Do focus đổi trước khi chu kỳ xử lý phím của trình duyệt hoàn tất, trình duyệt sẽ gửi sự kiện chèn ký tự thực tế tiếp theo lên ô mới được focus, dẫn đến rò rỉ ký tự sang ô kế tiếp.
 - **Fix**: Loại bỏ logic xử lý phím số trong sự kiện `keydown` (`onOtpKeyDown`). Sử dụng sự kiện `input` (`onOtpInput`) làm nơi duy nhất lọc giá trị và quản lý di chuyển focus. Đặc biệt, sử dụng `@ViewChildren('otpInput')` và `QueryList<ElementRef<HTMLInputElement>>` để truy cập các phần tử Native DOM một cách đúng chuẩn Angular, kết hợp với `setTimeout` (10ms) để dời việc chuyển focus ra khỏi luồng sự kiện hiện tại của trình duyệt, ngăn chặn triệt để hiện tượng rò rỉ ký tự phím bấm sang ô tiếp theo.
 - **Files liên quan**: `codebase/frontend/src/app/profile/profile.component.ts`, `codebase/frontend/src/app/profile/profile.component.html`
+
+### Misaligned Expenses Filter Input & Select
+- **Ngày**: 2026-06-02
+- **Vấn đề**: Ô Tìm kiếm (input) bị lệch lên cao (khoảng 6px) so với hai ô ng-select Danh mục và Sắp xếp trong bộ lọc Chi tiêu.
+- **Root cause**: CSS định nghĩa lớp `.user-search-input-group.ant-input-affix-wrapper` (liên kết không có khoảng trắng). Thực tế Ng-Zorro render lớp `.user-search-input-group` trên thẻ host ngoài cùng, còn `.ant-input-affix-wrapper` là phần tử con bên trong. CSS không ăn được khiến ô Tìm kiếm bị co về chiều cao mặc định (32px) thay vì 38px của select-box.
+- **Fix**: Cập nhật selector CSS thành `.user-search-input-group.ant-input-affix-wrapper, .user-search-input-group .ant-input-affix-wrapper` để style ăn khớp chính xác vào phần tử con.
+- **Files liên quan**: `codebase/frontend/src/styles.css`
+
+### Lệch Mép Dưới Dọc Theo Baseline Của Nhãn Label
+- **Ngày**: 2026-06-02
+- **Vấn đề**: Sau khi sửa ô Tìm kiếm cao 38px, mép dưới của nó vẫn bị lệch nhẹ khoảng 3px–4px so với ng-select.
+- **Root cause**: Label cột 1 "Danh mục" chứa chữ "g" có phần đuôi kéo xuống baseline, còn cột 2 "Tìm kiếm" không chứa. Thẻ `<label>` co giãn tự nhiên của trình duyệt khiến chiều cao label lệch nhau, đẩy input bên dưới lệch theo. Ngoài ra, việc gán Flexbox tùy chỉnh `.filter-field` trực tiếp lên thẻ Grid `nz-col` làm hỏng cơ chế Grid `nzAlign="bottom"` của Ant Design.
+- **Fix**:
+  1. Khóa chiều cao cố định của label ở mức `18px !important` và margin-bottom `6px !important` trong CSS component.
+  2. Tách biệt `nz-col` ra khỏi `.filter-field` (đưa `.filter-field` làm con bọc bên trong).
+  3. Ép chiều cao cứng `38px !important` đồng bộ ở mọi cấp độ thẻ (cả host `nz-input-group`, `nz-select` và con `.ant-input-affix-wrapper`, `.ant-select-selector`) trong global `styles.css`.
+- **Files liên quan**: `expenses.component.html`, `expenses.component.css`, `styles.css`
+
+### Các Ô Lọc Bị Dính Sát Vào Nhau Trong Modal
+- **Ngày**: 2026-06-02
+- **Vấn đề**: Trong modal "Kho Hóa đơn & Chứng từ Chi tiêu", ô select Danh mục và ô input Tìm kiếm bị dính chặt vào nhau, không có khoảng cách.
+- **Root cause**: Các CSS reset hoặc rule kế thừa trong modal của dự án đè lên và làm triệt tiêu thuộc tính padding mặc định của các cột `nz-col` trong Grid Ant Design.
+- **Fix**: Chuyển đổi bộ lọc sang sử dụng cấu trúc **CSS Grid** (`display: grid`) trực tiếp trên class `.filter-row` với thuộc tính `gap: 12px` (hoặc `gap: 16px` ở trang chính). Thuộc tính `gap` được trình duyệt dựng trực tiếp trên container và chắc chắn 100% không bao giờ có thể bị dính nhau.
+- **Files liên quan**: `expenses.component.html`
 
 ---
 
@@ -90,5 +114,13 @@
 - **Chi tiết**: Component `nz-date-picker` của Ng-Zorro yêu cầu dữ liệu liên kết `[(ngModel)]` hoặc `formControl` là một đối tượng `Date` (hoặc `null`/`undefined`). Để đồng bộ mượt mà với API lưu trữ dữ liệu dạng chuỗi (`yyyy-MM-dd` hoặc ISO string) mà không phải thay đổi các cấu trúc/hàm gọi API lớn, áp dụng pattern:
   1. Khởi tạo trường dữ liệu trong form/biến là `Date | null = null`.
   2. Khi nhận dữ liệu từ API, chuyển chuỗi sang `Date`: `dob ? new Date(dob) : null`.
-  3. Khi gửi dữ liệu lên API, sử dụng hàm chuẩn hóa tập trung `normalizeDateInput` hoặc `toIsoOffset` để chuyển `Date` object về chuỗi `'yyyy-MM-dd'` hoặc chuỗi ISO thích hợp.
+  3. Khi gửi dữ liệu lên API, sử dụng hàm chuẩn hóa tập trung `normalizeDateInput` or `toIsoOffset` để chuyển `Date` object về chuỗi `'yyyy-MM-dd'` hoặc chuỗi ISO thích hợp.
 - **Files liên quan**: `admin-families.component.ts`, `family.component.ts`, `admin-premium.component.ts`
+
+### Perfect Alignment for Filters (CSS Grid + Height Lock)
+- **Ngày**: 2026-06-02
+- **Chi tiết**: Để tạo ra bộ lọc (filter) thẳng hàng 100% không tì vết mà vẫn bảo toàn thiết kế Premium ấm áp, tinh tế:
+  1. Sử dụng CSS Grid (`display: grid`, `gap`, `align-items: end`) làm layout chủ đạo thay vì Grid thư viện dễ bị mất padding/gutter trong môi trường modal.
+  2. Khóa chiều cao cố định cho label (`height: 18px; line-height: 18px;`) và margin-bottom (`6px`) để triệt tiêu chênh lệch baseline do các ký tự có đuôi (g, p, y).
+  3. Ép chiều cao cứng phủ bì cho các select-box/input-box ở mức **38px** ở mọi cấp độ thẻ (cả host và con), đảm bảo không có sự chênh lệch kích thước thực tế hiển thị.
+- **Files liên quan**: `expenses.component.html`, `expenses.component.css`, `styles.css`

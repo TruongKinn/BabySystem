@@ -111,7 +111,7 @@
   </div>
 
   <nz-card class="table-card filter-card" nzSize="small">
-    <div class="filter-row">
+    <div class="filter-row" style="display: grid; grid-template-columns: 1.2fr 1.8fr 1.2fr auto; gap: 16px; align-items: end;">
       <div class="filter-field filter-field-category">
         <label>{{ 'momApp.expenses.filters.category' | translate }}</label>
         <nz-select 
@@ -148,7 +148,7 @@
       </div>
 
       <div class="filter-actions">
-        <button nz-button nzType="default" class="btn-user-outline" (click)="clearQuickFilters()" [disabled]="!hasActiveQuickFilter">
+        <button nz-button nzType="default" class="btn-user-outline" style="width: 100%; height: 38px !important;" (click)="clearQuickFilters()" [disabled]="!hasActiveQuickFilter">
           {{ 'momApp.expenses.filters.clear' | translate }}
         </button>
       </div>
@@ -359,9 +359,9 @@
 
     <ng-container *nzModalContent>
       <div class="expenses-list-body" style="padding: 8px 0;">
-        <!-- Compact Filters inside Dialog -->
+        <!-- Compact Filters inside Dialog using CSS Grid for absolute separation and alignment -->
         <div class="filter-row filter-row--compact" style="margin-bottom: 20px; display: grid; grid-template-columns: 1.2fr 1.5fr 1fr; gap: 12px; align-items: end;">
-          <div class="filter-field" style="display: flex; flex-direction: column;">
+          <div class="filter-field">
             <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; display: block;">{{ 'momApp.expenses.filters.category' | translate }}</label>
             <nz-select 
               [ngModel]="selectedCategoryId" 
@@ -376,7 +376,7 @@
             </nz-select>
           </div>
 
-          <div class="filter-field" style="display: flex; flex-direction: column;">
+          <div class="filter-field">
             <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; display: block;">{{ 'momApp.expenses.filters.search' | translate }}</label>
             <nz-input-group [nzPrefix]="prefixIconSearchModal" class="user-search-input-group">
               <input nz-input [value]="searchKeyword" (input)="onSearchKeywordChange($any($event.target).value)"
@@ -387,7 +387,7 @@
             </ng-template>
           </div>
 
-          <div class="filter-field" style="display: flex; flex-direction: column;">
+          <div class="filter-field">
             <label style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; margin-bottom: 6px; display: block;">{{ 'momApp.expenses.filters.sortLabel' | translate }}</label>
             <nz-select 
               [ngModel]="sortMode" 

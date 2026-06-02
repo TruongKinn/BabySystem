@@ -1083,8 +1083,10 @@ body {
 }
 
 /* --- Global Filter Select & Search Input styles (for portal Modals as well) --- */
-.user-filter-select {
+.user-filter-select,
+.user-filter-select.ant-select {
     width: 100% !important;
+    height: 38px !important;
 }
 
 .user-filter-select .ant-select-selector,
@@ -1104,6 +1106,7 @@ body {
 .user-filter-select.ant-select .ant-select-selection-item,
 .user-filter-select.ant-select .ant-select-selection-placeholder {
     line-height: 35px !important;
+    height: 35px !important;
 }
 
 .user-filter-select:hover .ant-select-selector,
@@ -1118,25 +1121,37 @@ body {
     box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
 }
 
-.user-search-input-group.ant-input-affix-wrapper {
+.user-search-input-group,
+.user-search-input-group.ant-input-group-wrapper {
+    height: 38px !important;
+    display: inline-block !important;
+}
+
+.user-search-input-group.ant-input-affix-wrapper,
+.user-search-input-group .ant-input-affix-wrapper {
     height: 38px !important;
     border-radius: 10px !important;
     border: 1.5px solid var(--border-color) !important;
     background: var(--surface-bg) !important;
     padding: 0 12px !important;
     transition: all 0.3s ease !important;
+    display: inline-flex !important;
+    align-items: center !important;
 }
 
-.user-search-input-group.ant-input-affix-wrapper:hover {
+.user-search-input-group.ant-input-affix-wrapper:hover,
+.user-search-input-group .ant-input-affix-wrapper:hover {
     border-color: rgba(249, 115, 22, 0.5) !important;
 }
 
-.user-search-input-group.ant-input-affix-wrapper-focused {
+.user-search-input-group.ant-input-affix-wrapper-focused,
+.user-search-input-group .ant-input-affix-wrapper-focused {
     border-color: var(--user-primary) !important;
     box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15) !important;
 }
 
-.user-search-input-group.ant-input-affix-wrapper input.ant-input {
+.user-search-input-group.ant-input-affix-wrapper input.ant-input,
+.user-search-input-group .ant-input-affix-wrapper input.ant-input {
     height: 100% !important;
     background: transparent !important;
     border: none !important;
