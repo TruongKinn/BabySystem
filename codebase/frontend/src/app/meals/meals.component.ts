@@ -15,7 +15,7 @@ import { NzEmptyModule } from 'ng-zorro-antd/empty';
 import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { NzInputModule } from 'ng-zorro-antd/input';
-import { NzModalModule } from 'ng-zorro-antd/modal';
+import { NzModalModule, NzModalService } from 'ng-zorro-antd/modal';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzRadioModule } from 'ng-zorro-antd/radio';
 import { NzSelectModule } from 'ng-zorro-antd/select';
@@ -28,13 +28,21 @@ import { API_CONFIG } from '../shared/constants/api.constant';
 
 export type ViewMode = 'week' | 'month' | 'year';
 
+export interface MealPlanItem {
+  id: number;
+  mealId: number;
+  mealName: string;
+  notes: string;
+  ingredients?: string;
+}
+
 export interface MealDayEntry {
   date: string;
   dayLabel: string;
-  breakfast: string[];
-  lunch: string[];
-  dinner: string[];
-  snack: string[];
+  breakfast: MealPlanItem[];
+  lunch: MealPlanItem[];
+  dinner: MealPlanItem[];
+  snack: MealPlanItem[];
   totalMeals: number;
 }
 
@@ -79,6 +87,10 @@ export class MealsComponent implements OnInit, OnDestroy {
   private readonly notification = inject(NzNotificationService);
   private readonly http = inject(HttpClient);
   private readonly i18n = inject(I18nService);
+  private readonly modalService = inject(NzModalService);
+
+  isEditMode = false;
+  editingMealPlanId: number | null = null;
 
   viewMode: ViewMode = 'week';
   selectedWeek: Date = new Date();
@@ -111,7 +123,7 @@ export class MealsComponent implements OnInit, OnDestroy {
   aiSuggestions: AiSuggestedDish[] = [];
   aiTargetDate: Date | null = null;
   aiApplyMode: 'day' | 'week' = 'day';
-  aiApplyMealType: MealType = 'DINNER';
+  aiApplyMealType: MealType | 'AUTO' = 'AUTO';
   isAddingFromAi = false;
 
   ngOnInit(): void {
@@ -221,7 +233,8 @@ export class MealsComponent implements OnInit, OnDestroy {
   createDishRow() {
     return this.fb.group({
       mealType: ['DINNER' as MealType, Validators.required],
-      mealName: ['', [Validators.required, Validators.maxLength(160)]]
+      mealName: ['', [Validators.required, Validators.maxLength(160)]],
+      ingredients: ['', [Validators.maxLength(500)]]
     });
   }
 
@@ -236,20 +249,47 @@ export class MealsComponent implements OnInit, OnDestroy {
   }
 
   openCreateModal(): void {
+    this.isEditMode = false;
+    this.editingMealPlanId = null;
     this.isCreateModalVisible = true;
   }
 
   closeCreateModal(): void {
     this.isCreateModalVisible = false;
+    this.isEditMode = false;
+    this.editingMealPlanId = null;
     while (this.dishesArray.length > 1) {
       this.dishesArray.removeAt(1);
     }
     this.createMealPlanForm.reset({
       planDate: null,
       notes: '',
-      dishes: [{ mealType: 'DINNER', mealName: '' }]
+      dishes: [{ mealType: 'DINNER', mealName: '', ingredients: '' }]
     });
     this.applyMode = 'day';
+  }
+
+  openEditModal(day: MealDayEntry, mealType: MealType, plan: MealPlanItem): void {
+    this.isEditMode = true;
+    this.editingMealPlanId = plan.id;
+    this.applyMode = 'day';
+
+    while (this.dishesArray.length > 1) {
+      this.dishesArray.removeAt(1);
+    }
+
+    this.createMealPlanForm.patchValue({
+      planDate: new Date(`${day.date}T00:00:00`),
+      notes: plan.notes
+    });
+
+    this.dishesArray.at(0).patchValue({
+      mealType: mealType,
+      mealName: plan.mealName,
+      ingredients: plan.ingredients || ''
+    });
+
+    this.isCreateModalVisible = true;
   }
 
   submitCreateMealPlan(): void {
@@ -265,7 +305,8 @@ export class MealsComponent implements OnInit, OnDestroy {
     const dishes = this.dishesArray.controls
       .map(ctrl => ({
         mealName: ctrl.get('mealName')?.value?.trim() ?? '',
-        mealType: ctrl.get('mealType')?.value as MealType
+        mealType: ctrl.get('mealType')?.value as MealType,
+        ingredients: ctrl.get('ingredients')?.value?.trim() ?? ''
       }))
       .filter(d => d.mealName);
 
@@ -277,37 +318,100 @@ export class MealsComponent implements OnInit, OnDestroy {
       return;
     }
 
-    const dates = this.applyMode === 'week'
-      ? this.generateEmptyDays(this.getWeekRange(planDate).start, this.getWeekRange(planDate).end).map(d => d.date)
-      : [this.formatLocalDate(planDate)];
-
+    const dateStr = this.formatLocalDate(planDate);
     this.isSubmitting = true;
-    const requests = dates.flatMap(date =>
-      dishes.map(dish => this.command.createMealPlan({
+
+    if (this.isEditMode && this.editingMealPlanId !== null) {
+      const dish = dishes[0];
+      this.command.updateMealPlan(this.editingMealPlanId, {
         mealName: dish.mealName,
         mealType: dish.mealType,
-        planDate: date,
-        notes
-      }))
-    );
-
-    this.executeSequential(requests, 0)
-      .then(() => {
-        this.isSubmitting = false;
-        this.closeCreateModal();
-        this.loadMeals(true);
-        this.notification.success(
-          this.i18n.translate('momApp.common.success'),
-          this.i18n.translate('momApp.meals.messages.createSuccess')
-        );
-      })
-      .catch((err) => {
-        this.isSubmitting = false;
-        this.notification.error(
-          this.i18n.translate('common.errorTitle'),
-          err?.message || this.i18n.translate('momApp.meals.messages.createFailed')
-        );
+        planDate: dateStr,
+        notes,
+        ingredients: dish.ingredients
+      }).subscribe({
+        next: () => {
+          this.isSubmitting = false;
+          this.closeCreateModal();
+          this.loadMeals(true);
+          this.notification.success(
+            this.i18n.translate('momApp.common.success'),
+            this.i18n.translate('momApp.meals.messages.updateSuccess')
+          );
+        },
+        error: (err) => {
+          this.isSubmitting = false;
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            err?.error?.message || err?.message || this.i18n.translate('momApp.meals.messages.updateFailed')
+          );
+        }
       });
+    } else {
+      const dates = this.applyMode === 'week'
+        ? this.generateEmptyDays(this.getWeekRange(planDate).start, this.getWeekRange(planDate).end).map(d => d.date)
+        : [dateStr];
+
+      const requests = dates.flatMap(date =>
+        dishes.map(dish => this.command.createMealPlan({
+          mealName: dish.mealName,
+          mealType: dish.mealType,
+          planDate: date,
+          notes,
+          ingredients: dish.ingredients
+        }))
+      );
+
+      this.executeSequential(requests, 0)
+        .then(() => {
+          this.isSubmitting = false;
+          this.closeCreateModal();
+          this.loadMeals(true);
+          this.notification.success(
+            this.i18n.translate('momApp.common.success'),
+            this.i18n.translate('momApp.meals.messages.createSuccess')
+          );
+        })
+        .catch((err) => {
+          this.isSubmitting = false;
+          this.notification.error(
+            this.i18n.translate('common.errorTitle'),
+            err?.message || this.i18n.translate('momApp.meals.messages.createFailed')
+          );
+        });
+    }
+  }
+
+  deleteMealPlan(mealPlanId: number): void {
+    this.modalService.confirm({
+      nzTitle: this.i18n.translate('momApp.common.warning'),
+      nzContent: this.i18n.translate('momApp.meals.messages.deleteConfirm'),
+      nzOkText: this.i18n.translate('momApp.common.ok') || 'OK',
+      nzCancelText: this.i18n.translate('commonActions.cancel') || 'Cancel',
+      nzOkDanger: true,
+      nzClassName: 'user-role-modal',
+      nzOnOk: () => {
+        return new Promise<void>((resolve, reject) => {
+          this.command.deleteMealPlan(mealPlanId).subscribe({
+            next: () => {
+              this.loadMeals(true);
+              this.notification.success(
+                this.i18n.translate('momApp.common.success'),
+                this.i18n.translate('momApp.meals.messages.deleteSuccess')
+              );
+              resolve();
+            },
+            error: (err) => {
+              this.notification.error(
+                this.i18n.translate('common.errorTitle'),
+                err?.error?.message || err?.message || this.i18n.translate('momApp.meals.messages.deleteFailed')
+              );
+              reject(err);
+            }
+          });
+        });
+      }
+    });
   }
 
   openAiModal(): void {
@@ -316,7 +420,7 @@ export class MealsComponent implements OnInit, OnDestroy {
     this.aiSuggestions = [];
     this.aiTargetDate = new Date();
     this.aiApplyMode = 'day';
-    this.aiApplyMealType = 'DINNER';
+    this.aiApplyMealType = 'AUTO';
   }
 
   closeAiModal(): void {
@@ -347,20 +451,57 @@ export class MealsComponent implements OnInit, OnDestroy {
     this.isAiLoading = true;
     this.aiSuggestions = [];
 
-    const startTs = Date.now();
-    const suggestions = this.generateAiSuggestions(this.aiIngredients);
-    const minLoadingMs = 260;
-    const delayMs = Math.max(0, minLoadingMs - (Date.now() - startTs));
+    const familyId = this.command.getFamilyId();
+    const language = this.i18n.getCurrentLanguage();
 
-    this.aiSearchTimeoutId = setTimeout(() => {
-      this.aiSuggestions = suggestions;
-      this.isAiLoading = false;
-      this.aiSearchTimeoutId = null;
-    }, delayMs);
+    this.http.post<any>(`${API_CONFIG.GATEWAY_URL}/ai/copilot/suggest-meals`, {
+      familyId,
+      ingredients: this.aiIngredients,
+      language
+    }).pipe(
+      finalize(() => {
+        this.isAiLoading = false;
+      })
+    ).subscribe({
+      next: (response) => {
+        const apiData = response?.data?.dishes ?? response?.data ?? [];
+        this.aiSuggestions = apiData.map((d: any) => ({
+          name: d.name,
+          description: d.description,
+          ingredients: d.ingredients,
+          mealType: d.mealType,
+          selected: false
+        }));
+      },
+      error: (err) => {
+        this.notification.error(
+          this.i18n.translate('common.errorTitle'),
+          err?.error?.message || this.i18n.translate('momApp.meals.messages.addFromAiFailed')
+        );
+      }
+    });
   }
 
   toggleAiSelection(dish: AiSuggestedDish): void {
     dish.selected = !dish.selected;
+    
+    // Tự động cập nhật bữa ăn thông minh theo các món được chọn
+    const selectedDishes = this.aiSuggestions.filter(d => d.selected);
+    if (selectedDishes.length === 1) {
+      // Chỉ chọn 1 món: tự động chuyển sang bữa ăn của món đó
+      this.aiApplyMealType = selectedDishes[0].mealType;
+    } else if (selectedDishes.length > 1) {
+      // Chọn nhiều món: nếu cùng bữa ăn thì chọn bữa đó, ngược lại để AUTO (tự động theo AI từng món)
+      const uniqueTypes = new Set(selectedDishes.map(d => d.mealType));
+      if (uniqueTypes.size === 1) {
+        this.aiApplyMealType = selectedDishes[0].mealType;
+      } else {
+        this.aiApplyMealType = 'AUTO';
+      }
+    } else {
+      // Reset về AUTO khi không chọn món nào
+      this.aiApplyMealType = 'AUTO';
+    }
   }
 
   addSelectedToMenu(): void {
@@ -387,12 +528,16 @@ export class MealsComponent implements OnInit, OnDestroy {
 
     this.isAddingFromAi = true;
     const requests = dates.flatMap(date =>
-      selected.map(dish => this.command.createMealPlan({
-        mealName: dish.name,
-        mealType: this.aiApplyMealType,
-        planDate: date,
-        notes: dish.description
-      }))
+      selected.map(dish => {
+        const finalMealType = this.aiApplyMealType === 'AUTO' ? dish.mealType : this.aiApplyMealType;
+        return this.command.createMealPlan({
+          mealName: dish.name,
+          mealType: finalMealType,
+          planDate: date,
+          notes: dish.description,
+          ingredients: dish.ingredients ? dish.ingredients.join(', ') : ''
+        });
+      })
     );
 
     this.executeSequential(requests, 0)
@@ -426,6 +571,17 @@ export class MealsComponent implements OnInit, OnDestroy {
       SNACK: 'green'
     };
     return colors[type] ?? 'default';
+  }
+
+  getPlanTooltip(plan: MealPlanItem): string {
+    const lines: string[] = [];
+    if (plan.ingredients) {
+      lines.push(`${this.i18n.translate('momApp.meals.modal.ingredientsLabel')}: ${plan.ingredients}`);
+    }
+    if (plan.notes) {
+      lines.push(`${this.i18n.translate('momApp.meals.modal.notesLabel')}: ${plan.notes}`);
+    }
+    return lines.join('\n') || this.i18n.translate('momApp.meals.empty.noNotes');
   }
 
   get selectedAiCount(): number {
@@ -560,10 +716,18 @@ export class MealsComponent implements OnInit, OnDestroy {
       const mealName: string = plan.mealName ?? plan.name ?? '';
       if (!mealName.trim()) return;
 
-      if (mealType === 'BREAKFAST') entry.breakfast.push(mealName);
-      else if (mealType === 'LUNCH') entry.lunch.push(mealName);
-      else if (mealType === 'DINNER') entry.dinner.push(mealName);
-      else if (mealType === 'SNACK') entry.snack.push(mealName);
+      const item: MealPlanItem = {
+        id: plan.id,
+        mealId: plan.mealId ?? plan.meal?.id,
+        mealName: mealName,
+        notes: plan.notes ?? '',
+        ingredients: plan.ingredients ?? ''
+      };
+
+      if (mealType === 'BREAKFAST') entry.breakfast.push(item);
+      else if (mealType === 'LUNCH') entry.lunch.push(item);
+      else if (mealType === 'DINNER') entry.dinner.push(item);
+      else if (mealType === 'SNACK') entry.snack.push(item);
     });
 
     const mappedDays = Array.from(dayMap.values());

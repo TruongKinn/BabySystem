@@ -1,0 +1,103 @@
+{
+  "title": "Meal Planner",
+  "subtitle": "Weekly meal plan for parents and baby-friendly routine",
+  "totalLabel": "planned days",
+  "actions": {
+    "create": "Add plan",
+    "aiSuggest": "AI Suggest"
+  },
+  "stats": {
+    "totalMeals": "Total meals",
+    "daysWithMeals": "Days with meals",
+    "period": {
+      "week": "Week: {{start}} - {{end}}",
+      "month": "Month {{month}}/{{year}}",
+      "year": "Year {{year}}"
+    }
+  },
+  "filters": {
+    "week": "By week",
+    "month": "By month",
+    "year": "By year",
+    "selectWeek": "Select week",
+    "selectMonth": "Select month",
+    "selectYear": "Select year"
+  },
+  "empty": {
+    "dayNoMeals": "No meals yet",
+    "noPlans": "No meal plans yet",
+    "createFirstPlan": "Create first meal plan",
+    "noNotes": "No notes"
+  },
+  "table": {
+    "day": "Day",
+    "breakfast": "Breakfast",
+    "lunch": "Lunch",
+    "dinner": "Dinner"
+  },
+  "mealType": {
+    "BREAKFAST": "Breakfast",
+    "LUNCH": "Lunch",
+    "DINNER": "Dinner",
+    "SNACK": "Snack"
+  },
+  "modal": {
+    "createTitle": "Create meal plan",
+    "editTitle": "Edit meal plan",
+    "createSubtitle": "Plan menu for a day / week",
+    "editSubtitle": "Update dish menu",
+    "savePlan": "Save plan",
+    "applyFor": "Apply for:",
+    "applyDay": "1 day",
+    "applyWeek": "Whole week",
+    "selectWeekStart": "Select week start date",
+    "selectDate": "Plan date",
+    "dateRequired": "Please select date",
+    "dishesTitle": "Dish list",
+    "addDish": "Add dish",
+    "mealTypePlaceholder": "Meal type",
+    "removeDish": "Remove dish",
+    "notesLabel": "Notes",
+    "notesPlaceholder": "Optional note",
+    "mealNameLabel": "Meal name",
+    "mealNamePlaceholder": "e.g. Chicken soup",
+    "mealTypeLabel": "Meal type",
+    "planDateLabel": "Plan date",
+    "noteLabel": "Note",
+    "notePlaceholder": "Optional note",
+    "ingredientsLabel": "Ingredients",
+    "ingredientsPlaceholder": "e.g. chicken, mushroom, ginger"
+  },
+  "ai": {
+    "modalTitle": "AI Meal Suggestion",
+    "modalSubtitle": "Smart meal suggestions powered by AI",
+    "inputLabel": "Enter available ingredients (comma separated)",
+    "inputPlaceholder": "Example: chicken, carrot, potato, onion",
+    "searchButton": "Suggest dishes",
+    "loading": "Analyzing ingredients...",
+    "suggestionsTitle": "Suggested dishes",
+    "ingredientsLabel": "Ingredients:",
+    "applyTitle": "Add to meal plan",
+    "applyAuto": "Auto by AI ✨",
+    "applyMealLabel": "Meal:",
+    "applyModeLabel": "Apply:",
+    "applyDateLabel": "Apply date:",
+    "addToMenuButton": "Add {{count}} dish(es) to meal plan",
+    "selectHint": "Select at least one dish to continue"
+  },
+  "messages": {
+    "createSuccess": "Meal plan created.",
+    "createFailed": "Unable to create meal plan.",
+    "updateSuccess": "Meal plan updated successfully.",
+    "updateFailed": "Unable to update meal plan.",
+    "deleteConfirm": "Are you sure you want to delete this dish from the plan?",
+    "deleteSuccess": "Dish deleted successfully.",
+    "deleteFailed": "Unable to delete dish.",
+    "requireAtLeastOneDish": "Please add at least one dish.",
+    "missingIngredients": "Please enter ingredients.",
+    "selectAtLeastOneSuggestion": "Please select at least one suggested dish.",
+    "selectApplyDate": "Please select apply date.",
+    "addFromAiSuccess": "Added {{count}} dish(es) to meal plan.",
+    "addFromAiFailed": "Unable to add dishes from AI suggestion."
+  }
+}

@@ -59,7 +59,9 @@ export class App implements OnInit, OnDestroy {
     {
       labelKey: 'momApp.layout.menu.overview',
       icon: 'grid',
-      children: [{ labelKey: 'momApp.layout.menu.dashboard', icon: 'home', route: '/app/dashboard' }]
+      children: [
+        { labelKey: 'momApp.layout.menu.dashboard', icon: 'home', route: '/app/dashboard' }
+      ]
     },
     {
       labelKey: 'momApp.layout.menu.familyCare',
@@ -67,10 +69,16 @@ export class App implements OnInit, OnDestroy {
       children: [
         { labelKey: 'momApp.layout.menu.baby', icon: 'smile', route: '/app/baby' },
         { labelKey: 'momApp.layout.menu.journey', icon: 'star', route: '/app/journey' },
-        { labelKey: 'momApp.layout.menu.meals', icon: 'coffee', route: '/app/meals' },
+        { labelKey: 'momApp.layout.menu.meals', icon: 'coffee', route: '/app/meals' }
+      ]
+    },
+    {
+      labelKey: 'momApp.layout.menu.productivity',
+      icon: 'layers',
+      children: [
         { labelKey: 'momApp.layout.menu.tasks', icon: 'check-square', route: '/app/tasks' },
         { labelKey: 'momApp.layout.menu.documents', icon: 'file-text', route: '/app/documents' },
-        { labelKey: 'AI Copilot', icon: 'star', route: '/app/copilot' }
+        { labelKey: 'momApp.layout.menu.copilot', icon: 'star', route: '/app/copilot' }
       ]
     },
     {
@@ -89,25 +97,42 @@ export class App implements OnInit, OnDestroy {
       children: [
         { labelKey: 'momApp.layout.menu.family', icon: 'users', route: '/app/family' },
         { labelKey: 'momApp.layout.menu.profile', icon: 'user', route: '/app/profile' },
-        { labelKey: 'momApp.layout.menu.settings', icon: 'settings', route: '/app/settings' },
-        { labelKey: 'momApp.layout.menu.themeSettings', icon: 'bg-colors', route: '/app/settings/theme' }
+        { labelKey: 'momApp.layout.menu.settings', icon: 'settings', route: '/app/settings' }
       ]
     }
   ];
   readonly adminMenuItems: MenuItem[] = [
     {
-      labelKey: 'momApp.admin.menu.portal',
+      labelKey: 'momApp.admin.menu.systemOverview',
       icon: 'grid',
       children: [
         { labelKey: 'momApp.admin.menu.dashboard', icon: 'home', route: '/admin/dashboard' },
-        { labelKey: 'momApp.admin.menu.users', icon: 'users', route: '/admin/users' },
-        { labelKey: 'momApp.admin.menu.families', icon: 'users', route: '/admin/families' },
+        { labelKey: 'momApp.admin.menu.users', icon: 'user', route: '/admin/users' },
+        { labelKey: 'momApp.admin.menu.families', icon: 'users', route: '/admin/families' }
+      ]
+    },
+    {
+      labelKey: 'momApp.admin.menu.business',
+      icon: 'wallet',
+      children: [
         { labelKey: 'momApp.admin.menu.premium', icon: 'star', route: '/admin/premium' },
-        { labelKey: 'momApp.admin.menu.finance', icon: 'wallet', route: '/admin/finance' },
-        { labelKey: 'momApp.admin.menu.exportPasswords', icon: 'key', route: '/admin/export-passwords' },
-        { labelKey: 'momApp.admin.menu.themeSettings', icon: 'bg-colors', route: '/admin/settings/theme' },
+        { labelKey: 'momApp.admin.menu.finance', icon: 'wallet', route: '/admin/finance' }
+      ]
+    },
+    {
+      labelKey: 'momApp.admin.menu.security',
+      icon: 'key',
+      children: [
         { labelKey: 'momApp.admin.menu.access', icon: 'check-square', route: '/admin/access' },
-        { labelKey: 'momApp.admin.menu.permissions', icon: 'settings', route: '/admin/permissions' }
+        { labelKey: 'momApp.admin.menu.permissions', icon: 'settings', route: '/admin/permissions' },
+        { labelKey: 'momApp.admin.menu.exportPasswords', icon: 'key', route: '/admin/export-passwords' }
+      ]
+    },
+    {
+      labelKey: 'momApp.admin.menu.config',
+      icon: 'settings',
+      children: [
+        { labelKey: 'momApp.admin.menu.themeSettings', icon: 'bg-colors', route: '/admin/settings/theme' }
       ]
     }
   ];

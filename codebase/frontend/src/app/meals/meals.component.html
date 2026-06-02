@@ -99,7 +99,23 @@
             <span class="meal-type-name">{{ 'momApp.meals.mealType.BREAKFAST' | translate }}</span>
           </div>
           <div class="meal-dishes-list">
-            <nz-tag *ngFor="let dish of day.breakfast" nzColor="orange" class="meal-dish-tag">{{ dish }}</nz-tag>
+            <nz-tag
+              *ngFor="let plan of day.breakfast"
+              nzColor="orange"
+              class="meal-dish-tag"
+              nz-tooltip
+              [nzTooltipTitle]="getPlanTooltip(plan)"
+            >
+              <span class="meal-dish-text" (click)="openEditModal(day, 'BREAKFAST', plan)">
+                {{ plan.mealName }}
+              </span>
+              <span
+                nz-icon
+                nzType="close"
+                class="btn-delete-plan-tag"
+                (click)="deleteMealPlan(plan.id); $event.stopPropagation()"
+              ></span>
+            </nz-tag>
           </div>
         </div>
 
@@ -109,7 +125,23 @@
             <span class="meal-type-name">{{ 'momApp.meals.mealType.LUNCH' | translate }}</span>
           </div>
           <div class="meal-dishes-list">
-            <nz-tag *ngFor="let dish of day.lunch" nzColor="gold" class="meal-dish-tag">{{ dish }}</nz-tag>
+            <nz-tag
+              *ngFor="let plan of day.lunch"
+              nzColor="gold"
+              class="meal-dish-tag"
+              nz-tooltip
+              [nzTooltipTitle]="getPlanTooltip(plan)"
+            >
+              <span class="meal-dish-text" (click)="openEditModal(day, 'LUNCH', plan)">
+                {{ plan.mealName }}
+              </span>
+              <span
+                nz-icon
+                nzType="close"
+                class="btn-delete-plan-tag"
+                (click)="deleteMealPlan(plan.id); $event.stopPropagation()"
+              ></span>
+            </nz-tag>
           </div>
         </div>
 
@@ -119,7 +151,23 @@
             <span class="meal-type-name">{{ 'momApp.meals.mealType.DINNER' | translate }}</span>
           </div>
           <div class="meal-dishes-list">
-            <nz-tag *ngFor="let dish of day.dinner" nzColor="purple" class="meal-dish-tag">{{ dish }}</nz-tag>
+            <nz-tag
+              *ngFor="let plan of day.dinner"
+              nzColor="purple"
+              class="meal-dish-tag"
+              nz-tooltip
+              [nzTooltipTitle]="getPlanTooltip(plan)"
+            >
+              <span class="meal-dish-text" (click)="openEditModal(day, 'DINNER', plan)">
+                {{ plan.mealName }}
+              </span>
+              <span
+                nz-icon
+                nzType="close"
+                class="btn-delete-plan-tag"
+                (click)="deleteMealPlan(plan.id); $event.stopPropagation()"
+              ></span>
+            </nz-tag>
           </div>
         </div>
 
@@ -129,7 +177,23 @@
             <span class="meal-type-name">{{ 'momApp.meals.mealType.SNACK' | translate }}</span>
           </div>
           <div class="meal-dishes-list">
-            <nz-tag *ngFor="let dish of day.snack" nzColor="green" class="meal-dish-tag">{{ dish }}</nz-tag>
+            <nz-tag
+              *ngFor="let plan of day.snack"
+              nzColor="green"
+              class="meal-dish-tag"
+              nz-tooltip
+              [nzTooltipTitle]="getPlanTooltip(plan)"
+            >
+              <span class="meal-dish-text" (click)="openEditModal(day, 'SNACK', plan)">
+                {{ plan.mealName }}
+              </span>
+              <span
+                nz-icon
+                nzType="close"
+                class="btn-delete-plan-tag"
+                (click)="deleteMealPlan(plan.id); $event.stopPropagation()"
+              ></span>
+            </nz-tag>
           </div>
         </div>
 
@@ -168,14 +232,14 @@
       <span nz-icon nzType="coffee"></span>
     </span>
     <span class="modal-title-text">
-      <span class="modal-title-main">{{ 'momApp.meals.modal.createTitle' | translate }}</span>
-      <span class="modal-title-sub">Lên thực đơn cho ngày / tuần</span>
+      <span class="modal-title-main">{{ (isEditMode ? 'momApp.meals.modal.editTitle' : 'momApp.meals.modal.createTitle') | translate }}</span>
+      <span class="modal-title-sub">{{ (isEditMode ? 'momApp.meals.modal.editSubtitle' : 'momApp.meals.modal.createSubtitle') | translate }}</span>
     </span>
   </div>
 </ng-template>
   <ng-container *nzModalContent>
     <form nz-form [formGroup]="createMealPlanForm" nzLayout="vertical">
-      <div class="modal-apply-mode">
+      <div class="modal-apply-mode" *ngIf="!isEditMode">
         <span class="modal-label">{{ 'momApp.meals.modal.applyFor' | translate }}</span>
         <nz-radio-group [(ngModel)]="applyMode" [ngModelOptions]="{ standalone: true }">
           <label nz-radio-button nzValue="day">{{ 'momApp.meals.modal.applyDay' | translate }}</label>
@@ -200,15 +264,15 @@
       <div class="dishes-section">
         <div class="dishes-section-header">
           <span class="dishes-title">{{ 'momApp.meals.modal.dishesTitle' | translate }}</span>
-          <button nz-button nzType="dashed" nzSize="small" type="button" (click)="addDish()" class="btn-add-dish">
+          <button nz-button nzType="dashed" nzSize="small" type="button" (click)="addDish()" class="btn-add-dish" *ngIf="!isEditMode">
             <span nz-icon nzType="plus"></span>
             {{ 'momApp.meals.modal.addDish' | translate }}
           </button>
         </div>
 
         <div formArrayName="dishes" class="dishes-list">
-          <div *ngFor="let dish of dishesArray.controls; let i = index" [formGroupName]="i" class="dish-row">
-            <div class="dish-row-inner">
+          <div *ngFor="let dish of dishesArray.controls; let i = index" [formGroupName]="i" class="dish-row-card">
+            <div class="dish-row-primary">
               <nz-select formControlName="mealType" class="dish-type-select" [nzPlaceHolder]="'momApp.meals.modal.mealTypePlaceholder' | translate">
                 <nz-option nzValue="BREAKFAST" [nzLabel]="'momApp.meals.mealType.BREAKFAST' | translate"></nz-option>
                 <nz-option nzValue="LUNCH" [nzLabel]="'momApp.meals.mealType.LUNCH' | translate"></nz-option>
@@ -229,13 +293,27 @@
                 nzDanger
                 type="button"
                 (click)="removeDish(i)"
-                [disabled]="dishesArray.length <= 1"
+                [disabled]="isEditMode || dishesArray.length <= 1"
                 class="btn-remove-dish"
+                *ngIf="!isEditMode"
                 nz-tooltip
                 [nzTooltipTitle]="'momApp.meals.modal.removeDish' | translate"
               >
                 <span nz-icon nzType="delete"></span>
               </button>
+            </div>
+
+            <div class="dish-row-secondary">
+              <span class="dish-sub-label">
+                <span nz-icon nzType="shopping"></span>
+                {{ 'momApp.meals.modal.ingredientsLabel' | translate }}
+              </span>
+              <input
+                nz-input
+                formControlName="ingredients"
+                [placeholder]="'momApp.meals.modal.ingredientsPlaceholder' | translate"
+                class="dish-ingredients-input"
+              />
             </div>
           </div>
         </div>
@@ -265,7 +343,7 @@
     </span>
     <span class="modal-title-text">
       <span class="modal-title-main">{{ 'momApp.meals.ai.modalTitle' | translate }}</span>
-      <span class="modal-title-sub">Gợi ý món ăn thông minh từ AI</span>
+      <span class="modal-title-sub">{{ 'momApp.meals.ai.modalSubtitle' | translate }}</span>
     </span>
   </div>
 </ng-template>
@@ -330,7 +408,8 @@
           <div class="ai-apply-row">
             <div class="ai-apply-item">
               <span class="ai-apply-label">{{ 'momApp.meals.ai.applyMealLabel' | translate }}</span>
-              <nz-select [(ngModel)]="aiApplyMealType" style="width: 160px;">
+              <nz-select [(ngModel)]="aiApplyMealType" style="width: 195px;">
+                <nz-option nzValue="AUTO" [nzLabel]="'momApp.meals.ai.applyAuto' | translate"></nz-option>
                 <nz-option nzValue="BREAKFAST" [nzLabel]="'momApp.meals.mealType.BREAKFAST' | translate"></nz-option>
                 <nz-option nzValue="LUNCH" [nzLabel]="'momApp.meals.mealType.LUNCH' | translate"></nz-option>
                 <nz-option nzValue="DINNER" [nzLabel]="'momApp.meals.mealType.DINNER' | translate"></nz-option>

@@ -36,6 +36,9 @@ public class MealEntity {
     @Column(length = 500)
     private String description;
 
+    @Column(length = 500)
+    private String ingredients;
+
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt = OffsetDateTime.now();
 }

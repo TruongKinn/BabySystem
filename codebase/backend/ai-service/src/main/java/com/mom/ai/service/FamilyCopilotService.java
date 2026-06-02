@@ -14,6 +14,8 @@ import com.mom.ai.controller.dto.AiChatResponse;
 import com.mom.ai.controller.dto.AiStatusResponse;
 import com.mom.ai.controller.dto.OcrReceiptRequest;
 import com.mom.ai.controller.dto.OcrReceiptResponse;
+import com.mom.ai.controller.dto.SuggestMealsRequest;
+import com.mom.ai.controller.dto.SuggestMealsResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -239,6 +241,80 @@ public class FamilyCopilotService {
         } catch (Exception e) {
             log.error("Failed to parse OCR JSON response: {}", ocrResultJson, e);
             throw new RuntimeException("Lỗi định dạng kết quả phân tích hóa đơn từ AI: " + e.getMessage());
+        }
+    }
+
+    public SuggestMealsResponse suggestMeals(SuggestMealsRequest request, UserAccessContext accessContext) {
+        enforceFamilyAccess(request.familyId(), accessContext);
+
+        String ingredients = request.ingredients();
+        String language = StringUtils.hasText(request.language()) ? request.language() : "vi";
+
+        String jsonResult;
+        if (isGemini()) {
+            jsonResult = geminiClient.suggestMeals(ingredients, language);
+        } else {
+            String systemPrompt = "You are a professional chef and nutritionist. Suggest meal options based on ingredients. You must output a JSON object containing a 'dishes' array.";
+            String userPrompt = """
+                Suggest 5-8 dishes from these ingredients: %s.
+                Each dish should have:
+                - 'name': Dish name in language '%s'.
+                - 'description': Short description in language '%s'.
+                - 'ingredients': Array of main ingredients used.
+                - 'mealType': Suitable meal type ('BREAKFAST', 'LUNCH', 'DINNER', 'SNACK').
+                
+                You must output only a valid JSON matching this schema:
+                {
+                  "dishes": [
+                    {
+                      "name": "string",
+                      "description": "string",
+                      "ingredients": ["string"],
+                      "mealType": "string"
+                    }
+                  ]
+                }
+                """.formatted(ingredients, language, language);
+
+            OpenAiResponsesRequest openAiRequest = new OpenAiResponsesRequest(
+                    properties.getModel(),
+                    systemPrompt,
+                    List.of(OpenAiInputMessage.of("user", userPrompt)),
+                    null,
+                    properties.getMaxOutputTokens()
+            );
+
+            OpenAiResponsesResponse response = openAiClient.create(openAiRequest);
+            jsonResult = response.outputText();
+        }
+
+        log.info("AI suggested meals response: {}", jsonResult);
+
+        try {
+            JsonNode resultNode = objectMapper.readTree(jsonResult);
+            List<SuggestMealsResponse.SuggestedDish> dishes = new ArrayList<>();
+            JsonNode dishesNode = resultNode.path("dishes");
+            if (dishesNode.isArray()) {
+                for (JsonNode dish : dishesNode) {
+                    List<String> dishIngredients = new ArrayList<>();
+                    JsonNode ingNode = dish.path("ingredients");
+                    if (ingNode.isArray()) {
+                        for (JsonNode ing : ingNode) {
+                            dishIngredients.add(ing.asText());
+                        }
+                    }
+                    dishes.add(new SuggestMealsResponse.SuggestedDish(
+                            dish.path("name").asText("Món ăn ngon"),
+                            dish.path("description").asText("Gợi ý từ AI"),
+                            dishIngredients,
+                            dish.path("mealType").asText("DINNER").toUpperCase()
+                    ));
+                }
+            }
+            return new SuggestMealsResponse(dishes);
+        } catch (Exception e) {
+            log.error("Failed to parse suggest meals JSON response: {}", jsonResult, e);
+            throw new RuntimeException("Lỗi định dạng kết quả gợi ý món ăn từ AI: " + e.getMessage());
         }
     }
 }

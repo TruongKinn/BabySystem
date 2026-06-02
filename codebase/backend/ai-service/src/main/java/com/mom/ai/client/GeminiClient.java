@@ -247,4 +247,118 @@ public class GeminiClient {
             throw new OpenAiApiException(502, "Gemini OCR API request failed: " + ex.getMessage());
         }
     }
+
+    public String suggestMeals(String ingredients, String language) {
+        String apiKey = properties.getApiKey();
+        if (!StringUtils.hasText(apiKey)) {
+            throw new OpenAiConfigurationException("GEMINI/OPENAI_API_KEY is not configured");
+        }
+
+        String geminiModel = properties.getModel();
+        if (geminiModel.contains("gpt-") || geminiModel.equals("gpt-5.4-mini") || "gemini-1.5-flash".equals(geminiModel)) {
+            geminiModel = "gemini-3.5-flash";
+        }
+
+        String url = String.format("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s",
+                geminiModel, apiKey);
+
+        try {
+            ObjectNode root = objectMapper.createObjectNode();
+            ArrayNode contentsNode = root.putArray("contents");
+            ObjectNode turnNode = contentsNode.addObject();
+            turnNode.put("role", "user");
+            ArrayNode partsNode = turnNode.putArray("parts");
+            
+            String promptText = """
+                Bạn là chuyên gia dinh dưỡng và đầu bếp AI chuyên nghiệp của hệ thống quản lý gia đình BabySystem.
+                Hãy gợi ý các món ăn ngon, lành mạnh và dễ làm từ danh sách nguyên liệu có sẵn mà người dùng cung cấp.
+                
+                Danh sách nguyên liệu của người dùng:
+                %s
+                
+                Nhiệm vụ của bạn:
+                1. Dựa trên nguyên liệu có sẵn (và có thể sử dụng thêm gia vị, hành, tỏi... thông dụng), hãy gợi ý khoảng 5-8 món ăn phù hợp.
+                2. Với mỗi món ăn, hãy cung cấp các thông tin sau bằng ngôn ngữ '%s':
+                   - Tên món ăn (name) (ví dụ: "Cháo gà hạt sen", "Súp rau củ").
+                   - Mô tả ngắn gọn, sinh động và hấp dẫn (description) (ví dụ: "Món ăn ấm bụng, nhiều dinh dưỡng phù hợp cho cả nhà và bé.").
+                   - Danh sách chi tiết các nguyên liệu chính cần dùng (ingredients) dưới dạng một mảng các chuỗi.
+                   - Phân loại bữa ăn phù hợp nhất (mealType): chỉ chọn một trong các giá trị sau: 'BREAKFAST', 'LUNCH', 'DINNER', 'SNACK'.
+                
+                Phản hồi bắt buộc phải là đối tượng JSON hợp lệ theo đúng cấu trúc schema yêu cầu.
+                """.formatted(ingredients, language);
+                
+            partsNode.addObject().put("text", promptText);
+
+            // Generation config
+            ObjectNode generationConfig = root.putObject("generationConfig");
+            generationConfig.put("responseMimeType", "application/json");
+            
+            // Schema
+            ObjectNode schemaNode = generationConfig.putObject("responseSchema");
+            schemaNode.put("type", "OBJECT");
+            
+            ObjectNode propertiesNode = schemaNode.putObject("properties");
+            
+            ObjectNode dishesNode = propertiesNode.putObject("dishes");
+            dishesNode.put("type", "ARRAY");
+            
+            ObjectNode itemsNode = dishesNode.putObject("items");
+            itemsNode.put("type", "OBJECT");
+            
+            ObjectNode itemProperties = itemsNode.putObject("properties");
+            itemProperties.putObject("name").put("type", "STRING");
+            itemProperties.putObject("description").put("type", "STRING");
+            
+            ObjectNode ingredientsArrayNode = itemProperties.putObject("ingredients");
+            ingredientsArrayNode.put("type", "ARRAY");
+            ingredientsArrayNode.putObject("items").put("type", "STRING");
+            
+            itemProperties.putObject("mealType").put("type", "STRING");
+            
+            ArrayNode itemRequired = itemsNode.putArray("required");
+            itemRequired.add("name");
+            itemRequired.add("description");
+            itemRequired.add("ingredients");
+            itemRequired.add("mealType");
+            
+            ArrayNode requiredNode = schemaNode.putArray("required");
+            requiredNode.add("dishes");
+
+            Duration timeout = properties.getTimeout();
+            log.info("Calling Gemini suggestMeals API with model: {}", geminiModel);
+            
+            JsonNode responseJson = WebClient.create()
+                    .post()
+                    .uri(url)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(root)
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
+                            .defaultIfEmpty("Gemini suggestMeals request failed")
+                            .flatMap(body -> Mono.error(new OpenAiApiException(response.statusCode().value(), "Gemini suggestMeals API error: " + body))))
+                    .bodyToMono(JsonNode.class)
+                    .timeout(timeout)
+                    .block();
+
+            if (responseJson == null) {
+                throw new OpenAiApiException(502, "Empty response from Gemini suggestMeals API");
+            }
+
+            String outputText = "";
+            JsonNode candidates = responseJson.path("candidates");
+            if (candidates.isArray() && candidates.size() > 0) {
+                JsonNode firstCandidate = candidates.get(0);
+                JsonNode parts = firstCandidate.path("content").path("parts");
+                if (parts.isArray() && parts.size() > 0) {
+                    outputText = parts.get(0).path("text").asText();
+                }
+            }
+            return outputText;
+        } catch (OpenAiApiException ex) {
+            throw ex;
+        } catch (RuntimeException ex) {
+            log.error("Gemini suggestMeals API call failed", ex);
+            throw new OpenAiApiException(502, "Gemini suggestMeals API request failed: " + ex.getMessage());
+        }
+    }
 }

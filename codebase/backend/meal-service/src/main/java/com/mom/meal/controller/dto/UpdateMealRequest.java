@@ -10,6 +10,8 @@ public record UpdateMealRequest(
         String name,
         MealType mealType,
         @Size(max = 500)
-        String description
+        String description,
+        @Size(max = 500)
+        String ingredients
 ) {
 }

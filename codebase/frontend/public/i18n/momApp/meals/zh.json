@@ -1,0 +1,103 @@
+{
+  "title": "膳食计划",
+  "subtitle": "父母每周膳食计划和适合宝宝的日常饮食",
+  "totalLabel": "计划日期",
+  "actions": {
+    "create": "添加计划",
+    "aiSuggest": "人工智能建议"
+  },
+  "stats": {
+    "totalMeals": "总餐食",
+    "daysWithMeals": "吃饭的日子",
+    "period": {
+      "week": "周：{{start}} - {{end}}",
+      "month": "月份 {{month}}/{{year}}",
+      "year": "年 {{year}}"
+    }
+  },
+  "filters": {
+    "week": "按周",
+    "month": "按月份",
+    "year": "按年份",
+    "selectWeek": "选择周",
+    "selectMonth": "选择月份",
+    "selectYear": "选择年份"
+  },
+  "empty": {
+    "dayNoMeals": "还没有吃饭",
+    "noPlans": "尚无膳食计划",
+    "createFirstPlan": "创建第一餐计划",
+    "noNotes": "无注释"
+  },
+  "table": {
+    "day": "日",
+    "breakfast": "早餐",
+    "lunch": "午餐",
+    "dinner": "晚餐"
+  },
+  "mealType": {
+    "BREAKFAST": "早餐",
+    "LUNCH": "午餐",
+    "DINNER": "晚餐",
+    "SNACK": "小吃"
+  },
+  "modal": {
+    "createTitle": "创建膳食计划",
+    "editTitle": "修改膳食计划",
+    "createSubtitle": "安排一天/一周的菜单",
+    "editSubtitle": "更新菜品菜单",
+    "savePlan": "保存计划",
+    "applyFor": "申请：",
+    "applyDay": "1 天",
+    "applyWeek": "整周",
+    "selectWeekStart": "选择周开始日期",
+    "selectDate": "计划日期",
+    "dateRequired": "请选择日期",
+    "dishesTitle": "菜品清单",
+    "addDish": "添加菜品",
+    "mealTypePlaceholder": "膳食类型",
+    "removeDish": "取出盘子",
+    "notesLabel": "注释",
+    "notesPlaceholder": "可选注释",
+    "mealNameLabel": "餐食名称",
+    "mealNamePlaceholder": "例如鸡汤",
+    "mealTypeLabel": "膳食类型",
+    "planDateLabel": "计划日期",
+    "noteLabel": "注意",
+    "notePlaceholder": "可选注释",
+    "ingredientsLabel": "主要成分",
+    "ingredientsPlaceholder": "例如：鸡肉、蘑菇、生姜"
+  },
+  "ai": {
+    "modalTitle": "人工智能膳食建议",
+    "modalSubtitle": "AI 驱动的智能膳食建议",
+    "inputLabel": "输入可用成分（逗号分隔）",
+    "inputPlaceholder": "示例：鸡肉、胡萝卜、土豆、洋葱",
+    "searchButton": "推荐菜品",
+    "loading": "正在分析成分...",
+    "suggestionsTitle": "推荐菜品",
+    "ingredientsLabel": "成分：",
+    "applyTitle": "添加到膳食计划",
+    "applyAuto": "AI 自动生成 ✨",
+    "applyMealLabel": "餐食：",
+    "applyModeLabel": "应用：",
+    "applyDateLabel": "申请日期：",
+    "addToMenuButton": "将 {{count}} 菜肴添加到膳食计划中",
+    "selectHint": "选择至少一道菜继续"
+  },
+  "messages": {
+    "createSuccess": "膳食计划已创建。",
+    "createFailed": "无法创建膳食计划。",
+    "updateSuccess": "膳食计划已成功更新。",
+    "updateFailed": "无法更新膳食计划。",
+    "deleteConfirm": "您确定要将这道菜从计划中删除吗？",
+    "deleteSuccess": "菜品删除成功。",
+    "deleteFailed": "无法删除菜品。",
+    "requireAtLeastOneDish": "请至少添加一道菜。",
+    "missingIngredients": "请输入成分。",
+    "selectAtLeastOneSuggestion": "请至少选择一道推荐菜肴。",
+    "selectApplyDate": "请选择申请日期。",
+    "addFromAiSuccess": "将{{count}} 菜肴添加到膳食计划中。",
+    "addFromAiFailed": "无法添加人工智能建议的菜肴。"
+  }
+}

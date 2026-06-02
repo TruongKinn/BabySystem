@@ -53,6 +53,7 @@ public class MealService {
         meal.setName(request.name().trim());
         meal.setMealType(request.mealType());
         meal.setDescription(trimToNull(request.description()));
+        meal.setIngredients(trimToNull(request.ingredients()));
         return toMealResponse(mealRepository.save(meal));
     }
 
@@ -97,6 +98,9 @@ public class MealService {
         }
         if (request.description() != null) {
             meal.setDescription(trimToNull(request.description()));
+        }
+        if (request.ingredients() != null) {
+            meal.setIngredients(trimToNull(request.ingredients()));
         }
 
         return toMealResponse(mealRepository.save(meal));
@@ -149,7 +153,7 @@ public class MealService {
                 saved.getPlanDate(),
                 saved.getNotes()
         ));
-        return toMealPlanResponse(saved, meal.getName(), meal.getMealType());
+        return toMealPlanResponse(saved, meal.getName(), meal.getMealType(), meal.getIngredients());
     }
 
     public List<MealPlanResponse> getMealPlans(Long familyId, LocalDate from, LocalDate to) {
@@ -175,7 +179,8 @@ public class MealService {
                 .map(plan -> toMealPlanResponse(
                         plan,
                         resolveMealName(mealsById.get(plan.getMealId())),
-                        resolveMealType(mealsById.get(plan.getMealId()))
+                        resolveMealType(mealsById.get(plan.getMealId())),
+                        resolveMealIngredients(mealsById.get(plan.getMealId()))
                 ))
                 .toList();
     }
@@ -191,7 +196,8 @@ public class MealService {
                 .map(plan -> toMealPlanResponse(
                         plan,
                         resolveMealName(mealsById.get(plan.getMealId())),
-                        resolveMealType(mealsById.get(plan.getMealId()))
+                        resolveMealType(mealsById.get(plan.getMealId())),
+                        resolveMealIngredients(mealsById.get(plan.getMealId()))
                 ))
                 .toList();
     }
@@ -212,7 +218,8 @@ public class MealService {
                 .map(plan -> toMealPlanResponse(
                         plan,
                         resolveMealName(mealsById.get(plan.getMealId())),
-                        resolveMealType(mealsById.get(plan.getMealId()))
+                        resolveMealType(mealsById.get(plan.getMealId())),
+                        resolveMealIngredients(mealsById.get(plan.getMealId()))
                 ))
                 .toList();
         return new WeeklyMealPlanResponse(weekStart, weekEnd, planResponses);
@@ -254,9 +261,9 @@ public class MealService {
 
         MealPlanEntity saved = mealPlanRepository.save(plan);
         MealSnapshot meal = mealRepository.findById(saved.getMealId())
-                .map(entity -> new MealSnapshot(entity.getName(), entity.getMealType()))
+                .map(entity -> new MealSnapshot(entity.getName(), entity.getMealType(), entity.getIngredients()))
                 .orElse(null);
-        return toMealPlanResponse(saved, resolveMealName(meal), resolveMealType(meal));
+        return toMealPlanResponse(saved, resolveMealName(meal), resolveMealType(meal), resolveMealIngredients(meal));
     }
 
     @Transactional
@@ -275,7 +282,7 @@ public class MealService {
         return mealRepository.findAllById(mealIds).stream()
                 .collect(Collectors.toMap(
                         MealEntity::getId,
-                        meal -> new MealSnapshot(meal.getName(), meal.getMealType())
+                        meal -> new MealSnapshot(meal.getName(), meal.getMealType(), meal.getIngredients())
                 ));
     }
 
@@ -285,6 +292,10 @@ public class MealService {
 
     private MealType resolveMealType(MealSnapshot meal) {
         return meal != null ? meal.mealType() : MealType.DINNER;
+    }
+
+    private String resolveMealIngredients(MealSnapshot meal) {
+        return meal != null ? meal.ingredients() : null;
     }
 
     private String trimToNull(String value) {
@@ -301,11 +312,12 @@ public class MealService {
                 meal.getFamilyId(),
                 meal.getName(),
                 meal.getMealType(),
-                meal.getDescription()
+                meal.getDescription(),
+                meal.getIngredients()
         );
     }
 
-    private MealPlanResponse toMealPlanResponse(MealPlanEntity plan, String mealName, MealType mealType) {
+    private MealPlanResponse toMealPlanResponse(MealPlanEntity plan, String mealName, MealType mealType, String ingredients) {
         return new MealPlanResponse(
                 plan.getId(),
                 plan.getFamilyId(),
@@ -313,10 +325,11 @@ public class MealService {
                 mealName,
                 mealType,
                 plan.getPlanDate(),
-                plan.getNotes()
+                plan.getNotes(),
+                ingredients
         );
     }
 
-    private record MealSnapshot(String name, MealType mealType) {
+    private record MealSnapshot(String name, MealType mealType, String ingredients) {
     }
 }

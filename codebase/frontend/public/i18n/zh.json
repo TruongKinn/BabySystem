@@ -27,7 +27,8 @@
       "success": "成功",
       "warning": "警告",
       "notAvailable": "不适用",
-      "none": "无"
+      "none": "无",
+      "ok": "确认"
     },
     "home": {
       "title": "登录成功",
@@ -60,7 +61,9 @@
         "settings": "设置",
         "themeSettings": "主题设置",
         "documents": "文件",
-        "invoices": "发票生成"
+        "invoices": "发票生成",
+        "productivity": "效率与内容",
+        "copilot": "AI Copilot"
       }
     },
     "admin": {
@@ -74,7 +77,11 @@
         "exportPasswords": "导出密码",
         "themeSettings": "主题设置",
         "access": "访问控制",
-        "permissions": "权限目录"
+        "permissions": "权限目录",
+        "systemOverview": "系统与账户",
+        "business": "业务与财务",
+        "security": "安全与权限",
+        "config": "系统配置"
       },
       "brandTitle": "妈妈控制",
       "brandSubtitle": "操作控制台",
@@ -1063,7 +1070,8 @@
       "empty": {
         "dayNoMeals": "还没有吃饭",
         "noPlans": "尚无膳食计划",
-        "createFirstPlan": "创建第一餐计划"
+        "createFirstPlan": "创建第一餐计划",
+        "noNotes": "无注释"
       },
       "table": {
         "day": "日",
@@ -1097,7 +1105,12 @@
         "mealTypeLabel": "膳食类型",
         "planDateLabel": "计划日期",
         "noteLabel": "注意",
-        "notePlaceholder": "可选注释"
+        "notePlaceholder": "可选注释",
+        "editTitle": "修改膳食计划",
+        "createSubtitle": "安排一天/一周的菜单",
+        "editSubtitle": "更新菜品菜单",
+        "ingredientsLabel": "主要成分",
+        "ingredientsPlaceholder": "例如：鸡肉、蘑菇、生姜"
       },
       "ai": {
         "modalTitle": "人工智能膳食建议",
@@ -1112,7 +1125,9 @@
         "applyModeLabel": "应用：",
         "applyDateLabel": "申请日期：",
         "addToMenuButton": "将 {{count}} 菜肴添加到膳食计划中",
-        "selectHint": "选择至少一道菜继续"
+        "selectHint": "选择至少一道菜继续",
+        "applyAuto": "AI 自动生成 ✨",
+        "modalSubtitle": "AI 驱动的智能膳食建议"
       },
       "messages": {
         "createSuccess": "膳食计划已创建。",
@@ -1122,7 +1137,12 @@
         "selectAtLeastOneSuggestion": "请至少选择一道推荐菜肴。",
         "selectApplyDate": "请选择申请日期。",
         "addFromAiSuccess": "将{{count}} 菜肴添加到膳食计划中。",
-        "addFromAiFailed": "无法添加人工智能建议的菜肴。"
+        "addFromAiFailed": "无法添加人工智能建议的菜肴。",
+        "updateSuccess": "膳食计划已成功更新。",
+        "updateFailed": "无法更新膳食计划。",
+        "deleteConfirm": "您确定要将这道菜从计划中删除吗？",
+        "deleteSuccess": "菜品删除成功。",
+        "deleteFailed": "无法删除菜品。"
       }
     },
     "expenses": {

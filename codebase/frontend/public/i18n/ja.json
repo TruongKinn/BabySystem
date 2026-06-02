@@ -27,7 +27,8 @@
       "success": "成功",
       "warning": "警告",
       "notAvailable": "該当なし",
-      "none": "なし"
+      "none": "なし",
+      "ok": "確認"
     },
     "home": {
       "title": "ログインに成功しました",
@@ -60,7 +61,9 @@
         "settings": "設定",
         "themeSettings": "テーマ設定",
         "documents": "ドキュメント",
-        "invoices": "請求書作成"
+        "invoices": "請求書作成",
+        "productivity": "仕事とコンテンツ",
+        "copilot": "AI Copilot"
       }
     },
     "admin": {
@@ -74,7 +77,11 @@
         "exportPasswords": "パスワードのエクスポート",
         "themeSettings": "テーマ設定",
         "access": "アクセス制御",
-        "permissions": "許可カタログ"
+        "permissions": "許可カタログ",
+        "systemOverview": "システムとアカウント",
+        "business": "ビジネスと財務",
+        "security": "セキュリティと権限",
+        "config": "システム設定"
       },
       "brandTitle": "ママコントロール",
       "brandSubtitle": "運用コンソール",
@@ -1097,7 +1104,12 @@
         "mealTypeLabel": "食事の種類",
         "planDateLabel": "計画日",
         "noteLabel": "注",
-        "notePlaceholder": "オプションのメモ"
+        "notePlaceholder": "オプションのメモ",
+        "editTitle": "食事計画を編集する",
+        "createSubtitle": "日/週のメニューを計画する",
+        "editSubtitle": "メニューを更新する",
+        "ingredientsLabel": "主要材料",
+        "ingredientsPlaceholder": "例: 鶏肉、きのこ、生姜"
       },
       "ai": {
         "modalTitle": "AIによる食事提案",
@@ -1112,7 +1124,8 @@
         "applyModeLabel": "適用:",
         "applyDateLabel": "適用日:",
         "addToMenuButton": "{{count}} 料理を食事プランに追加します",
-        "selectHint": "続けるには少なくとも 1 つの料理を選択してください"
+        "selectHint": "続けるには少なくとも 1 つ of 料理を選択してください",
+        "applyAuto": "AI 自動生成 ✨"
       },
       "messages": {
         "createSuccess": "食事プランが作成されました。",
@@ -1122,7 +1135,12 @@
         "selectAtLeastOneSuggestion": "提案された料理を少なくとも 1 つ選択してください。",
         "selectApplyDate": "適用日を選択してください。",
         "addFromAiSuccess": "{{count}} 料理を食事プランに追加しました。",
-        "addFromAiFailed": "AI の提案から料理を追加できません。"
+        "addFromAiFailed": "AI の提案から料理を追加できません。",
+        "updateSuccess": "食事プランが更新されました。",
+        "updateFailed": "食事プランを更新できません。",
+        "deleteConfirm": "この料理を計画から削除してもよろしいですか？",
+        "deleteSuccess": "料理を削除しました。",
+        "deleteFailed": "料理を削除できません。"
       }
     },
     "expenses": {

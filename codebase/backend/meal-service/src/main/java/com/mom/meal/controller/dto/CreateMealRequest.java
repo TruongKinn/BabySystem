@@ -9,6 +9,7 @@ public record CreateMealRequest(
         @NotNull Long familyId,
         @NotBlank @Size(max = 160) String name,
         @NotNull MealType mealType,
-        @Size(max = 500) String description
+        @Size(max = 500) String description,
+        @Size(max = 500) String ingredients
 ) {
 }

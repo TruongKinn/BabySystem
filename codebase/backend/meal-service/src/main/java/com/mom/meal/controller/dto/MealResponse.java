@@ -7,6 +7,7 @@ public record MealResponse(
         Long familyId,
         String name,
         MealType mealType,
-        String description
+        String description,
+        String ingredients
 ) {
 }

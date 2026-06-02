@@ -30,6 +30,7 @@ interface MealApi {
   name: string;
   mealType: MealType;
   description: string | null;
+  ingredients?: string | null;
 }
 
 export interface BabyProfile {
@@ -1088,10 +1089,10 @@ export class SuperAppCommandService {
     return this.post(`/shopping/shopping-items/${itemId}/check`, { checked }).pipe(map(() => undefined));
   }
 
-  createMealPlan(input: { mealName: string; mealType: MealType; planDate: string; notes: string }): Observable<void> {
+  createMealPlan(input: { mealName: string; mealType: MealType; planDate: string; notes: string; ingredients?: string }): Observable<void> {
     const familyId = this.getFamilyId();
 
-    return this.ensureMeal(familyId, input.mealName, input.mealType).pipe(
+    return this.ensureMeal(familyId, input.mealName, input.mealType, input.ingredients).pipe(
       switchMap((meal) =>
         this.post('/meal/meal-plans', {
           familyId,
@@ -1102,6 +1103,27 @@ export class SuperAppCommandService {
       ),
       map(() => undefined)
     );
+  }
+
+  updateMealPlan(mealPlanId: number, input: { mealName: string; mealType: MealType; planDate: string; notes: string; ingredients?: string }): Observable<void> {
+    const familyId = this.getFamilyId();
+
+    return this.ensureMeal(familyId, input.mealName, input.mealType, input.ingredients).pipe(
+      switchMap((meal) =>
+        this.put(`/meal/meal-plans/${mealPlanId}`, {
+          mealId: meal.id,
+          planDate: input.planDate,
+          notes: input.notes
+        })
+      ),
+      map(() => undefined)
+    );
+  }
+
+  deleteMealPlan(mealPlanId: number): Observable<void> {
+    return this.http
+      .delete<ApiEnvelope<unknown>>(`${this.apiBase}/meal/meal-plans/${mealPlanId}`)
+      .pipe(map(() => undefined));
   }
 
   createBabyProfile(input: { name: string; birthDate: string; gender: BabyGender; notes: string }): Observable<void> {
@@ -1523,7 +1545,7 @@ export class SuperAppCommandService {
     );
   }
 
-  private ensureMeal(familyId: number, rawMealName: string, mealType: MealType): Observable<MealApi> {
+  private ensureMeal(familyId: number, rawMealName: string, mealType: MealType, ingredients?: string): Observable<MealApi> {
     const mealName = rawMealName.trim();
 
     return this.getMeals(familyId).pipe(
@@ -1532,6 +1554,16 @@ export class SuperAppCommandService {
           (meal) => meal.name.toLowerCase() === mealName.toLowerCase() && meal.mealType === mealType
         );
         if (existing) {
+          const inputIng = (ingredients ?? '').trim();
+          const existIng = (existing.ingredients ?? '').trim();
+          if (inputIng && existIng !== inputIng) {
+            return this.put<MealApi>(`/meal/meals/${existing.id}`, {
+              name: existing.name,
+              mealType: existing.mealType,
+              description: existing.description ?? '',
+              ingredients: inputIng
+            });
+          }
           return of(existing);
         }
 
@@ -1539,7 +1571,8 @@ export class SuperAppCommandService {
           familyId,
           name: mealName,
           mealType,
-          description: ''
+          description: '',
+          ingredients: ingredients || ''
         });
       })
     );

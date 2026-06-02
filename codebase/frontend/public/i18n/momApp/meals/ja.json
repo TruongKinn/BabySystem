@@ -1,0 +1,101 @@
+{
+  "title": "ミールプランナー",
+  "subtitle": "両親のための週ごとの食事プランと赤ちゃんに優しいルーティン",
+  "totalLabel": "予定日",
+  "actions": {
+    "create": "プランを追加",
+    "aiSuggest": "AI サジェスト"
+  },
+  "stats": {
+    "totalMeals": "食事の合計",
+    "daysWithMeals": "食事のある日",
+    "period": {
+      "week": "週: {{start}} - {{end}}",
+      "month": "月 {{month}}/{{year}}",
+      "year": "年 {{year}}"
+    }
+  },
+  "filters": {
+    "week": "週別",
+    "month": "月別",
+    "year": "年別",
+    "selectWeek": "週を選択してください",
+    "selectMonth": "月を選択してください",
+    "selectYear": "年を選択してください"
+  },
+  "empty": {
+    "dayNoMeals": "食事はまだありません",
+    "noPlans": "食事の予定はまだありません",
+    "createFirstPlan": "最初の食事プランを作成する"
+  },
+  "table": {
+    "day": "日",
+    "breakfast": "朝食",
+    "lunch": "ランチ",
+    "dinner": "ディナー"
+  },
+  "mealType": {
+    "BREAKFAST": "朝食",
+    "LUNCH": "ランチ",
+    "DINNER": "ディナー",
+    "SNACK": "スナック"
+  },
+  "modal": {
+    "createTitle": "食事計画を作成する",
+    "editTitle": "食事計画を編集する",
+    "createSubtitle": "日/週のメニューを計画する",
+    "editSubtitle": "メニューを更新する",
+    "savePlan": "プランを保存",
+    "applyFor": "申し込み:",
+    "applyDay": "1日",
+    "applyWeek": "一週間中",
+    "selectWeekStart": "週の開始日を選択してください",
+    "selectDate": "計画日",
+    "dateRequired": "日付を選択してください",
+    "dishesTitle": "料理リスト",
+    "addDish": "料理を追加",
+    "mealTypePlaceholder": "食事の種類",
+    "removeDish": "皿を取り外す",
+    "notesLabel": "注記",
+    "notesPlaceholder": "オプションのメモ",
+    "mealNameLabel": "食事名",
+    "mealNamePlaceholder": "例:チキンスープ",
+    "mealTypeLabel": "食事の種類",
+    "planDateLabel": "計画日",
+    "noteLabel": "注",
+    "notePlaceholder": "オプションのメモ",
+    "ingredientsLabel": "主要材料",
+    "ingredientsPlaceholder": "例: 鶏肉、きのこ、生姜"
+  },
+  "ai": {
+    "modalTitle": "AIによる食事提案",
+    "inputLabel": "利用可能な材料を入力してください (カンマ区切り)",
+    "inputPlaceholder": "例: 鶏肉、にんじん、ジャガイモ、玉ねぎ",
+    "searchButton": "料理の提案",
+    "loading": "成分を分析中...",
+    "suggestionsTitle": "おすすめの料理",
+    "ingredientsLabel": "材料:",
+    "applyTitle": "食事プランに追加",
+    "applyAuto": "AI 自動生成 ✨",
+    "applyMealLabel": "食事:",
+    "applyModeLabel": "適用:",
+    "applyDateLabel": "適用日:",
+    "addToMenuButton": "{{count}} 料理を食事プランに追加します",
+    "selectHint": "続けるには少なくとも 1 つ of 料理を選択してください"
+  },
+  "messages": {
+    "createSuccess": "食事プランが作成されました。",
+    "createFailed": "食事プランを作成できません。",
+    "updateSuccess": "食事プランが更新されました。",
+    "updateFailed": "食事プランを更新できません。",
+    "deleteConfirm": "この料理を計画から削除してもよろしいですか？",
+    "deleteSuccess": "料理を削除しました。",
+    "deleteFailed": "料理を削除できません。",
+    "requireAtLeastOneDish": "一品以上追加してください。",
+    "missingIngredients": "原材料を入力してください。",
+    "selectAtLeastOneSuggestion": "提案された料理を少なくとも 1 つ選択してください。",
+    "selectApplyDate": "適用日を選択してください。",
+    "addFromAiSuccess": "{{count}} 料理を食事プランに追加しました。",
+    "addFromAiFailed": "AI の提案から料理を追加できません。"
+  }
+}

@@ -27,7 +27,8 @@
       "success": "Thành công",
       "notAvailable": "N/A",
       "warning": "Cảnh báo",
-      "none": "Không có"
+      "none": "Không có",
+      "ok": "Xác nhận"
     },
     "home": {
       "title": "Đăng nhập thành công",
@@ -60,7 +61,9 @@
         "settings": "Cài đặt",
         "themeSettings": "Cài đặt giao diện",
         "documents": "Tài liệu",
-        "invoices": "Tạo Hóa đơn"
+        "invoices": "Tạo Hóa đơn",
+        "productivity": "Công việc & Nội dung",
+        "copilot": "AI Copilot"
       }
     },
     "admin": {
@@ -74,7 +77,11 @@
         "exportPasswords": "Quản lý password export",
         "themeSettings": "Cài đặt giao diện",
         "access": "Kiểm soát truy cập",
-        "permissions": "Danh mục quyền"
+        "permissions": "Danh mục quyền",
+        "systemOverview": "Giám sát & Tài khoản",
+        "business": "Kinh doanh & Tài chính",
+        "security": "Bảo mật & Phân quyền",
+        "config": "Cấu hình hệ thống"
       },
       "brandTitle": "MOM CONTROL",
       "brandSubtitle": "Ops Console",
@@ -1033,96 +1040,6 @@
         "remainingItems": "Còn lại"
       }
     },
-    "meals": {
-      "title": "Kế Hoạch Bữa Ăn",
-      "subtitle": "Lịch bữa ăn theo tuần cho cả nhà và phù hợp cho bé",
-      "totalLabel": "ngày đã lên kế hoạch",
-      "actions": {
-        "create": "Thêm kế hoạch",
-        "aiSuggest": "Gợi ý AI"
-      },
-      "table": {
-        "day": "Ngày",
-        "breakfast": "Sáng",
-        "lunch": "Trưa",
-        "dinner": "Tối"
-      },
-      "mealType": {
-        "BREAKFAST": "Bữa sáng",
-        "LUNCH": "Bữa trưa",
-        "DINNER": "Bữa tối",
-        "SNACK": "Bữa phụ"
-      },
-      "modal": {
-        "createTitle": "Tạo kế hoạch bữa ăn",
-        "mealNameLabel": "Tên món",
-        "mealNamePlaceholder": "Ví dụ: Canh gà nấm",
-        "mealTypeLabel": "Loại bữa",
-        "planDateLabel": "Ngày áp dụng",
-        "noteLabel": "Ghi chú",
-        "notePlaceholder": "Ghi chú thêm",
-        "savePlan": "Lưu kế hoạch",
-        "applyFor": "Áp dụng cho:",
-        "applyDay": "1 ngày",
-        "applyWeek": "Cả tuần",
-        "selectWeekStart": "Chọn ngày bắt đầu tuần",
-        "selectDate": "Ngày kế hoạch",
-        "dateRequired": "Vui lòng chọn ngày",
-        "dishesTitle": "Danh sách món",
-        "addDish": "Thêm món",
-        "mealTypePlaceholder": "Loại bữa ăn",
-        "removeDish": "Xóa món",
-        "notesLabel": "Ghi chú",
-        "notesPlaceholder": "Ghi chú thêm"
-      },
-      "messages": {
-        "createSuccess": "Tạo kế hoạch bữa ăn thành công.",
-        "createFailed": "Không thể tạo kế hoạch bữa ăn.",
-        "requireAtLeastOneDish": "Vui lòng thêm ít nhất một món.",
-        "missingIngredients": "Vui lòng nhập nguyên liệu.",
-        "selectAtLeastOneSuggestion": "Vui lòng chọn ít nhất một món gợi ý.",
-        "selectApplyDate": "Vui lòng chọn ngày áp dụng.",
-        "addFromAiSuccess": "Đã thêm {{count}} món vào kế hoạch bữa ăn.",
-        "addFromAiFailed": "Không thể thêm món từ gợi ý AI."
-      },
-      "stats": {
-        "totalMeals": "Tổng số món",
-        "daysWithMeals": "Số ngày có bữa",
-        "period": {
-          "week": "Tuần: {{start}} - {{end}}",
-          "month": "Tháng {{month}}/{{year}}",
-          "year": "Năm {{year}}"
-        }
-      },
-      "filters": {
-        "week": "Theo tuần",
-        "month": "Theo tháng",
-        "year": "Theo năm",
-        "selectWeek": "Chọn tuần",
-        "selectMonth": "Chọn tháng",
-        "selectYear": "Chọn năm"
-      },
-      "empty": {
-        "dayNoMeals": "Chưa có món ăn",
-        "noPlans": "Chưa có kế hoạch bữa ăn",
-        "createFirstPlan": "Tạo kế hoạch đầu tiên"
-      },
-      "ai": {
-        "modalTitle": "Gợi ý món ăn bằng AI",
-        "inputLabel": "Nhập nguyên liệu hiện có (phân tách bằng dấu phẩy)",
-        "inputPlaceholder": "Ví dụ: gà, cà rốt, khoai tây, hành",
-        "searchButton": "Gợi ý món",
-        "loading": "Đang phân tích nguyên liệu...",
-        "suggestionsTitle": "Món ăn gợi ý",
-        "ingredientsLabel": "Nguyên liệu:",
-        "applyTitle": "Thêm vào kế hoạch bữa ăn",
-        "applyMealLabel": "Bữa ăn:",
-        "applyModeLabel": "Áp dụng:",
-        "applyDateLabel": "Ngày áp dụng:",
-        "addToMenuButton": "Thêm {{count}} món vào kế hoạch bữa ăn",
-        "selectHint": "Chọn ít nhất một món để tiếp tục"
-      }
-    },
     "expenses": {
       "title": "Kiểm Soát Chi Tiêu",
       "subtitle": "Theo dõi chi tiêu gia đình và bảo vệ ngân sách tháng",
@@ -1760,6 +1677,109 @@
       "message": "Bạn không có quyền truy cập trang này.",
       "goUserPortal": "Về User Portal",
       "goAdminPortal": "Về Admin Portal"
+    },
+    "meals": {
+      "title": "Kế Hoạch Bữa Ăn",
+      "subtitle": "Lịch bữa ăn theo tuần cho cả nhà và phù hợp cho bé",
+      "totalLabel": "ngày đã lên kế hoạch",
+      "actions": {
+        "create": "Thêm kế hoạch",
+        "aiSuggest": "Gợi ý AI"
+      },
+      "table": {
+        "day": "Ngày",
+        "breakfast": "Sáng",
+        "lunch": "Trưa",
+        "dinner": "Tối"
+      },
+      "mealType": {
+        "BREAKFAST": "Bữa sáng",
+        "LUNCH": "Bữa trưa",
+        "DINNER": "Bữa tối",
+        "SNACK": "Bữa phụ"
+      },
+      "modal": {
+        "createTitle": "Tạo kế hoạch bữa ăn",
+        "mealNameLabel": "Tên món",
+        "mealNamePlaceholder": "Ví dụ: Canh gà nấm",
+        "mealTypeLabel": "Loại bữa",
+        "planDateLabel": "Ngày áp dụng",
+        "noteLabel": "Ghi chú",
+        "notePlaceholder": "Ghi chú thêm",
+        "savePlan": "Lưu kế hoạch",
+        "applyFor": "Áp dụng cho:",
+        "applyDay": "1 ngày",
+        "applyWeek": "Cả tuần",
+        "selectWeekStart": "Chọn ngày bắt đầu tuần",
+        "selectDate": "Ngày kế hoạch",
+        "dateRequired": "Vui lòng chọn ngày",
+        "dishesTitle": "Danh sách món",
+        "addDish": "Thêm món",
+        "mealTypePlaceholder": "Loại bữa ăn",
+        "removeDish": "Xóa món",
+        "notesLabel": "Ghi chú",
+        "notesPlaceholder": "Ghi chú thêm",
+        "editTitle": "Chỉnh sửa kế hoạch bữa ăn",
+        "createSubtitle": "Lên thực đơn cho ngày / tuần",
+        "editSubtitle": "Cập nhật thực đơn món ăn",
+        "ingredientsLabel": "Nguyên liệu",
+        "ingredientsPlaceholder": "Ví dụ: thịt gà, nấm, gừng"
+      },
+      "messages": {
+        "createSuccess": "Tạo kế hoạch bữa ăn thành công.",
+        "createFailed": "Không thể tạo kế hoạch bữa ăn.",
+        "requireAtLeastOneDish": "Vui lòng thêm ít nhất một món.",
+        "missingIngredients": "Vui lòng nhập nguyên liệu.",
+        "selectAtLeastOneSuggestion": "Vui lòng chọn ít nhất một món gợi ý.",
+        "selectApplyDate": "Vui lòng chọn ngày áp dụng.",
+        "addFromAiSuccess": "Đã thêm {{count}} món vào kế hoạch bữa ăn.",
+        "addFromAiFailed": "Không thể thêm món từ gợi ý AI.",
+        "updateSuccess": "Cập nhật kế hoạch bữa ăn thành công.",
+        "updateFailed": "Không thể cập nhật kế hoạch bữa ăn.",
+        "deleteConfirm": "Bạn có chắc chắn muốn xóa món ăn này khỏi kế hoạch?",
+        "deleteSuccess": "Xóa món ăn thành công.",
+        "deleteFailed": "Không thể xóa món ăn."
+      },
+      "stats": {
+        "totalMeals": "Tổng số món",
+        "daysWithMeals": "Số ngày có bữa",
+        "period": {
+          "week": "Tuần: {{start}} - {{end}}",
+          "month": "Tháng {{month}}/{{year}}",
+          "year": "Năm {{year}}"
+        }
+      },
+      "filters": {
+        "week": "Theo tuần",
+        "month": "Theo tháng",
+        "year": "Theo năm",
+        "selectWeek": "Chọn tuần",
+        "selectMonth": "Chọn tháng",
+        "selectYear": "Chọn năm"
+      },
+      "empty": {
+        "dayNoMeals": "Chưa có món ăn",
+        "noPlans": "Chưa có kế hoạch bữa ăn",
+        "createFirstPlan": "Tạo kế hoạch đầu tiên",
+        "noNotes": "Không có ghi chú"
+      },
+      "ai": {
+        "modalTitle": "Gợi ý món ăn bằng AI",
+        "inputLabel": "Nhập nguyên liệu hiện có (phân tách bằng dấu phẩy)",
+        "inputPlaceholder": "Ví dụ: gà, cà rốt, khoai tây, hành",
+        "searchButton": "Gợi ý món",
+        "loading": "Đang phân tích nguyên liệu...",
+        "suggestionsTitle": "Món ăn gợi ý",
+        "ingredientsLabel": "Nguyên liệu:",
+        "applyTitle": "Thêm vào kế hoạch bữa ăn",
+        "applyMealLabel": "Bữa ăn:",
+        "applyModeLabel": "Áp dụng:",
+        "applyDateLabel": "Ngày áp dụng:",
+        "addToMenuButton": "Thêm {{count}} món vào kế hoạch bữa ăn",
+        "selectHint": "Chọn ít nhất một món để tiếp tục",
+        "applyAuto": "Tự động theo AI ✨",
+        "modalSubtitle": "Gợi ý món ăn thông minh từ AI"
+      }
     }
   },
   "app": {
