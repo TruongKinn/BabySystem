@@ -361,4 +361,141 @@ public class GeminiClient {
             throw new OpenAiApiException(502, "Gemini suggestMeals API request failed: " + ex.getMessage());
         }
     }
+
+    public String generateTravelPlan(String destination, Integer durationDays, String preferences, String language) {
+        String apiKey = properties.getApiKey();
+        if (!StringUtils.hasText(apiKey)) {
+            throw new OpenAiConfigurationException("GEMINI/OPENAI_API_KEY is not configured");
+        }
+
+        String geminiModel = properties.getModel();
+        if (geminiModel.contains("gpt-") || geminiModel.equals("gpt-5.4-mini") || "gemini-1.5-flash".equals(geminiModel)) {
+            geminiModel = "gemini-3.5-flash";
+        }
+
+        String url = String.format("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s",
+                geminiModel, apiKey);
+
+        try {
+            ObjectNode root = objectMapper.createObjectNode();
+            ArrayNode contentsNode = root.putArray("contents");
+            ObjectNode turnNode = contentsNode.addObject();
+            turnNode.put("role", "user");
+            ArrayNode partsNode = turnNode.putArray("parts");
+
+            String preferencesText = StringUtils.hasText(preferences) ? preferences : "Không có yêu cầu đặc biệt.";
+            String promptText = """
+                Bạn là một chuyên gia du lịch và trợ lý AI của hệ thống quản lý gia đình BabySystem.
+                Hãy lập một kế hoạch du lịch hoàn chỉnh cho gia đình dựa trên các thông tin sau:
+                - Điểm đến: %s
+                - Số ngày đi: %d ngày
+                - Yêu cầu đặc biệt/Ngữ cảnh gia đình: %s
+                
+                Nhiệm vụ của bạn:
+                1. Đặt tên tiêu đề chuyến đi (title) hấp dẫn và mô tả ngắn gọn, sinh động (description) chuyến đi. Ghi bằng ngôn ngữ '%s'.
+                2. Thiết kế lịch trình cụ thể từng ngày:
+                   - Đề xuất các địa điểm tham quan thực tế có thật tại điểm đến đó (ví dụ nếu đi Đà Lạt thì gợi ý Hồ Xuân Hương, Thung lũng Tình Yêu, Chợ Đà Lạt...).
+                   - Cung cấp tọa độ địa lý chính xác (lat và lng dạng số thực) của từng điểm đến này để hiển thị trên bản đồ OpenStreetMap.
+                   - Phân bổ đều cho các ngày từ 1 đến %d (trường dayIndex từ 1 đến %d).
+                   - Viết ghi chú (notes) ngắn gọn, sinh động bằng ngôn ngữ '%s' cho từng địa điểm (các hoạt động nên làm, lý do chọn...).
+                3. Đề xuất danh sách các món đồ dùng chuẩn bị (checklist) cụ thể, hữu ích cho chuyến đi (đặc biệt phù hợp nếu có trẻ em đi cùng). Phân loại vào một trong 4 nhóm danh mục chính xác sau:
+                   - 'baby' (Đồ dùng cho bé: tã, bỉm, sữa, xe đẩy...)
+                   - 'parents' (Đồ dùng của bố mẹ: quần áo dạo phố, đồ tắm...)
+                   - 'documents' (Giấy tờ, vé máy bay, vé tàu xe, xác nhận đặt phòng...)
+                   - 'other' (Thiết bị khác: sạc dự phòng, máy ảnh, sạc điện thoại...)
+                   Mỗi vật dụng có tên ngắn gọn tự nhiên (task) bằng ngôn ngữ '%s'.
+                
+                Phản hồi bắt buộc phải là đối tượng JSON hợp lệ theo đúng cấu trúc schema yêu cầu.
+                """.formatted(destination, durationDays, preferencesText, language, durationDays, durationDays, language, language, language);
+
+            partsNode.addObject().put("text", promptText);
+
+            // Generation config
+            ObjectNode generationConfig = root.putObject("generationConfig");
+            generationConfig.put("responseMimeType", "application/json");
+
+            // Schema
+            ObjectNode schemaNode = generationConfig.putObject("responseSchema");
+            schemaNode.put("type", "OBJECT");
+
+            ObjectNode propertiesNode = schemaNode.putObject("properties");
+
+            propertiesNode.putObject("title").put("type", "STRING");
+            propertiesNode.putObject("description").put("type", "STRING");
+
+            // Destinations Schema
+            ObjectNode destinationsNode = propertiesNode.putObject("destinations");
+            destinationsNode.put("type", "ARRAY");
+            ObjectNode destItemsNode = destinationsNode.putObject("items");
+            destItemsNode.put("type", "OBJECT");
+            ObjectNode destProps = destItemsNode.putObject("properties");
+            destProps.putObject("name").put("type", "STRING");
+            destProps.putObject("lat").put("type", "NUMBER");
+            destProps.putObject("lng").put("type", "NUMBER");
+            destProps.putObject("dayIndex").put("type", "INTEGER");
+            destProps.putObject("notes").put("type", "STRING");
+
+            ArrayNode destRequired = destItemsNode.putArray("required");
+            destRequired.add("name");
+            destRequired.add("lat");
+            destRequired.add("lng");
+            destRequired.add("dayIndex");
+
+            // Checklist Schema
+            ObjectNode checklistNode = propertiesNode.putObject("checklist");
+            checklistNode.put("type", "ARRAY");
+            ObjectNode checkItemsNode = checklistNode.putObject("items");
+            checkItemsNode.put("type", "OBJECT");
+            ObjectNode checkProps = checkItemsNode.putObject("properties");
+            checkProps.putObject("task").put("type", "STRING");
+            checkProps.putObject("category").put("type", "STRING");
+
+            ArrayNode checkRequired = checkItemsNode.putArray("required");
+            checkRequired.add("task");
+            checkRequired.add("category");
+
+            ArrayNode requiredNode = schemaNode.putArray("required");
+            requiredNode.add("title");
+            requiredNode.add("description");
+            requiredNode.add("destinations");
+            requiredNode.add("checklist");
+
+            Duration timeout = properties.getTimeout();
+            log.info("Calling Gemini generateTravelPlan API with model: {}", geminiModel);
+
+            JsonNode responseJson = WebClient.create()
+                    .post()
+                    .uri(url)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(root)
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
+                            .defaultIfEmpty("Gemini generateTravelPlan request failed")
+                            .flatMap(body -> Mono.error(new OpenAiApiException(response.statusCode().value(), "Gemini generateTravelPlan API error: " + body))))
+                    .bodyToMono(JsonNode.class)
+                    .timeout(timeout)
+                    .block();
+
+            if (responseJson == null) {
+                throw new OpenAiApiException(502, "Empty response from Gemini generateTravelPlan API");
+            }
+
+            String outputText = "";
+            JsonNode candidates = responseJson.path("candidates");
+            if (candidates.isArray() && candidates.size() > 0) {
+                JsonNode firstCandidate = candidates.get(0);
+                JsonNode parts = firstCandidate.path("content").path("parts");
+                if (parts.isArray() && parts.size() > 0) {
+                    outputText = parts.get(0).path("text").asText();
+                }
+            }
+            return outputText;
+        } catch (OpenAiApiException ex) {
+            throw ex;
+        } catch (RuntimeException ex) {
+            log.error("Gemini generateTravelPlan API call failed", ex);
+            throw new OpenAiApiException(502, "Gemini generateTravelPlan API request failed: " + ex.getMessage());
+        }
+    }
 }
+

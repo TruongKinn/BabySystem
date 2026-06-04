@@ -25,6 +25,7 @@ import { TasksComponent } from './tasks/tasks.component';
 import { DocumentsComponent } from './documents/documents.component';
 import { AiCopilotComponent } from './ai-copilot/ai-copilot.component';
 import { InvoicesComponent } from './invoices/invoices.component';
+import { TravelComponent } from './travel/travel.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'admin/login' },
@@ -43,6 +44,7 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'baby', component: BabyComponent },
       { path: 'journey', component: JourneyComponent },
+      { path: 'travel', component: TravelComponent },
       { path: 'meals', component: MealsComponent },
       { path: 'expenses', component: ExpensesComponent },
       { path: 'tasks', component: TasksComponent },
@@ -81,6 +83,7 @@ export const routes: Routes = [
   { path: 'dashboard', redirectTo: 'app/dashboard', pathMatch: 'full' },
   { path: 'baby', redirectTo: 'app/baby', pathMatch: 'full' },
   { path: 'journey', redirectTo: 'app/journey', pathMatch: 'full' },
+  { path: 'travel', redirectTo: 'app/travel', pathMatch: 'full' },
   { path: 'meals', redirectTo: 'app/meals', pathMatch: 'full' },
   { path: 'expenses', redirectTo: 'app/expenses', pathMatch: 'full' },
   { path: 'tasks', redirectTo: 'app/tasks', pathMatch: 'full' },

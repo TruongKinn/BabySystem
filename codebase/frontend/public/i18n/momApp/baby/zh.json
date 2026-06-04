@@ -20,5 +20,42 @@
       "sad": "伤心",
       "angry": "生气"
     }
+  },
+  "forecast": {
+    "title": "宝宝预测",
+    "subtitle": "未来 24 小时的睡眠与喂养预测",
+    "refresh": "刷新",
+    "emptyState": "暂无预测。点击刷新或添加新记录。",
+    "nextSleep": "下一次睡眠",
+    "nextFeeding": "下一次喂养",
+    "updatedAt": "更新时间",
+    "anomaliesCount": "{{count}} 个未解决的异常",
+    "summary": {
+      "LOW": "最新预测：宝宝可能在 {{sleepTime}} 左右入睡，并在 {{feedingTime}} 左右进食。未检测到明显异常。",
+      "MEDIUM": "最新预测：宝宝可能在 {{sleepTime}} 左右入睡，并在 {{feedingTime}} 左右进食。检测到轻微作息偏差。",
+      "HIGH": "最新预测：宝宝可能在 {{sleepTime}} 左右入睡，并在 {{feedingTime}} 左右进食。今天作息有明显偏差，建议密切观察。"
+    },
+    "recommendations": {
+      "highRisk1": "今晚请密切观察宝宝，因为总睡眠时间低于日常平均水平。",
+      "highRisk2": "如果宝宝出现健康异常迹象，请及时联系医护人员。",
+      "mediumRisk": "在接下来的几个小时内记录更多日志，以确认是否存在作息偏差。",
+      "lowRisk": "目前作息稳定。请继续记录以获得更准确的预测。",
+      "sleepCompare": "今天睡眠：{{today}} 小时，近期平均：{{baseline}} 小时。",
+      "stats": "今日喂养次数：{{feedings}}，换尿布次数：{{diapers}}。"
+    },
+    "messages": {
+      "queueSuccess": "已将预测刷新请求加入队列。",
+      "loadFailed": "无法加载宝宝预测",
+      "refreshFailed": "无法刷新预测"
+    },
+    "anomalies": {
+      "modalTitle": "宝宝作息异常警报",
+      "type": "异常类型",
+      "detectedAt": "检测时间",
+      "resolveBtn": "确认已处理",
+      "empty": "目前没有未解决的异常。",
+      "resolveSuccess": "异常已成功处理。",
+      "resolveFailed": "无法处理异常。"
+    }
   }
 }

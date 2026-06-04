@@ -1,0 +1,669 @@
+<div class="page-container">
+  <!-- Header Section -->
+  <div class="header-actions">
+    <div>
+      <h1 class="page-title">{{ 'app.travel.title' | translate }}</h1>
+      <p class="page-subtitle">{{ 'app.travel.subtitle' | translate }}</p>
+    </div>
+    <div class="header-button-group">
+      <button nz-button nzType="default" class="btn-user-outline btn-ai-sparkle" (click)="openAiCreateModal()" style="margin-right: 8px;">
+        <span nz-icon nzType="robot" nzTheme="outline"></span>
+        {{ 'app.travel.generateAiTrip' | translate }}
+      </button>
+      <button nz-button nzType="primary" class="btn-user-primary" (click)="openCreateModal()">
+        <span nz-icon nzType="plus"></span>
+        {{ 'app.travel.newTrip' | translate }}
+      </button>
+    </div>
+  </div>
+
+  <nz-spin [nzSpinning]="isLoading">
+    <!-- Empty State if no travel plan exists -->
+    <div *ngIf="travelPlans.length === 0" class="empty-state-wrapper">
+      <nz-empty
+        [nzNotFoundImage]="'simple'"
+        [nzNotFoundContent]="emptyContentTpl"
+        [nzNotFoundFooter]="emptyFooterTpl"
+      >
+        <ng-template #emptyContentTpl>
+          <span class="empty-text">{{ 'app.travel.noTrip' | translate }}</span>
+        </ng-template>
+        <ng-template #emptyFooterTpl>
+          <div class="empty-actions">
+            <button nz-button nzType="default" class="btn-user-outline btn-ai-sparkle" (click)="openAiCreateModal()" style="margin-right: 8px;">
+              <span nz-icon nzType="robot" nzTheme="outline"></span>
+              {{ 'app.travel.generateAiTrip' | translate }}
+            </button>
+            <button nz-button nzType="primary" class="btn-user-primary" (click)="openCreateModal()">
+              {{ 'app.travel.createFirstTrip' | translate }}
+            </button>
+          </div>
+        </ng-template>
+      </nz-empty>
+    </div>
+
+    <!-- Main Travel Planner Workspace -->
+    <div *ngIf="travelPlans.length > 0" class="travel-grid">
+    <!-- Sidebar: Trips List & Trip Information -->
+    <div class="travel-sidebar">
+      <!-- Active Trips Selector Card -->
+      <nz-card class="travel-card" [nzTitle]="tripsCardTitleTpl">
+        <ng-template #tripsCardTitleTpl>
+          <div class="card-title-with-icon">
+            <span class="title-icon-wrap title-icon-wrap--orange">
+              <span nz-icon nzType="compass" nzTheme="outline"></span>
+            </span>
+            <span>{{ 'app.travel.myTrips' | translate }}</span>
+          </div>
+        </ng-template>
+
+        <div class="plans-list">
+          <div
+            *ngFor="let plan of travelPlans"
+            class="plan-item"
+            [class.plan-item--active]="selectedPlan?.id === plan.id"
+            (click)="selectPlan(plan)"
+          >
+            <div class="plan-item-info">
+              <strong class="plan-item-title">{{ plan.title }}</strong>
+              <span class="plan-item-dates">
+                <span nz-icon nzType="calendar"></span>
+                {{ formatDate(plan.startDate) }} - {{ formatDate(plan.endDate) }}
+              </span>
+            </div>
+            <button
+              nz-button
+              nzType="text"
+              nzDanger
+              class="btn-delete-trip"
+              (click)="deletePlan(plan, $event)"
+              [attr.title]="'app.travel.deleteTrip' | translate"
+            >
+              <span nz-icon nzType="delete"></span>
+            </button>
+          </div>
+        </div>
+      </nz-card>
+
+      <!-- Active Trip Details & Tabs -->
+      <nz-card *ngIf="selectedPlan" class="travel-card detail-card">
+        <div class="selected-plan-header">
+          <div class="title-row-with-sync">
+            <h2>{{ selectedPlan.title }}</h2>
+            <div class="sync-indicator">
+              <span *ngIf="isSaving" class="sync-status sync-status--saving">
+                <span nz-icon nzType="sync" nzSpin></span> {{ 'app.travel.saving' | translate }}
+              </span>
+              <span *ngIf="isSaved" class="sync-status sync-status--saved">
+                <span nz-icon nzType="check-circle" nzTheme="fill"></span> {{ 'app.travel.saved' | translate }}
+              </span>
+            </div>
+          </div>
+          <p class="plan-desc">{{ selectedPlan.description }}</p>
+          <div class="plan-meta-tags">
+            <nz-tag nzColor="orange">
+              <span nz-icon nzType="calendar"></span>
+              {{ formatDate(selectedPlan.startDate) }} - {{ formatDate(selectedPlan.endDate) }}
+            </nz-tag>
+            <nz-tag nzColor="magenta">
+              <span nz-icon nzType="environment"></span>
+              {{ selectedPlan.destinations.length }} {{ 'app.travel.destinations' | translate }}
+            </nz-tag>
+          </div>
+        </div>
+
+        <nz-tabset nzCentered>
+          <!-- Route / Destinations Tab -->
+          <nz-tab [nzTitle]="tabRouteTitleTpl">
+            <ng-template #tabRouteTitleTpl>
+              <span nz-icon nzType="environment"></span>
+              {{ 'app.travel.tabRoute' | translate }}
+            </ng-template>
+
+            <div class="tab-content-wrapper">
+              <div class="tab-header-actions">
+                <h3>{{ 'app.travel.itinerary' | translate }}</h3>
+                <button nz-button class="btn-user-secondary btn-sm" (click)="openAddDestinationAt(21.0285, 105.8542)">
+                  <span nz-icon nzType="plus"></span>
+                  {{ 'app.travel.addDestination' | translate }}
+                </button>
+              </div>
+
+              <!-- Empty Destinations -->
+              <div *ngIf="selectedPlan.destinations.length === 0" class="empty-destinations">
+                <p>{{ 'app.travel.emptyDestinationsHint' | translate }}</p>
+                <button nz-button class="btn-user-outline" (click)="openAddDestinationAt(21.0285, 105.8542)">
+                  {{ 'app.travel.addDestOnMap' | translate }}
+                </button>
+              </div>
+
+              <!-- List of destinations -->
+              <nz-timeline *ngIf="selectedPlan.destinations.length > 0" class="destinations-timeline">
+                <nz-timeline-item
+                  *ngFor="let dest of selectedPlan.destinations"
+                  [nzColor]="'orange'"
+                >
+                  <div class="timeline-dest-item">
+                    <div class="dest-info-wrapper">
+                      <!-- Destination Image Thumbnail -->
+                      <div *ngIf="dest.imageUrl" class="dest-thumb" [style.backgroundImage]="'url(' + getSafeImageUrl(dest.imageUrl) + ')'"></div>
+                      <div class="dest-info">
+                        <div class="dest-name-row">
+                          <strong>{{ dest.name }}</strong>
+                          <nz-tag nzColor="blue">Ngày {{ dest.dayIndex }}</nz-tag>
+                        </div>
+                        <p *ngIf="dest.notes" class="dest-notes">{{ dest.notes }}</p>
+                      </div>
+                    </div>
+                    <button nz-button nzType="text" nzDanger (click)="removeDestination(dest.id)">
+                      <span nz-icon nzType="close-circle"></span>
+                    </button>
+                  </div>
+                </nz-timeline-item>
+              </nz-timeline>
+            </div>
+          </nz-tab>
+
+          <!-- AI Planner Tab -->
+          <nz-tab [nzTitle]="tabAiTitleTpl">
+            <ng-template #tabAiTitleTpl>
+              <span nz-icon nzType="customer-service"></span>
+              {{ 'app.travel.tabAi' | translate }}
+            </ng-template>
+
+            <div class="tab-content-wrapper">
+              <h3>{{ 'app.travel.aiIdeaTitle' | translate }}</h3>
+              <p class="section-help-text">{{ 'app.travel.aiIdeaDesc' | translate }}</p>
+
+              <!-- Prompt box -->
+              <div class="ai-prompt-box">
+                <textarea
+                  nz-input
+                  [(ngModel)]="aiPrompt"
+                  [nzAutosize]="{ minRows: 3, maxRows: 6 }"
+                  [placeholder]="'app.travel.aiPromptPlaceholder' | translate"
+                ></textarea>
+                <div class="prompt-actions">
+                  <button
+                    nz-button
+                    nzType="primary"
+                    class="btn-user-primary"
+                    [nzLoading]="isAiGenerating"
+                    (click)="generateAiTravelIdea()"
+                  >
+                    <span nz-icon nzType="experiment"></span>
+                    {{ 'app.travel.generateIdeas' | translate }}
+                  </button>
+                </div>
+              </div>
+
+              <!-- AI Output -->
+              <div *ngIf="isAiGenerating" class="ai-generating-state">
+                <nz-spin nzSimple nzSize="large"></nz-spin>
+                <p>{{ 'app.travel.aiGenerating' | translate }}</p>
+              </div>
+
+              <div *ngIf="!isAiGenerating && (aiSuggestionResponse || selectedPlan.aiIdeas)" class="ai-result-box">
+                <div class="ai-result-header">
+                  <span><span nz-icon nzType="robot"></span> AI Suggestion</span>
+                  <button nz-button class="btn-user-outline btn-sm" (click)="applyAiSuggestionToPlan()">
+                    <span nz-icon nzType="save"></span>
+                    {{ 'app.travel.saveToPlan' | translate }}
+                  </button>
+                </div>
+                <div class="ai-result-body markdown-content">
+                  {{ aiSuggestionResponse || selectedPlan.aiIdeas }}
+                </div>
+              </div>
+            </div>
+          </nz-tab>
+
+          <!-- Checklist Tab -->
+          <nz-tab [nzTitle]="tabChecklistTitleTpl">
+            <ng-template #tabChecklistTitleTpl>
+              <span nz-icon nzType="check-square"></span>
+              {{ 'app.travel.tabChecklist' | translate }}
+            </ng-template>
+
+            <div class="tab-content-wrapper">
+              <h3>{{ 'app.travel.checklistTitle' | translate }}</h3>
+              
+              <!-- Quick Add Item -->
+              <div class="checklist-add-form">
+                <div class="add-input-row">
+                  <input
+                    nz-input
+                    [(ngModel)]="newChecklistItemText"
+                    [placeholder]="'app.travel.newChecklistItem' | translate"
+                    (keyup.enter)="addChecklistItem()"
+                  />
+                </div>
+                <div class="add-actions-row">
+                  <nz-select [(ngModel)]="newChecklistItemCategory">
+                    <nz-option nzValue="baby" [nzLabel]="'app.travel.catBaby' | translate"></nz-option>
+                    <nz-option nzValue="parents" [nzLabel]="'app.travel.catParents' | translate"></nz-option>
+                    <nz-option nzValue="documents" [nzLabel]="'app.travel.catDocs' | translate"></nz-option>
+                    <nz-option nzValue="other" [nzLabel]="'app.travel.catOther' | translate"></nz-option>
+                  </nz-select>
+                  <button nz-button nzType="primary" class="btn-user-primary" (click)="addChecklistItem()" [nzLoading]="isSaving">
+                    <span nz-icon nzType="plus-circle" nzTheme="outline" *ngIf="!isSaving"></span>
+                    <span>{{ 'app.travel.addBtn' | translate }}</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Categories -->
+              <div class="checklist-categories-list">
+                <!-- Baby Category -->
+                <div class="checklist-cat-section">
+                  <div class="cat-header">
+                    <h4>{{ 'app.travel.catBaby' | translate }}</h4>
+                    <span class="completion-badge">{{ getCompletionPercent('baby') }}%</span>
+                  </div>
+                  <div class="checklist-items">
+                    <div
+                      *ngFor="let item of getFilteredChecklist('baby')"
+                      class="checklist-item-row"
+                      [class.checklist-item-row--completed]="item.completed"
+                    >
+                      <label nz-checkbox [ngModel]="item.completed" (ngModelChange)="toggleChecklistItem(item)">
+                        {{ item.task }}
+                      </label>
+                      <button nz-button nzType="text" nzDanger (click)="removeChecklistItem(item.id)">
+                        <span nz-icon nzType="delete"></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Documents Category -->
+                <div class="checklist-cat-section">
+                  <div class="cat-header">
+                    <h4>{{ 'app.travel.catDocs' | translate }}</h4>
+                    <span class="completion-badge">{{ getCompletionPercent('documents') }}%</span>
+                  </div>
+                  <div class="checklist-items">
+                    <div
+                      *ngFor="let item of getFilteredChecklist('documents')"
+                      class="checklist-item-row"
+                      [class.checklist-item-row--completed]="item.completed"
+                    >
+                      <label nz-checkbox [ngModel]="item.completed" (ngModelChange)="toggleChecklistItem(item)">
+                        {{ item.task }}
+                      </label>
+                      <button nz-button nzType="text" nzDanger (click)="removeChecklistItem(item.id)">
+                        <span nz-icon nzType="delete"></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Parents Category -->
+                <div class="checklist-cat-section">
+                  <div class="cat-header">
+                    <h4>{{ 'app.travel.catParents' | translate }}</h4>
+                    <span class="completion-badge">{{ getCompletionPercent('parents') }}%</span>
+                  </div>
+                  <div class="checklist-items">
+                    <div
+                      *ngFor="let item of getFilteredChecklist('parents')"
+                      class="checklist-item-row"
+                      [class.checklist-item-row--completed]="item.completed"
+                    >
+                      <label nz-checkbox [ngModel]="item.completed" (ngModelChange)="toggleChecklistItem(item)">
+                        {{ item.task }}
+                      </label>
+                      <button nz-button nzType="text" nzDanger (click)="removeChecklistItem(item.id)">
+                        <span nz-icon nzType="delete"></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Other Category -->
+                <div class="checklist-cat-section">
+                  <div class="cat-header">
+                    <h4>{{ 'app.travel.catOther' | translate }}</h4>
+                    <span class="completion-badge">{{ getCompletionPercent('other') }}%</span>
+                  </div>
+                  <div class="checklist-items">
+                    <div
+                      *ngFor="let item of getFilteredChecklist('other')"
+                      class="checklist-item-row"
+                      [class.checklist-item-row--completed]="item.completed"
+                    >
+                      <label nz-checkbox [ngModel]="item.completed" (ngModelChange)="toggleChecklistItem(item)">
+                        {{ item.task }}
+                      </label>
+                      <button nz-button nzType="text" nzDanger (click)="removeChecklistItem(item.id)">
+                        <span nz-icon nzType="delete"></span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </nz-tab>
+        </nz-tabset>
+      </nz-card>
+    </div>
+
+    <!-- Map Workspace Column -->
+    <div class="travel-map-container">
+      <nz-card class="map-card" [nzTitle]="mapCardTitleTpl">
+        <ng-template #mapCardTitleTpl>
+          <div class="card-title-with-icon">
+            <span class="title-icon-wrap title-icon-wrap--violet">
+              <span nz-icon nzType="global" nzTheme="outline"></span>
+            </span>
+            <span>{{ 'app.travel.routeMap' | translate }}</span>
+            <small class="map-hint-text">({{ 'app.travel.mapHint' | translate }})</small>
+          </div>
+        </ng-template>
+
+        <!-- Leaflet Map Container -->
+        <div id="leaflet-travel-map" class="travel-map"></div>
+      </nz-card>
+    </div>
+  </div>
+  </nz-spin>
+</div>
+
+<!-- Modal: Create Trip -->
+<nz-modal
+  [(nzVisible)]="isCreateModalVisible"
+  [nzTitle]="modalTitleTpl"
+  [nzContent]="modalContentTpl"
+  [nzFooter]="modalFooterTpl"
+  (nzOnCancel)="closeCreateModal()"
+  nzClassName="user-role-modal"
+>
+  <ng-template #modalTitleTpl>
+    <div class="modal-title-with-icon">
+      <span class="modal-title-icon-wrap">
+        <span nz-icon nzType="smile"></span>
+      </span>
+      <span class="modal-title-text">
+        <span class="modal-title-main">{{ 'app.travel.createTripTitle' | translate }}</span>
+        <span class="modal-title-sub">{{ 'app.travel.createTripSub' | translate }}</span>
+      </span>
+    </div>
+  </ng-template>
+
+  <ng-template #modalContentTpl>
+    <form nz-form [formGroup]="travelPlanForm" nzLayout="vertical" class="user-modal-form-grid grid-1col">
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'app.travel.tripTitleLabel' | translate }}</nz-form-label>
+        <nz-form-control [nzErrorTip]="'app.travel.titleError' | translate">
+          <input nz-input formControlName="title" [placeholder]="'app.travel.placeholderTripTitle' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>{{ 'app.travel.descriptionLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input formControlName="description" [nzAutosize]="{ minRows: 2, maxRows: 4 }" [placeholder]="'app.travel.placeholderDescription' | translate"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'app.travel.dateRangeLabel' | translate }}</nz-form-label>
+        <nz-form-control [nzErrorTip]="'app.travel.dateRangeError' | translate">
+          <nz-range-picker formControlName="dateRange" style="width: 100%;"></nz-range-picker>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-template>
+
+  <ng-template #modalFooterTpl>
+    <button nz-button class="btn-user-outline" (click)="closeCreateModal()">{{ 'commonActions.cancel' | translate }}</button>
+    <button nz-button nzType="primary" class="btn-user-primary" (click)="submitCreatePlan()">{{ 'commonActions.save' | translate }}</button>
+  </ng-template>
+</nz-modal>
+
+<!-- Modal: Add Destination -->
+<nz-modal
+  [(nzVisible)]="isAddDestModalVisible"
+  [nzTitle]="destModalTitleTpl"
+  [nzContent]="destModalContentTpl"
+  [nzFooter]="destModalFooterTpl"
+  (nzOnCancel)="closeAddDestModal()"
+  nzClassName="user-role-modal"
+  [nzWidth]="650"
+>
+  <ng-template #destModalTitleTpl>
+    <div class="modal-title-with-icon">
+      <span class="modal-title-icon-wrap modal-title-icon-wrap--violet">
+        <span nz-icon nzType="environment"></span>
+      </span>
+      <span class="modal-title-text">
+        <span class="modal-title-main">{{ 'app.travel.addDestTitle' | translate }}</span>
+        <span class="modal-title-sub">{{ 'app.travel.addDestSub' | translate }}</span>
+      </span>
+    </div>
+  </ng-template>
+
+  <ng-template #destModalContentTpl>
+    <div class="dest-modal-layout">
+      <!-- Left side: Map Geocoding Search -->
+      <div class="dest-search-section">
+        <nz-form-item style="margin-bottom: 12px !important;">
+          <nz-form-label>{{ 'app.travel.searchLabel' | translate }}</nz-form-label>
+          <nz-form-control>
+            <nz-input-group [nzSuffix]="suffixIconButton">
+              <input
+                nz-input
+                [(ngModel)]="searchQuery"
+                [placeholder]="'app.travel.searchAddress' | translate"
+                (keyup.enter)="searchDestination()"
+              />
+            </nz-input-group>
+            <ng-template #suffixIconButton>
+              <span
+                nz-icon
+                [nzType]="isSearchingDest ? 'loading' : 'search'"
+                (click)="searchDestination()"
+                style="cursor: pointer; color: var(--user-primary); font-size: 16px;"
+              ></span>
+            </ng-template>
+          </nz-form-control>
+        </nz-form-item>
+
+        <div *ngIf="searchResults.length > 0" class="search-results-list">
+          <div
+            *ngFor="let result of searchResults"
+            class="search-result-item"
+            (click)="selectSearchResult(result)"
+          >
+            <span nz-icon nzType="environment" class="result-icon"></span>
+            <div class="result-text">
+              <strong>{{ result.display_name.split(',')[0] }}</strong>
+              <small>{{ result.display_name }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <nz-divider></nz-divider>
+
+      <!-- Form Section -->
+      <form nz-form [formGroup]="destinationForm" nzLayout="vertical" class="user-modal-form-grid grid-1col">
+        <div class="form-row-2col">
+          <nz-form-item>
+            <nz-form-label nzRequired>{{ 'app.travel.destNameLabel' | translate }}</nz-form-label>
+            <nz-form-control [nzErrorTip]="'app.travel.destNameError' | translate">
+              <input nz-input formControlName="name" />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzRequired>{{ 'app.travel.dayIndexLabel' | translate }}</nz-form-label>
+            <nz-form-control>
+              <nz-select formControlName="dayIndex" style="width: 100%;">
+                <nz-option nzValue="1" [nzLabel]="'Ngày 1'"></nz-option>
+                <nz-option nzValue="2" [nzLabel]="'Ngày 2'"></nz-option>
+                <nz-option nzValue="3" [nzLabel]="'Ngày 3'"></nz-option>
+                <nz-option nzValue="4" [nzLabel]="'Ngày 4'"></nz-option>
+                <nz-option nzValue="5" [nzLabel]="'Ngày 5'"></nz-option>
+                <nz-option nzValue="6" [nzLabel]="'Ngày 6'"></nz-option>
+                <nz-option nzValue="7" [nzLabel]="'Ngày 7'"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <div class="form-row-2col">
+          <nz-form-item>
+            <nz-form-label>Vĩ độ (Latitude)</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="lat" readonly />
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label>Kinh độ (Longitude)</nz-form-label>
+            <nz-form-control>
+              <input nz-input formControlName="lng" readonly />
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <nz-form-item>
+          <nz-form-label>{{ 'app.travel.notesLabel' | translate }}</nz-form-label>
+          <nz-form-control>
+            <input nz-input formControlName="notes" [placeholder]="'app.travel.placeholderNotes' | translate" />
+          </nz-form-control>
+        </nz-form-item>
+
+        <nz-form-item>
+          <nz-form-label>Hình ảnh lưu niệm (Mốc dấu đã tới)</nz-form-label>
+          <nz-form-control>
+            <div class="image-upload-wrapper">
+              <input
+                type="file"
+                accept="image/*"
+                #fileInput
+                style="display: none"
+                (change)="onFileSelected($event)"
+              />
+              <button
+                nz-button
+                nzType="default"
+                class="btn-user-outline btn-upload-trigger"
+                type="button"
+                (click)="fileInput.click()"
+                [nzLoading]="isUploadingImage"
+                *ngIf="!uploadedImageUrl && !destinationForm.get('imageUrl')?.value"
+              >
+                <span nz-icon nzType="camera"></span> Tải ảnh từ máy / Chụp ảnh
+              </button>
+
+              <div *ngIf="uploadedImageUrl || destinationForm.get('imageUrl')?.value" class="upload-preview-container">
+                <div class="preview-card">
+                  <img [src]="getSafeImageUrl(uploadedImageUrl || destinationForm.get('imageUrl')?.value)" class="upload-preview-img" />
+                  <button
+                    nz-button
+                    nzType="text"
+                    nzDanger
+                    class="btn-remove-preview"
+                    type="button"
+                    (click)="removeUploadedImage()"
+                  >
+                    <span nz-icon nzType="delete"></span> Xóa ảnh
+                  </button>
+                </div>
+              </div>
+            </div>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </div>
+  </ng-template>
+
+  <ng-template #destModalFooterTpl>
+    <button nz-button class="btn-user-outline" (click)="closeAddDestModal()">{{ 'commonActions.cancel' | translate }}</button>
+    <button nz-button nzType="primary" class="btn-user-primary" (click)="submitAddDestination()">{{ 'commonActions.save' | translate }}</button>
+  </ng-template>
+</nz-modal>
+
+<!-- Modal: Create Trip with AI -->
+<nz-modal
+  [(nzVisible)]="isAiCreateModalVisible"
+  [nzTitle]="aiModalTitleTpl"
+  [nzContent]="aiModalContentTpl"
+  [nzFooter]="aiModalFooterTpl"
+  (nzOnCancel)="closeAiCreateModal()"
+  nzClassName="user-role-modal"
+  [nzWidth]="550"
+>
+  <ng-template #aiModalTitleTpl>
+    <div class="modal-title-with-icon">
+      <span class="modal-title-icon-wrap modal-title-icon-wrap--orange">
+        <span nz-icon nzType="robot" nzTheme="outline"></span>
+      </span>
+      <span class="modal-title-text">
+        <span class="modal-title-main">{{ 'app.travel.aiCreateTitle' | translate }}</span>
+        <span class="modal-title-sub">{{ 'app.travel.aiCreateSub' | translate }}</span>
+      </span>
+    </div>
+  </ng-template>
+
+  <ng-template #aiModalContentTpl>
+    <nz-spin [nzSpinning]="isAiGenerating" [nzTip]="'app.travel.aiGeneratingPlan' | translate">
+      <form nz-form [formGroup]="aiCreateForm" nzLayout="vertical" class="user-modal-form-grid grid-1col">
+        <nz-form-item>
+          <nz-form-label nzRequired>{{ 'app.travel.destinationLabel' | translate }}</nz-form-label>
+          <nz-form-control [nzErrorTip]="'app.travel.destinationError' | translate">
+            <input nz-input formControlName="destination" [placeholder]="'app.travel.placeholderDestination' | translate" />
+          </nz-form-control>
+        </nz-form-item>
+
+        <div class="form-row-2col">
+          <nz-form-item>
+            <nz-form-label nzRequired>{{ 'app.travel.durationLabel' | translate }}</nz-form-label>
+            <nz-form-control [nzErrorTip]="'app.travel.durationError' | translate">
+              <nz-select formControlName="durationDays" style="width: 100%;">
+                <nz-option [nzValue]="1" [nzLabel]="'1 ' + ('app.travel.day' | translate)"></nz-option>
+                <nz-option [nzValue]="2" [nzLabel]="'2 ' + ('app.travel.days' | translate)"></nz-option>
+                <nz-option [nzValue]="3" [nzLabel]="'3 ' + ('app.travel.days' | translate)"></nz-option>
+                <nz-option [nzValue]="4" [nzLabel]="'4 ' + ('app.travel.days' | translate)"></nz-option>
+                <nz-option [nzValue]="5" [nzLabel]="'5 ' + ('app.travel.days' | translate)"></nz-option>
+                <nz-option [nzValue]="6" [nzLabel]="'6 ' + ('app.travel.days' | translate)"></nz-option>
+                <nz-option [nzValue]="7" [nzLabel]="'7 ' + ('app.travel.days' | translate)"></nz-option>
+              </nz-select>
+            </nz-form-control>
+          </nz-form-item>
+
+          <nz-form-item>
+            <nz-form-label nzRequired>{{ 'app.travel.startDateLabel' | translate }}</nz-form-label>
+            <nz-form-control [nzErrorTip]="'app.travel.startDateError' | translate">
+              <nz-date-picker formControlName="startDate" style="width: 100%;"></nz-date-picker>
+            </nz-form-control>
+          </nz-form-item>
+        </div>
+
+        <nz-form-item>
+          <nz-form-label>{{ 'app.travel.preferencesLabel' | translate }}</nz-form-label>
+          <nz-form-control>
+            <textarea
+              nz-input
+              formControlName="preferences"
+              [nzAutosize]="{ minRows: 3, maxRows: 5 }"
+              [placeholder]="'app.travel.placeholderPreferences' | translate"
+            ></textarea>
+          </nz-form-control>
+        </nz-form-item>
+      </form>
+    </nz-spin>
+  </ng-template>
+
+  <ng-template #aiModalFooterTpl>
+    <button nz-button class="btn-user-outline" (click)="closeAiCreateModal()" [disabled]="isAiGenerating">
+      {{ 'commonActions.cancel' | translate }}
+    </button>
+    <button nz-button nzType="primary" class="btn-user-primary btn-ai-sparkle" (click)="submitAiGeneratePlan()" [nzLoading]="isAiGenerating">
+      <span nz-icon nzType="experiment" *ngIf="!isAiGenerating"></span>
+      {{ 'app.travel.generateBtn' | translate }}
+    </button>
+  </ng-template>
+</nz-modal>

@@ -20,5 +20,42 @@
       "sad": "Buồn",
       "angry": "Phẫn nộ"
     }
+  },
+  "forecast": {
+    "title": "Baby Forecast",
+    "subtitle": "Dự báo nhịp ăn ngủ trong 24 giờ tới",
+    "refresh": "Refresh",
+    "emptyState": "Chưa có forecast. Bấm Refresh hoặc ghi thêm log mới.",
+    "nextSleep": "Giấc ngủ tiếp theo",
+    "nextFeeding": "Bữa ăn tiếp theo",
+    "updatedAt": "Cập nhật",
+    "anomaliesCount": "{{count}} bất thường đang mở",
+    "summary": {
+      "LOW": "Dự báo gần nhất: bé có thể buồn ngủ quanh {{sleepTime}} và có bữa ăn tiếp theo quanh {{feedingTime}}. Chưa thấy tín hiệu bất thường lớn.",
+      "MEDIUM": "Dự báo gần nhất: bé có thể buồn ngủ quanh {{sleepTime}} và có bữa ăn tiếp theo quanh {{feedingTime}}. Có một vài tín hiệu lệch nhịp nhẹ.",
+      "HIGH": "Dự báo gần nhất: bé có thể buồn ngủ quanh {{sleepTime}} và có bữa ăn tiếp theo quanh {{feedingTime}}. Nhịp hôm nay đang lệch rõ, nên theo dõi sát hơn."
+    },
+    "recommendations": {
+      "highRisk1": "Theo dõi sát hơn trong tối nay vì tổng giờ ngủ đang thấp hơn nhịp thường ngày.",
+      "highRisk2": "Nếu bé có dấu hiệu bất thường về sức khỏe, hãy liên hệ nhân viên y tế.",
+      "mediumRisk": "Ghi thêm log trong vài giờ tới để hệ thống xác nhận nhịp sinh hoạt có đang lệch không.",
+      "lowRisk": "Nhịp sinh hoạt hiện đang ổn định. Tiếp tục ghi log để dự báo chính xác hơn.",
+      "sleepCompare": "Hôm nay bé ngủ {{today}}h so với trung bình gần đây {{baseline}}h.",
+      "stats": "Số bữa ăn hôm nay: {{feedings}}, số lần thay tã: {{diapers}}."
+    },
+    "messages": {
+      "queueSuccess": "Đã đưa yêu cầu dự báo vào hàng đợi.",
+      "loadFailed": "Không thể tải Baby Forecast",
+      "refreshFailed": "Không thể làm mới forecast"
+    },
+    "anomalies": {
+      "modalTitle": "Cảnh báo bất thường sinh hoạt",
+      "type": "Loại bất thường",
+      "detectedAt": "Phát hiện lúc",
+      "resolveBtn": "Xác nhận đã xử lý",
+      "empty": "Không có bất thường nào đang mở.",
+      "resolveSuccess": "Đã giải quyết bất thường thành công.",
+      "resolveFailed": "Không thể giải quyết bất thường."
+    }
   }
 }

@@ -3,12 +3,14 @@ package com.mom.baby;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 import java.io.File;
 import java.nio.file.Files;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @EnableCaching
+@EnableRabbit
 @SpringBootApplication
 public class BabyServiceApplication {
 

@@ -63,7 +63,8 @@
         "documents": "Tài liệu",
         "invoices": "Tạo Hóa đơn",
         "productivity": "Công việc & Nội dung",
-        "copilot": "AI Copilot"
+        "copilot": "AI Copilot",
+        "travel": "Du lịch"
       }
     },
     "admin": {
@@ -1318,6 +1319,43 @@
           "sad": "Buồn",
           "angry": "Phẫn nộ"
         }
+      },
+      "forecast": {
+        "title": "Baby Forecast",
+        "subtitle": "Dự báo nhịp ăn ngủ trong 24 giờ tới",
+        "refresh": "Refresh",
+        "emptyState": "Chưa có forecast. Bấm Refresh hoặc ghi thêm log mới.",
+        "nextSleep": "Giấc ngủ tiếp theo",
+        "nextFeeding": "Bữa ăn tiếp theo",
+        "updatedAt": "Cập nhật",
+        "anomaliesCount": "{{count}} bất thường đang mở",
+        "summary": {
+          "LOW": "Dự báo gần nhất: bé có thể buồn ngủ quanh {{sleepTime}} và có bữa ăn tiếp theo quanh {{feedingTime}}. Chưa thấy tín hiệu bất thường lớn.",
+          "MEDIUM": "Dự báo gần nhất: bé có thể buồn ngủ quanh {{sleepTime}} và có bữa ăn tiếp theo quanh {{feedingTime}}. Có một vài tín hiệu lệch nhịp nhẹ.",
+          "HIGH": "Dự báo gần nhất: bé có thể buồn ngủ quanh {{sleepTime}} và có bữa ăn tiếp theo quanh {{feedingTime}}. Nhịp hôm nay đang lệch rõ, nên theo dõi sát hơn."
+        },
+        "recommendations": {
+          "highRisk1": "Theo dõi sát hơn trong tối nay vì tổng giờ ngủ đang thấp hơn nhịp thường ngày.",
+          "highRisk2": "Nếu bé có dấu hiệu bất thường về sức khỏe, hãy liên hệ nhân viên y tế.",
+          "mediumRisk": "Ghi thêm log trong vài giờ tới để hệ thống xác nhận nhịp sinh hoạt có đang lệch không.",
+          "lowRisk": "Nhịp sinh hoạt hiện đang ổn định. Tiếp tục ghi log để dự báo chính xác hơn.",
+          "sleepCompare": "Hôm nay bé ngủ {{today}}h so với trung bình gần đây {{baseline}}h.",
+          "stats": "Số bữa ăn hôm nay: {{feedings}}, số lần thay tã: {{diapers}}."
+        },
+        "messages": {
+          "queueSuccess": "Đã đưa yêu cầu dự báo vào hàng đợi.",
+          "loadFailed": "Không thể tải Baby Forecast",
+          "refreshFailed": "Không thể làm mới forecast"
+        },
+        "anomalies": {
+          "modalTitle": "Cảnh báo bất thường sinh hoạt",
+          "type": "Loại bất thường",
+          "detectedAt": "Phát hiện lúc",
+          "resolveBtn": "Xác nhận đã xử lý",
+          "empty": "Không có bất thường nào đang mở.",
+          "resolveSuccess": "Đã giải quyết bất thường thành công.",
+          "resolveFailed": "Không thể giải quyết bất thường."
+        }
       }
     },
     "family": {
@@ -2497,6 +2535,74 @@
       "otpIncomplete": "Vui lòng nhập đủ 6 chữ số OTP.",
       "otpVerifySuccess": "Ký số điện tử thành công! Dấu mộc Family Verify đã được kích hoạt.",
       "otpVerifyFailed": "Mã OTP không chính xác. Vui lòng kiểm tra lại trong chuông thông báo."
+    },
+    "travel": {
+      "title": "Du lịch cùng Gia đình",
+      "subtitle": "Lên lịch trình, đánh dấu điểm đến trên bản đồ OpenStreetMap và tham khảo ý tưởng hành trình từ AI.",
+      "newTrip": "Tạo chuyến đi mới",
+      "noTrip": "Gia đình chưa có chuyến đi nào được thiết lập.",
+      "createFirstTrip": "Tạo chuyến đi đầu tiên",
+      "myTrips": "Chuyến đi của gia đình",
+      "deleteTrip": "Xóa chuyến đi",
+      "destinations": "địa điểm",
+      "tabRoute": "Lộ trình & Bản đồ",
+      "tabAi": "Ý tưởng AI",
+      "tabChecklist": "Checklist chuẩn bị",
+      "itinerary": "Lộ trình chi tiết",
+      "addDestination": "Thêm địa điểm",
+      "emptyDestinationsHint": "Chưa có địa điểm nào trong lịch trình. Hãy click lên bản đồ hoặc click nút phía dưới để thêm.",
+      "addDestOnMap": "Thêm điểm đến",
+      "aiIdeaTitle": "Lên ý tưởng du lịch với AI",
+      "aiIdeaDesc": "Nhập điểm đến, số ngày dự kiến hoặc các yêu cầu đặc biệt của gia đình để AI Copilot gợi ý lịch trình chi tiết và an toàn nhất cho trẻ nhỏ.",
+      "aiPromptPlaceholder": "Nhập yêu cầu của bạn tại đây...",
+      "generateIdeas": "Tạo ý tưởng bằng AI",
+      "aiGenerating": "AI đang phân tích và lên ý tưởng hành trình cho gia đình...",
+      "saveToPlan": "Lưu vào chuyến đi",
+      "checklistTitle": "Đồ dùng cần chuẩn bị cho chuyến đi",
+      "newChecklistItem": "Thêm đồ dùng mới...",
+      "catBaby": "Đồ của bé",
+      "catParents": "Đồ của bố mẹ",
+      "catDocs": "Giấy tờ & Vé",
+      "catOther": "Thiết bị & Khác",
+      "routeMap": "Bản đồ lộ trình OpenStreetMap",
+      "mapHint": "Click bất kỳ vị trí nào trên bản đồ để thêm nhanh điểm đến",
+      "createTripTitle": "Thiết lập Chuyến đi Mới",
+      "createTripSub": "Lên thông tin thời gian và điểm đến cho chuyến đi của cả nhà",
+      "tripTitleLabel": "Tên chuyến đi",
+      "placeholderTripTitle": "Ví dụ: Đi Đà Lạt 3 ngày 2 đêm",
+      "titleError": "Vui lòng nhập tên chuyến đi!",
+      "descriptionLabel": "Mô tả / Ghi chú",
+      "placeholderDescription": "Mô tả ngắn gọn về chuyến đi...",
+      "dateRangeLabel": "Khoảng thời gian",
+      "dateRangeError": "Vui lòng chọn ngày đi và ngày về!",
+      "addDestTitle": "Thêm Điểm đến Mới",
+      "addDestSub": "Tìm kiếm địa điểm trên bản đồ và phân bổ vào ngày đi tương ứng",
+      "searchAddress": "Tìm kiếm địa điểm (ví dụ: Hồ Xuân Hương, Đà Lạt)...",
+      "destNameLabel": "Tên địa điểm",
+      "destNameError": "Vui lòng nhập tên địa điểm!",
+      "dayIndexLabel": "Lịch trình ngày",
+      "notesLabel": "Ghi chú cho địa điểm",
+      "placeholderNotes": "Ví dụ: Ăn trưa tại đây, mang theo xe đẩy...",
+      "saving": "Đang đồng bộ...",
+      "saved": "Đã lưu vào máy chủ",
+      "searchLabel": "Tìm kiếm địa điểm",
+      "addBtn": "Thêm",
+      "generateAiTrip": "Tạo bằng AI",
+      "aiCreateTitle": "Lập Chuyến đi Tự động bằng AI",
+      "aiCreateSub": "Nhập điểm đến và yêu cầu để AI tự động thiết lập toàn bộ lịch trình, bản đồ và checklist chuẩn bị",
+      "destinationLabel": "Điểm đến mong muốn",
+      "placeholderDestination": "Ví dụ: Đà Lạt, Nha Trang, Phú Quốc...",
+      "destinationError": "Vui lòng nhập điểm đến!",
+      "durationLabel": "Số ngày đi dự kiến",
+      "durationError": "Vui lòng chọn số ngày đi!",
+      "startDateLabel": "Ngày bắt đầu khởi hành",
+      "startDateError": "Vui lòng chọn ngày khởi hành!",
+      "preferencesLabel": "Yêu cầu đặc biệt (Ngữ cảnh gia đình)",
+      "placeholderPreferences": "Ví dụ: Gia đình có bé 6 tháng tuổi, di chuyển nhẹ nhàng, nghỉ dưỡng, ăn uống thanh đạm...",
+      "generateBtn": "Lập lịch trình bằng AI",
+      "aiGeneratingPlan": "AI đang lập lịch trình chi tiết và chuẩn bị đồ dùng...",
+      "day": "ngày",
+      "days": "ngày"
     }
   },
   "auth": {

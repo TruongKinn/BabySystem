@@ -1,5 +1,6 @@
 @import 'ng-zorro-antd/ng-zorro-antd.min.css';
 @import 'metismenujs/style';
+@import 'leaflet/dist/leaflet.css';
 
 :root {
     /* Light Theme Palette */

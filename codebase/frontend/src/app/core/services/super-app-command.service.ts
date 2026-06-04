@@ -127,6 +127,38 @@ export interface BabyDashboard {
   vaccinationInsight: BabyVaccinationInsight;
 }
 
+export type BabyForecastRiskLevel = 'LOW' | 'MEDIUM' | 'HIGH';
+
+export interface BabyForecast {
+  id: number;
+  babyId: number;
+  familyId: number;
+  forecastDate: string;
+  generatedAt: string;
+  horizonHours: number;
+  sleepWindowStart: string | null;
+  sleepWindowEnd: string | null;
+  feedingWindowStart: string | null;
+  feedingWindowEnd: string | null;
+  riskLevel: BabyForecastRiskLevel;
+  summary: string;
+  recommendationsJson: string | null;
+  signalsJson: string | null;
+}
+
+export interface BabyForecastAnomaly {
+  id: number;
+  babyId: number;
+  familyId: number;
+  sourceLogId: number | null;
+  anomalyType: string;
+  severity: BabyForecastRiskLevel;
+  message: string;
+  detectedAt: string;
+  resolvedAt: string | null;
+  metadataJson: string | null;
+}
+
 export interface ResolvedPremiumFeature {
   featureKey: string;
   enabled: boolean;
@@ -1174,6 +1206,31 @@ export class SuperAppCommandService {
     return this.get<BabyDashboard>(`/baby/babies/${input.babyId}/dashboard`, params);
   }
 
+  getBabyForecastLatest(babyId: number): Observable<BabyForecast | null> {
+    return this.get<BabyForecast | null>(`/baby/babies/${babyId}/forecast/latest`);
+  }
+
+  refreshBabyForecast(babyId: number): Observable<void> {
+    return this.post(`/baby/babies/${babyId}/forecast/refresh`, {}).pipe(map(() => undefined));
+  }
+
+  getBabyForecastAnomalies(babyId: number, openOnly = true): Observable<BabyForecastAnomaly[]> {
+    const params = new HttpParams().set('openOnly', String(openOnly));
+    return this.get<BabyForecastAnomaly[]>(`/baby/babies/${babyId}/forecast/anomalies`, params);
+  }
+
+  resolveBabyForecastAnomaly(babyId: number, anomalyId: number): Observable<BabyForecastAnomaly> {
+    return this.http
+      .patch<ApiEnvelope<BabyForecastAnomaly>>(`${this.apiBase}/baby/babies/${babyId}/forecast/anomalies/${anomalyId}/resolve`, {})
+      .pipe(
+        map((response) => {
+          if (!response.success) throw new Error(response.message || 'API error');
+          return response.data;
+        }),
+        catchError(this.handleError)
+      );
+  }
+
   getBabyLogs(babyId: number, date?: string): Observable<BabyLogEntry[]> {
     let params = new HttpParams();
     if (date?.trim()) {
@@ -1983,5 +2040,44 @@ export class SuperAppCommandService {
 
   getImportHistoryDetail(id: number): Observable<any> {
     return this.get<any>(`/file/files/import/history/${id}`);
+  }
+
+  getTravelPlans(familyId: number): Observable<any[]> {
+    return this.get<any[]>(`/baby/travel-plans/family/${familyId}`).pipe(
+      map((items) => items ?? []),
+      catchError(() => of([]))
+    );
+  }
+
+  createTravelPlan(plan: any): Observable<any> {
+    return this.post<any>('/baby/travel-plans', plan);
+  }
+
+  updateTravelPlan(planId: string, plan: any): Observable<any> {
+    return this.put<any>(`/baby/travel-plans/${planId}`, plan);
+  }
+
+  deleteTravelPlan(planId: string): Observable<void> {
+    return this.http
+      .delete<ApiEnvelope<unknown>>(`${this.apiBase}/baby/travel-plans/${planId}`)
+      .pipe(
+        map(() => undefined),
+        catchError(this.handleError)
+      );
+  }
+
+  generateTravelPlan(request: {
+    destination: string;
+    durationDays: number;
+    startDate: string;
+    preferences?: string;
+    language?: string;
+  }): Observable<any> {
+    const familyId = this.getFamilyId();
+    return this.post<any>('/ai/copilot/generate-travel-plan', {
+      familyId,
+      ...request,
+      language: request.language ?? 'vi'
+    });
   }
 }

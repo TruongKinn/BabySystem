@@ -63,7 +63,8 @@
         "documents": "Documents",
         "invoices": "Invoice Generator",
         "productivity": "Productivity",
-        "copilot": "AI Copilot"
+        "copilot": "AI Copilot",
+        "travel": "Family Travel"
       }
     },
     "admin": {
@@ -1423,6 +1424,43 @@
           "sad": "Sad",
           "angry": "Angry"
         }
+      },
+      "forecast": {
+        "title": "Baby Forecast",
+        "subtitle": "Sleep & feeding forecast for the next 24 hours",
+        "refresh": "Refresh",
+        "emptyState": "No forecast available. Click Refresh or add new logs.",
+        "nextSleep": "Next Sleep",
+        "nextFeeding": "Next Feeding",
+        "updatedAt": "Updated At",
+        "anomaliesCount": "{{count}} open anomalies",
+        "summary": {
+          "LOW": "Latest forecast: baby may sleep around {{sleepTime}} and feed around {{feedingTime}}. No major anomalies detected.",
+          "MEDIUM": "Latest forecast: baby may sleep around {{sleepTime}} and feed around {{feedingTime}}. Some minor rhythm shifts detected.",
+          "HIGH": "Latest forecast: baby may sleep around {{sleepTime}} and feed around {{feedingTime}}. Significant rhythm shift today, closer monitoring recommended."
+        },
+        "recommendations": {
+          "highRisk1": "Monitor baby more closely tonight as total sleep is lower than baseline.",
+          "highRisk2": "Contact medical professionals if baby shows abnormal health signs.",
+          "mediumRisk": "Record more logs over the next few hours to confirm any rhythm shift.",
+          "lowRisk": "Rhythm is currently stable. Continue logging for better predictions.",
+          "sleepCompare": "Today sleep: {{today}}h vs recent average: {{baseline}}h.",
+          "stats": "Today feedings: {{feedings}}, diaper changes: {{diapers}}."
+        },
+        "messages": {
+          "queueSuccess": "Forecast refresh request queued.",
+          "loadFailed": "Failed to load Baby Forecast",
+          "refreshFailed": "Failed to refresh forecast"
+        },
+        "anomalies": {
+          "modalTitle": "Baby Rhythm Anomalies",
+          "type": "Anomaly Type",
+          "detectedAt": "Detected At",
+          "resolveBtn": "Resolve",
+          "empty": "No open anomalies.",
+          "resolveSuccess": "Anomaly resolved successfully.",
+          "resolveFailed": "Failed to resolve anomaly."
+        }
       }
     },
     "family": {
@@ -2499,6 +2537,74 @@
       "otpIncomplete": "Please enter all 6 digits of the OTP code.",
       "otpVerifySuccess": "Digital signature successful! Family Verify seal has been activated.",
       "otpVerifyFailed": "Incorrect OTP code. Please check your notifications and try again."
+    },
+    "travel": {
+      "title": "Family Travel Planner",
+      "subtitle": "Plan itineraries, mark destinations on OpenStreetMap, and generate journey ideas using AI.",
+      "newTrip": "Create New Trip",
+      "noTrip": "No travel plans have been created by the family yet.",
+      "createFirstTrip": "Create First Trip",
+      "myTrips": "Family Trips",
+      "deleteTrip": "Delete Trip",
+      "destinations": "destinations",
+      "tabRoute": "Itinerary & Map",
+      "tabAi": "AI Planner",
+      "tabChecklist": "Checklist",
+      "itinerary": "Detailed Itinerary",
+      "addDestination": "Add Location",
+      "emptyDestinationsHint": "No locations in the itinerary yet. Click on the map or the button below to add one.",
+      "addDestOnMap": "Add Destination",
+      "aiIdeaTitle": "Generate Travel Ideas with AI",
+      "aiIdeaDesc": "Enter your destination, days, or family requests for the AI Copilot to suggest a detailed and baby-safe itinerary.",
+      "aiPromptPlaceholder": "Enter your travel requests here...",
+      "generateIdeas": "Generate Ideas",
+      "aiGenerating": "AI is generating the perfect family itinerary...",
+      "saveToPlan": "Save to Trip",
+      "checklistTitle": "Items to Prepare for the Trip",
+      "newChecklistItem": "Add item...",
+      "catBaby": "Baby Items",
+      "catParents": "Parents Items",
+      "catDocs": "Docs & Tickets",
+      "catOther": "Gear & Others",
+      "routeMap": "OpenStreetMap Route Map",
+      "mapHint": "Click anywhere on the map to quickly add a destination",
+      "createTripTitle": "Setup New Trip",
+      "createTripSub": "Set the dates and destination for your family trip",
+      "tripTitleLabel": "Trip Title",
+      "placeholderTripTitle": "E.g., 3 Days 2 Nights in Da Lat",
+      "titleError": "Please enter a trip title!",
+      "descriptionLabel": "Description / Notes",
+      "placeholderDescription": "Short description about the trip...",
+      "dateRangeLabel": "Date Range",
+      "dateRangeError": "Please select departure and return dates!",
+      "addDestTitle": "Add New Destination",
+      "addDestSub": "Search for locations on the map and allocate them to the corresponding days",
+      "searchAddress": "Search location (e.g., Xuan Huong Lake, Da Lat)...",
+      "destNameLabel": "Location Name",
+      "destNameError": "Please enter a location name!",
+      "dayIndexLabel": "Itinerary Day",
+      "notesLabel": "Location Notes",
+      "placeholderNotes": "E.g., Lunch here, bring baby stroller...",
+      "saving": "Syncing...",
+      "saved": "Saved to cloud",
+      "searchLabel": "Search Location",
+      "addBtn": "Add",
+      "generateAiTrip": "Generate with AI",
+      "aiCreateTitle": "Auto-Plan Trip with AI",
+      "aiCreateSub": "Enter your destination and requests for the AI to auto-configure the entire itinerary, map route, and checklist",
+      "destinationLabel": "Desired Destination",
+      "placeholderDestination": "E.g., Da Lat, Nha Trang, Phu Quoc...",
+      "destinationError": "Please enter a destination!",
+      "durationLabel": "Expected Duration",
+      "durationError": "Please select the trip duration!",
+      "startDateLabel": "Departure Date",
+      "startDateError": "Please select a departure date!",
+      "preferencesLabel": "Special Requests (Family Context)",
+      "placeholderPreferences": "E.g., Traveling with a 6-month-old baby, prefer relaxed pace, resort vacation, mild meals...",
+      "generateBtn": "Generate Itinerary with AI",
+      "aiGeneratingPlan": "AI is constructing your detailed itinerary and checklist...",
+      "day": "day",
+      "days": "days"
     }
   },
   "auth": {

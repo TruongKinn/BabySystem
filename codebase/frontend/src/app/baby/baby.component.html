@@ -116,7 +116,7 @@
 
   <div class="gallery-error" *ngIf="dashboardLoadError">{{ dashboardLoadError }}</div>
 
-    <div class="kpi-grid animate-slide-up" style="animation-delay:.03s" *ngIf="selectedBabyId">
+  <div class="kpi-grid animate-slide-up" style="animation-delay:.03s" *ngIf="selectedBabyId">
     <div class="kpi-card">
       <p>{{ 'momApp.baby.dashboard.sleepSelectedDay' | translate }}</p>
       <h3>{{ summary?.sleepHours ?? 0 }}<span>h</span></h3>
@@ -134,6 +134,131 @@
       <h3>{{ formatDecimal(summary?.latestWeightKg, 'kg') }}</h3>
     </div>
   </div>
+
+  <nz-card class="table-card animate-slide-up forecast-card" *ngIf="selectedBabyId" style="animation-delay:.04s">
+    <div class="forecast-header">
+      <div>
+        <h3>{{ 'momApp.baby.forecast.title' | translate }}</h3>
+        <p>{{ 'momApp.baby.forecast.subtitle' | translate }}</p>
+      </div>
+      <button nz-button nzType="default" [nzLoading]="isRefreshingForecast" (click)="refreshForecast()">
+        <span nz-icon nzType="sync"></span>
+        {{ 'momApp.baby.forecast.refresh' | translate }}
+      </button>
+    </div>
+
+    <div class="gallery-error" *ngIf="forecastLoadError">{{ forecastLoadError }}</div>
+
+    <div *ngIf="isLoadingForecast" class="empty-state">
+      <nz-spin nzSimple></nz-spin>
+    </div>
+
+    <nz-empty
+      *ngIf="!isLoadingForecast && !forecast"
+      [nzNotFoundContent]="'momApp.baby.forecast.emptyState' | translate"
+    ></nz-empty>
+
+    <div class="forecast-body" *ngIf="!isLoadingForecast && forecast">
+      <div class="forecast-summary">
+        <nz-tag [nzColor]="forecast.riskLevel === 'HIGH' ? 'red' : forecast.riskLevel === 'MEDIUM' ? 'orange' : 'green'">
+          {{ forecast.riskLevel }}
+        </nz-tag>
+        <span>{{ getForecastSummary() }}</span>
+      </div>
+
+      <div class="forecast-slots">
+        <div>
+          <small>{{ 'momApp.baby.forecast.nextSleep' | translate }}</small>
+          <strong>{{ formatDateTime(forecast.sleepWindowStart) }}</strong>
+        </div>
+        <div>
+          <small>{{ 'momApp.baby.forecast.nextFeeding' | translate }}</small>
+          <strong>{{ formatDateTime(forecast.feedingWindowStart) }}</strong>
+        </div>
+        <div>
+          <small>{{ 'momApp.baby.forecast.updatedAt' | translate }}</small>
+          <strong>{{ formatDateTime(forecast.generatedAt) }}</strong>
+        </div>
+      </div>
+
+      <ul class="forecast-recommendations" *ngIf="forecastRecommendations.length > 0">
+        <li *ngFor="let recommendation of forecastRecommendations">{{ recommendation }}</li>
+      </ul>
+
+      <div class="forecast-anomalies clickable" *ngIf="forecastAnomalies.length > 0" (click)="openAnomaliesModal()">
+        <span nz-icon nzType="warning"></span>
+        {{ 'momApp.baby.forecast.anomaliesCount' | translate:{ count: forecastAnomalies.length } }}
+      </div>
+    </div>
+  </nz-card>
+
+  <!-- MODAL XEM CHI TIẾT & GIẢI QUYẾT BẤT THƯỜNG -->
+  <nz-modal
+    [(nzVisible)]="isAnomaliesModalVisible"
+    [nzTitle]="anomaliesModalTitleTpl"
+    nzClassName="user-role-modal"
+    [nzWidth]="840"
+    [nzFooter]="null"
+    (nzOnCancel)="closeAnomaliesModal()">
+    <ng-template #anomaliesModalTitleTpl>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span class="modal-title-icon-wrap modal-title-icon-wrap--yellow">
+          <span nz-icon nzType="warning"></span>
+        </span>
+        <span class="modal-title-text">
+          <span class="modal-title-main">{{ 'momApp.baby.forecast.anomalies.modalTitle' | translate }}</span>
+          <span class="modal-title-sub">Báo cáo lệch nhịp sinh hoạt cần xử lý</span>
+        </span>
+      </div>
+    </ng-template>
+
+    <ng-container *nzModalContent>
+      <div *ngIf="forecastAnomalies.length === 0" class="empty-state">
+        <nz-empty [nzNotFoundContent]="'momApp.baby.forecast.anomalies.empty' | translate"></nz-empty>
+      </div>
+
+      <div class="anomalies-list-container" *ngIf="forecastAnomalies.length > 0">
+        <nz-list nzItemLayout="horizontal" [nzBordered]="false">
+          <nz-list-item *ngFor="let anomaly of forecastAnomalies" style="border-bottom: 1px solid var(--color-border, #f0f0f0); padding: 16px 0;">
+            <nz-list-item-meta
+              [nzTitle]="anomalyTitleTpl"
+              [nzDescription]="anomalyDescTpl">
+              <ng-template #anomalyTitleTpl>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <nz-tag [nzColor]="anomaly.severity === 'HIGH' ? 'red' : anomaly.severity === 'MEDIUM' ? 'orange' : 'blue'">
+                    {{ anomaly.severity }}
+                  </nz-tag>
+                  <strong style="color: var(--color-text-primary, #1f2937); font-size: 15px;">{{ anomaly.anomalyType }}</strong>
+                </div>
+              </ng-template>
+              <ng-template #anomalyDescTpl>
+                <div style="margin-top: 8px;">
+                  <p style="color: var(--color-text-secondary, #4b5563); margin-bottom: 6px; font-size: 14px; line-height: 1.5;">{{ anomaly.message }}</p>
+                  <span style="font-size: 12px; color: var(--color-text-muted, #9ca3af);">
+                    {{ 'momApp.baby.forecast.anomalies.detectedAt' | translate }}: {{ formatDateTime(anomaly.detectedAt) }}
+                  </span>
+                </div>
+              </ng-template>
+            </nz-list-item-meta>
+            <ul nz-list-item-actions>
+              <nz-list-item-action>
+                <button
+                  nz-button
+                  nzType="primary"
+                  nzDanger
+                  [nzLoading]="resolvingAnomalyId === anomaly.id"
+                  (click)="resolveAnomaly(anomaly.id)"
+                  class="btn-user-danger-action">
+                  <span nz-icon nzType="check-circle" nzTheme="outline"></span>
+                  {{ 'momApp.baby.forecast.anomalies.resolveBtn' | translate }}
+                </button>
+              </nz-list-item-action>
+            </ul>
+          </nz-list-item>
+        </nz-list>
+      </div>
+    </ng-container>
+  </nz-modal>
 
   <div class="insight-grid" *ngIf="selectedBabyId">
     <nz-card class="table-card animate-slide-up" [nzTitle]="'momApp.baby.dashboard.careTrendTitle' | translate" style="animation-delay:.05s">

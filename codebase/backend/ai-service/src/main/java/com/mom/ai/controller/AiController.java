@@ -7,6 +7,8 @@ import com.mom.ai.controller.dto.OcrReceiptRequest;
 import com.mom.ai.controller.dto.OcrReceiptResponse;
 import com.mom.ai.controller.dto.SuggestMealsRequest;
 import com.mom.ai.controller.dto.SuggestMealsResponse;
+import com.mom.ai.controller.dto.GenerateTravelPlanRequest;
+import com.mom.ai.controller.dto.GenerateTravelPlanResponse;
 import com.mom.ai.service.FamilyCopilotService;
 import com.mom.ai.service.UserAccessContext;
 import com.mom.common.dto.ApiResponse;
@@ -57,6 +59,17 @@ public class AiController {
     ) {
         UserAccessContext accessContext = new UserAccessContext(userId, familyIds, admin);
         return ApiResponse.ok("Success", familyCopilotService.suggestMeals(request, accessContext));
+    }
+
+    @PostMapping("/generate-travel-plan")
+    public ApiResponse<GenerateTravelPlanResponse> generateTravelPlan(
+            @Valid @RequestBody GenerateTravelPlanRequest request,
+            @RequestHeader(value = "X-User-Id", required = false) Long userId,
+            @RequestHeader(value = "X-Family-Ids", required = false) String familyIds,
+            @RequestHeader(value = "X-User-Admin", required = false, defaultValue = "false") boolean admin
+    ) {
+        UserAccessContext accessContext = new UserAccessContext(userId, familyIds, admin);
+        return ApiResponse.ok("Travel plan generated successfully", familyCopilotService.generateTravelPlan(request, accessContext));
     }
 
     @GetMapping("/status")

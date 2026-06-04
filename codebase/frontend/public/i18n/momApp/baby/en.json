@@ -20,5 +20,42 @@
       "sad": "Sad",
       "angry": "Angry"
     }
+  },
+  "forecast": {
+    "title": "Baby Forecast",
+    "subtitle": "Sleep & feeding forecast for the next 24 hours",
+    "refresh": "Refresh",
+    "emptyState": "No forecast available. Click Refresh or add new logs.",
+    "nextSleep": "Next Sleep",
+    "nextFeeding": "Next Feeding",
+    "updatedAt": "Updated At",
+    "anomaliesCount": "{{count}} open anomalies",
+    "summary": {
+      "LOW": "Latest forecast: baby may sleep around {{sleepTime}} and feed around {{feedingTime}}. No major anomalies detected.",
+      "MEDIUM": "Latest forecast: baby may sleep around {{sleepTime}} and feed around {{feedingTime}}. Some minor rhythm shifts detected.",
+      "HIGH": "Latest forecast: baby may sleep around {{sleepTime}} and feed around {{feedingTime}}. Significant rhythm shift today, closer monitoring recommended."
+    },
+    "recommendations": {
+      "highRisk1": "Monitor baby more closely tonight as total sleep is lower than baseline.",
+      "highRisk2": "Contact medical professionals if baby shows abnormal health signs.",
+      "mediumRisk": "Record more logs over the next few hours to confirm any rhythm shift.",
+      "lowRisk": "Rhythm is currently stable. Continue logging for better predictions.",
+      "sleepCompare": "Today sleep: {{today}}h vs recent average: {{baseline}}h.",
+      "stats": "Today feedings: {{feedings}}, diaper changes: {{diapers}}."
+    },
+    "messages": {
+      "queueSuccess": "Forecast refresh request queued.",
+      "loadFailed": "Failed to load Baby Forecast",
+      "refreshFailed": "Failed to refresh forecast"
+    },
+    "anomalies": {
+      "modalTitle": "Baby Rhythm Anomalies",
+      "type": "Anomaly Type",
+      "detectedAt": "Detected At",
+      "resolveBtn": "Resolve",
+      "empty": "No open anomalies.",
+      "resolveSuccess": "Anomaly resolved successfully.",
+      "resolveFailed": "Failed to resolve anomaly."
+    }
   }
 }

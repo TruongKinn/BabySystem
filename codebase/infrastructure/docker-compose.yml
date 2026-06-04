@@ -42,6 +42,24 @@ services:
       timeout: 5s
       retries: 5
 
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    container_name: mom-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   zookeeper:
     image: confluentinc/cp-zookeeper:7.5.3
     container_name: mom-zookeeper
@@ -168,34 +186,41 @@ services:
     container_name: mom-vault-unseal
     depends_on:
       - vault
-    restart: always
+    restart: "no"
     volumes:
       - ./vault:/vault:ro
     command: |
       sh -c '
       apk add --no-cache curl jq >/dev/null 2>&1;
       
+      KEYS_FILE="/vault/cluster-keys.json"
+
       echo "Chờ dịch vụ Vault trực tuyến...";
-      until curl -fsS http://vault:8200/v1/sys/health >/dev/null 2>&1;
+      until curl -sS http://vault:8200/v1/sys/health >/dev/null 2>&1;
       do
         sleep 2;
       done;
-      
-      KEYS_FILE="/vault/cluster-keys.json"
-      if [ -f "$$KEYS_FILE" ]; then
-        echo "Tìm thấy cluster-keys.json. Đang tự động mở khóa Vault (Unsealing)...";
-        
-        KEY1=$$(jq -r ".unseal_keys_b64[0]" "$$KEYS_FILE")
-        KEY2=$$(jq -r ".unseal_keys_b64[1]" "$$KEYS_FILE")
-        KEY3=$$(jq -r ".unseal_keys_b64[2]" "$$KEYS_FILE")
-        
-        curl -fsS -X POST -H "Content-Type: application/json" -d "{\"key\": \"$$KEY1\"}" http://vault:8200/v1/sys/unseal >/dev/null
-        curl -fsS -X POST -H "Content-Type: application/json" -d "{\"key\": \"$$KEY2\"}" http://vault:8200/v1/sys/unseal >/dev/null
-        curl -fsS -X POST -H "Content-Type: application/json" -d "{\"key\": \"$$KEY3\"}" http://vault:8200/v1/sys/unseal >/dev/null
-        
-        echo "Vault đã được mở khóa tự động thành công!"
+
+      SEALED=$$(curl -sS http://vault:8200/v1/sys/seal-status | jq -r ".sealed")
+      if [ "$$SEALED" = "true" ]; then
+        if [ -f "$$KEYS_FILE" ]; then
+          echo "Tìm thấy cluster-keys.json. Đang tự động mở khóa Vault (Unsealing)...";
+
+          KEY1=$$(jq -r ".unseal_keys_b64[0]" "$$KEYS_FILE")
+          KEY2=$$(jq -r ".unseal_keys_b64[1]" "$$KEYS_FILE")
+          KEY3=$$(jq -r ".unseal_keys_b64[2]" "$$KEYS_FILE")
+
+          curl -fsS -X POST -H "Content-Type: application/json" -d "{\"key\": \"$$KEY1\"}" http://vault:8200/v1/sys/unseal >/dev/null
+          curl -fsS -X POST -H "Content-Type: application/json" -d "{\"key\": \"$$KEY2\"}" http://vault:8200/v1/sys/unseal >/dev/null
+          curl -fsS -X POST -H "Content-Type: application/json" -d "{\"key\": \"$$KEY3\"}" http://vault:8200/v1/sys/unseal >/dev/null
+
+          echo "Vault đã được mở khóa tự động thành công!"
+        else
+          echo "LỖI: Không tìm thấy tệp tin cluster-keys.json tại /vault/cluster-keys.json để unseal tự động."
+          exit 1
+        fi
       else
-        echo "LỖI: Không tìm thấy tệp tin cluster-keys.json tại /vault/cluster-keys.json để unseal tự động."
+        echo "Vault đang mở khóa sẵn. Không cần chạy lại."
       fi
       '
 
@@ -240,4 +265,5 @@ volumes:
   vault_data:
   vault_logs:
   minio_data:
+  rabbitmq_data:
   keycloak_data:

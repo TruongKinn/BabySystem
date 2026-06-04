@@ -17,9 +17,12 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzTagModule } from 'ng-zorro-antd/tag';
+import { NzListModule } from 'ng-zorro-antd/list';
 import {
   BabyCareTrendPoint,
   BabyDashboard,
+  BabyForecast,
+  BabyForecastAnomaly,
   BabyGender,
   BabyGrowthRecord,
   BabyLogEntry,
@@ -61,6 +64,7 @@ interface GalleryFileView extends FileMetadata {
     NzEmptyModule,
     NzImageModule,
     NzTagModule,
+    NzListModule,
     BabyCommentsComponent
   ],
   templateUrl: './baby.component.html',
@@ -119,6 +123,8 @@ export class BabyComponent {
   isLoadingGrowthRecords = false;
   isLoadingVaccinations = false;
   isLoadingGallery = false;
+  isLoadingForecast = false;
+  isRefreshingForecast = false;
   quickLogLoadingType: BabyLogType | null = null;
 
   dashboardLoadError: string | null = null;
@@ -126,6 +132,7 @@ export class BabyComponent {
   growthLoadError: string | null = null;
   vaccinationLoadError: string | null = null;
   galleryLoadError: string | null = null;
+  forecastLoadError: string | null = null;
   growthPremiumLocked = false;
 
   selectedBabyId: number | null = null;
@@ -134,6 +141,10 @@ export class BabyComponent {
   growthRecords: BabyGrowthRecord[] = [];
   vaccinations: BabyVaccination[] = [];
   galleryFiles: GalleryFileView[] = [];
+  forecast: BabyForecast | null = null;
+  forecastAnomalies: BabyForecastAnomaly[] = [];
+  isAnomaliesModalVisible = false;
+  resolvingAnomalyId: number | null = null;
   selectedBabyAvatarUrl: string | null = null;
 
   familyMembers: FamilyMemberProfile[] = [];
@@ -217,6 +228,41 @@ export class BabyComponent {
 
   get recentLogs(): BabyLogEntry[] {
     return this.dashboard?.recentLogs ?? [];
+  }
+
+  get forecastRecommendations(): string[] {
+    if (!this.forecast?.recommendationsJson) {
+      return [];
+    }
+    try {
+      const parsed = JSON.parse(this.forecast.recommendationsJson);
+      if (Array.isArray(parsed)) {
+        return parsed.map((item: any) => {
+          if (typeof item === 'string') {
+            return item;
+          }
+          if (item && typeof item === 'object' && item.key) {
+            return this.i18n.translate(item.key, item.params || {});
+          }
+          return '';
+        }).filter(val => !!val);
+      }
+    } catch {
+      return [];
+    }
+    return [];
+  }
+
+  getForecastSummary(): string {
+    if (!this.forecast) {
+      return '';
+    }
+    const sleepTime = this.formatDateTime(this.forecast.sleepWindowStart);
+    const feedingTime = this.formatDateTime(this.forecast.feedingWindowStart);
+    return this.i18n.translate('momApp.baby.forecast.summary.' + this.forecast.riskLevel, {
+      sleepTime,
+      feedingTime
+    });
   }
 
   get hasOverviewData(): boolean {
@@ -369,6 +415,7 @@ export class BabyComponent {
           this.isSubmittingLog = false;
           this.closeCreateLogModal();
           this.loadBabyCareOverview();
+          this.loadForecast();
           this.notification.success(
             this.i18n.translate('momApp.common.success'),
             this.i18n.translate('momApp.baby.messages.saveLogSuccess')
@@ -520,6 +567,7 @@ export class BabyComponent {
         next: () => {
           this.quickLogLoadingType = null;
           this.loadBabyCareOverview();
+          this.loadForecast();
           this.notification.success(this.i18n.translate('momApp.common.success'), this.i18n.translate('momApp.baby.messages.createLogSuccess'));
         },
         error: (err) => {
@@ -773,8 +821,64 @@ export class BabyComponent {
     this.selectedBabyId = babyId;
     this.loadPremiumFeatures();
     this.loadBabyCareOverview();
+    this.loadForecast();
     this.loadMedicalData();
     this.loadGalleryFiles();
+  }
+
+  refreshForecast(): void {
+    if (!this.selectedBabyId || this.isRefreshingForecast) {
+      return;
+    }
+
+    const babyId = this.selectedBabyId;
+    this.isRefreshingForecast = true;
+    this.command.refreshBabyForecast(babyId).subscribe({
+      next: () => {
+        this.isRefreshingForecast = false;
+        this.notification.success('Forecast', this.i18n.translate('momApp.baby.forecast.messages.queueSuccess'));
+        setTimeout(() => this.loadForecast(), 1200);
+      },
+      error: (err) => {
+        this.isRefreshingForecast = false;
+        this.notification.error(this.i18n.translate('common.errorTitle'), err?.message || this.i18n.translate('momApp.baby.forecast.messages.refreshFailed'));
+      }
+    });
+  }
+
+  openAnomaliesModal(): void {
+    this.isAnomaliesModalVisible = true;
+  }
+
+  closeAnomaliesModal(): void {
+    this.isAnomaliesModalVisible = false;
+  }
+
+  resolveAnomaly(anomalyId: number): void {
+    if (!this.selectedBabyId || this.resolvingAnomalyId !== null) {
+      return;
+    }
+
+    const babyId = this.selectedBabyId;
+    this.resolvingAnomalyId = anomalyId;
+    this.command.resolveBabyForecastAnomaly(babyId, anomalyId).subscribe({
+      next: () => {
+        this.resolvingAnomalyId = null;
+        this.notification.success(
+          this.i18n.translate('momApp.common.success'),
+          this.i18n.translate('momApp.baby.forecast.anomalies.resolveSuccess')
+        );
+        this.forecastAnomalies = this.forecastAnomalies.filter((a) => a.id !== anomalyId);
+        this.loadForecast();
+      },
+      error: (err) => {
+        this.resolvingAnomalyId = null;
+        this.notification.error(
+          this.i18n.translate('common.errorTitle'),
+          err?.message || this.i18n.translate('momApp.baby.forecast.anomalies.resolveFailed')
+        );
+      }
+    });
   }
 
   private loadBabyCareOverview(): void {
@@ -835,6 +939,41 @@ export class BabyComponent {
         this.isLoadingSelectedDateLogs = false;
         this.selectedDateLogs = [];
         this.logsLoadError = err?.message || this.i18n.translate('momApp.baby.messages.logLoadFailed');
+      }
+    });
+  }
+
+  private loadForecast(): void {
+    if (!this.selectedBabyId) {
+      this.forecast = null;
+      this.forecastAnomalies = [];
+      return;
+    }
+
+    const babyId = this.selectedBabyId;
+    this.isLoadingForecast = true;
+    this.forecastLoadError = null;
+
+    forkJoin({
+      latest: this.command.getBabyForecastLatest(babyId),
+      anomalies: this.command.getBabyForecastAnomalies(babyId, true)
+    }).subscribe({
+      next: ({ latest, anomalies }) => {
+        if (this.selectedBabyId !== babyId) {
+          return;
+        }
+        this.isLoadingForecast = false;
+        this.forecast = latest;
+        this.forecastAnomalies = anomalies;
+      },
+      error: (err) => {
+        if (this.selectedBabyId !== babyId) {
+          return;
+        }
+        this.isLoadingForecast = false;
+        this.forecast = null;
+        this.forecastAnomalies = [];
+        this.forecastLoadError = err?.message || this.i18n.translate('momApp.baby.forecast.messages.loadFailed');
       }
     });
   }
@@ -1072,6 +1211,8 @@ export class BabyComponent {
     this.growthRecords = [];
     this.vaccinations = [];
     this.galleryFiles = [];
+    this.forecast = null;
+    this.forecastAnomalies = [];
     this.selectedBabyAvatarUrl = null;
     this.growthPremiumLocked = false;
   }
@@ -1102,6 +1243,18 @@ export class BabyComponent {
       return 1;
     }
     return 1;
+  }
+
+  private parseJsonStringArray(value: string | null | undefined): string[] {
+    if (!value) {
+      return [];
+    }
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed.filter((item) => typeof item === 'string') : [];
+    } catch {
+      return [];
+    }
   }
 
   private numberOrNull(value: unknown): number | null {

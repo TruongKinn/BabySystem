@@ -63,7 +63,8 @@
         "documents": "ドキュメント",
         "invoices": "請求書作成",
         "productivity": "仕事とコンテンツ",
-        "copilot": "AI Copilot"
+        "copilot": "AI Copilot",
+        "travel": "家族旅行"
       }
     },
     "admin": {
@@ -1421,6 +1422,43 @@
           "sad": "悲しいね",
           "angry": "ひどいね"
         }
+      },
+      "forecast": {
+        "title": "赤ちゃん予測",
+        "subtitle": "今後24時間の睡眠と授乳の予測",
+        "refresh": "更新",
+        "emptyState": "予測データがありません。更新するか、新しい記録を追加してください。",
+        "nextSleep": "次の睡眠",
+        "nextFeeding": "次の授乳",
+        "updatedAt": "更新日時",
+        "anomaliesCount": "{{count}} 件の未解決の異常",
+        "summary": {
+          "LOW": "最新の予測：赤ちゃんは {{sleepTime}} 頃に眠くなり、{{feedingTime}} 頃に授乳が必要になる可能性があります。大きな異常は検出されていません。",
+          "MEDIUM": "最新の予測：赤ちゃんは {{sleepTime}} 頃に眠くなり、{{feedingTime}} 頃に授乳が必要になる可能性があります。軽微なリズムの乱れが検出されています。",
+          "HIGH": "最新の予測：赤ちゃんは {{sleepTime}} 頃に眠くなり、{{feedingTime}} 頃に授乳が必要になる可能性があります。本日のリズムに大きな乱れがあります。慎重な見守りをお勧めします。"
+        },
+        "recommendations": {
+          "highRisk1": "総睡眠時間が通常より短いため、今夜は赤ちゃんをより注意深く見守ってください。",
+          "highRisk2": "赤ちゃんに異常な健康状態の兆候が見られる場合は、医療専門家に連絡してください。",
+          "mediumRisk": "リズムの乱れを確認するため、今後数時間の間にさらに記録を登録してください。",
+          "lowRisk": "現在、生活リズムは安定しています。より正確な予測のために記録を続けてください。",
+          "sleepCompare": "本日の睡眠：{{today}}時間、最近の平均：{{baseline}}時間。",
+          "stats": "本日の授乳回数：{{feedings}}回、おむつ交換回数：{{diapers}}回。"
+        },
+        "messages": {
+          "queueSuccess": "予測の更新リクエストがキューに追加されました。",
+          "loadFailed": "赤ちゃん予測を読み込めませんでした",
+          "refreshFailed": "予測を更新できませんでした"
+        },
+        "anomalies": {
+          "modalTitle": "赤ちゃんの生活リズム異常警告",
+          "type": "異常タイプ",
+          "detectedAt": "検出日時",
+          "resolveBtn": "処理済みにする",
+          "empty": "現在、未解決の異常はありません。",
+          "resolveSuccess": "異常が正常に処理されました。",
+          "resolveFailed": "異常の処理に失敗しました。"
+        }
       }
     },
     "family": {
@@ -2490,6 +2528,74 @@
       "otpIncomplete": "6桁のOTPコードをすべて入力してください。",
       "otpVerifySuccess": "デジタル署名が成功しました！Family Verifyスタンプが有効化されました。",
       "otpVerifyFailed": "OTPコードが正しくありません。通知を確認してもう一度お試しください。"
+    },
+    "travel": {
+      "title": "家族旅行プランナー",
+      "subtitle": "日程の計画、OpenStreetMapでの目的地マーク、AIによる旅行プラン作成。",
+      "newTrip": "新しい旅行を作成",
+      "noTrip": "家族の旅行計画はまだありません。",
+      "createFirstTrip": "最初の旅行を作成",
+      "myTrips": "家族の旅行",
+      "deleteTrip": "旅行を削除",
+      "destinations": "目的地",
+      "tabRoute": "日程と地図",
+      "tabAi": "AIプランナー",
+      "tabChecklist": "準備リスト",
+      "itinerary": "詳細な日程",
+      "addDestination": "場所を追加",
+      "emptyDestinationsHint": "日程に場所がありません。地図をクリックするか、下のボタンをクリックして追加してください。",
+      "addDestOnMap": "目的地を追加",
+      "aiIdeaTitle": "AIで旅行プランを作成する",
+      "aiIdeaDesc": "目的地、日数、家族の希望を入力すると、AI Copilotが赤ちゃん連れでも安心な詳細な日程を提案します。",
+      "aiPromptPlaceholder": "旅行の希望を入力してください...",
+      "generateIdeas": "プラン作成",
+      "aiGenerating": "AIが家族に最適な日程を生成中...",
+      "saveToPlan": "旅行に保存",
+      "checklistTitle": "旅行の準備アイテム",
+      "newChecklistItem": "アイテムを追加...",
+      "catBaby": "赤ちゃん用品",
+      "catParents": "保護者用品",
+      "catDocs": "書類とチケット",
+      "catOther": "機材とその他",
+      "routeMap": "OpenStreetMap ルートマップ",
+      "mapHint": "地図上の任意の場所をクリックして、すばやく目的地を追加します",
+      "createTripTitle": "新しい旅行の設定",
+      "createTripSub": "家族旅行の日程と目的地を設定します",
+      "tripTitleLabel": "旅行タイトル",
+      "placeholderTripTitle": "例：ダラット 3泊4日の旅",
+      "titleError": "旅行タイトルを入力してください！",
+      "descriptionLabel": "説明 / メモ",
+      "placeholderDescription": "旅行に関する簡単な説明...",
+      "dateRangeLabel": "日付範囲",
+      "dateRangeError": "出発日と帰宅日を選択してください！",
+      "addDestTitle": "新しい目的地を追加",
+      "addDestSub": "地図上の場所を検索し、対応する日に割り当てます",
+      "searchAddress": "場所を検索（例：ダラット春香湖）...",
+      "destNameLabel": "場所の名前",
+      "destNameError": "場所の名前を入力してください！",
+      "dayIndexLabel": "日程の日数",
+      "notesLabel": "場所のメモ",
+      "placeholderNotes": "例：ここで昼食、ベビーカーを持参...",
+      "saving": "同期中...",
+      "saved": "サーバーに保存されました",
+      "searchLabel": "場所を検索",
+      "addBtn": "追加",
+      "generateAiTrip": "AIで作成",
+      "aiCreateTitle": "AI自動旅行プラン作成",
+      "aiCreateSub": "目的地と要望を入力するだけで、AIが日程、ルートマップ、準備リストを自動設定します",
+      "destinationLabel": "目的地",
+      "placeholderDestination": "例：ダラット、ニャチャン、フーコック島...",
+      "destinationError": "目的地を入力してください！",
+      "durationLabel": "予定日数",
+      "durationError": "日数を選択してください！",
+      "startDateLabel": "出発日",
+      "startDateError": "出発日を選択してください！",
+      "preferencesLabel": "特別な要望（家族構成など）",
+      "placeholderPreferences": "例：生後6ヶ月の赤ちゃん連れ、ゆったりした日程、リゾート滞在、薄味の食事希望...",
+      "generateBtn": "AIで旅行プランを生成",
+      "aiGeneratingPlan": "AIが詳細な日程と準備リストを作成中...",
+      "day": "日",
+      "days": "日"
     }
   },
   "auth": {

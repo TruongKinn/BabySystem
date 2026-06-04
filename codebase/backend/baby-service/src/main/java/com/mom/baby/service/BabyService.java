@@ -23,6 +23,7 @@ import com.mom.baby.domain.GrowthRecordEntity;
 import com.mom.baby.domain.VaccinationEntity;
 import com.mom.baby.event.BabyEventPublisher;
 import com.mom.baby.event.BabyLogCreatedPayload;
+import com.mom.baby.forecast.event.BabyForecastEventPublisher;
 import com.mom.baby.premium.PremiumFeatures;
 import com.mom.baby.repository.BabyLogRepository;
 import com.mom.baby.repository.BabyRepository;
@@ -62,6 +63,7 @@ public class BabyService {
     private final VaccinationRepository vaccinationRepository;
     private final GrowthRecordRepository growthRecordRepository;
     private final BabyEventPublisher babyEventPublisher;
+    private final BabyForecastEventPublisher babyForecastEventPublisher;
     private final PremiumAccessService premiumAccessService;
 
     @Transactional
@@ -132,6 +134,7 @@ public class BabyService {
                 saved.getValue(),
                 saved.getLoggedAt()
         ));
+        babyForecastEventPublisher.publishActivityRecorded(saved, baby.getFamilyId());
         return toBabyLogResponse(saved);
     }
 

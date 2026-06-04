@@ -16,6 +16,8 @@ import com.mom.ai.controller.dto.OcrReceiptRequest;
 import com.mom.ai.controller.dto.OcrReceiptResponse;
 import com.mom.ai.controller.dto.SuggestMealsRequest;
 import com.mom.ai.controller.dto.SuggestMealsResponse;
+import com.mom.ai.controller.dto.GenerateTravelPlanRequest;
+import com.mom.ai.controller.dto.GenerateTravelPlanResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
@@ -315,6 +317,70 @@ public class FamilyCopilotService {
         } catch (Exception e) {
             log.error("Failed to parse suggest meals JSON response: {}", jsonResult, e);
             throw new RuntimeException("Lỗi định dạng kết quả gợi ý món ăn từ AI: " + e.getMessage());
+        }
+    }
+
+    public GenerateTravelPlanResponse generateTravelPlan(GenerateTravelPlanRequest request, UserAccessContext accessContext) {
+        enforceFamilyAccess(request.familyId(), accessContext);
+
+        String destination = request.destination();
+        int durationDays = request.durationDays();
+        String preferences = request.preferences();
+        String language = StringUtils.hasText(request.language()) ? request.language() : "vi";
+
+        String jsonResult;
+        if (isGemini()) {
+            jsonResult = geminiClient.generateTravelPlan(destination, durationDays, preferences, language);
+        } else {
+            // Fallback to OpenAI if not gemini
+            String systemPrompt = "You are a professional travel planner assistant. Generate a travel plan matching the requested schema in JSON format.";
+            String userPrompt = """
+                Generate a travel plan for:
+                - Destination: %s
+                - Duration: %d days
+                - Preferences: %s
+                
+                You must output only a valid JSON matching this schema:
+                {
+                  "title": "string",
+                  "description": "string",
+                  "destinations": [
+                    {
+                      "name": "string",
+                      "lat": 0.0,
+                      "lng": 0.0,
+                      "dayIndex": 1,
+                      "notes": "string"
+                    }
+                  ],
+                  "checklist": [
+                    {
+                      "task": "string",
+                      "category": "string"
+                    }
+                  ]
+                }
+                """.formatted(destination, durationDays, preferences, language);
+
+            OpenAiResponsesRequest openAiRequest = new OpenAiResponsesRequest(
+                    properties.getModel(),
+                    systemPrompt,
+                    List.of(OpenAiInputMessage.of("user", userPrompt)),
+                    null,
+                    properties.getMaxOutputTokens()
+            );
+
+            OpenAiResponsesResponse response = openAiClient.create(openAiRequest);
+            jsonResult = response.outputText();
+        }
+
+        log.info("AI suggested travel plan response: {}", jsonResult);
+
+        try {
+            return objectMapper.readValue(jsonResult, GenerateTravelPlanResponse.class);
+        } catch (Exception e) {
+            log.error("Failed to parse generate travel plan JSON response: {}", jsonResult, e);
+            throw new RuntimeException("Lỗi định dạng kết quả tạo chuyến đi từ AI: " + e.getMessage());
         }
     }
 }

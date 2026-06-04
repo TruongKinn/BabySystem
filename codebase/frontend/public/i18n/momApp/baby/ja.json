@@ -20,5 +20,42 @@
       "sad": "悲しいね",
       "angry": "ひどいね"
     }
+  },
+  "forecast": {
+    "title": "赤ちゃん予測",
+    "subtitle": "今後24時間の睡眠と授乳の予測",
+    "refresh": "更新",
+    "emptyState": "予測データがありません。更新するか、新しい記録を追加してください。",
+    "nextSleep": "次の睡眠",
+    "nextFeeding": "次の授乳",
+    "updatedAt": "更新日時",
+    "anomaliesCount": "{{count}} 件の未解決の異常",
+    "summary": {
+      "LOW": "最新の予測：赤ちゃんは {{sleepTime}} 頃に眠くなり、{{feedingTime}} 頃に授乳が必要になる可能性があります。大きな異常は検出されていません。",
+      "MEDIUM": "最新の予測：赤ちゃんは {{sleepTime}} 頃に眠くなり、{{feedingTime}} 頃に授乳が必要になる可能性があります。軽微なリズムの乱れが検出されています。",
+      "HIGH": "最新の予測：赤ちゃんは {{sleepTime}} 頃に眠くなり、{{feedingTime}} 頃に授乳が必要になる可能性があります。本日のリズムに大きな乱れがあります。慎重な見守りをお勧めします。"
+    },
+    "recommendations": {
+      "highRisk1": "総睡眠時間が通常より短いため、今夜は赤ちゃんをより注意深く見守ってください。",
+      "highRisk2": "赤ちゃんに異常な健康状態の兆候が見られる場合は、医療専門家に連絡してください。",
+      "mediumRisk": "リズムの乱れを確認するため、今後数時間の間にさらに記録を登録してください。",
+      "lowRisk": "現在、生活リズムは安定しています。より正確な予測のために記録を続けてください。",
+      "sleepCompare": "本日の睡眠：{{today}}時間、最近の平均：{{baseline}}時間。",
+      "stats": "本日の授乳回数：{{feedings}}回、おむつ交換回数：{{diapers}}回。"
+    },
+    "messages": {
+      "queueSuccess": "予測の更新リクエストがキューに追加されました。",
+      "loadFailed": "赤ちゃん予測を読み込めませんでした",
+      "refreshFailed": "予測を更新できませんでした"
+    },
+    "anomalies": {
+      "modalTitle": "赤ちゃんの生活リズム異常警告",
+      "type": "異常タイプ",
+      "detectedAt": "検出日時",
+      "resolveBtn": "処理済みにする",
+      "empty": "現在、未解決の異常はありません。",
+      "resolveSuccess": "異常が正常に処理されました。",
+      "resolveFailed": "異常の処理に失敗しました。"
+    }
   }
 }
