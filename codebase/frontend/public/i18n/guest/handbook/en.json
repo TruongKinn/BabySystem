@@ -1,0 +1,72 @@
+{
+  "title": "Discover Motherhood Knowledge",
+  "subtitle": "From the early days of pregnancy to the journey of raising your baby, we are always with you with scientific and warmest information.",
+  "searchPlaceholder": "Search articles, experts, or topics...",
+  "filters": {
+    "all": "All",
+    "newborn": "Newborn",
+    "nutrition": "Postpartum Nutrition",
+    "develop": "Baby Development",
+    "sleep": "Sleep",
+    "mental": "Moms' Mental Health"
+  },
+  "featured": {
+    "badge": "Featured Article"
+  },
+  "article": {
+    "readTime": "min read",
+    "author": "Author",
+    "saved": "Saved",
+    "save": "Save article",
+    "unsave": "Unsave",
+    "noResults": "No articles found",
+    "noResultsDesc": "Try searching with another keyword or select another topic",
+    "viewAll": "View All",
+    "loadMore": "Load more articles",
+    "readMore": "Read more"
+  },
+  "articles": {
+    "featured": {
+      "title": "EASY Routine: The Secret to Helping Newborns Sleep Well and Moms Relax",
+      "desc": "The EASY method helps establish a natural biological rhythm for your baby, creating predictability in eating, sleeping, and playing routines. Discover how to apply it gently, bringing peace to the whole family.",
+      "author": "Dr. Nguyen Anh",
+      "readTime": "10 min read"
+    },
+    "milk": {
+      "title": "7-Day Postpartum Menu to Boost Breast Milk Production for New Moms",
+      "desc": "Traditional dishes combined with modern science help mothers recover quickly and maintain an abundant, high-quality milk supply.",
+      "author": "Dr. Le Nhi",
+      "readTime": "5 min read"
+    },
+    "umbilical": {
+      "title": "Newborn Umbilical Cord Care: What Parents Should Absolutely Avoid",
+      "desc": "Detailed guide from pediatricians on daily umbilical cord care, identifying infection signs, and helping it fall off quickly.",
+      "author": "Expert T.H",
+      "readTime": "8 min read"
+    },
+    "ww19": {
+      "title": "Wonder Week 19: Sleep Regression or Cognitive Leap?",
+      "desc": "Deconstruct the causes of baby's fussiness in week 19 and helpful tips for parents to navigate this difficult phase smoothly.",
+      "author": "Mom Cabbage",
+      "readTime": "4 min read"
+    },
+    "depression": {
+      "title": "Postpartum Depression: Early Detection for Timely Healing",
+      "desc": "More than 1 in 5 mothers experience postpartum depression. Understand the signs, causes, and how to find appropriate support.",
+      "author": "M.A. in Psychology",
+      "readTime": "6 min read"
+    },
+    "ferber": {
+      "title": "The Ferber Method: Sleep Training Your Baby Independently from 6 Months",
+      "desc": "Learn the step-by-step Ferber sleep training process, important considerations, and when this method is suitable for your baby.",
+      "author": "Dr. Minh Chau",
+      "readTime": "7 min read"
+    },
+    "motor": {
+      "title": "Motor Development Milestones for Babies from 0 to 12 Months",
+      "desc": "From rolling and crawling to standing and taking first steps — a complete guide to tracking and supporting your baby's physical growth.",
+      "author": "Assoc. Prof. Pediatrics",
+      "readTime": "5 min read"
+    }
+  }
+}

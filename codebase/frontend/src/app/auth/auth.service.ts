@@ -171,8 +171,7 @@ export class AuthService {
 
 
   logout(): void {
-    const fallbackRoute = this.router.url.startsWith('/admin') ? '/admin/login' : '/app/login';
-    this.logoutTo(fallbackRoute);
+    this.logoutTo('/home');
   }
 
   logoutTo(redirectTo: string): void {

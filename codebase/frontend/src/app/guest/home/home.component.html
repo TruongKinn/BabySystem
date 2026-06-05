@@ -1,0 +1,169 @@
+<!-- Shared Navbar -->
+<app-guest-navbar></app-guest-navbar>
+
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- Hero Section -->
+  <section class="hero-section">
+    <div class="hero-text">
+      <span class="hero-label">{{ 'guest.home.hero.label' | translate }}</span>
+      <h1 class="hero-title" [innerHTML]="'guest.home.hero.title' | translate">
+      </h1>
+      <p class="hero-desc">
+        {{ 'guest.home.hero.desc' | translate }}
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary" routerLink="/guest/handbook">{{ 'guest.home.hero.exploreHandbook' | translate }}</button>
+        <button class="btn-outline" routerLink="/guest/community">{{ 'guest.home.hero.joinCommunity' | translate }}</button>
+      </div>
+    </div>
+    <div class="hero-image-wrapper">
+      <div class="hero-blob"></div>
+      <img
+        src="images/home/hero-mother-baby.jpg"
+        [alt]="'guest.common.brand' | translate"
+        class="hero-image"
+        loading="eager"
+      />
+    </div>
+  </section>
+
+  <!-- Main Categories (Bento Grid Style) -->
+  <section class="categories-section">
+    <div class="section-header">
+      <h2 class="section-title">{{ 'guest.home.categories.title' | translate }}</h2>
+      <p class="section-subtitle">{{ 'guest.home.categories.subtitle' | translate }}</p>
+    </div>
+    <div class="bento-grid">
+      <!-- Health Tracking Card - Wide -->
+      <a routerLink="/guest/health" class="bento-card bento-wide health-card">
+        <div class="bento-blob"></div>
+        <div class="bento-content">
+          <div class="card-icon icon-health">
+            <span class="material-symbols-outlined fill-icon">monitor_heart</span>
+          </div>
+          <h3 class="card-title">{{ 'guest.home.categories.health.title' | translate }}</h3>
+          <p class="card-desc">{{ 'guest.home.categories.health.desc' | translate }}</p>
+        </div>
+        <div class="card-link">
+          {{ 'guest.home.categories.health.link' | translate }}
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </div>
+      </a>
+
+      <!-- Community Card -->
+      <a routerLink="/guest/community" class="bento-card community-card">
+        <div class="bento-content">
+          <div class="card-icon icon-community">
+            <span class="material-symbols-outlined fill-icon">forum</span>
+          </div>
+          <h3 class="card-title">{{ 'guest.home.categories.community.title' | translate }}</h3>
+          <p class="card-desc">{{ 'guest.home.categories.community.desc' | translate }}</p>
+        </div>
+        <div class="card-link">
+          {{ 'guest.home.categories.community.link' | translate }}
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </div>
+      </a>
+
+      <!-- Knowledge Base Card -->
+      <a routerLink="/guest/handbook" class="bento-card knowledge-card">
+        <div class="bento-content">
+          <div class="card-icon icon-knowledge">
+            <span class="material-symbols-outlined fill-icon">menu_book</span>
+          </div>
+          <h3 class="card-title">{{ 'guest.home.categories.handbook.title' | translate }}</h3>
+          <p class="card-desc">{{ 'guest.home.categories.handbook.desc' | translate }}</p>
+        </div>
+        <div class="card-link">
+          {{ 'guest.home.categories.handbook.link' | translate }}
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </div>
+      </a>
+
+      <!-- Shop Card - Wide -->
+      <a routerLink="/guest/shop" class="bento-card bento-wide shop-card">
+        <div class="shop-bg-img">
+          <img src="images/home/shop-background.jpg" [alt]="'guest.home.categories.shop.title' | translate" loading="lazy" />
+        </div>
+        <div class="bento-content relative">
+          <div class="card-icon icon-shop">
+            <span class="material-symbols-outlined fill-icon">local_mall</span>
+          </div>
+          <h3 class="card-title">{{ 'guest.home.categories.shop.title' | translate }}</h3>
+          <p class="card-desc">{{ 'guest.home.categories.shop.desc' | translate }}</p>
+        </div>
+        <div class="card-link">
+          {{ 'guest.home.categories.shop.link' | translate }}
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Latest Articles -->
+  <section class="articles-section">
+    <div class="articles-header">
+      <div>
+        <h2 class="section-title">{{ 'guest.home.articles.title' | translate }}</h2>
+        <p class="section-subtitle">{{ 'guest.home.articles.subtitle' | translate }}</p>
+      </div>
+      <a routerLink="/guest/handbook" class="view-all-link">
+        {{ 'guest.home.articles.viewAll' | translate }}
+        <span class="material-symbols-outlined">arrow_forward</span>
+      </a>
+    </div>
+    <div class="articles-grid">
+      <article class="article-card" *ngFor="let article of articles">
+        <div class="article-image-wrap">
+          <img [src]="article.image" [alt]="article.alt | translate" class="article-image" loading="lazy" />
+          <div class="article-badge" [ngClass]="article.categoryClass">{{ article.category | translate }}</div>
+        </div>
+        <div class="article-body">
+          <h3 class="article-title">{{ article.title | translate }}</h3>
+          <p class="article-desc">{{ article.description | translate }}</p>
+          <div class="article-meta">
+            <span>{{ article.author | translate }}</span>
+            <span>•</span>
+            <span>{{ article.readTime | translate }}</span>
+          </div>
+        </div>
+      </article>
+    </div>
+    <a routerLink="/guest/handbook" class="view-all-mobile">{{ 'guest.home.articles.viewAll' | translate }}</a>
+  </section>
+
+  <!-- Featured Products -->
+  <section class="products-section">
+    <div class="section-header">
+      <h2 class="section-title">{{ 'guest.home.products.title' | translate }}</h2>
+      <p class="section-subtitle">{{ 'guest.home.products.subtitle' | translate }}</p>
+    </div>
+    <div class="products-grid">
+      <div class="product-card" *ngFor="let product of products">
+        <div class="product-image-wrap">
+          <img [src]="product.image" [alt]="product.alt | translate" class="product-image" loading="lazy" />
+        </div>
+        <div class="product-info">
+          <div class="product-category">{{ product.category | translate }}</div>
+          <h4 class="product-name">{{ product.name | translate }}</h4>
+          <div class="product-footer">
+            <span class="product-price">{{ product.price | translate }}</span>
+            <button class="btn-add-cart" [attr.aria-label]="('guest.shop.product.addToCart' | translate) + ' ' + (product.name | translate)">
+              <span class="material-symbols-outlined">add_shopping_cart</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="products-footer">
+      <button class="btn-view-all" routerLink="/guest/shop">{{ 'guest.home.products.viewAll' | translate }}</button>
+    </div>
+  </section>
+
+</main>
+
+<!-- Shared Footer -->
+<app-guest-footer></app-guest-footer>

@@ -1,0 +1,80 @@
+{
+  "title": "Selected Products for Your Beloved Baby",
+  "subtitle": "Discover safe, high-quality products specially designed for your baby's comprehensive development.",
+  "searchPlaceholder": "Search products...",
+  "cart": {
+    "count": "Cart"
+  },
+  "badge": {
+    "authentic": "100% Authentic",
+    "freeShipping": "Free shipping from 299k",
+    "return30Days": "30-day return policy"
+  },
+  "filter": {
+    "title": "Filters",
+    "categories": "Categories",
+    "priceTitle": "Price Range",
+    "price": "Under {{price}}",
+    "brands": "Brands",
+    "clear": "Clear Filters"
+  },
+  "sort": {
+    "label": "Sort by:",
+    "options": {
+      "popular": "Most Popular",
+      "priceAsc": "Price: Low to High",
+      "priceDesc": "Price: High to Low",
+      "newest": "Newest"
+    }
+  },
+  "product": {
+    "count": "Showing <strong>{{count}}</strong> products",
+    "reviews": "reviews",
+    "addToCart": "Add to Cart",
+    "noResults": "No products found",
+    "noResultsDesc": "Try changing filters or search keywords",
+    "viewAll": "View all products",
+    "wishlistAdd": "Add to wishlist",
+    "wishlistRemove": "Remove from wishlist"
+  },
+  "pagination": {
+    "prev": "Previous",
+    "next": "Next",
+    "page": "Page"
+  },
+  "categoriesList": {
+    "all": "All Products",
+    "diaper": "Diapers & Wipes",
+    "formula": "Baby Formula",
+    "clothing": "Newborn Clothing",
+    "toys": "Educational Toys",
+    "feeding": "Feeding Utensils",
+    "skincare": "Baby Skincare"
+  },
+  "productsList": {
+    "toys1": {
+      "name": "Safe Natural Wooden Block Building Toy Set",
+      "alt": "Natural wooden building blocks set"
+    },
+    "clothing1": {
+      "name": "Set of 3 Organic Cotton Bodysuits",
+      "alt": "Organic cotton newborn bodysuit set"
+    },
+    "feeding1": {
+      "name": "Premium Anti-Colic PPSU Baby Bottle 240ml",
+      "alt": "Premium anti-colic PPSU baby feeding bottle"
+    },
+    "diaper1": {
+      "name": "Huggies Newborn Tape Diapers Size NB 24 Pack",
+      "alt": "Huggies newborn diapers"
+    },
+    "formula1": {
+      "name": "Meiji Infant Formula Milk 800g (0-12 months)",
+      "alt": "Meiji baby formula milk 0-1 year"
+    },
+    "skincare1": {
+      "name": "Organic Moisturizing Baby Cream 100ml",
+      "alt": "Organic moisturizing baby cream lotion"
+    }
+  }
+}

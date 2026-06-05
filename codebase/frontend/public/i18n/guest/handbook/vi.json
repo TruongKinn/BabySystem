@@ -1,0 +1,72 @@
+{
+  "title": "Khám phá kiến thức làm mẹ",
+  "subtitle": "Từ những ngày đầu mang thai đến hành trình nuôi dưỡng bé yêu, chúng tôi luôn đồng hành cùng bạn với những thông tin khoa học và ấm áp nhất.",
+  "searchPlaceholder": "Tìm kiếm bài viết, chuyên gia, hoặc chủ đề...",
+  "filters": {
+    "all": "Tất cả",
+    "newborn": "Trẻ sơ sinh",
+    "nutrition": "Dinh dưỡng sau sinh",
+    "develop": "Phát triển của bé",
+    "sleep": "Giấc ngủ",
+    "mental": "Sức khỏe tâm lý mẹ"
+  },
+  "featured": {
+    "badge": "Bài viết nổi bật"
+  },
+  "article": {
+    "readTime": "phút đọc",
+    "author": "Tác giả",
+    "saved": "Đã lưu",
+    "save": "Lưu bài viết",
+    "unsave": "Bỏ lưu",
+    "noResults": "Không tìm thấy bài viết",
+    "noResultsDesc": "Thử tìm kiếm với từ khóa khác hoặc chọn chủ đề khác",
+    "viewAll": "Xem tất cả",
+    "loadMore": "Xem thêm bài viết",
+    "readMore": "Đọc tiếp"
+  },
+  "articles": {
+    "featured": {
+      "title": "Lịch sinh hoạt EASY: Bí quyết giúp trẻ sơ sinh ngủ ngoan, mẹ nhàn tênh",
+      "desc": "Phương pháp EASY giúp thiết lập nhịp sinh học tự nhiên cho bé, tạo ra sự dễ đoán trong thói quen ăn, ngủ và chơi. Khám phá cách áp dụng nhẹ nhàng không gò ép, mang lại sự bình yên cho cả gia đình trong những tháng đầu đời.",
+      "author": "BS. Nguyễn Anh",
+      "readTime": "10 phút đọc"
+    },
+    "milk": {
+      "title": "Thực đơn 7 ngày gọi sữa về ướt áo cho mẹ sau sinh",
+      "desc": "Những món ăn truyền thống kết hợp khoa học hiện đại giúp mẹ nhanh hồi phục sức khỏe và duy trì nguồn sữa dồi dào, chất lượng cho bé.",
+      "author": "BS. Lê Nhi",
+      "readTime": "5 phút đọc"
+    },
+    "umbilical": {
+      "title": "Chăm sóc rốn trẻ sơ sinh: Những điều mẹ tuyệt đối không nên làm",
+      "desc": "Hướng dẫn chi tiết từ chuyên gia nhi khoa về cách vệ sinh cuống rốn hàng ngày, nhận biết các dấu hiệu nhiễm trùng và giúp rốn bé mau rụng.",
+      "author": "Chuyên gia T.H",
+      "readTime": "8 phút đọc"
+    },
+    "ww19": {
+      "title": "Wonder Week 19: Khủng hoảng hay bước nhảy vọt về nhận thức?",
+      "desc": "Giải mã nguyên nhân khiến bé trằn trọc, quấy khóc trong tuần thứ 19 và các mẹo nhỏ giúp mẹ đồng hành cùng con vượt qua giai đoạn khó khăn này một cách nhẹ nhàng.",
+      "author": "Mẹ Bắp Cải",
+      "readTime": "4 phút đọc"
+    },
+    "depression": {
+      "title": "Trầm cảm sau sinh: Nhận biết sớm để chữa lành kịp thời",
+      "desc": "Hơn 1 trong 5 bà mẹ trải qua trầm cảm sau sinh. Hiểu rõ các dấu hiệu, nguyên nhân và cách tìm kiếm sự hỗ trợ phù hợp để mẹ luôn khỏe mạnh.",
+      "author": "ThS. Tâm lý học",
+      "readTime": "6 phút đọc"
+    },
+    "ferber": {
+      "title": "Phương pháp Ferber: Luyện ngủ độc lập cho bé từ 6 tháng",
+      "desc": "Tìm hiểu quy trình luyện ngủ Ferber từng bước, những lưu ý quan trọng và khi nào phương pháp này phù hợp với bé nhà bạn.",
+      "author": "BS. Minh Châu",
+      "readTime": "7 phút đọc"
+    },
+    "motor": {
+      "title": "Các mốc phát triển vận động của bé từ 0-12 tháng cần biết",
+      "desc": "Từ lật, bò đến đứng và những bước chân đầu tiên — hướng dẫn đầy đủ để bố mẹ theo dõi và hỗ trợ sự phát triển vận động của con.",
+      "author": "PGS. Nhi khoa",
+      "readTime": "5 phút đọc"
+    }
+  }
+}

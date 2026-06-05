@@ -26,10 +26,17 @@ import { DocumentsComponent } from './documents/documents.component';
 import { AiCopilotComponent } from './ai-copilot/ai-copilot.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { TravelComponent } from './travel/travel.component';
+import { guestRoutes } from './guest/guest.routes';
 
 export const routes: Routes = [
-  { path: '', pathMatch: 'full', redirectTo: 'admin/login' },
+  { path: '', pathMatch: 'full', redirectTo: 'guest' },
+  { path: 'home', redirectTo: 'guest/home', pathMatch: 'full' },
   { path: 'login', pathMatch: 'full', redirectTo: 'admin/login' },
+
+  {
+    path: 'guest',
+    children: guestRoutes
+  },
 
   { path: 'app/login', component: LoginComponent, data: { portal: 'user' } },
   { path: 'app/register', component: RegisterComponent },
@@ -56,7 +63,7 @@ export const routes: Routes = [
       { path: 'profile', component: ProfileComponent },
       { path: 'documents', component: DocumentsComponent },
       { path: 'copilot', component: AiCopilotComponent },
-      { path: 'invoices', component: InvoicesComponent }
+      { path: 'invoices', component: InvoicesComponent },
     ]
   },
 
@@ -97,5 +104,5 @@ export const routes: Routes = [
   { path: 'copilot', redirectTo: 'app/copilot', pathMatch: 'full' },
   { path: 'invoices', redirectTo: 'app/invoices', pathMatch: 'full' },
 
-  { path: '**', redirectTo: 'admin/login' }
+  { path: '**', redirectTo: 'guest' }
 ];

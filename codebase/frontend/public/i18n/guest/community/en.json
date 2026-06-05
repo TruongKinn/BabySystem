@@ -1,0 +1,88 @@
+{
+  "title": "Moms' Community",
+  "subtitle": "A place to share experiences and receive helpful advice from breastfeeding mothers",
+  "searchPlaceholder": "Search posts, topics...",
+  "newPostBtn": "New Discussion",
+  "sidebar": {
+    "trending": "Trending Topics",
+    "recentComments": "Recent Discussions"
+  },
+  "post": {
+    "pinned": "Pinned",
+    "likes": "Likes",
+    "comments": "Comments",
+    "save": "Save Post",
+    "saved": "Saved",
+    "joinPrompt": "Join the community to comment and write posts",
+    "joinBtn": "Login Now",
+    "timeAgo": {
+      "hoursAgo": "hours ago",
+      "justNow": "Just now",
+      "daysAgo": "days ago"
+    }
+  },
+  "form": {
+    "modalTitle": "Create New Discussion",
+    "titleLabel": "Discussion Title",
+    "titlePlaceholder": "Enter your discussion title...",
+    "categoryLabel": "Select Category",
+    "contentLabel": "Content",
+    "contentPlaceholder": "Share your questions or experience with other moms...",
+    "cancel": "Cancel",
+    "submit": "Post"
+  },
+  "filters": {
+    "all": "All",
+    "sleep": "Baby's Sleep",
+    "nutrition": "Nutrition & Weaning",
+    "experience": "Parenting Experience",
+    "review": "Product Reviews",
+    "notice": "Announcement"
+  },
+  "posts": {
+    "rules": {
+      "title": "Community Rules & Safe Posting Guidelines",
+      "content": "Welcome moms to our shared home! To maintain a positive, supportive, and loving environment, the admin team would like to remind everyone of basic rules..."
+    },
+    "weaning": {
+      "title": "6-month-old refuse solid food, keeps spitting it out, what should I do?",
+      "content": "My baby is 6 and a half months old, I am introducing solids using traditional weaning combined with BLW. First few days seemed fine, but recently baby shuts mouth tightly or spits everything out. I am so stressed. Any moms who went through this can share advice?"
+    },
+    "ww19": {
+      "title": "Wonder Week 19 — Crying all night, but we finally made it through!",
+      "content": "After 2 terrible weeks of Wonder Week 19, my baby finally slept through the night again. Moms in this phase, don't give up, it will pass! I want to share some tips that helped..."
+    },
+    "diapers": {
+      "title": "Detailed Review of 5 Thin and Lightweight Diapers for Summer 2024",
+      "content": "Summer is here, I have tested 5 different diaper brands for my 8-month-old to find the thinnest, most breathable one. The result is quite surprising as the most expensive one wasn't the best..."
+    },
+    "depression": {
+      "title": "Signs of Postpartum Depression and How to Seek Support",
+      "content": "As a psychologist, I frequently meet mothers who are exhausted but don't realize they have postpartum depression. In this article, I want to share 7 critical signs..."
+    }
+  },
+  "trending": {
+    "topic1": "Review of thin and lightweight diapers for babies in hot summer weather",
+    "topic2": "How to boost children's immune system during seasonal transitions",
+    "topic3": "Montessori parenting methods for babies 0-3 years at home",
+    "topic4": "7-day weaning menu for 6-month-olds starting solid foods",
+    "views": "views"
+  },
+  "recent": {
+    "comment1": {
+      "postTitle": "Pigeon Baby Bottle Review",
+      "excerpt": "\"My baby switched to this bottle and loves it, the nipple is so soft...\""
+    },
+    "comment2": {
+      "postTitle": "Wonder Week 19",
+      "excerpt": "\"Thank you for sharing, my baby is entering this phase too...\""
+    },
+    "comment3": {
+      "postTitle": "6-Month-Old Refuses Solids",
+      "excerpt": "\"Try letting your baby hold the food to explore first, don't force...\""
+    },
+    "time": {
+      "minsAgo": "mins ago"
+    }
+  }
+}

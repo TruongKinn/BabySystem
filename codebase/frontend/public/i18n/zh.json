@@ -2990,5 +2990,446 @@
         }
       }
     }
+  },
+  "guest": {
+    "common": {
+      "brand": "妈咪宝贝",
+      "navbar": {
+        "home": "首页",
+        "handbook": "指南手册",
+        "shop": "母婴商城",
+        "community": "交流社区",
+        "health": "成长健康",
+        "login": "登录",
+        "search": "搜索",
+        "menu": "菜单"
+      },
+      "footer": {
+        "tagline": "© 2024 妈咪宝贝。陪伴妈妈们度过快乐育儿的每一步。",
+        "explore": "发现探索",
+        "aboutUs": "关于我们",
+        "support247": "24/7 客户支持",
+        "legal": "法律条款",
+        "privacyPolicy": "隐私政策",
+        "termsOfService": "使用条款",
+        "cooperate": "商务合作",
+        "contactAd": "广告联系"
+      }
+    },
+    "community": {
+      "title": "妈妈交流社区",
+      "subtitle": "分享育儿经验、获取热心妈妈们建议的互动平台",
+      "searchPlaceholder": "搜索帖子或话题...",
+      "newPostBtn": "发布新帖",
+      "sidebar": {
+        "trending": "热门讨论趋势",
+        "recentComments": "最新互动交流"
+      },
+      "post": {
+        "pinned": "置顶",
+        "likes": "点赞",
+        "comments": "回复",
+        "save": "收藏帖子",
+        "saved": "已收藏",
+        "joinPrompt": "加入社区以参与回复和发帖",
+        "joinBtn": "立即登录",
+        "timeAgo": {
+          "hoursAgo": "小时前",
+          "justNow": "刚刚",
+          "daysAgo": "天前"
+        }
+      },
+      "form": {
+        "modalTitle": "发布新讨论帖",
+        "titleLabel": "帖子标题",
+        "titlePlaceholder": "请输入您的帖子标题...",
+        "categoryLabel": "选择板块",
+        "contentLabel": "帖子内容",
+        "contentPlaceholder": "与其他妈妈分享您的疑问或带娃经验...",
+        "cancel": "取消",
+        "submit": "发布"
+      },
+      "filters": {
+        "all": "全部",
+        "sleep": "宝宝睡眠交流",
+        "nutrition": "营养与辅食喂养",
+        "experience": "新手妈妈经验",
+        "review": "母婴用品评测",
+        "notice": "社区公告"
+      },
+      "posts": {
+        "rules": {
+          "title": "社区规范及安全发帖指南",
+          "content": "欢迎各位妈妈来到我们共同的家园！为了维护一个积极、分享和充满爱的环境，管理员团队想提醒大家一些基本规范..."
+        },
+        "weaning": {
+          "title": "6个月宝宝不爱吃辅食，总是含着又吐出来，妈妈该怎么办？",
+          "content": "我的宝宝快6个半月了，我正在结合传统和BLW（自主进食）给宝宝喂辅食。前几天配合得还挺好，但最近只要喂辅食就紧闭嘴巴，或者含着含着就全部吐出来。我很焦虑，有经历过的妈妈分享经验吗？"
+        },
+        "ww19": {
+          "title": "妙奇周（Wonder Week）19 —— 宝宝哭闹了整夜，我们终于熬过来了！",
+          "content": "经历了妙奇周19两个糟糕的星期后，我的宝宝终于又可以睡整觉了。在这个阶段的妈妈们千万别放弃，一切都会过去的！我想分享一些有用的技巧..."
+        },
+        "diapers": {
+          "title": "2024夏季5款超薄透气纸尿裤深度测评",
+          "content": "夏天到了，我为我8个月大的宝宝测评了5种不同品牌的纸尿裤，想找出最薄最透气的。结果很出乎意料，因为最贵的不一定是最好的..."
+        },
+        "depression": {
+          "title": "如何识别产后抑郁症以及如何寻求专业支持",
+          "content": "作为心理医生，我经常遇到那些身心俱疲但自己并没有意识到患有产后抑郁的妈妈。在本文中，我想分享7个关键信号..."
+        }
+      },
+      "trending": {
+        "topic1": "炎热夏日适合宝宝穿戴的超薄透气纸尿裤评测",
+        "topic2": "在换季期间如何增强儿童免疫力",
+        "topic3": "在家中实践适用于0-3岁儿童的蒙台梭利早期教育",
+        "topic4": "为刚开始吃辅食的6个月宝宝制定的7天辅食计划表",
+        "views": "次浏览"
+      },
+      "recent": {
+        "comment1": {
+          "postTitle": "贝亲（Pigeon）奶瓶评测",
+          "excerpt": "\"我给宝宝换了这个奶瓶，效果特别好，奶嘴真的很柔软...\""
+        },
+        "comment2": {
+          "postTitle": "妙奇周（Wonder Week）19",
+          "excerpt": "\"谢谢你的分享，我的宝宝也刚进入这个阶段...\""
+        },
+        "comment3": {
+          "postTitle": "6个月宝宝不爱吃辅食",
+          "excerpt": "\"可以试着让宝宝自己拿手抓着探索食物，千万不要强迫喂食...\""
+        },
+        "time": {
+          "minsAgo": "分钟前"
+        }
+      }
+    },
+    "handbook": {
+      "title": "探索科学育儿知识",
+      "subtitle": "从怀孕初期到养育宝宝的整个旅程，我们始终用最科学、最温馨的信息陪伴您左右。",
+      "searchPlaceholder": "搜索文章、专家或主题...",
+      "filters": {
+        "all": "全部",
+        "newborn": "婴儿护理",
+        "nutrition": "产后营养",
+        "develop": "成长发育",
+        "sleep": "睡眠培养",
+        "mental": "妈妈心理"
+      },
+      "featured": {
+        "badge": "热门精选"
+      },
+      "article": {
+        "readTime": "分钟阅读",
+        "author": "作者",
+        "saved": "已保存",
+        "save": "保存文章",
+        "unsave": "取消保存",
+        "noResults": "未找到相关文章",
+        "noResultsDesc": "请尝试搜索其他关键字或选择其他主题",
+        "viewAll": "查看全部",
+        "loadMore": "加载更多文章",
+        "readMore": "阅读全文"
+      },
+      "articles": {
+        "featured": {
+          "title": "EASY规律作息：新生儿乖乖入睡、妈妈轻松带娃的秘诀",
+          "desc": "EASY方法帮助宝宝建立自然的生物钟，让吃、玩、睡的日常规律变得可预测。探索如何温和地引入此作息，带给全家轻松的生活。",
+          "author": "阮英 医生",
+          "readTime": "10 分钟阅读"
+        },
+        "milk": {
+          "title": "产后妈妈7天催乳食谱：促进母乳分泌、迅速恢复体力",
+          "desc": "传统月子餐与现代营养学结合，帮助妈妈快速恢复身体，并维持充足、高质量的母乳供应。",
+          "author": "黎妮 医生",
+          "readTime": "5 分钟阅读"
+        },
+        "umbilical": {
+          "title": "新生儿脐带护理：父母绝对要避免的错误做法",
+          "desc": "儿科专家详细指导日常脐带护理、识别感染迹象，并帮助其快速脱落。",
+          "author": "专家 T.H",
+          "readTime": "8 分钟阅读"
+        },
+        "ww19": {
+          "title": "妙奇周（Wonder Week）19：睡眠倒退期还是认知飞跃？",
+          "desc": "解读宝宝第19周哭闹的原因，以及帮助父母平稳度过这个艰难阶段的实用建议。",
+          "author": "卷心菜妈妈",
+          "readTime": "4 分钟阅读"
+        },
+        "depression": {
+          "title": "产后抑郁症：早期发现以进行及时心理疗愈",
+          "desc": "超过五分之一的母亲会经历产后抑郁症。了解抑郁征兆、原因以及如何寻求适当的支持。",
+          "author": "心理学硕士",
+          "readTime": "6 分钟阅读"
+        },
+        "ferber": {
+          "title": "法伯（Ferber）睡眠训练法：引导6个月以上宝宝自主入睡",
+          "desc": "了解法伯自主入睡训练的详细步骤、重要注意事项，以及该方法何时适合您的宝宝。",
+          "author": "明珠 医生",
+          "readTime": "7 分钟阅读"
+        },
+        "motor": {
+          "title": "0至12个月婴幼儿大运动发育里程碑指南",
+          "desc": "从翻身、爬行到站立和迈出第一步——跟踪和支持宝宝体能成长的完整指南。",
+          "author": "儿科副教授",
+          "readTime": "5 分钟阅读"
+        }
+      }
+    },
+    "health": {
+      "title": "宝宝健康成长追踪",
+      "subtitle": "记录日常活动、身高、体重以及疫苗接种时间表。",
+      "greeting": "妈妈好，今天 {{name}} 怎么样？",
+      "babyInfoFormat": "宝宝 {{name}} • {{age}}",
+      "addMetric": "添加新指标",
+      "baby": {
+        "name": "小熊",
+        "age": "月龄",
+        "ageText": "6个月12天"
+      },
+      "stats": {
+        "weight": "体重",
+        "height": "身高",
+        "comparedToLastMonth": "比上月",
+        "chartTitle": "成长发育曲线图",
+        "whoStandard": "达标 WHO",
+        "whoStandardLegend": "WHO标准"
+      },
+      "months": {
+        "march": "3月",
+        "april": "4月",
+        "may": "5月",
+        "current": "当前"
+      },
+      "log": {
+        "title": "今日生活日志",
+        "quickActions": "快速记录",
+        "types": {
+          "feed": "饮食",
+          "sleep": "睡眠",
+          "diaper": "换尿布",
+          "note": "备注"
+        },
+        "duration": "持续时间",
+        "time": "时间",
+        "timeSuffix": {
+          "morning": "上午",
+          "afternoon": "下午",
+          "justNow": "刚刚"
+        }
+      },
+      "logs": {
+        "feed15m": "母乳喂养 (15分钟)",
+        "sleep45m": "小睡 (45分钟)",
+        "diaperWet": "换尿布 (湿)",
+        "feed20m": "母乳喂养 (20分钟)",
+        "time1030": "上午 10:30",
+        "time0815": "上午 08:15",
+        "time0745": "上午 07:45",
+        "time0600": "上午 06:00"
+      },
+      "vaccine": {
+        "title": "接种疫苗提醒",
+        "status": {
+          "upcoming": "待接种",
+          "done": "已接种",
+          "overdue": "已逾期"
+        }
+      },
+      "vaccines": {
+        "v6in1": {
+          "name": "六合一疫苗 (第三剂)",
+          "desc": "预防白喉、百日咳、破伤风、脊髓灰质炎、乙流脑、乙肝",
+          "dueDate": "本周内"
+        },
+        "rota": {
+          "name": "轮状病毒疫苗 (第三剂)",
+          "desc": "预防轮状病毒引起的肠胃炎",
+          "dueDate": "3周后"
+        },
+        "je": {
+          "name": "乙脑疫苗 (第一剂)",
+          "desc": "预防流行性乙型脑炎",
+          "dueDate": "2025年9月"
+        }
+      },
+      "doctor": {
+        "title": "专科医生建议",
+        "name": "阮秋河 医生",
+        "text": "宝宝6个月大时开始添加辅食。妈妈可以先尝试让宝宝接触细腻的蔬菜泥。每次尝试新食物后，别忘了观察宝宝 reaction。"
+      },
+      "modal": {
+        "title": "记录活动详情",
+        "timeLabel": "记录时间",
+        "durationLabel": "持续时长 / 喂食量",
+        "diaperType": "尿布类型",
+        "placeholderFeed": "例如: 15分钟 / 120毫升",
+        "placeholderSleep": "例如: 45分钟",
+        "placeholderDiaper": "例如: 湿 / 脏",
+        "noteLabel": "补充备注",
+        "notePlaceholder": "输入宝宝的状态或其他补充说明...",
+        "cancel": "取消",
+        "submit": "保存记录"
+      }
+    },
+    "home": {
+      "hero": {
+        "label": "为人母的旅程",
+        "title": "与母亲同行，养育快乐孩子",
+        "desc": "探索一个宁静的空间，获取深度育儿知识，分享互助社区，以及为您的宝宝精选的最安全护理产品。",
+        "exploreHandbook": "探索指南手册",
+        "joinCommunity": "加入社区交流"
+      },
+      "categories": {
+        "title": "妈妈与宝宝的专属空间",
+        "subtitle": "为您提供健康怀孕和宝宝快乐成长所需的一切",
+        "health": {
+          "title": "成长健康跟踪",
+          "desc": "轻松记录生长指标、疫苗接种计划和宝宝睡眠日志。",
+          "link": "开始记录"
+        },
+        "community": {
+          "title": "交流社区",
+          "desc": "与其他母乳喂养的妈妈们分享经验并获取建议。",
+          "link": "立即加入"
+        },
+        "handbook": {
+          "title": "指南手册",
+          "desc": "来自医疗保健专业人员的深度文章。",
+          "link": "查看手册"
+        },
+        "shop": {
+          "title": "母婴安全商城",
+          "desc": "精选有机产品，对宝宝娇嫩的肌肤绝对安全。",
+          "link": "立即选购"
+        }
+      },
+      "articles": {
+        "title": "最新育儿指南",
+        "subtitle": "科学育儿，让带娃变得更轻松",
+        "viewAll": "查看全部",
+        "easy": {
+          "alt": "宝宝睡眠",
+          "category": "睡眠",
+          "title": "新生儿EASY睡眠训练法",
+          "desc": "详细指导如何建立“吃-玩-睡”循环，帮助宝宝乖乖入睡，让妈妈在头几个月里更轻松。",
+          "author": "阮英 医生",
+          "readTime": "5 分钟阅读"
+        },
+        "blw": {
+          "alt": "婴儿营养",
+          "category": "营养",
+          "title": "6个月宝宝自主进食（BLW）食谱",
+          "desc": "安全、营养丰富的自主进食食物建议以及如何处理宝宝噎食的指南。",
+          "author": "营养专家",
+          "readTime": "8 分钟阅读"
+        },
+        "play": {
+          "alt": "认知发展",
+          "category": "发育成长",
+          "title": "1-2岁幼儿大脑开发益智游戏",
+          "desc": "简单易行的家庭互动活动，有助于激发宝宝的好奇心和语言表达能力。",
+          "author": "心理学硕士",
+          "readTime": "6 分钟阅读"
+        }
+      },
+      "products": {
+        "title": "热门推荐商品",
+        "subtitle": "深受成千上万妈妈信赖的选择",
+        "viewAll": "查看所有商品",
+        "lotion": {
+          "alt": "有机婴儿面霜",
+          "category": "日常洗护",
+          "name": "婴儿有机温和保湿面霜",
+          "price": "¥98.00"
+        },
+        "bowl": {
+          "alt": "吸盘硅胶辅食餐盘",
+          "category": "辅食餐具",
+          "name": "防翻吸盘硅胶餐盘套装",
+          "price": "¥65.00"
+        }
+      }
+    },
+    "shop": {
+      "title": "为您的挚爱宝贝精选良品",
+      "subtitle": "探索专为宝宝全面发展而设计的安全、高品质产品。",
+      "searchPlaceholder": "搜索商品...",
+      "cart": {
+        "count": "购物车"
+      },
+      "badge": {
+        "authentic": "100% 正品保障",
+        "freeShipping": "满299k免运费",
+        "return30Days": "30天退换货保障"
+      },
+      "filter": {
+        "title": "商品筛选",
+        "categories": "分类板块",
+        "priceTitle": "价格区间",
+        "price": "低于 {{price}}",
+        "brands": "品牌",
+        "clear": "清空筛选"
+      },
+      "sort": {
+        "label": "排序方式:",
+        "options": {
+          "popular": "最受欢迎",
+          "priceAsc": "价格：从低到高",
+          "priceDesc": "价格：从高到低",
+          "newest": "最新上架"
+        }
+      },
+      "product": {
+        "count": "显示 <strong>{{count}}</strong> 个商品",
+        "reviews": "条评论",
+        "addToCart": "加入购物车",
+        "noResults": "未找到相关商品",
+        "noResultsDesc": "请尝试更改筛选条件或搜索关键字",
+        "viewAll": "查看全部商品",
+        "wishlistAdd": "加入收藏夹",
+        "wishlistRemove": "取消收藏"
+      },
+      "pagination": {
+        "prev": "上一页",
+        "next": "下一页",
+        "page": "页"
+      },
+      "categoriesList": {
+        "all": "全部商品",
+        "diaper": "纸尿裤与湿巾",
+        "formula": "婴幼儿奶粉",
+        "clothing": "新生儿服饰",
+        "toys": "早教益智玩具",
+        "feeding": "辅食喂养餐具",
+        "skincare": "婴儿洗护护肤"
+      },
+      "productsList": {
+        "toys1": {
+          "name": "儿童天然木制积木玩具安全无毒套装",
+          "alt": "天然木制儿童积木套装"
+        },
+        "clothing1": {
+          "name": "新生儿有机棉连体衣超透气 3件套",
+          "alt": "有机棉婴儿连体衣套装"
+        },
+        "feeding1": {
+          "name": "高端防胀气 PPSU 宽口径奶瓶 240ml",
+          "alt": "高端防胀气宽口径 PPSU 奶瓶"
+        },
+        "diaper1": {
+          "name": "好奇（Huggies）纸尿裤 新生儿 NB 24片",
+          "alt": "好奇新生儿纸尿裤"
+        },
+        "formula1": {
+          "name": "明治（Meiji）一段配方奶粉 800克 (0-12个月)",
+          "alt": "明治婴儿配方奶粉一段"
+        },
+        "skincare1": {
+          "name": "天然有机滋润保湿婴儿面霜 100ml",
+          "alt": "天然有机婴儿滋润保湿霜"
+        }
+      }
+    }
   }
 }

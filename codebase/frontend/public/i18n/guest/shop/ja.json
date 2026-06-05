@@ -1,0 +1,80 @@
+{
+  "title": "愛しい赤ちゃんのためのセレクトアイテム",
+  "subtitle": "赤ちゃんの総合的な発達のために特別に設計された、安全で高品質な製品をご覧ください。",
+  "searchPlaceholder": "商品を検索...",
+  "cart": {
+    "count": "カート"
+  },
+  "badge": {
+    "authentic": "100% 正規品保証",
+    "freeShipping": "299k以上で送料無料",
+    "return30Days": "30日間返品・交換保証"
+  },
+  "filter": {
+    "title": "絞り込み",
+    "categories": "カテゴリー",
+    "priceTitle": "価格帯",
+    "price": "{{price}} 以下",
+    "brands": "ブランド",
+    "clear": "フィルターをクリア"
+  },
+  "sort": {
+    "label": "並べ替え:",
+    "options": {
+      "popular": "人気順",
+      "priceAsc": "価格の安い順",
+      "priceDesc": "価格の高い順",
+      "newest": "新着順"
+    }
+  },
+  "product": {
+    "count": "<strong>{{count}}</strong> 件の商品を表示中",
+    "reviews": "件のレビュー",
+    "addToCart": "カートに入れる",
+    "noResults": "商品が見つかりませんでした",
+    "noResultsDesc": "フィルターを変更するか、別のキーワードでお試しください",
+    "viewAll": "すべての商品を見る",
+    "wishlistAdd": "お気に入りに追加",
+    "wishlistRemove": "お気に入りから削除"
+  },
+  "pagination": {
+    "prev": "前へ",
+    "next": "次へ",
+    "page": "ページ"
+  },
+  "categoriesList": {
+    "all": "すべての商品",
+    "diaper": "おむつ＆おしりふき",
+    "formula": "粉ミルク",
+    "clothing": "ベビー服・新生児ウェア",
+    "toys": "知育玩具・おもちゃ",
+    "feeding": "離乳食グッズ・食器",
+    "skincare": "ベビースキンケア"
+  },
+  "productsList": {
+    "toys1": {
+      "name": "天然木で作られた安全な赤ちゃん用積み木知育セット",
+      "alt": "天然木の積み木セット"
+    },
+    "clothing1": {
+      "name": "オーガニックコットン ベビーロンパース 3枚セット",
+      "alt": "新生児オーガニックコットン肌着"
+    },
+    "feeding1": {
+      "name": "プレミアム防爆気 PPSU製哺乳瓶 240ml",
+      "alt": "プレミアムPPSU哺乳瓶"
+    },
+    "diaper1": {
+      "name": "ハギーズ（Huggies）おむつ テープ 新生児 NBサイズ 24枚入",
+      "alt": "ハギーズ新生児おむつ"
+    },
+    "formula1": {
+      "name": "明治ほほえみ 粉ミルク 800g (0〜12ヶ月)",
+      "alt": "明治赤ちゃん用粉ミルク"
+    },
+    "skincare1": {
+      "name": "オーガニック ベビー保湿保湿クリーム 100ml",
+      "alt": "オーガニックベビークリーム"
+    }
+  }
+}

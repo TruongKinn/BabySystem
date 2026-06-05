@@ -1,0 +1,246 @@
+<!-- Shared Navbar -->
+<app-guest-navbar></app-guest-navbar>
+
+<!-- MAIN -->
+<main class="main-content">
+  <div class="community-container">
+
+    <!-- ── LEFT CONTENT: FEEDS ── -->
+    <div class="feed-area">
+
+      <!-- Header & Search -->
+      <div class="feed-header reveal">
+        <div class="header-main">
+          <div>
+            <h1 class="page-title">{{ 'guest.community.title' | translate }}</h1>
+            <p class="page-desc">{{ 'guest.community.subtitle' | translate }}</p>
+          </div>
+          <button class="btn-primary btn-new-post" (click)="openNewPostForm()" id="btn-create-post">
+            <span class="material-symbols-outlined">add_comment</span>
+            {{ 'guest.community.newPostBtn' | translate }}
+          </button>
+        </div>
+
+        <div class="search-wrapper">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input
+            type="text"
+            class="search-input"
+            [placeholder]="'guest.community.searchPlaceholder' | translate"
+            id="search-posts"
+          />
+        </div>
+      </div>
+
+      <!-- Filters Section -->
+      <section class="filters-section reveal">
+        <div class="filters-scroll">
+          <button
+            *ngFor="let filter of filters"
+            class="chip"
+            [class.chip-active]="activeFilter === filter.value"
+            (click)="setFilter(filter.value)"
+            [id]="'filter-' + filter.value"
+          >
+            {{ filter.key | translate }}
+          </button>
+        </div>
+      </section>
+
+      <!-- Feeds Grid -->
+      <div class="posts-feed">
+        <article
+          *ngFor="let post of filteredPosts; let i = index"
+          class="post-card reveal"
+          [style.animation-delay]="(i * 50) + 'ms'"
+        >
+          <!-- Header -->
+          <div class="post-header">
+            <div class="post-author-info">
+              <div class="author-avatar">
+                <img *ngIf="post.authorAvatar" [src]="post.authorAvatar" [alt]="post.authorName" />
+                <span *ngIf="!post.authorAvatar" class="material-symbols-outlined">person</span>
+              </div>
+              <div>
+                <div class="author-name-row">
+                  <span class="author-name">{{ post.authorName }}</span>
+                  <span *ngIf="post.authorBadge" class="badge-role" [class.badge-admin]="post.authorBadge === 'Admin'">
+                    {{ post.authorBadge }}
+                  </span>
+                </div>
+                <div class="post-meta-row">
+                  <span class="post-time" *ngIf="post.timeAgo === '0'">{{ 'guest.community.post.timeAgo.justNow' | translate }}</span>
+                  <span class="post-time" *ngIf="post.timeAgo === '1d'">1 {{ 'guest.community.post.timeAgo.daysAgo' | translate }}</span>
+                  <span class="post-time" *ngIf="post.timeAgo !== '0' && post.timeAgo !== '1d'">
+                    {{ post.timeAgo }} {{ 'guest.community.post.timeAgo.hoursAgo' | translate }}
+                  </span>
+                  <span class="bullet">•</span>
+                  <span class="post-category">{{ getCategoryKey(post.category) | translate }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pin Badge -->
+            <span class="badge-pinned" *ngIf="post.isPinned">
+              <span class="material-symbols-outlined fill-icon pin-icon">push_pin</span>
+              {{ 'guest.community.post.pinned' | translate }}
+            </span>
+          </div>
+
+          <!-- Body -->
+          <div class="post-body">
+            <h2 class="post-title">{{ post.title | translate }}</h2>
+            <p class="post-content">{{ post.content | translate }}</p>
+          </div>
+
+          <!-- Footer Actions -->
+          <div class="post-actions">
+            <button
+              class="action-btn"
+              [class.action-liked]="post.isLiked"
+              (click)="toggleLike(post, $event)"
+              [attr.aria-label]="'guest.community.post.likes' | translate"
+            >
+              <span class="material-symbols-outlined action-icon">thumb_up</span>
+              <span>{{ post.likes }}</span>
+            </button>
+            <button class="action-btn" [attr.aria-label]="'guest.community.post.comments' | translate">
+              <span class="material-symbols-outlined action-icon">chat_bubble</span>
+              <span>{{ post.comments }}</span>
+            </button>
+            <button
+              class="action-btn action-btn-save"
+              [class.action-saved]="post.isSaved"
+              (click)="toggleSave(post, $event)"
+              [attr.aria-label]="(post.isSaved ? 'guest.community.post.saved' : 'guest.community.post.save') | translate"
+            >
+              <span class="material-symbols-outlined">
+                bookmark
+              </span>
+            </button>
+          </div>
+        </article>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT CONTENT: SIDEBAR ── -->
+    <aside class="sidebar-area">
+
+      <!-- Join CTA -->
+      <div class="sidebar-card join-cta reveal">
+        <div class="cta-blob"></div>
+        <div class="cta-content">
+          <span class="material-symbols-outlined cta-icon">groups</span>
+          <h3>{{ 'guest.community.post.joinPrompt' | translate }}</h3>
+          <button class="btn-cta" (click)="navigateToLogin()" id="btn-join-community">
+            {{ 'guest.community.post.joinBtn' | translate }}
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Trending Topics -->
+      <div class="sidebar-card trending-card reveal">
+        <h3 class="card-title">
+          <span class="material-symbols-outlined title-icon text-amber">local_fire_department</span>
+          {{ 'guest.community.sidebar.trending' | translate }}
+        </h3>
+        <div class="trending-list">
+          <div *ngFor="let topic of trendingTopics" class="trending-item">
+            <span class="trend-rank" [class.rank-top]="topic.rank <= 3">{{ topic.rank }}</span>
+            <div class="trend-content">
+              <a href="#" class="trend-title">{{ topic.title | translate }}</a>
+              <span class="trend-views">{{ topic.views }} {{ 'guest.community.trending.views' | translate }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Discussions -->
+      <div class="sidebar-card recent-comments reveal">
+        <h3 class="card-title">
+          <span class="material-symbols-outlined title-icon text-violet">forum</span>
+          {{ 'guest.community.sidebar.recentComments' | translate }}
+        </h3>
+        <div class="comments-list">
+          <div *ngFor="let comment of recentComments" class="comment-item">
+            <div class="comment-avatar">
+              <img [src]="comment.authorAvatar" [alt]="comment.authorName" />
+            </div>
+            <div class="comment-content">
+              <div class="comment-meta">
+                <span class="comment-author">{{ comment.authorName }}</span>
+                <span class="comment-time">{{ comment.timeAgo }} {{ 'guest.community.recent.time.minsAgo' | translate }}</span>
+              </div>
+              <a href="#" class="comment-post-title">{{ comment.postTitle | translate }}</a>
+              <p class="comment-excerpt">{{ comment.excerpt | translate }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </aside>
+
+  </div>
+</main>
+
+<!-- ── NEW POST MODAL (Overlay) ── -->
+<div class="modal-overlay" *ngIf="showNewPostForm" (click)="closeNewPostForm()">
+  <div class="new-post-modal" (click)="$event.stopPropagation()">
+    <!-- Header -->
+    <div class="modal-header">
+      <h3 class="modal-title">
+        <span class="material-symbols-outlined title-icon">edit_note</span>
+        {{ 'guest.community.form.modalTitle' | translate }}
+      </h3>
+      <button class="btn-close-modal" (click)="closeNewPostForm()" [attr.aria-label]="'guest.community.form.cancel' | translate">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Body -->
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="new-post-title">{{ 'guest.community.form.titleLabel' | translate }}</label>
+        <input
+          type="text"
+          id="new-post-title"
+          class="form-input"
+          [placeholder]="'guest.community.form.titlePlaceholder' | translate"
+          [(ngModel)]="newPostTitle"
+          autocomplete="off"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="new-post-category">{{ 'guest.community.form.categoryLabel' | translate }}</label>
+        <select id="new-post-category" class="form-select" [(ngModel)]="newPostCategory">
+          <option *ngFor="let cat of postCategories" [value]="cat.value">{{ cat.key | translate }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="new-post-content">{{ 'guest.community.form.contentLabel' | translate }}</label>
+        <textarea
+          id="new-post-content"
+          class="form-textarea"
+          [placeholder]="'guest.community.form.contentPlaceholder' | translate"
+          rows="5"
+          [(ngModel)]="newPostContent"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeNewPostForm()">{{ 'guest.community.form.cancel' | translate }}</button>
+      <button class="btn-submit" (click)="submitPost()" [disabled]="!newPostTitle.trim() || !newPostContent.trim()">
+        {{ 'guest.community.form.submit' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Shared Footer -->
+<app-guest-footer></app-guest-footer>

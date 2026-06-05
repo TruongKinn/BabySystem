@@ -1,0 +1,42 @@
+<nav class="navbar" role="navigation" aria-label="Điều hướng chính">
+  <div class="navbar-inner">
+
+    <!-- Brand -->
+    <div class="navbar-left">
+      <a class="brand-logo" routerLink="/guest/home" [attr.aria-label]="'guest.common.brand' | translate">
+        <span class="brand-heart">🌸</span>
+        {{ 'guest.common.brand' | translate }}
+      </a>
+
+      <!-- Desktop Nav Links -->
+      <div class="nav-links" [class.open]="isMobileMenuOpen">
+        <a
+          *ngFor="let item of navItems"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          class="nav-link"
+          (click)="isMobileMenuOpen = false"
+        >{{ item.label | translate }}</a>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="nav-actions">
+      <button class="btn-icon" [attr.aria-label]="'guest.common.navbar.search' | translate">
+        <span class="material-symbols-outlined">search</span>
+      </button>
+      <button class="btn-login" (click)="navigateToLogin()" id="navbar-btn-login">
+        {{ 'guest.common.navbar.login' | translate }}
+      </button>
+      <button
+        class="btn-icon btn-menu"
+        (click)="toggleMobileMenu()"
+        [attr.aria-expanded]="isMobileMenuOpen"
+        [attr.aria-label]="'guest.common.navbar.menu' | translate"
+      >
+        <span class="material-symbols-outlined">{{ isMobileMenuOpen ? 'close' : 'menu' }}</span>
+      </button>
+    </div>
+
+  </div>
+</nav>

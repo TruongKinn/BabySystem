@@ -2997,5 +2997,446 @@
         }
       }
     }
+  },
+  "guest": {
+    "common": {
+      "brand": "Mother & Baby",
+      "navbar": {
+        "home": "Home",
+        "handbook": "Handbook",
+        "shop": "Shop",
+        "community": "Community",
+        "health": "Health",
+        "login": "Login",
+        "search": "Search",
+        "menu": "Menu"
+      },
+      "footer": {
+        "tagline": "© 2024 Mother & Baby. Accompanying moms on the journey of raising happy children.",
+        "explore": "Explore",
+        "aboutUs": "About Us",
+        "support247": "24/7 Support",
+        "legal": "Legal",
+        "privacyPolicy": "Privacy Policy",
+        "termsOfService": "Terms of Service",
+        "cooperate": "Cooperation",
+        "contactAd": "Contact for Ads"
+      }
+    },
+    "community": {
+      "title": "Moms' Community",
+      "subtitle": "A place to share experiences and receive helpful advice from breastfeeding mothers",
+      "searchPlaceholder": "Search posts, topics...",
+      "newPostBtn": "New Discussion",
+      "sidebar": {
+        "trending": "Trending Topics",
+        "recentComments": "Recent Discussions"
+      },
+      "post": {
+        "pinned": "Pinned",
+        "likes": "Likes",
+        "comments": "Comments",
+        "save": "Save Post",
+        "saved": "Saved",
+        "joinPrompt": "Join the community to comment and write posts",
+        "joinBtn": "Login Now",
+        "timeAgo": {
+          "hoursAgo": "hours ago",
+          "justNow": "Just now",
+          "daysAgo": "days ago"
+        }
+      },
+      "form": {
+        "modalTitle": "Create New Discussion",
+        "titleLabel": "Discussion Title",
+        "titlePlaceholder": "Enter your discussion title...",
+        "categoryLabel": "Select Category",
+        "contentLabel": "Content",
+        "contentPlaceholder": "Share your questions or experience with other moms...",
+        "cancel": "Cancel",
+        "submit": "Post"
+      },
+      "filters": {
+        "all": "All",
+        "sleep": "Baby's Sleep",
+        "nutrition": "Nutrition & Weaning",
+        "experience": "Parenting Experience",
+        "review": "Product Reviews",
+        "notice": "Announcement"
+      },
+      "posts": {
+        "rules": {
+          "title": "Community Rules & Safe Posting Guidelines",
+          "content": "Welcome moms to our shared home! To maintain a positive, supportive, and loving environment, the admin team would like to remind everyone of basic rules..."
+        },
+        "weaning": {
+          "title": "6-month-old refuse solid food, keeps spitting it out, what should I do?",
+          "content": "My baby is 6 and a half months old, I am introducing solids using traditional weaning combined with BLW. First few days seemed fine, but recently baby shuts mouth tightly or spits everything out. I am so stressed. Any moms who went through this can share advice?"
+        },
+        "ww19": {
+          "title": "Wonder Week 19 — Crying all night, but we finally made it through!",
+          "content": "After 2 terrible weeks of Wonder Week 19, my baby finally slept through the night again. Moms in this phase, don't give up, it will pass! I want to share some tips that helped..."
+        },
+        "diapers": {
+          "title": "Detailed Review of 5 Thin and Lightweight Diapers for Summer 2024",
+          "content": "Summer is here, I have tested 5 different diaper brands for my 8-month-old to find the thinnest, most breathable one. The result is quite surprising as the most expensive one wasn't the best..."
+        },
+        "depression": {
+          "title": "Signs of Postpartum Depression and How to Seek Support",
+          "content": "As a psychologist, I frequently meet mothers who are exhausted but don't realize they have postpartum depression. In this article, I want to share 7 critical signs..."
+        }
+      },
+      "trending": {
+        "topic1": "Review of thin and lightweight diapers for babies in hot summer weather",
+        "topic2": "How to boost children's immune system during seasonal transitions",
+        "topic3": "Montessori parenting methods for babies 0-3 years at home",
+        "topic4": "7-day weaning menu for 6-month-olds starting solid foods",
+        "views": "views"
+      },
+      "recent": {
+        "comment1": {
+          "postTitle": "Pigeon Baby Bottle Review",
+          "excerpt": "\"My baby switched to this bottle and loves it, the nipple is so soft...\""
+        },
+        "comment2": {
+          "postTitle": "Wonder Week 19",
+          "excerpt": "\"Thank you for sharing, my baby is entering this phase too...\""
+        },
+        "comment3": {
+          "postTitle": "6-Month-Old Refuses Solids",
+          "excerpt": "\"Try letting your baby hold the food to explore first, don't force...\""
+        },
+        "time": {
+          "minsAgo": "mins ago"
+        }
+      }
+    },
+    "handbook": {
+      "title": "Discover Motherhood Knowledge",
+      "subtitle": "From the early days of pregnancy to the journey of raising your baby, we are always with you with scientific and warmest information.",
+      "searchPlaceholder": "Search articles, experts, or topics...",
+      "filters": {
+        "all": "All",
+        "newborn": "Newborn",
+        "nutrition": "Postpartum Nutrition",
+        "develop": "Baby Development",
+        "sleep": "Sleep",
+        "mental": "Moms' Mental Health"
+      },
+      "featured": {
+        "badge": "Featured Article"
+      },
+      "article": {
+        "readTime": "min read",
+        "author": "Author",
+        "saved": "Saved",
+        "save": "Save article",
+        "unsave": "Unsave",
+        "noResults": "No articles found",
+        "noResultsDesc": "Try searching with another keyword or select another topic",
+        "viewAll": "View All",
+        "loadMore": "Load more articles",
+        "readMore": "Read more"
+      },
+      "articles": {
+        "featured": {
+          "title": "EASY Routine: The Secret to Helping Newborns Sleep Well and Moms Relax",
+          "desc": "The EASY method helps establish a natural biological rhythm for your baby, creating predictability in eating, sleeping, and playing routines. Discover how to apply it gently, bringing peace to the whole family.",
+          "author": "Dr. Nguyen Anh",
+          "readTime": "10 min read"
+        },
+        "milk": {
+          "title": "7-Day Postpartum Menu to Boost Breast Milk Production for New Moms",
+          "desc": "Traditional dishes combined with modern science help mothers recover quickly and maintain an abundant, high-quality milk supply.",
+          "author": "Dr. Le Nhi",
+          "readTime": "5 min read"
+        },
+        "umbilical": {
+          "title": "Newborn Umbilical Cord Care: What Parents Should Absolutely Avoid",
+          "desc": "Detailed guide from pediatricians on daily umbilical cord care, identifying infection signs, and helping it fall off quickly.",
+          "author": "Expert T.H",
+          "readTime": "8 min read"
+        },
+        "ww19": {
+          "title": "Wonder Week 19: Sleep Regression or Cognitive Leap?",
+          "desc": "Deconstruct the causes of baby's fussiness in week 19 and helpful tips for parents to navigate this difficult phase smoothly.",
+          "author": "Mom Cabbage",
+          "readTime": "4 min read"
+        },
+        "depression": {
+          "title": "Postpartum Depression: Early Detection for Timely Healing",
+          "desc": "More than 1 in 5 mothers experience postpartum depression. Understand the signs, causes, and how to find appropriate support.",
+          "author": "M.A. in Psychology",
+          "readTime": "6 min read"
+        },
+        "ferber": {
+          "title": "The Ferber Method: Sleep Training Your Baby Independently from 6 Months",
+          "desc": "Learn the step-by-step Ferber sleep training process, important considerations, and when this method is suitable for your baby.",
+          "author": "Dr. Minh Chau",
+          "readTime": "7 min read"
+        },
+        "motor": {
+          "title": "Motor Development Milestones for Babies from 0 to 12 Months",
+          "desc": "From rolling and crawling to standing and taking first steps — a complete guide to tracking and supporting your baby's physical growth.",
+          "author": "Assoc. Prof. Pediatrics",
+          "readTime": "5 min read"
+        }
+      }
+    },
+    "health": {
+      "title": "Baby Health Tracking",
+      "subtitle": "Record daily activities, height, weight, and vaccination schedules for your baby.",
+      "greeting": "Hello Mom, how is {{name}} today?",
+      "babyInfoFormat": "Baby {{name}} • {{age}}",
+      "addMetric": "Add new metric",
+      "baby": {
+        "name": "Teddy",
+        "age": "old",
+        "ageText": "6 months 12 days old"
+      },
+      "stats": {
+        "weight": "Weight",
+        "height": "Height",
+        "comparedToLastMonth": "compared to last month",
+        "chartTitle": "Growth Chart",
+        "whoStandard": "WHO Standard",
+        "whoStandardLegend": "WHO Standard"
+      },
+      "months": {
+        "march": "March",
+        "april": "April",
+        "may": "May",
+        "current": "Current"
+      },
+      "log": {
+        "title": "Today's Activity Log",
+        "quickActions": "Quick Log",
+        "types": {
+          "feed": "Feeding",
+          "sleep": "Sleep",
+          "diaper": "Diaper",
+          "note": "Note"
+        },
+        "duration": "duration",
+        "time": "time",
+        "timeSuffix": {
+          "morning": "AM",
+          "afternoon": "PM",
+          "justNow": "Just now"
+        }
+      },
+      "logs": {
+        "feed15m": "Breastfeeding (15 mins)",
+        "sleep45m": "Short sleep (45 mins)",
+        "diaperWet": "Diaper change (Wet)",
+        "feed20m": "Breastfeeding (20 mins)",
+        "time1030": "10:30 AM",
+        "time0815": "08:15 AM",
+        "time0745": "07:45 AM",
+        "time0600": "06:00 AM"
+      },
+      "vaccine": {
+        "title": "Upcoming Vaccinations",
+        "status": {
+          "upcoming": "Upcoming",
+          "done": "Done",
+          "overdue": "Overdue"
+        }
+      },
+      "vaccines": {
+        "v6in1": {
+          "name": "6-in-1 Vaccine (Dose 3)",
+          "desc": "Prevents Diphtheria, Tetanus, Pertussis, Polio, Hib, Hepatitis B",
+          "dueDate": "This week"
+        },
+        "rota": {
+          "name": "Rota Vaccine (Dose 3)",
+          "desc": "Prevents Rotavirus Gastroenteritis",
+          "dueDate": "In 3 weeks"
+        },
+        "je": {
+          "name": "Japanese Encephalitis Vaccine (Dose 1)",
+          "desc": "Prevents Japanese Encephalitis",
+          "dueDate": "September 2025"
+        }
+      },
+      "doctor": {
+        "title": "Advice from Pediatrician",
+        "name": "Dr. Nguyen Thu Ha",
+        "text": "At 6 months, babies start weaning. Try introducing smooth vegetable purees first. Don't forget to track your baby's reaction after each new food."
+      },
+      "modal": {
+        "title": "Log Daily Activity",
+        "timeLabel": "Time",
+        "durationLabel": "Duration / Feeding Amount",
+        "diaperType": "Diaper Type",
+        "placeholderFeed": "e.g., 15 mins / 120ml",
+        "placeholderSleep": "e.g., 45 mins",
+        "placeholderDiaper": "e.g., Wet / Dirty",
+        "noteLabel": "Additional Notes",
+        "notePlaceholder": "Enter baby's state or other notes...",
+        "cancel": "Cancel",
+        "submit": "Save Log"
+      }
+    },
+    "home": {
+      "hero": {
+        "label": "Motherhood Journey",
+        "title": "Accompanying Moms, Raising Happy Children",
+        "desc": "Discover a peaceful space with in-depth knowledge, a supportive community, and the safest care products for your little one.",
+        "exploreHandbook": "Explore Handbook",
+        "joinCommunity": "Join Community"
+      },
+      "categories": {
+        "title": "Mother & Baby Space",
+        "subtitle": "Everything you need for a healthy pregnancy and a happy baby",
+        "health": {
+          "title": "Health Tracking",
+          "desc": "Easily record growth metrics, vaccination schedules, and baby sleep logs.",
+          "link": "Start tracking"
+        },
+        "community": {
+          "title": "Community",
+          "desc": "Share experiences and get advice from other breastfeeding mothers.",
+          "link": "Join now"
+        },
+        "handbook": {
+          "title": "Handbook",
+          "desc": "In-depth articles from healthcare professionals.",
+          "link": "View handbook"
+        },
+        "shop": {
+          "title": "Safe Shop",
+          "desc": "A selection of organic products, absolutely safe for baby's sensitive skin.",
+          "link": "Shop now"
+        }
+      },
+      "articles": {
+        "title": "Latest Articles",
+        "subtitle": "Scientific parenting knowledge made easy",
+        "viewAll": "View All",
+        "easy": {
+          "alt": "Baby sleep",
+          "category": "Sleep",
+          "title": "EASY Sleep Training Method for Newborns",
+          "desc": "Detailed guide to set up the Eat-Play-Sleep cycle to help babies sleep well and moms relax during the first months.",
+          "author": "Dr. Nguyen Anh",
+          "readTime": "5 min read"
+        },
+        "blw": {
+          "alt": "Baby nutrition",
+          "category": "Nutrition",
+          "title": "BLW Weaning Menu for 6-Month-Olds",
+          "desc": "Safe, nutritious baby-led weaning food ideas and instructions on how to handle gagging.",
+          "author": "Nutritionist",
+          "readTime": "8 min read"
+        },
+        "play": {
+          "alt": "Cognitive development",
+          "category": "Development",
+          "title": "Brain Development Games for 1-2 Year Olds",
+          "desc": "Simple interactive activities at home to stimulate children's curiosity and language skills.",
+          "author": "Master of Psychology",
+          "readTime": "6 min read"
+        }
+      },
+      "products": {
+        "title": "Featured Products",
+        "subtitle": "Trusted by thousands of mothers",
+        "viewAll": "View All Products",
+        "lotion": {
+          "alt": "Organic baby lotion",
+          "category": "Skincare",
+          "name": "Organic Baby Moisturizing Lotion",
+          "price": "$15.00"
+        },
+        "bowl": {
+          "alt": "Suction silicon bowl set",
+          "category": "Feeding",
+          "name": "Anti-slip Silicon Suction Bowl Set",
+          "price": "$10.00"
+        }
+      }
+    },
+    "shop": {
+      "title": "Selected Products for Your Beloved Baby",
+      "subtitle": "Discover safe, high-quality products specially designed for your baby's comprehensive development.",
+      "searchPlaceholder": "Search products...",
+      "cart": {
+        "count": "Cart"
+      },
+      "badge": {
+        "authentic": "100% Authentic",
+        "freeShipping": "Free shipping from 299k",
+        "return30Days": "30-day return policy"
+      },
+      "filter": {
+        "title": "Filters",
+        "categories": "Categories",
+        "priceTitle": "Price Range",
+        "price": "Under {{price}}",
+        "brands": "Brands",
+        "clear": "Clear Filters"
+      },
+      "sort": {
+        "label": "Sort by:",
+        "options": {
+          "popular": "Most Popular",
+          "priceAsc": "Price: Low to High",
+          "priceDesc": "Price: High to Low",
+          "newest": "Newest"
+        }
+      },
+      "product": {
+        "count": "Showing <strong>{{count}}</strong> products",
+        "reviews": "reviews",
+        "addToCart": "Add to Cart",
+        "noResults": "No products found",
+        "noResultsDesc": "Try changing filters or search keywords",
+        "viewAll": "View all products",
+        "wishlistAdd": "Add to wishlist",
+        "wishlistRemove": "Remove from wishlist"
+      },
+      "pagination": {
+        "prev": "Previous",
+        "next": "Next",
+        "page": "Page"
+      },
+      "categoriesList": {
+        "all": "All Products",
+        "diaper": "Diapers & Wipes",
+        "formula": "Baby Formula",
+        "clothing": "Newborn Clothing",
+        "toys": "Educational Toys",
+        "feeding": "Feeding Utensils",
+        "skincare": "Baby Skincare"
+      },
+      "productsList": {
+        "toys1": {
+          "name": "Safe Natural Wooden Block Building Toy Set",
+          "alt": "Natural wooden building blocks set"
+        },
+        "clothing1": {
+          "name": "Set of 3 Organic Cotton Bodysuits",
+          "alt": "Organic cotton newborn bodysuit set"
+        },
+        "feeding1": {
+          "name": "Premium Anti-Colic PPSU Baby Bottle 240ml",
+          "alt": "Premium anti-colic PPSU baby feeding bottle"
+        },
+        "diaper1": {
+          "name": "Huggies Newborn Tape Diapers Size NB 24 Pack",
+          "alt": "Huggies newborn diapers"
+        },
+        "formula1": {
+          "name": "Meiji Infant Formula Milk 800g (0-12 months)",
+          "alt": "Meiji baby formula milk 0-1 year"
+        },
+        "skincare1": {
+          "name": "Organic Moisturizing Baby Cream 100ml",
+          "alt": "Organic moisturizing baby cream lotion"
+        }
+      }
+    }
   }
 }

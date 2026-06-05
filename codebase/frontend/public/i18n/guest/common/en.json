@@ -1,0 +1,24 @@
+{
+  "brand": "Mother & Baby",
+  "navbar": {
+    "home": "Home",
+    "handbook": "Handbook",
+    "shop": "Shop",
+    "community": "Community",
+    "health": "Health",
+    "login": "Login",
+    "search": "Search",
+    "menu": "Menu"
+  },
+  "footer": {
+    "tagline": "© 2024 Mother & Baby. Accompanying moms on the journey of raising happy children.",
+    "explore": "Explore",
+    "aboutUs": "About Us",
+    "support247": "24/7 Support",
+    "legal": "Legal",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "cooperate": "Cooperation",
+    "contactAd": "Contact for Ads"
+  }
+}

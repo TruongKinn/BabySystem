@@ -1,4 +1,4 @@
-<div class="app-shell" [class.admin-shell]="isAdminRoute" *ngIf="showLayout; else authLayout">
+<div class="app-shell" [class.admin-shell]="isAdminRoute" *ngIf="showLayout; else noLayout">
 
   <!-- MetisMenu Sidebar -->
   <app-sidebar
@@ -160,6 +160,14 @@
       <span *ngIf="currentLanguage === lang.code" class="language-option__check" nz-icon nzType="check"></span>
     </button>
   </div>
+</ng-template>
+
+<ng-template #noLayout>
+  <ng-container *ngIf="isGuestPage; else authLayout">
+    <div class="guest-wrapper">
+      <router-outlet></router-outlet>
+    </div>
+  </ng-container>
 </ng-template>
 
 <!-- Auth layout (unauthenticated) -->

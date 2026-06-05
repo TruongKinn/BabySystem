@@ -1,0 +1,96 @@
+{
+  "title": "Baby Health Tracking",
+  "subtitle": "Record daily activities, height, weight, and vaccination schedules for your baby.",
+  "greeting": "Hello Mom, how is {{name}} today?",
+  "babyInfoFormat": "Baby {{name}} • {{age}}",
+  "addMetric": "Add new metric",
+  "baby": {
+    "name": "Teddy",
+    "age": "old",
+    "ageText": "6 months 12 days old"
+  },
+  "stats": {
+    "weight": "Weight",
+    "height": "Height",
+    "comparedToLastMonth": "compared to last month",
+    "chartTitle": "Growth Chart",
+    "whoStandard": "WHO Standard",
+    "whoStandardLegend": "WHO Standard"
+  },
+  "months": {
+    "march": "March",
+    "april": "April",
+    "may": "May",
+    "current": "Current"
+  },
+  "log": {
+    "title": "Today's Activity Log",
+    "quickActions": "Quick Log",
+    "types": {
+      "feed": "Feeding",
+      "sleep": "Sleep",
+      "diaper": "Diaper",
+      "note": "Note"
+    },
+    "duration": "duration",
+    "time": "time",
+    "timeSuffix": {
+      "morning": "AM",
+      "afternoon": "PM",
+      "justNow": "Just now"
+    }
+  },
+  "logs": {
+    "feed15m": "Breastfeeding (15 mins)",
+    "sleep45m": "Short sleep (45 mins)",
+    "diaperWet": "Diaper change (Wet)",
+    "feed20m": "Breastfeeding (20 mins)",
+    "time1030": "10:30 AM",
+    "time0815": "08:15 AM",
+    "time0745": "07:45 AM",
+    "time0600": "06:00 AM"
+  },
+  "vaccine": {
+    "title": "Upcoming Vaccinations",
+    "status": {
+      "upcoming": "Upcoming",
+      "done": "Done",
+      "overdue": "Overdue"
+    }
+  },
+  "vaccines": {
+    "v6in1": {
+      "name": "6-in-1 Vaccine (Dose 3)",
+      "desc": "Prevents Diphtheria, Tetanus, Pertussis, Polio, Hib, Hepatitis B",
+      "dueDate": "This week"
+    },
+    "rota": {
+      "name": "Rota Vaccine (Dose 3)",
+      "desc": "Prevents Rotavirus Gastroenteritis",
+      "dueDate": "In 3 weeks"
+    },
+    "je": {
+      "name": "Japanese Encephalitis Vaccine (Dose 1)",
+      "desc": "Prevents Japanese Encephalitis",
+      "dueDate": "September 2025"
+    }
+  },
+  "doctor": {
+    "title": "Advice from Pediatrician",
+    "name": "Dr. Nguyen Thu Ha",
+    "text": "At 6 months, babies start weaning. Try introducing smooth vegetable purees first. Don't forget to track your baby's reaction after each new food."
+  },
+  "modal": {
+    "title": "Log Daily Activity",
+    "timeLabel": "Time",
+    "durationLabel": "Duration / Feeding Amount",
+    "diaperType": "Diaper Type",
+    "placeholderFeed": "e.g., 15 mins / 120ml",
+    "placeholderSleep": "e.g., 45 mins",
+    "placeholderDiaper": "e.g., Wet / Dirty",
+    "noteLabel": "Additional Notes",
+    "notePlaceholder": "Enter baby's state or other notes...",
+    "cancel": "Cancel",
+    "submit": "Save Log"
+  }
+}

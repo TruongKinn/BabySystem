@@ -2995,5 +2995,446 @@
         }
       }
     }
+  },
+  "guest": {
+    "common": {
+      "brand": "Mẹ Bé Yêu",
+      "navbar": {
+        "home": "Trang chủ",
+        "handbook": "Cẩm nang",
+        "shop": "Cửa hàng",
+        "community": "Cộng đồng",
+        "health": "Sức khỏe",
+        "login": "Đăng nhập",
+        "search": "Tìm kiếm",
+        "menu": "Menu"
+      },
+      "footer": {
+        "tagline": "© 2024 Mẹ Bé Yêu. Đồng hành cùng mẹ trong hành trình nuôi con hạnh phúc.",
+        "explore": "Khám phá",
+        "aboutUs": "Về chúng tôi",
+        "support247": "Hỗ trợ 24/7",
+        "legal": "Pháp lý",
+        "privacyPolicy": "Chính sách bảo mật",
+        "termsOfService": "Điều khoản sử dụng",
+        "cooperate": "Hợp tác",
+        "contactAd": "Liên hệ quảng cáo"
+      }
+    },
+    "community": {
+      "title": "Cộng đồng Mẹ Bé Yêu",
+      "subtitle": "Nơi sẻ chia kinh nghiệm và nhận lời khuyên hữu ích từ các mẹ bỉm sữa",
+      "searchPlaceholder": "Tìm kiếm bài viết, chủ đề...",
+      "newPostBtn": "Viết bài thảo luận",
+      "sidebar": {
+        "trending": "Xu hướng thảo luận",
+        "recentComments": "Thảo luận mới nhất"
+      },
+      "post": {
+        "pinned": "Đã ghim",
+        "likes": "Lượt thích",
+        "comments": "Bình luận",
+        "save": "Lưu bài viết",
+        "saved": "Đã lưu",
+        "joinPrompt": "Tham gia cộng đồng để bình luận và đăng bài",
+        "joinBtn": "Đăng nhập ngay",
+        "timeAgo": {
+          "hoursAgo": "giờ trước",
+          "justNow": "Vừa xong",
+          "daysAgo": "ngày trước"
+        }
+      },
+      "form": {
+        "modalTitle": "Tạo bài viết mới",
+        "titleLabel": "Tiêu đề bài viết",
+        "titlePlaceholder": "Nhập tiêu đề bài viết của bạn...",
+        "categoryLabel": "Chọn chuyên mục",
+        "contentLabel": "Nội dung bài viết",
+        "contentPlaceholder": "Chia sẻ câu hỏi hoặc kinh nghiệm của bạn với các mẹ khác...",
+        "cancel": "Hủy",
+        "submit": "Đăng bài"
+      },
+      "filters": {
+        "all": "Tất cả",
+        "sleep": "Giấc ngủ của bé",
+        "nutrition": "Dinh dưỡng & Ăn dặm",
+        "experience": "Kinh nghiệm làm mẹ",
+        "review": "Review đồ dùng",
+        "notice": "Thông báo"
+      },
+      "posts": {
+        "rules": {
+          "title": "Nội quy Cộng đồng & Hướng dẫn đăng bài an toàn",
+          "content": "Chào mừng các mẹ đến với ngôi nhà chung! Để duy trì một không gian tích cực, chia sẻ và yêu thương, ban quản trị xin nhắc lại một số nội quy cơ bản khi tham gia diễn đàn..."
+        },
+        "weaning": {
+          "title": "Bé 6 tháng lười ăn dặm, toàn ngậm rồi phun ra, mẹ phải làm sao?",
+          "content": "Bé nhà em được 6 tháng rưỡi rồi, em đang cho con ăn dặm theo phương pháp truyền thống kết hợp BLW. Mấy ngày đầu con có vẻ hợp tác, nhưng dạo gần đây cứ đút thìa vào là con ngậm chặt miệng, hoặc ngậm một lúc rồi phì ra hết. Em stress quá các mom ạ. Có mẹ nào từng trải qua giai đoạn này cho em xin ít kinh nghiệm với!"
+        },
+        "ww19": {
+          "title": "Wonder Week 19 — Con khóc cả đêm, mẹ đã vượt qua được rồi!",
+          "content": "Sau 2 tuần kinh khủng khiếp của Wonder Week 19, con mình cuối cùng đã ngủ xuyên đêm trở lại. Mẹ nào đang trong giai đoạn này đừng nản nhé, rồi sẽ qua thôi! Mình xin chia sẻ một vài tips đã giúp ích..."
+        },
+        "diapers": {
+          "title": "Review chi tiết 5 loại bỉm mỏng nhẹ cho bé dùng hè 2024",
+          "content": "Mùa hè đến rồi, mình đã thử nghiệm qua 5 loại bỉm khác nhau cho bé 8 tháng để tìm ra loại mỏng nhẹ, thoáng khí nhất. Kết quả khá bất ngờ vì loại đắt nhất không phải là tốt nhất..."
+        },
+        "depression": {
+          "title": "Dấu hiệu nhận biết trầm cảm sau sinh và cách tìm kiếm hỗ trợ",
+          "content": "Là bác sĩ tâm lý, tôi thường xuyên gặp các mẹ đến khám trong tình trạng kiệt sức nhưng không nhận ra mình đang mắc trầm cảm sau sinh. Bài viết này tôi muốn chia sẻ 7 dấu hiệu quan trọng..."
+        }
+      },
+      "trending": {
+        "topic1": "Review các loại bỉm mỏng nhẹ cho bé dùng trong mùa hè nắng nóng",
+        "topic2": "Cách tăng sức đề kháng cho trẻ khi thời tiết giao mùa",
+        "topic3": "Phương pháp Montessori cho bé 0-3 tuổi tại nhà",
+        "topic4": "Thực đơn ăn dặm 7 ngày cho bé 6 tháng bắt đầu ăn dặm",
+        "views": "lượt xem"
+      },
+      "recent": {
+        "comment1": {
+          "postTitle": "Review bình sữa Pigeon",
+          "excerpt": "\"Bé nhà mình đổi sang bình này trộm vía hợp tác hẳn, núm ty mềm lắm...\""
+        },
+        "comment2": {
+          "postTitle": "Wonder Week 19",
+          "excerpt": "\"Cảm ơn bạn chia sẻ, con mình cũng đang bước vào giai đoạn này...\""
+        },
+        "comment3": {
+          "postTitle": "Lười ăn dặm 6 tháng",
+          "excerpt": "\"Các mẹ thử cho bé cầm đồ ăn tự khám phá trước, đừng ép bé...\""
+        },
+        "time": {
+          "minsAgo": "phút trước"
+        }
+      }
+    },
+    "handbook": {
+      "title": "Khám phá kiến thức làm mẹ",
+      "subtitle": "Từ những ngày đầu mang thai đến hành trình nuôi dưỡng bé yêu, chúng tôi luôn đồng hành cùng bạn với những thông tin khoa học và ấm áp nhất.",
+      "searchPlaceholder": "Tìm kiếm bài viết, chuyên gia, hoặc chủ đề...",
+      "filters": {
+        "all": "Tất cả",
+        "newborn": "Trẻ sơ sinh",
+        "nutrition": "Dinh dưỡng sau sinh",
+        "develop": "Phát triển của bé",
+        "sleep": "Giấc ngủ",
+        "mental": "Sức khỏe tâm lý mẹ"
+      },
+      "featured": {
+        "badge": "Bài viết nổi bật"
+      },
+      "article": {
+        "readTime": "phút đọc",
+        "author": "Tác giả",
+        "saved": "Đã lưu",
+        "save": "Lưu bài viết",
+        "unsave": "Bỏ lưu",
+        "noResults": "Không tìm thấy bài viết",
+        "noResultsDesc": "Thử tìm kiếm với từ khóa khác hoặc chọn chủ đề khác",
+        "viewAll": "Xem tất cả",
+        "loadMore": "Xem thêm bài viết",
+        "readMore": "Đọc tiếp"
+      },
+      "articles": {
+        "featured": {
+          "title": "Lịch sinh hoạt EASY: Bí quyết giúp trẻ sơ sinh ngủ ngoan, mẹ nhàn tênh",
+          "desc": "Phương pháp EASY giúp thiết lập nhịp sinh học tự nhiên cho bé, tạo ra sự dễ đoán trong thói quen ăn, ngủ và chơi. Khám phá cách áp dụng nhẹ nhàng không gò ép, mang lại sự bình yên cho cả gia đình trong những tháng đầu đời.",
+          "author": "BS. Nguyễn Anh",
+          "readTime": "10 phút đọc"
+        },
+        "milk": {
+          "title": "Thực đơn 7 ngày gọi sữa về ướt áo cho mẹ sau sinh",
+          "desc": "Những món ăn truyền thống kết hợp khoa học hiện đại giúp mẹ nhanh hồi phục sức khỏe và duy trì nguồn sữa dồi dào, chất lượng cho bé.",
+          "author": "BS. Lê Nhi",
+          "readTime": "5 phút đọc"
+        },
+        "umbilical": {
+          "title": "Chăm sóc rốn trẻ sơ sinh: Những điều mẹ tuyệt đối không nên làm",
+          "desc": "Hướng dẫn chi tiết từ chuyên gia nhi khoa về cách vệ sinh cuống rốn hàng ngày, nhận biết các dấu hiệu nhiễm trùng và giúp rốn bé mau rụng.",
+          "author": "Chuyên gia T.H",
+          "readTime": "8 phút đọc"
+        },
+        "ww19": {
+          "title": "Wonder Week 19: Khủng hoảng hay bước nhảy vọt về nhận thức?",
+          "desc": "Giải mã nguyên nhân khiến bé trằn trọc, quấy khóc trong tuần thứ 19 và các mẹo nhỏ giúp mẹ đồng hành cùng con vượt qua giai đoạn khó khăn này một cách nhẹ nhàng.",
+          "author": "Mẹ Bắp Cải",
+          "readTime": "4 phút đọc"
+        },
+        "depression": {
+          "title": "Trầm cảm sau sinh: Nhận biết sớm để chữa lành kịp thời",
+          "desc": "Hơn 1 trong 5 bà mẹ trải qua trầm cảm sau sinh. Hiểu rõ các dấu hiệu, nguyên nhân và cách tìm kiếm sự hỗ trợ phù hợp để mẹ luôn khỏe mạnh.",
+          "author": "ThS. Tâm lý học",
+          "readTime": "6 phút đọc"
+        },
+        "ferber": {
+          "title": "Phương pháp Ferber: Luyện ngủ độc lập cho bé từ 6 tháng",
+          "desc": "Tìm hiểu quy trình luyện ngủ Ferber từng bước, những lưu ý quan trọng và khi nào phương pháp này phù hợp với bé nhà bạn.",
+          "author": "BS. Minh Châu",
+          "readTime": "7 phút đọc"
+        },
+        "motor": {
+          "title": "Các mốc phát triển vận động của bé từ 0-12 tháng cần biết",
+          "desc": "Từ lật, bò đến đứng và những bước chân đầu tiên — hướng dẫn đầy đủ để bố mẹ theo dõi và hỗ trợ sự phát triển vận động của con.",
+          "author": "PGS. Nhi khoa",
+          "readTime": "5 phút đọc"
+        }
+      }
+    },
+    "health": {
+      "title": "Theo dõi sức khỏe của bé",
+      "subtitle": "Ghi lại các hoạt động sinh hoạt, chỉ số chiều cao, cân nặng và lịch trình tiêm chủng cho con.",
+      "greeting": "Chào mẹ, hôm nay {{name}} thế nào?",
+      "babyInfoFormat": "Bé {{name}} • {{age}}",
+      "addMetric": "Thêm chỉ số mới",
+      "baby": {
+        "name": "Gấu",
+        "age": "tuổi",
+        "ageText": "6 tháng 12 ngày tuổi"
+      },
+      "stats": {
+        "weight": "Cân nặng",
+        "height": "Chiều cao",
+        "comparedToLastMonth": "so với tháng trước",
+        "chartTitle": "Biểu đồ tăng trưởng",
+        "whoStandard": "Đạt chuẩn WHO",
+        "whoStandardLegend": "Chuẩn WHO"
+      },
+      "months": {
+        "march": "Tháng 3",
+        "april": "Tháng 4",
+        "may": "Tháng 5",
+        "current": "Hiện tại"
+      },
+      "log": {
+        "title": "Nhật ký sinh hoạt hôm nay",
+        "quickActions": "Ghi chép nhanh",
+        "types": {
+          "feed": "Ăn uống",
+          "sleep": "Giấc ngủ",
+          "diaper": "Tã bỉm",
+          "note": "Ghi chú"
+        },
+        "duration": "thời lượng",
+        "time": "thời gian",
+        "timeSuffix": {
+          "morning": "Sáng",
+          "afternoon": "Chiều",
+          "justNow": "Vừa xong"
+        }
+      },
+      "logs": {
+        "feed15m": "Bú mẹ (15 phút)",
+        "sleep45m": "Ngủ giấc ngắn (45p)",
+        "diaperWet": "Thay tã (Ướt)",
+        "feed20m": "Bú mẹ (20 phút)",
+        "time1030": "10:30 Sáng",
+        "time0815": "08:15 Sáng",
+        "time0745": "07:45 Sáng",
+        "time0600": "06:00 Sáng"
+      },
+      "vaccine": {
+        "title": "Lịch tiêm phòng sắp tới",
+        "status": {
+          "upcoming": "Sắp tới hạn",
+          "done": "Đã tiêm",
+          "overdue": "Quá hạn"
+        }
+      },
+      "vaccines": {
+        "v6in1": {
+          "name": "Vắc-xin 6 trong 1 (Mũi 3)",
+          "desc": "Phòng Bạch hầu, Ho gà, Uốn ván, Bại liệt, Hib, Viêm gan B",
+          "dueDate": "Trong tuần này"
+        },
+        "rota": {
+          "name": "Vắc-xin Rota (Mũi 3)",
+          "desc": "Phòng Tiêu chảy do Rotavirus",
+          "dueDate": "3 tuần nữa"
+        },
+        "je": {
+          "name": "Vắc-xin Viêm não Nhật Bản (Mũi 1)",
+          "desc": "Phòng Viêm não Nhật Bản",
+          "dueDate": "Tháng 9/2025"
+        }
+      },
+      "doctor": {
+        "title": "Lời khuyên từ Bác sĩ",
+        "name": "BS. Nguyễn Thu Hà",
+        "text": "Giai đoạn 6 tháng tuổi, bé bắt đầu ăn dặm. Mẹ hãy thử cho bé làm quen với các loại rau củ nghiền mịn trước nhé. Đừng quên theo dõi phản ứng của bé sau mỗi loại thức ăn mới."
+      },
+      "modal": {
+        "title": "Ghi chép sinh hoạt",
+        "timeLabel": "Thời gian",
+        "durationLabel": "Thời lượng / Lượng ăn",
+        "diaperType": "Loại tã",
+        "placeholderFeed": "VD: 15 phút / 120ml",
+        "placeholderSleep": "VD: 45 phút",
+        "placeholderDiaper": "VD: Ướt / Bẩn",
+        "noteLabel": "Ghi chú thêm",
+        "notePlaceholder": "Ghi chú bất kỳ điều gì thêm...",
+        "cancel": "Hủy",
+        "submit": "Lưu ghi chép"
+      }
+    },
+    "home": {
+      "hero": {
+        "label": "Hành trình làm mẹ",
+        "title": "Đồng hành cùng mẹ, nuôi con hạnh phúc",
+        "desc": "Khám phá không gian bình yên với những kiến thức chuyên sâu, cộng đồng sẻ chia và các sản phẩm chăm sóc bé yêu an toàn nhất.",
+        "exploreHandbook": "Khám phá cẩm nang",
+        "joinCommunity": "Tham gia cộng đồng"
+      },
+      "categories": {
+        "title": "Không gian của mẹ và bé",
+        "subtitle": "Mọi thứ bạn cần cho một thai kỳ khỏe mạnh và em bé vui vẻ",
+        "health": {
+          "title": "Theo dõi Sức khỏe",
+          "desc": "Ghi lại chỉ số phát triển, lịch tiêm phòng và nhật ký giấc ngủ của bé dễ dàng.",
+          "link": "Bắt đầu theo dõi"
+        },
+        "community": {
+          "title": "Cộng đồng",
+          "desc": "Chia sẻ kinh nghiệm và nhận lời khuyên từ các mẹ bỉm sữa.",
+          "link": "Tham gia ngay"
+        },
+        "handbook": {
+          "title": "Cẩm nang",
+          "desc": "Bài viết chuyên sâu từ chuyên gia y tế.",
+          "link": "Xem cẩm nang"
+        },
+        "shop": {
+          "title": "Cửa hàng An Toàn",
+          "desc": "Tuyển chọn các sản phẩm organic, an toàn tuyệt đối cho làn da nhạy cảm của bé.",
+          "link": "Mua sắm ngay"
+        }
+      },
+      "articles": {
+        "title": "Cẩm nang mới nhất",
+        "subtitle": "Kiến thức khoa học nuôi con dễ dàng hơn",
+        "viewAll": "Xem tất cả",
+        "easy": {
+          "alt": "Giấc ngủ của bé",
+          "category": "Giấc ngủ",
+          "title": "Phương pháp luyện ngủ Easy cho trẻ sơ sinh",
+          "desc": "Hướng dẫn chi tiết cách thiết lập chu kỳ Ăn - Chơi - Ngủ giúp bé ngoan, mẹ nhàn trong những tháng đầu đời.",
+          "author": "BS. Nguyễn Anh",
+          "readTime": "5 phút đọc"
+        },
+        "blw": {
+          "alt": "Dinh dưỡng cho bé",
+          "category": "Dinh dưỡng",
+          "title": "Thực đơn ăn dặm BLW cho bé 6 tháng",
+          "desc": "Gợi ý các món ăn dặm tự chỉ huy an toàn, giàu dinh dưỡng và cách xử lý khi bé bị hóc.",
+          "author": "Chuyên gia Dinh dưỡng",
+          "readTime": "8 phút đọc"
+        },
+        "play": {
+          "alt": "Phát triển tư duy",
+          "category": "Phát triển",
+          "title": "Trò chơi phát triển trí não giai đoạn 1-2 tuổi",
+          "desc": "Các hoạt động tương tác đơn giản tại nhà giúp kích thích sự tò mò và khả năng ngôn ngữ của trẻ.",
+          "author": "ThS. Tâm lý học",
+          "readTime": "6 phút đọc"
+        }
+      },
+      "products": {
+        "title": "Sản phẩm nổi bật",
+        "subtitle": "Được hàng ngàn mẹ bỉm sữa tin dùng",
+        "viewAll": "Xem tất cả sản phẩm",
+        "lotion": {
+          "alt": "Kem dưỡng ẩm hữu cơ cho bé",
+          "category": "Chăm sóc da",
+          "name": "Kem dưỡng ẩm hữu cơ cho bé",
+          "price": "350.000đ"
+        },
+        "bowl": {
+          "alt": "Bộ khay silicon chống lật",
+          "category": "Ăn dặm",
+          "name": "Bộ khay silicon chống lật",
+          "price": "220.000đ"
+        }
+      }
+    },
+    "shop": {
+      "title": "Sản phẩm chọn lọc cho bé yêu",
+      "subtitle": "Khám phá các sản phẩm an toàn, chất lượng cao được thiết kế riêng cho sự phát triển toàn diện của bé.",
+      "searchPlaceholder": "Tìm kiếm sản phẩm...",
+      "cart": {
+        "count": "Giỏ hàng"
+      },
+      "badge": {
+        "authentic": "100% chính hãng",
+        "freeShipping": "Miễn ship từ 299k",
+        "return30Days": "Đổi trả 30 ngày"
+      },
+      "filter": {
+        "title": "Bộ lọc",
+        "categories": "Danh mục",
+        "priceTitle": "Mức giá",
+        "price": "Dưới {{price}}",
+        "brands": "Thương hiệu",
+        "clear": "Xóa bộ lọc"
+      },
+      "sort": {
+        "label": "Sắp xếp:",
+        "options": {
+          "popular": "Phổ biến nhất",
+          "priceAsc": "Giá: Thấp đến Cao",
+          "priceDesc": "Giá: Cao đến Thấp",
+          "newest": "Mới nhất"
+        }
+      },
+      "product": {
+        "count": "Hiển thị <strong>{{count}}</strong> sản phẩm",
+        "reviews": "đánh giá",
+        "addToCart": "Thêm vào giỏ",
+        "noResults": "Không tìm thấy sản phẩm",
+        "noResultsDesc": "Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm",
+        "viewAll": "Xem tất cả sản phẩm",
+        "wishlistAdd": "Yêu thích",
+        "wishlistRemove": "Bỏ yêu thích"
+      },
+      "pagination": {
+        "prev": "Trang trước",
+        "next": "Trang tiếp",
+        "page": "Trang"
+      },
+      "categoriesList": {
+        "all": "Tất cả sản phẩm",
+        "diaper": "Tã & Bỉm",
+        "formula": "Sữa công thức",
+        "clothing": "Quần áo sơ sinh",
+        "toys": "Đồ chơi giáo dục",
+        "feeding": "Dụng cụ ăn dặm",
+        "skincare": "Chăm sóc da bé"
+      },
+      "productsList": {
+        "toys1": {
+          "name": "Bộ xếp hình khối gỗ tự nhiên an toàn cho bé",
+          "alt": "Bộ đồ chơi xếp hình khối gỗ tự nhiên"
+        },
+        "clothing1": {
+          "name": "Set 3 Bodysuit Cotton Hữu Cơ Thấm Hút Tốt",
+          "alt": "Set bodysuit cotton hữu cơ sơ sinh"
+        },
+        "feeding1": {
+          "name": "Bình sữa PPSU Chống Đầy Hơi Cao Cấp 240ml",
+          "alt": "Bình sữa PPSU chống đầy hơi cao cấp"
+        },
+        "diaper1": {
+          "name": "Tã Dán Huggies Sơ Sinh NB Gói 24 Miếng",
+          "alt": "Tã dán Huggies sơ sinh"
+        },
+        "formula1": {
+          "name": "Sữa Công Thức Meiji Hộp 800g (0-12 tháng)",
+          "alt": "Sữa công thức Meiji 0-1 tuổi"
+        },
+        "skincare1": {
+          "name": "Kem Dưỡng Ẩm Hữu Cơ Cho Bé 100ml",
+          "alt": "Kem dưỡng ẩm hữu cơ cho bé"
+        }
+      }
+    }
   }
 }

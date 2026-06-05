@@ -1,0 +1,88 @@
+{
+  "title": "Cộng đồng Mẹ Bé Yêu",
+  "subtitle": "Nơi sẻ chia kinh nghiệm và nhận lời khuyên hữu ích từ các mẹ bỉm sữa",
+  "searchPlaceholder": "Tìm kiếm bài viết, chủ đề...",
+  "newPostBtn": "Viết bài thảo luận",
+  "sidebar": {
+    "trending": "Xu hướng thảo luận",
+    "recentComments": "Thảo luận mới nhất"
+  },
+  "post": {
+    "pinned": "Đã ghim",
+    "likes": "Lượt thích",
+    "comments": "Bình luận",
+    "save": "Lưu bài viết",
+    "saved": "Đã lưu",
+    "joinPrompt": "Tham gia cộng đồng để bình luận và đăng bài",
+    "joinBtn": "Đăng nhập ngay",
+    "timeAgo": {
+      "hoursAgo": "giờ trước",
+      "justNow": "Vừa xong",
+      "daysAgo": "ngày trước"
+    }
+  },
+  "form": {
+    "modalTitle": "Tạo bài viết mới",
+    "titleLabel": "Tiêu đề bài viết",
+    "titlePlaceholder": "Nhập tiêu đề bài viết của bạn...",
+    "categoryLabel": "Chọn chuyên mục",
+    "contentLabel": "Nội dung bài viết",
+    "contentPlaceholder": "Chia sẻ câu hỏi hoặc kinh nghiệm của bạn với các mẹ khác...",
+    "cancel": "Hủy",
+    "submit": "Đăng bài"
+  },
+  "filters": {
+    "all": "Tất cả",
+    "sleep": "Giấc ngủ của bé",
+    "nutrition": "Dinh dưỡng & Ăn dặm",
+    "experience": "Kinh nghiệm làm mẹ",
+    "review": "Review đồ dùng",
+    "notice": "Thông báo"
+  },
+  "posts": {
+    "rules": {
+      "title": "Nội quy Cộng đồng & Hướng dẫn đăng bài an toàn",
+      "content": "Chào mừng các mẹ đến với ngôi nhà chung! Để duy trì một không gian tích cực, chia sẻ và yêu thương, ban quản trị xin nhắc lại một số nội quy cơ bản khi tham gia diễn đàn..."
+    },
+    "weaning": {
+      "title": "Bé 6 tháng lười ăn dặm, toàn ngậm rồi phun ra, mẹ phải làm sao?",
+      "content": "Bé nhà em được 6 tháng rưỡi rồi, em đang cho con ăn dặm theo phương pháp truyền thống kết hợp BLW. Mấy ngày đầu con có vẻ hợp tác, nhưng dạo gần đây cứ đút thìa vào là con ngậm chặt miệng, hoặc ngậm một lúc rồi phì ra hết. Em stress quá các mom ạ. Có mẹ nào từng trải qua giai đoạn này cho em xin ít kinh nghiệm với!"
+    },
+    "ww19": {
+      "title": "Wonder Week 19 — Con khóc cả đêm, mẹ đã vượt qua được rồi!",
+      "content": "Sau 2 tuần kinh khủng khiếp của Wonder Week 19, con mình cuối cùng đã ngủ xuyên đêm trở lại. Mẹ nào đang trong giai đoạn này đừng nản nhé, rồi sẽ qua thôi! Mình xin chia sẻ một vài tips đã giúp ích..."
+    },
+    "diapers": {
+      "title": "Review chi tiết 5 loại bỉm mỏng nhẹ cho bé dùng hè 2024",
+      "content": "Mùa hè đến rồi, mình đã thử nghiệm qua 5 loại bỉm khác nhau cho bé 8 tháng để tìm ra loại mỏng nhẹ, thoáng khí nhất. Kết quả khá bất ngờ vì loại đắt nhất không phải là tốt nhất..."
+    },
+    "depression": {
+      "title": "Dấu hiệu nhận biết trầm cảm sau sinh và cách tìm kiếm hỗ trợ",
+      "content": "Là bác sĩ tâm lý, tôi thường xuyên gặp các mẹ đến khám trong tình trạng kiệt sức nhưng không nhận ra mình đang mắc trầm cảm sau sinh. Bài viết này tôi muốn chia sẻ 7 dấu hiệu quan trọng..."
+    }
+  },
+  "trending": {
+    "topic1": "Review các loại bỉm mỏng nhẹ cho bé dùng trong mùa hè nắng nóng",
+    "topic2": "Cách tăng sức đề kháng cho trẻ khi thời tiết giao mùa",
+    "topic3": "Phương pháp Montessori cho bé 0-3 tuổi tại nhà",
+    "topic4": "Thực đơn ăn dặm 7 ngày cho bé 6 tháng bắt đầu ăn dặm",
+    "views": "lượt xem"
+  },
+  "recent": {
+    "comment1": {
+      "postTitle": "Review bình sữa Pigeon",
+      "excerpt": "\"Bé nhà mình đổi sang bình này trộm vía hợp tác hẳn, núm ty mềm lắm...\""
+    },
+    "comment2": {
+      "postTitle": "Wonder Week 19",
+      "excerpt": "\"Cảm ơn bạn chia sẻ, con mình cũng đang bước vào giai đoạn này...\""
+    },
+    "comment3": {
+      "postTitle": "Lười ăn dặm 6 tháng",
+      "excerpt": "\"Các mẹ thử cho bé cầm đồ ăn tự khám phá trước, đừng ép bé...\""
+    },
+    "time": {
+      "minsAgo": "phút trước"
+    }
+  }
+}

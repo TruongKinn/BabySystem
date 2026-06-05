@@ -1,0 +1,80 @@
+{
+  "title": "Sản phẩm chọn lọc cho bé yêu",
+  "subtitle": "Khám phá các sản phẩm an toàn, chất lượng cao được thiết kế riêng cho sự phát triển toàn diện của bé.",
+  "searchPlaceholder": "Tìm kiếm sản phẩm...",
+  "cart": {
+    "count": "Giỏ hàng"
+  },
+  "badge": {
+    "authentic": "100% chính hãng",
+    "freeShipping": "Miễn ship từ 299k",
+    "return30Days": "Đổi trả 30 ngày"
+  },
+  "filter": {
+    "title": "Bộ lọc",
+    "categories": "Danh mục",
+    "priceTitle": "Mức giá",
+    "price": "Dưới {{price}}",
+    "brands": "Thương hiệu",
+    "clear": "Xóa bộ lọc"
+  },
+  "sort": {
+    "label": "Sắp xếp:",
+    "options": {
+      "popular": "Phổ biến nhất",
+      "priceAsc": "Giá: Thấp đến Cao",
+      "priceDesc": "Giá: Cao đến Thấp",
+      "newest": "Mới nhất"
+    }
+  },
+  "product": {
+    "count": "Hiển thị <strong>{{count}}</strong> sản phẩm",
+    "reviews": "đánh giá",
+    "addToCart": "Thêm vào giỏ",
+    "noResults": "Không tìm thấy sản phẩm",
+    "noResultsDesc": "Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm",
+    "viewAll": "Xem tất cả sản phẩm",
+    "wishlistAdd": "Yêu thích",
+    "wishlistRemove": "Bỏ yêu thích"
+  },
+  "pagination": {
+    "prev": "Trang trước",
+    "next": "Trang tiếp",
+    "page": "Trang"
+  },
+  "categoriesList": {
+    "all": "Tất cả sản phẩm",
+    "diaper": "Tã & Bỉm",
+    "formula": "Sữa công thức",
+    "clothing": "Quần áo sơ sinh",
+    "toys": "Đồ chơi giáo dục",
+    "feeding": "Dụng cụ ăn dặm",
+    "skincare": "Chăm sóc da bé"
+  },
+  "productsList": {
+    "toys1": {
+      "name": "Bộ xếp hình khối gỗ tự nhiên an toàn cho bé",
+      "alt": "Bộ đồ chơi xếp hình khối gỗ tự nhiên"
+    },
+    "clothing1": {
+      "name": "Set 3 Bodysuit Cotton Hữu Cơ Thấm Hút Tốt",
+      "alt": "Set bodysuit cotton hữu cơ sơ sinh"
+    },
+    "feeding1": {
+      "name": "Bình sữa PPSU Chống Đầy Hơi Cao Cấp 240ml",
+      "alt": "Bình sữa PPSU chống đầy hơi cao cấp"
+    },
+    "diaper1": {
+      "name": "Tã Dán Huggies Sơ Sinh NB Gói 24 Miếng",
+      "alt": "Tã dán Huggies sơ sinh"
+    },
+    "formula1": {
+      "name": "Sữa Công Thức Meiji Hộp 800g (0-12 tháng)",
+      "alt": "Sữa công thức Meiji 0-1 tuổi"
+    },
+    "skincare1": {
+      "name": "Kem Dưỡng Ẩm Hữu Cơ Cho Bé 100ml",
+      "alt": "Kem dưỡng ẩm hữu cơ cho bé"
+    }
+  }
+}

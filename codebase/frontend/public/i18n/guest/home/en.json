@@ -1,0 +1,79 @@
+{
+  "hero": {
+    "label": "Motherhood Journey",
+    "title": "Accompanying Moms, Raising Happy Children",
+    "desc": "Discover a peaceful space with in-depth knowledge, a supportive community, and the safest care products for your little one.",
+    "exploreHandbook": "Explore Handbook",
+    "joinCommunity": "Join Community"
+  },
+  "categories": {
+    "title": "Mother & Baby Space",
+    "subtitle": "Everything you need for a healthy pregnancy and a happy baby",
+    "health": {
+      "title": "Health Tracking",
+      "desc": "Easily record growth metrics, vaccination schedules, and baby sleep logs.",
+      "link": "Start tracking"
+    },
+    "community": {
+      "title": "Community",
+      "desc": "Share experiences and get advice from other breastfeeding mothers.",
+      "link": "Join now"
+    },
+    "handbook": {
+      "title": "Handbook",
+      "desc": "In-depth articles from healthcare professionals.",
+      "link": "View handbook"
+    },
+    "shop": {
+      "title": "Safe Shop",
+      "desc": "A selection of organic products, absolutely safe for baby's sensitive skin.",
+      "link": "Shop now"
+    }
+  },
+  "articles": {
+    "title": "Latest Articles",
+    "subtitle": "Scientific parenting knowledge made easy",
+    "viewAll": "View All",
+    "easy": {
+      "alt": "Baby sleep",
+      "category": "Sleep",
+      "title": "EASY Sleep Training Method for Newborns",
+      "desc": "Detailed guide to set up the Eat-Play-Sleep cycle to help babies sleep well and moms relax during the first months.",
+      "author": "Dr. Nguyen Anh",
+      "readTime": "5 min read"
+    },
+    "blw": {
+      "alt": "Baby nutrition",
+      "category": "Nutrition",
+      "title": "BLW Weaning Menu for 6-Month-Olds",
+      "desc": "Safe, nutritious baby-led weaning food ideas and instructions on how to handle gagging.",
+      "author": "Nutritionist",
+      "readTime": "8 min read"
+    },
+    "play": {
+      "alt": "Cognitive development",
+      "category": "Development",
+      "title": "Brain Development Games for 1-2 Year Olds",
+      "desc": "Simple interactive activities at home to stimulate children's curiosity and language skills.",
+      "author": "Master of Psychology",
+      "readTime": "6 min read"
+    }
+  },
+  "products": {
+    "title": "Featured Products",
+    "subtitle": "Trusted by thousands of mothers",
+    "viewAll": "View All Products",
+    "lotion": {
+      "alt": "Organic baby lotion",
+      "category": "Skincare",
+      "name": "Organic Baby Moisturizing Lotion",
+      "price": "$15.00"
+    },
+    "bowl": {
+      "alt": "Suction silicon bowl set",
+      "category": "Feeding",
+      "name": "Anti-slip Silicon Suction Bowl Set",
+      "price": "$10.00"
+    }
+  }
+}

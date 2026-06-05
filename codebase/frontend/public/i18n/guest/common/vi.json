@@ -1,0 +1,24 @@
+{
+  "brand": "Mẹ Bé Yêu",
+  "navbar": {
+    "home": "Trang chủ",
+    "handbook": "Cẩm nang",
+    "shop": "Cửa hàng",
+    "community": "Cộng đồng",
+    "health": "Sức khỏe",
+    "login": "Đăng nhập",
+    "search": "Tìm kiếm",
+    "menu": "Menu"
+  },
+  "footer": {
+    "tagline": "© 2024 Mẹ Bé Yêu. Đồng hành cùng mẹ trong hành trình nuôi con hạnh phúc.",
+    "explore": "Khám phá",
+    "aboutUs": "Về chúng tôi",
+    "support247": "Hỗ trợ 24/7",
+    "legal": "Pháp lý",
+    "privacyPolicy": "Chính sách bảo mật",
+    "termsOfService": "Điều khoản sử dụng",
+    "cooperate": "Hợp tác",
+    "contactAd": "Liên hệ quảng cáo"
+  }
+}

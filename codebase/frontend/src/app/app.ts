@@ -153,10 +153,15 @@ export class App implements OnInit, OnDestroy {
 
     this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((event: NavigationEnd) => {
       const url = event.urlAfterRedirects || event.url;
-      this.showLayout = this.authService.isAuthenticated() && !url.includes('/login');
+      this.updateLayoutState(url);
       this.syncPortalState(url);
       this.refreshThemeEntitlement();
     });
+  }
+
+  private updateLayoutState(url: string): void {
+    const isGuest = url === '/home' || url.startsWith('/home?') || url.startsWith('/home#') || url === '/guest' || url.startsWith('/guest/');
+    this.showLayout = this.authService.isAuthenticated() && !url.includes('/login') && !isGuest;
   }
 
   ngOnInit(): void {
@@ -164,7 +169,7 @@ export class App implements OnInit, OnDestroy {
       return;
     }
 
-    this.showLayout = this.authService.isAuthenticated() && !this.router.url.includes('/login');
+    this.updateLayoutState(this.router.url);
     this.syncPortalState(this.router.url);
     this.applyStoredAppearance();
     this.refreshThemeEntitlement();
@@ -173,7 +178,7 @@ export class App implements OnInit, OnDestroy {
     this.authService.authEvents.subscribe((event) => {
       if (event === 'login') {
         this.avatarUrl = this.authService.getStoredItem('atg_avatar_url') || undefined;
-        this.showLayout = !this.router.url.includes('/login');
+        this.updateLayoutState(this.router.url);
         if (this.router.url.includes('/login')) {
           this.router.navigateByUrl(this.authService.getDefaultRouteByRole(), { replaceUrl: true });
         }
@@ -211,6 +216,11 @@ export class App implements OnInit, OnDestroy {
 
   get isAdminRoute(): boolean {
     return this.router.url.startsWith('/admin');
+  }
+
+  get isGuestPage(): boolean {
+    const url = this.router.url;
+    return url === '/home' || url.startsWith('/home?') || url.startsWith('/home#') || url === '/guest' || url.startsWith('/guest/');
   }
 
   get currentLanguageOption(): LanguageOption {

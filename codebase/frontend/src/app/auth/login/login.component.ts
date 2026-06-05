@@ -161,7 +161,10 @@ export class LoginComponent implements OnInit {
     }
 
     if (this.isBrowser && this.authService.isAuthenticated()) {
-      this.router.navigateByUrl(this.authService.getDefaultRouteByRole(), { replaceUrl: true });
+      const fromParam = this.route.snapshot.queryParamMap.get('from');
+      if (fromParam !== 'home') {
+        this.router.navigateByUrl(this.authService.getDefaultRouteByRole(), { replaceUrl: true });
+      }
     }
 
     if (this.isBrowser) {

@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+
+<html lang="vi"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Trang chủ - Mẹ Bé Yêu</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700&amp;family=Nunito+Sans:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "inverse-on-surface": "#f2f0ed",
+                        "error": "#ba1a1a",
+                        "surface": "#fbf9f6",
+                        "on-primary-fixed": "#370d10",
+                        "surface-dim": "#dbdad7",
+                        "on-secondary-fixed-variant": "#2c4e35",
+                        "surface-container-low": "#f5f3f0",
+                        "primary-container": "#e89f9f",
+                        "secondary": "#44664b",
+                        "primary-fixed": "#ffdad9",
+                        "primary-fixed-dim": "#ffb3b3",
+                        "outline": "#857372",
+                        "secondary-container": "#c2e9c7",
+                        "background": "#fbf9f6",
+                        "on-surface": "#1b1c1a",
+                        "secondary-fixed": "#c5ecca",
+                        "on-error": "#ffffff",
+                        "on-tertiary-fixed": "#2b1707",
+                        "on-primary-container": "#6a3536",
+                        "on-primary": "#ffffff",
+                        "on-primary-fixed-variant": "#6d3738",
+                        "surface-bright": "#fbf9f6",
+                        "surface-container-high": "#eae8e5",
+                        "on-error-container": "#93000a",
+                        "secondary-fixed-dim": "#aad0af",
+                        "surface-container-lowest": "#ffffff",
+                        "surface-container-highest": "#e4e2df",
+                        "inverse-surface": "#30312f",
+                        "on-secondary-container": "#486a4f",
+                        "on-secondary-fixed": "#00210c",
+                        "on-background": "#1b1c1a",
+                        "on-tertiary-fixed-variant": "#5c412e",
+                        "outline-variant": "#d7c2c1",
+                        "error-container": "#ffdad6",
+                        "on-tertiary": "#ffffff",
+                        "on-surface-variant": "#524343",
+                        "on-tertiary-container": "#593f2c",
+                        "surface-container": "#efeeeb",
+                        "tertiary": "#765844",
+                        "tertiary-container": "#d0ab92",
+                        "surface-variant": "#e4e2df",
+                        "inverse-primary": "#ffb3b3",
+                        "tertiary-fixed": "#ffdcc5",
+                        "tertiary-fixed-dim": "#e6bfa6",
+                        "primary": "#894e4f",
+                        "surface-tint": "#894e4f",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "base": "8px",
+                        "stack-md": "24px",
+                        "container-padding-mobile": "20px",
+                        "stack-sm": "12px",
+                        "gutter": "24px",
+                        "container-padding-desktop": "64px",
+                        "stack-lg": "48px"
+                    },
+                    "fontFamily": {
+                        "headline-lg": ["Plus Jakarta Sans"],
+                        "headline-lg-mobile": ["Plus Jakarta Sans"],
+                        "body-lg": ["Nunito Sans"],
+                        "label-md": ["Nunito Sans"],
+                        "label-sm": ["Nunito Sans"],
+                        "headline-xl": ["Plus Jakarta Sans"],
+                        "headline-md": ["Plus Jakarta Sans"],
+                        "body-md": ["Nunito Sans"]
+                    },
+                    "fontSize": {
+                        "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "600" }],
+                        "headline-lg-mobile": ["28px", { "lineHeight": "36px", "fontWeight": "600" }],
+                        "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }],
+                        "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "600" }],
+                        "label-sm": ["12px", { "lineHeight": "16px", "fontWeight": "700" }],
+                        "headline-xl": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .fill-icon {
+            font-variation-settings: 'FILL' 1;
+        }
+        body {
+            background-color: #fbf9f6; /* surface */
+            color: #1b1c1a; /* on-surface */
+        }
+        .card-shadow {
+            box-shadow: 0 4px 20px -4px rgba(137,78,79,0.1);
+        }
+    </style>
+</head>
+<body class="font-body-md text-body-md antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="bg-surface dark:bg-surface-container docked full-width top-0 sticky z-50 bg-surface/80 backdrop-blur-md shadow-sm shadow-[0_4px_20px_-4px_rgba(137,78,79,0.1)]">
+<div class="flex justify-between items-center w-full px-container-padding-mobile md:px-container-padding-desktop max-w-7xl mx-auto h-20">
+<!-- Brand Logo -->
+<div class="text-headline-md font-headline-xl text-primary dark:text-primary-fixed-dim tracking-tight">
+                Mẹ Bé Yêu
+            </div>
+<!-- Navigation Links (Desktop) -->
+<nav class="hidden md:flex items-center gap-gutter">
+<a class="text-primary dark:text-primary-fixed-dim border-b-2 border-primary dark:border-primary-fixed-dim pb-1 font-bold text-label-md font-label-md hover:bg-primary-container/20 dark:hover:bg-primary-fixed-dim/10 rounded-lg px-3 py-2 transition-colors scale-95 duration-150 ease-in-out" href="#">
+                    Trang chủ
+                </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors text-label-md font-label-md hover:bg-primary-container/20 dark:hover:bg-primary-fixed-dim/10 rounded-lg px-3 py-2" href="#">
+                    Cẩm nang
+                </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors text-label-md font-label-md hover:bg-primary-container/20 dark:hover:bg-primary-fixed-dim/10 rounded-lg px-3 py-2" href="#">
+                    Cửa hàng
+                </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors text-label-md font-label-md hover:bg-primary-container/20 dark:hover:bg-primary-fixed-dim/10 rounded-lg px-3 py-2" href="#">
+                    Cộng đồng
+                </a>
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors text-label-md font-label-md hover:bg-primary-container/20 dark:hover:bg-primary-fixed-dim/10 rounded-lg px-3 py-2" href="#">
+                    Sức khỏe
+                </a>
+</nav>
+<!-- Search & Actions -->
+<div class="flex items-center gap-4">
+<button class="text-on-surface-variant hover:text-primary transition-colors p-2 rounded-full hover:bg-primary-container/20">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+</button>
+<button class="bg-primary-container text-on-primary-container hover:bg-primary hover:text-on-primary transition-colors px-6 py-2 rounded-full text-label-md font-label-md hidden md:block">
+                    Đăng nhập
+                </button>
+<button class="md:hidden text-on-surface-variant p-2">
+<span class="material-symbols-outlined" data-icon="menu">menu</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Main Content -->
+<main class="flex-grow">
+<!-- Hero Section -->
+<section class="relative w-full max-w-7xl mx-auto px-container-padding-mobile md:px-container-padding-desktop py-stack-lg flex flex-col md:flex-row items-center gap-gutter">
+<div class="w-full md:w-1/2 flex flex-col gap-stack-md z-10">
+<span class="text-primary font-label-md text-label-md uppercase tracking-wider">Hành trình làm mẹ</span>
+<h1 class="font-headline-xl text-headline-xl text-on-surface">
+                    Đồng hành cùng mẹ,<br/>nuôi con hạnh phúc
+                </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-lg">
+                    Khám phá không gian bình yên với những kiến thức chuyên sâu, cộng đồng sẻ chia và các sản phẩm chăm sóc bé yêu an toàn nhất.
+                </p>
+<div class="flex gap-4 mt-4">
+<button class="bg-primary text-on-primary px-8 py-3 rounded-full text-label-md font-label-md hover:bg-on-primary-container transition-colors shadow-sm">
+                        Khám phá cẩm nang
+                    </button>
+<button class="border border-primary text-primary px-8 py-3 rounded-full text-label-md font-label-md hover:bg-primary-container/10 transition-colors">
+                        Tham gia cộng đồng
+                    </button>
+</div>
+</div>
+<div class="w-full md:w-1/2 relative">
+<!-- Decorative background shape -->
+<div class="absolute inset-0 bg-secondary-container/30 rounded-full blur-3xl transform -translate-x-10 translate-y-10"></div>
+<img alt="Mẹ và bé" class="w-full h-auto rounded-[32px] object-cover card-shadow relative z-10" data-alt="A warm, brightly lit lifestyle portrait of a happy mother gently holding her smiling baby in a sunlit, minimal nursery. The room features soft cream walls, light wood textures, and gentle pastel accents. The lighting is soft and diffused, creating a serene, nurturing, and safe atmosphere consistent with a premium parenting brand." src="https://lh3.googleusercontent.com/aida-public/AB6AXuASRNVQtjk1OAEwA-4rb_NhiEzPw-JDwgLypbjKfIw2AwYFUQ1rktqz1S1XmNCrANuc1IK-Y0yCKwpIRiJ91MfbobIE0mjcZOEY2vWtrGgHaDNBnWxijeHscb0Xj4WBUGZ6hOkPDBpEx5us3jdUIMAODmzikM_1Oa1s2H1RW4oo7K2bUbv1zjY-Mwl2eSH9p0pb_pYbiUzMbzU7hzDuFdlSWVKM39-N9uAqJOuKHQQyCCwUqxPm0BDVLOeExS2bvt808z-ZIbIEeDY"/>
+</div>
+</section>
+<!-- Main Categories (Bento Grid Style) -->
+<section class="w-full max-w-7xl mx-auto px-container-padding-mobile md:px-container-padding-desktop py-stack-lg">
+<div class="mb-stack-md text-center">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Không gian của mẹ và bé</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Mọi thứ bạn cần cho một thai kỳ khỏe mạnh và em bé vui vẻ</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter auto-rows-[250px]">
+<!-- Health Tracking Card -->
+<a class="col-span-1 md:col-span-2 bg-surface-container-low rounded-xl p-8 flex flex-col justify-between card-shadow hover:-translate-y-1 transition-transform relative overflow-hidden group" href="#">
+<div class="absolute right-0 bottom-0 w-64 h-64 bg-secondary-container/40 rounded-tl-full blur-2xl group-hover:bg-secondary-container/60 transition-colors"></div>
+<div class="relative z-10">
+<div class="w-12 h-12 bg-secondary/10 rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-secondary fill-icon text-3xl" data-icon="monitor_heart">monitor_heart</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Theo dõi Sức khỏe</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm">Ghi lại chỉ số phát triển, lịch tiêm phòng và nhật ký giấc ngủ của bé dễ dàng.</p>
+</div>
+<div class="relative z-10 mt-auto flex items-center text-secondary font-label-md text-label-md">
+                        Bắt đầu theo dõi <span class="material-symbols-outlined ml-1" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</a>
+<!-- Community Card -->
+<a class="bg-primary-container/20 rounded-xl p-8 flex flex-col justify-between card-shadow hover:-translate-y-1 transition-transform" href="#">
+<div>
+<div class="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-primary fill-icon text-3xl" data-icon="forum">forum</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Cộng đồng</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Chia sẻ kinh nghiệm và nhận lời khuyên từ các mẹ bỉm sữa.</p>
+</div>
+</a>
+<!-- Knowledge Base Card -->
+<a class="bg-tertiary-container/20 rounded-xl p-8 flex flex-col justify-between card-shadow hover:-translate-y-1 transition-transform" href="#">
+<div>
+<div class="w-12 h-12 bg-tertiary/10 rounded-full flex items-center justify-center mb-4">
+<span class="material-symbols-outlined text-tertiary fill-icon text-3xl" data-icon="menu_book">menu_book</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Cẩm nang</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Bài viết chuyên sâu từ chuyên gia y tế.</p>
+</div>
+</a>
+<!-- Shop Card -->
+<a class="col-span-1 md:col-span-2 bg-surface-container-low rounded-xl p-8 flex flex-col justify-between card-shadow hover:-translate-y-1 transition-transform relative overflow-hidden group" href="#">
+<div class="absolute right-0 top-0 w-full h-full opacity-20 group-hover:opacity-30 transition-opacity">
+<img alt="Shop background" class="w-full h-full object-cover" data-alt="A beautifully arranged flat lay of organic baby products, including soft cotton onesies, wooden teething toys, and natural skincare bottles on a clean white background. The lighting is soft and bright, emphasizing safety, purity, and a minimalist aesthetic suitable for a premium baby shop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAkTLAUth4zSuyQ-3PeiLfWccM7IwtWFEfn6-Xx6CaY7SCuqokp0IOgRQNpikS4z3VAuPZaRJ8bk9hm7fXtJbZLVNRAG98JXlKTWSFLe2kjaSeeQ9bSpjBLRJWvejeHhraWS1KeVqdT6hn4efCmhdilL9AdLSxJv6XCTdZ5uBeIVzpX0I84FVCImYduFeOTa8j7ctwemq86eUQJd0ICzCNHYocALkOCiUG_x61xk-szk4_IGZ0DxHWysG5nwOJ2cdGx0S_7U1dSozU"/>
+</div>
+<div class="relative z-10 h-full flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mb-4 shadow-sm">
+<span class="material-symbols-outlined text-on-surface fill-icon text-3xl" data-icon="local_mall">local_mall</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-on-surface mb-2">Cửa hàng An Toàn</h3>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-sm">Tuyển chọn các sản phẩm organic, an toàn tuyệt đối cho làn da nhạy cảm của bé.</p>
+</div>
+<div class="mt-auto flex items-center text-on-surface font-label-md text-label-md">
+                            Mua sắm ngay <span class="material-symbols-outlined ml-1" data-icon="arrow_forward">arrow_forward</span>
+</div>
+</div>
+</a>
+</div>
+</section>
+<!-- Latest Articles -->
+<section class="w-full max-w-7xl mx-auto px-container-padding-mobile md:px-container-padding-desktop py-stack-lg bg-surface-container-lowest rounded-[40px] mb-stack-lg shadow-sm border border-outline-variant/20">
+<div class="flex justify-between items-end mb-stack-md">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Cẩm nang mới nhất</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Kiến thức khoa học nuôi con dễ dàng hơn</p>
+</div>
+<a class="hidden md:flex items-center text-primary font-label-md text-label-md hover:underline" href="#">
+                    Xem tất cả <span class="material-symbols-outlined ml-1" data-icon="arrow_forward">arrow_forward</span>
+</a>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Article 1 -->
+<article class="flex flex-col gap-4 group cursor-pointer">
+<div class="overflow-hidden rounded-xl h-48 relative">
+<img alt="Giấc ngủ của bé" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A close-up view of a sleeping newborn baby swaddled in a soft, breathable white cotton blanket. The baby rests on a minimalist, textured cream bedsheet. Natural, soft sunlight gently illuminates the baby's face, creating a peaceful, calm, and highly emotional mood perfect for an article about infant sleep." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAv2duZ98DgwwIQLdPRVUYdJ5323YyKH9Grv0VQ8jByx7CVZP_nFY64q-LlRwgZI_XZZPUEPATZZWkUxFOGoKA-hmKWKU10hbheWAjkGscB2u7Pqop58Kq6nqFmPvIO4lvf_v1fU9ar8cDMI-WHK4k1IQYQGKUJtGYqQKGyFM4Mh8FDbifdmNa8rwqI0nF1DJWeJ8Q3erMsGT7endvyDILWFRgRHd6qK2wcMCf3wdn55c6FgIY1YmRVIhYhgDEoAxVsPND_vy3pqNE"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-label-sm font-label-sm text-primary">Giấc ngủ</div>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface text-xl mb-2 group-hover:text-primary transition-colors">Phương pháp luyện ngủ Easy cho trẻ sơ sinh</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Hướng dẫn chi tiết cách thiết lập chu kỳ Ăn - Chơi - Ngủ giúp bé ngoan, mẹ nhàn trong những tháng đầu đời.</p>
+<div class="flex items-center gap-2 mt-4 text-label-sm font-label-sm text-outline">
+<span>BS. Nguyễn Anh</span> • <span>5 phút đọc</span>
+</div>
+</div>
+</article>
+<!-- Article 2 -->
+<article class="flex flex-col gap-4 group cursor-pointer">
+<div class="overflow-hidden rounded-xl h-48 relative">
+<img alt="Dinh dưỡng cho bé" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A clean, minimalist kitchen setting showing a bowl of vibrant, freshly pureed baby food next to organic vegetables like carrots and peas. The bowls sit on a light oak wooden table. The lighting is bright and cheerful, emphasizing health, nutrition, and natural ingredients in a modern home environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbEZE1luZ6KAADJFpfuWSWsmYts7WFQHc-2rahLTxNdCLYXG-3Bj58bBK-hbMQEtasScGit1CvRmD4RT3LbMxikQxUBu-phHIRwovYfPKb-zqn8n7FaZtsQRQOKFrMviY1wXNFxnuq6S8Sa-O4l2MGMVFHjskzl2CE4kIVU2JC7DLtqQ1Ny0weDWRVevfqZqR-OWmm7ljRZi6dg4UNRSD6ndq2wDQXlRLEEwre8Npk1qhXsjXPIQfMEV-HV5lbIg1o9xRebw-lCKA"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-label-sm font-label-sm text-secondary">Dinh dưỡng</div>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface text-xl mb-2 group-hover:text-primary transition-colors">Thực đơn ăn dặm BLW cho bé 6 tháng</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Gợi ý các món ăn dặm tự chỉ huy an toàn, giàu dinh dưỡng và cách xử lý khi bé bị hóc.</p>
+<div class="flex items-center gap-2 mt-4 text-label-sm font-label-sm text-outline">
+<span>Chuyên gia Dinh dưỡng</span> • <span>8 phút đọc</span>
+</div>
+</div>
+</article>
+<!-- Article 3 -->
+<article class="flex flex-col gap-4 group cursor-pointer">
+<div class="overflow-hidden rounded-xl h-48 relative">
+<img alt="Phát triển tư duy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" data-alt="A tender moment of a mother playing gently with her toddler on a soft, light-colored rug in a spacious, sun-drenched living room. The room has minimalist decor with soft neutral tones. The mood is joyful, focusing on cognitive development and loving interaction." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDh7bvCpxlkxXzX9EpFq_jQgBkeZvTBU5jK_rYdqCA2_r5WagJE3N5vJ4lwoQU-hYphh7vu7FSmC98w5iWKLgushweC6eZFbxWOqk5KVpNA1Q6AmTgz4NBQgLJEJ9UJuilJW1fn6vSDS6tQPe9AlAhB4AFwVurMNqhhqwNQVsRAHYeyeAPIhTcIeReIuTY0S-iclJykCntJUeN5Js_YOZ4uoiMe5GUwZi0qt_WNdIpyO1PTRjeVx9H6PxizSS4P2aNbELMPMMLX7No"/>
+<div class="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 rounded-full text-label-sm font-label-sm text-tertiary">Phát triển</div>
+</div>
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface text-xl mb-2 group-hover:text-primary transition-colors">Trò chơi phát triển trí não giai đoạn 1-2 tuổi</h3>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">Các hoạt động tương tác đơn giản tại nhà giúp kích thích sự tò mò và khả năng ngôn ngữ của trẻ.</p>
+<div class="flex items-center gap-2 mt-4 text-label-sm font-label-sm text-outline">
+<span>ThS. Tâm lý học</span> • <span>6 phút đọc</span>
+</div>
+</div>
+</article>
+</div>
+<a class="md:hidden flex items-center justify-center mt-stack-sm text-primary font-label-md text-label-md w-full py-3 border border-outline-variant rounded-lg" href="#">
+                Xem tất cả cẩm nang
+            </a>
+</section>
+<!-- Featured Products -->
+<section class="w-full max-w-7xl mx-auto px-container-padding-mobile md:px-container-padding-desktop pb-stack-lg">
+<div class="mb-stack-md text-center">
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Sản phẩm nổi bật</h2>
+<p class="font-body-md text-body-md text-on-surface-variant mt-2">Được hàng ngàn mẹ bỉm sữa tin dùng</p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-gutter">
+<!-- Product 1 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 card-shadow flex flex-col group">
+<div class="aspect-square bg-surface-container-low rounded-lg mb-4 relative overflow-hidden">
+<img alt="Kem nẻ hữu cơ" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform" data-alt="A minimalist product shot of organic baby lotion and a soft sea sponge placed on a smooth, slightly reflective light cream surface. The lighting is studio-quality, soft, and high-key, emphasizing the clean, pure, and safe nature of the skincare product." src="https://lh3.googleusercontent.com/aida-public/AB6AXuABfqnri-6OmWlSMYKFUZdls06eeizdw-eaGDltvZjGsF4Kd8LI7ePkBju5TtBm1oBtP3SPMlF_2Up6qJa5caC6rmwaBPRNr8ZbiW5TDdvQuqTD7Ax3NNSH_09j6xX7qGyrPRomzCg4Z9j7FDmleBr5ztyEkjtLAH7eceEqMwvTB2U3AO8VBrPI89EvZhzcD_inYwQrs5xs_X-hwb0s2fgpm_UJRw5W0mg5vWjmYFnj9vatIKOi8GIfbjvuRJk8ZpxYnJbUTdSZ47U"/>
+</div>
+<div class="flex flex-col flex-grow justify-between">
+<div>
+<div class="text-label-sm font-label-sm text-secondary mb-1">Chăm sóc da</div>
+<h4 class="font-label-md text-label-md text-on-surface line-clamp-2 mb-2">Kem dưỡng ẩm hữu cơ cho bé</h4>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-headline-md text-headline-md text-primary text-lg">350.000đ</span>
+<button class="bg-primary-container/20 text-on-primary-container p-2 rounded-full hover:bg-primary-container hover:text-on-primary-container transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Product 2 -->
+<div class="bg-surface-container-lowest rounded-xl p-4 card-shadow flex flex-col group">
+<div class="aspect-square bg-surface-container-low rounded-lg mb-4 relative overflow-hidden">
+<img alt="Khay ăn dặm" class="w-full h-full object-cover mix-blend-multiply group-hover:scale-105 transition-transform" data-alt="A clean product photography shot of premium, earth-toned silicone baby feeding bowls and soft spoons arranged neatly on a plain white background. The aesthetic is modern, minimalist, and high-quality, focusing on safe materials for infant feeding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxuRn-veyGZCm8EwSQa5USRnvZJbZfi-H0JEqVRY4TxMSiPu2i_Q5pGKr7FGe7tMUMXOMKAuBypHJ5Rcn8tAL_M7GobKDPVtkFO8-8canG6ebmguuNccSnLb6-_ZtGP05jOnXfhOdDhU3TKEepXKTFBvepdgRoOxjjqDLR0s-1_dJSXBv40Dv-IQtsKm_EYe9GW4pcAchvG-c-Dtch51EiQ8993bCuxo9KcGP7OXc5L6hsjF2S4Rxt7yEkIVFcofbtQ6HWjyAAvCc"/>
+</div>
+<div class="flex flex-col flex-grow justify-between">
+<div>
+<div class="text-label-sm font-label-sm text-secondary mb-1">Ăn dặm</div>
+<h4 class="font-label-md text-label-md text-on-surface line-clamp-2 mb-2">Bộ khay silicon chống lật</h4>
+</div>
+<div class="flex items-center justify-between mt-auto">
+<span class="font-headline-md text-headline-md text-primary text-lg">220.000đ</span>
+<button class="bg-primary-container/20 text-on-primary-container p-2 rounded-full hover:bg-primary-container hover:text-on-primary-container transition-colors">
+<span class="material-symbols-outlined text-sm" data-icon="add_shopping_cart">add_shopping_cart</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div class="text-center mt-stack-md">
+<button class="border border-outline text-on-surface px-8 py-2 rounded-full text-label-md font-label-md hover:bg-surface-container transition-colors">
+                    Xem tất cả sản phẩm
+                </button>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-surface-container-highest dark:bg-inverse-surface full-width bottom-0 mt-stack-lg bg-surface-container-highest dark:bg-inverse-surface border-t border-outline-variant/30 flat no shadows">
+<div class="w-full py-stack-lg px-container-padding-mobile md:px-container-padding-desktop max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-gutter">
+<!-- Brand Column -->
+<div class="col-span-1 md:col-span-1">
+<div class="text-headline-md font-headline-md text-primary dark:text-primary-fixed-dim mb-4">
+                    Mẹ Bé Yêu
+                </div>
+<p class="text-body-md font-body-md text-on-surface-variant dark:text-surface-container-low mb-6">
+                    © 2024 Mẹ Bé Yêu. Đồng hành cùng mẹ trong hành trình nuôi con hạnh phúc.
+                </p>
+<div class="flex gap-4">
+<a class="text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim transition-colors" href="#">
+<span class="material-symbols-outlined" data-icon="language">language</span>
+</a>
+</div>
+</div>
+<!-- Links Columns -->
+<div class="col-span-1 md:col-span-3 grid grid-cols-2 md:grid-cols-3 gap-8">
+<div>
+<h4 class="text-label-md font-label-md font-bold text-on-surface dark:text-on-surface-dark mb-4">Khám phá</h4>
+<ul class="space-y-3">
+<li><a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:translate-x-1 transition-transform duration-200 inline-block" href="#">Về chúng tôi</a></li>
+<li><a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:translate-x-1 transition-transform duration-200 inline-block" href="#">Hỗ trợ 24/7</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-label-md font-label-md font-bold text-on-surface dark:text-on-surface-dark mb-4">Pháp lý</h4>
+<ul class="space-y-3">
+<li><a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:translate-x-1 transition-transform duration-200 inline-block" href="#">Chính sách bảo mật</a></li>
+<li><a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:translate-x-1 transition-transform duration-200 inline-block" href="#">Điều khoản sử dụng</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-label-md font-label-md font-bold text-on-surface dark:text-on-surface-dark mb-4">Hợp tác</h4>
+<ul class="space-y-3">
+<li><a class="text-label-sm font-label-sm text-on-surface-variant dark:text-surface-variant hover:text-primary dark:hover:text-primary-fixed-dim hover:translate-x-1 transition-transform duration-200 inline-block" href="#">Liên hệ quảng cáo</a></li>
+</ul>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

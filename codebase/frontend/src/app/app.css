@@ -361,6 +361,15 @@
   font-size: 16px;
 }
 
+/* ---- Guest Wrapper (Landing/Home page) ------------------- */
+.guest-wrapper {
+  display: block;
+  width: 100vw;
+  min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
 /* ---- Auth Wrapper ---------------------------------------- */
 .auth-wrapper {
   display: flex !important;

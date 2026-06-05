@@ -1,0 +1,80 @@
+{
+  "title": "为您的挚爱宝贝精选良品",
+  "subtitle": "探索专为宝宝全面发展而设计的安全、高品质产品。",
+  "searchPlaceholder": "搜索商品...",
+  "cart": {
+    "count": "购物车"
+  },
+  "badge": {
+    "authentic": "100% 正品保障",
+    "freeShipping": "满299k免运费",
+    "return30Days": "30天退换货保障"
+  },
+  "filter": {
+    "title": "商品筛选",
+    "categories": "分类板块",
+    "priceTitle": "价格区间",
+    "price": "低于 {{price}}",
+    "brands": "品牌",
+    "clear": "清空筛选"
+  },
+  "sort": {
+    "label": "排序方式:",
+    "options": {
+      "popular": "最受欢迎",
+      "priceAsc": "价格：从低到高",
+      "priceDesc": "价格：从高到低",
+      "newest": "最新上架"
+    }
+  },
+  "product": {
+    "count": "显示 <strong>{{count}}</strong> 个商品",
+    "reviews": "条评论",
+    "addToCart": "加入购物车",
+    "noResults": "未找到相关商品",
+    "noResultsDesc": "请尝试更改筛选条件或搜索关键字",
+    "viewAll": "查看全部商品",
+    "wishlistAdd": "加入收藏夹",
+    "wishlistRemove": "取消收藏"
+  },
+  "pagination": {
+    "prev": "上一页",
+    "next": "下一页",
+    "page": "页"
+  },
+  "categoriesList": {
+    "all": "全部商品",
+    "diaper": "纸尿裤与湿巾",
+    "formula": "婴幼儿奶粉",
+    "clothing": "新生儿服饰",
+    "toys": "早教益智玩具",
+    "feeding": "辅食喂养餐具",
+    "skincare": "婴儿洗护护肤"
+  },
+  "productsList": {
+    "toys1": {
+      "name": "儿童天然木制积木玩具安全无毒套装",
+      "alt": "天然木制儿童积木套装"
+    },
+    "clothing1": {
+      "name": "新生儿有机棉连体衣超透气 3件套",
+      "alt": "有机棉婴儿连体衣套装"
+    },
+    "feeding1": {
+      "name": "高端防胀气 PPSU 宽口径奶瓶 240ml",
+      "alt": "高端防胀气宽口径 PPSU 奶瓶"
+    },
+    "diaper1": {
+      "name": "好奇（Huggies）纸尿裤 新生儿 NB 24片",
+      "alt": "好奇新生儿纸尿裤"
+    },
+    "formula1": {
+      "name": "明治（Meiji）一段配方奶粉 800克 (0-12个月)",
+      "alt": "明治婴儿配方奶粉一段"
+    },
+    "skincare1": {
+      "name": "天然有机滋润保湿婴儿面霜 100ml",
+      "alt": "天然有机婴儿滋润保湿霜"
+    }
+  }
+}

@@ -1,0 +1,254 @@
+<!-- Shared Navbar -->
+<app-guest-navbar></app-guest-navbar>
+
+<!-- MAIN -->
+<main class="main-content">
+
+  <!-- ── PAGE HEADER ── -->
+  <section class="page-header reveal">
+    <div class="header-text">
+      <h1 class="greeting-title">{{ 'guest.health.greeting' | translate:{name: babyName | translate} }}</h1>
+      <p class="baby-info">
+        <span class="material-symbols-outlined fill-icon baby-info-icon">child_care</span>
+        {{ 'guest.health.babyInfoFormat' | translate:{name: babyName | translate, age: babyAge | translate} }}
+      </p>
+    </div>
+    <button class="btn-add-metric" (click)="openLogModal('note')" id="btn-add-metric">
+      <span class="material-symbols-outlined">add</span>
+      {{ 'guest.health.addMetric' | translate }}
+    </button>
+  </section>
+
+  <!-- ── BENTO GRID DASHBOARD ── -->
+  <section class="dashboard-grid">
+
+    <!-- ──────────────────────────────────────────
+         LEFT COL: Growth Overview (8 cols)
+         ────────────────────────────────────────── -->
+    <div class="growth-card reveal">
+      <div class="growth-card-header">
+        <h2 class="section-title">{{ 'guest.health.stats.chartTitle' | translate }}</h2>
+        <span class="who-badge">
+          <span class="material-symbols-outlined who-badge-icon">verified</span>
+          {{ 'guest.health.stats.whoStandard' | translate }}
+        </span>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">
+            <span class="material-symbols-outlined stat-icon">scale</span>
+            {{ 'guest.health.stats.weight' | translate }}
+          </div>
+          <div class="stat-value">{{ currentWeight }} kg</div>
+          <div class="stat-change positive">
+            <span class="material-symbols-outlined trend-icon">trending_up</span>
+            {{ weightChange }} {{ 'guest.health.stats.comparedToLastMonth' | translate }}
+          </div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">
+            <span class="material-symbols-outlined stat-icon">straighten</span>
+            {{ 'guest.health.stats.height' | translate }}
+          </div>
+          <div class="stat-value">{{ currentHeight }} cm</div>
+          <div class="stat-change positive">
+            <span class="material-symbols-outlined trend-icon">trending_up</span>
+            {{ heightChange }} {{ 'guest.health.stats.comparedToLastMonth' | translate }}
+          </div>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <div class="chart-container">
+        <!-- Grid lines -->
+        <div class="chart-grid"></div>
+        <!-- SVG trend lines -->
+        <svg class="chart-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+          <!-- WHO median (dashed reference) -->
+          <path d="M0,72 Q25,65 50,55 T100,35" fill="none" stroke="#d7c2c1" stroke-dasharray="4,4" stroke-width="1.5"/>
+          <!-- Actual growth line -->
+          <path d="M0,80 Q20,72 40,55 T80,32 T100,12" fill="none" stroke="#a3c9a8" stroke-linecap="round" stroke-width="3"/>
+          <!-- Data points -->
+          <circle cx="0"   cy="80" r="3" fill="#44664b"/>
+          <circle cx="33"  cy="55" r="3" fill="#44664b"/>
+          <circle cx="66"  cy="32" r="3" fill="#44664b"/>
+          <circle cx="100" cy="12" r="4" fill="#894e4f" stroke="white" stroke-width="2"/>
+        </svg>
+        <!-- Labels -->
+        <div class="chart-labels">
+          <span *ngFor="let d of growthData">{{ d.month | translate }}</span>
+        </div>
+        <!-- Legend -->
+        <div class="chart-legend">
+          <span class="legend-item">
+            <span class="legend-dot legend-dot-actual"></span>
+            {{ babyName | translate }}
+          </span>
+          <span class="legend-item">
+            <span class="legend-dot legend-dot-who"></span>
+            {{ 'guest.health.stats.whoStandardLegend' | translate }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         RIGHT COL: Quick Actions + Log (4 cols)
+         ────────────────────────────────────────── -->
+    <div class="right-col">
+
+      <!-- Quick Actions -->
+      <div class="quick-actions-card reveal">
+        <h3 class="quick-title">{{ 'guest.health.log.quickActions' | translate }}</h3>
+        <div class="quick-grid">
+          <button
+            *ngFor="let action of quickActions"
+            class="quick-action-btn"
+            [class]="'quick-action-btn action-' + action.color"
+            (click)="openLogModal(action.type)"
+            [id]="'quick-action-' + action.type"
+          >
+            <div class="quick-action-icon" [class]="'icon-bg-' + action.color">
+              <span class="material-symbols-outlined fill-icon">{{ action.icon }}</span>
+            </div>
+            <span class="quick-action-label">{{ action.label | translate }}</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mini Log Timeline -->
+      <div class="log-card reveal">
+        <h3 class="quick-title">{{ 'guest.health.log.title' | translate }}</h3>
+        <div class="timeline">
+          <div class="timeline-line"></div>
+          <div
+            *ngFor="let entry of todayLog"
+            class="timeline-item"
+          >
+            <div class="timeline-dot" [class]="'dot-' + entry.iconColor">
+              <span class="material-symbols-outlined timeline-icon">{{ entry.icon }}</span>
+            </div>
+            <div class="timeline-content">
+              <div class="timeline-title">{{ entry.title | translate }}</div>
+              <div class="timeline-time">{{ entry.time | translate }}</div>
+              <div class="timeline-note" *ngIf="entry.note">{{ entry.note }}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ──────────────────────────────────────────
+         FULL WIDTH: Vaccines + Doctor Advice
+         ────────────────────────────────────────── -->
+    <div class="vaccines-section reveal">
+      <div class="vaccines-header">
+        <span class="material-symbols-outlined vaccines-icon fill-icon">vaccines</span>
+        <h2 class="section-title">{{ 'guest.health.vaccine.title' | translate }}</h2>
+      </div>
+
+      <div class="vaccines-content">
+        <!-- Vaccine Cards -->
+        <div class="vaccines-list">
+          <div
+            *ngFor="let vaccine of vaccines; let i = index"
+            class="vaccine-card"
+            [class]="getVaccineStatusClass(vaccine.status)"
+            [style.animation-delay]="(i * 60) + 'ms'"
+          >
+            <div class="vaccine-left">
+              <span class="vaccine-status-label" [class]="getVaccineStatusClass(vaccine.status) + '-label'">
+                <span class="material-symbols-outlined status-dot">
+                  {{ vaccine.status === 'done' ? 'check_circle' : vaccine.status === 'overdue' ? 'warning' : 'schedule' }}
+                </span>
+                {{ getVaccineStatusLabel(vaccine.status) | translate }} • {{ vaccine.dueDate | translate }}
+              </span>
+              <div class="vaccine-name">{{ vaccine.name | translate }}</div>
+              <div class="vaccine-desc">{{ vaccine.description | translate }}</div>
+            </div>
+            <button class="btn-vaccine-detail" [attr.aria-label]="('guest.handbook.article.viewAll' | translate) + ' ' + (vaccine.name | translate)">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Doctor Advice -->
+        <div class="doctor-card">
+          <div class="doctor-avatar-wrap">
+            <img [src]="doctorAdvice.avatar" [alt]="'guest.health.doctor.title' | translate" class="doctor-avatar" loading="lazy" />
+            <span class="doctor-verified-badge">
+              <span class="material-symbols-outlined fill-icon">verified</span>
+            </span>
+          </div>
+          <div class="doctor-content">
+            <div class="doctor-label">
+              <span class="material-symbols-outlined doctor-label-icon fill-icon">stethoscope</span>
+              {{ 'guest.health.doctor.title' | translate }}
+            </div>
+            <div class="doctor-name">{{ doctorAdvice.name | translate }}</div>
+            <p class="doctor-text">{{ doctorAdvice.text | translate }}</p>
+            <button class="btn-read-more" id="btn-read-more-advice">
+              {{ 'guest.handbook.article.readMore' | translate }}
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<!-- ── LOG MODAL ── -->
+<div class="modal-overlay" *ngIf="showLogModal" (click)="closeLogModal()">
+  <div class="log-modal" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2 class="modal-title">
+        <span class="material-symbols-outlined fill-icon modal-type-icon"
+          [class]="'icon-type-' + logType">
+          {{ logType === 'feed' ? 'restaurant' : logType === 'sleep' ? 'bed' : logType === 'diaper' ? 'water_drop' : 'note' }}
+        </span>
+        {{ 'guest.health.modal.title' | translate }} - {{ ('guest.health.log.types.' + logType) | translate }}
+      </h2>
+      <button class="btn-close-modal" (click)="closeLogModal()" [attr.aria-label]="'guest.health.modal.cancel' | translate">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="form-group">
+        <label for="log-time" class="form-label">{{ 'guest.health.modal.timeLabel' | translate }}</label>
+        <input id="log-time" type="time" class="form-input" [(ngModel)]="logTime" />
+      </div>
+      <div class="form-group" *ngIf="logType !== 'note'">
+        <label for="log-duration" class="form-label">
+          {{ (logType === 'diaper' ? 'guest.health.modal.diaperType' : 'guest.health.modal.durationLabel') | translate }}
+        </label>
+        <input
+          id="log-duration"
+          type="text"
+          class="form-input"
+          [placeholder]="(logType === 'feed' ? 'guest.health.modal.placeholderFeed' : logType === 'sleep' ? 'guest.health.modal.placeholderSleep' : 'guest.health.modal.placeholderDiaper') | translate"
+          [(ngModel)]="logDuration"
+        />
+      </div>
+      <div class="form-group">
+        <label for="log-note" class="form-label">{{ 'guest.health.modal.noteLabel' | translate }}</label>
+        <textarea id="log-note" class="form-textarea" rows="3" [placeholder]="'guest.health.modal.notePlaceholder' | translate" [(ngModel)]="logNote"></textarea>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button class="btn-cancel" (click)="closeLogModal()">{{ 'guest.health.modal.cancel' | translate }}</button>
+      <button class="btn-submit" (click)="submitLog()" id="btn-submit-log">
+        <span class="material-symbols-outlined">save</span>
+        {{ 'guest.health.modal.submit' | translate }}
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Shared Footer -->
+<app-guest-footer></app-guest-footer>

@@ -1,0 +1,156 @@
+<!-- Shared Navbar -->
+<app-guest-navbar></app-guest-navbar>
+
+
+<!-- MAIN CONTENT -->
+<main class="main-content">
+
+  <!-- ── HERO / SEARCH SECTION ── -->
+  <section class="hero-section">
+    <div class="hero-text-block">
+      <h1 class="hero-title">{{ 'guest.handbook.title' | translate }}</h1>
+      <p class="hero-desc">
+        {{ 'guest.handbook.subtitle' | translate }}
+      </p>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-wrapper">
+      <div class="search-input-group">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input
+          id="search-articles"
+          type="text"
+          class="search-input"
+          [placeholder]="'guest.handbook.searchPlaceholder' | translate"
+          [(ngModel)]="searchQuery"
+          autocomplete="off"
+        />
+        <button class="search-clear" *ngIf="searchQuery" (click)="searchQuery = ''" [attr.aria-label]="'guest.form.cancel' | translate">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FILTER CHIPS ── -->
+  <section class="filters-section">
+    <div class="filters-scroll">
+      <button
+        *ngFor="let filter of filters"
+        class="chip"
+        [class.chip-active]="activeFilter === filter.value"
+        (click)="setFilter(filter.value)"
+        [id]="'filter-' + filter.value"
+      >
+        {{ filter.key | translate }}
+      </button>
+    </div>
+  </section>
+
+  <!-- ── FEATURED ARTICLE (BENTO) ── -->
+  <section class="featured-section reveal" *ngIf="activeFilter === 'Tất cả' && !searchQuery">
+    <div class="featured-card">
+      <div class="featured-image" [style.background-image]="'url(' + featuredArticle.image + ')'">
+        <div class="featured-image-overlay"></div>
+      </div>
+      <div class="featured-content">
+        <span class="badge badge-featured">
+          <span class="material-symbols-outlined badge-icon">stars</span>
+          {{ 'guest.handbook.featured.badge' | translate }}
+        </span>
+        <h2 class="featured-title">{{ featuredArticle.title | translate }}</h2>
+        <p class="featured-desc">{{ featuredArticle.description | translate }}</p>
+        <div class="featured-meta">
+          <div class="author-chip">
+            <div class="author-avatar">
+              <span class="material-symbols-outlined">person</span>
+            </div>
+            <span class="author-name">{{ featuredArticle.author | translate }}</span>
+          </div>
+          <span class="read-time">
+            <span class="material-symbols-outlined read-time-icon">schedule</span>
+            {{ featuredArticle.readTime | translate }}
+          </span>
+        </div>
+        <a href="#" class="read-more-link">
+          {{ 'guest.handbook.article.readMore' | translate }}
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ARTICLES GRID ── -->
+  <section class="articles-section">
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="filteredArticles.length === 0">
+      <span class="material-symbols-outlined empty-icon">search_off</span>
+      <h3>{{ 'guest.handbook.article.noResults' | translate }}</h3>
+      <p>{{ 'guest.handbook.article.noResultsDesc' | translate }}</p>
+      <button class="btn-outline" (click)="searchQuery = ''; setFilter('Tất cả')">{{ 'guest.handbook.article.viewAll' | translate }}</button>
+    </div>
+
+    <div class="articles-grid" *ngIf="filteredArticles.length > 0">
+      <article
+        *ngFor="let article of filteredArticles; let i = index"
+        class="article-card reveal"
+        [style.animation-delay]="(i * 80) + 'ms'"
+      >
+        <!-- Image -->
+        <div class="article-image-wrap">
+          <img
+            [src]="article.image"
+            [alt]="article.imageAlt | translate"
+            class="article-image"
+            loading="lazy"
+          />
+          <span class="article-badge" [ngClass]="article.categoryClass">
+            {{ getCategoryKey(article.category) | translate }}
+          </span>
+        </div>
+
+        <!-- Content -->
+        <div class="article-body">
+          <div class="article-meta">
+            <span class="material-symbols-outlined meta-icon">schedule</span>
+            {{ article.readTime | translate }}
+          </div>
+          <h3 class="article-title">{{ article.title | translate }}</h3>
+          <p class="article-desc">{{ article.description | translate }}</p>
+
+          <div class="article-footer">
+            <div class="author-row">
+              <div class="author-avatar-sm">
+                <span class="material-symbols-outlined">person</span>
+              </div>
+              <span class="author-name-sm">{{ article.author | translate }}</span>
+            </div>
+            <button
+              class="btn-save"
+              [class.saved]="isSaved(article.id)"
+              (click)="toggleSave(article.id, $event)"
+              [attr.aria-label]="(isSaved(article.id) ? 'guest.handbook.article.unsave' : 'guest.handbook.article.save') | translate"
+            >
+              <span class="material-symbols-outlined">
+                {{ isSaved(article.id) ? 'bookmark' : 'bookmark_border' }}
+              </span>
+            </button>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <!-- Load More -->
+    <div class="load-more-wrapper" *ngIf="filteredArticles.length > 0">
+      <button class="btn-load-more" id="btn-load-more">
+        <span class="material-symbols-outlined">expand_more</span>
+        {{ 'guest.handbook.article.loadMore' | translate }}
+      </button>
+    </div>
+  </section>
+
+</main>
+
+<!-- Shared Footer -->
+<app-guest-footer></app-guest-footer>

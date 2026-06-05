@@ -1,0 +1,24 @@
+{
+  "brand": "マミー＆ベビー",
+  "navbar": {
+    "home": "ホーム",
+    "handbook": "ハンドブック",
+    "shop": "ショップ",
+    "community": "コミュニティ",
+    "health": "ヘルスケア",
+    "login": "ログイン",
+    "search": "検索",
+    "menu": "メニュー"
+  },
+  "footer": {
+    "tagline": "© 2024 マミー＆ベビー。幸せな育児の旅に寄り添います。",
+    "explore": "探検する",
+    "aboutUs": "会社概要",
+    "support247": "24/7 サポート",
+    "legal": "法的情報",
+    "privacyPolicy": "プライバシーポリシー",
+    "termsOfService": "利用規約",
+    "cooperate": "パートナーシップ",
+    "contactAd": "広告掲載について"
+  }
+}

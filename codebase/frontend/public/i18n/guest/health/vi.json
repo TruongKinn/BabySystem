@@ -1,0 +1,96 @@
+{
+  "title": "Theo dõi sức khỏe của bé",
+  "subtitle": "Ghi lại các hoạt động sinh hoạt, chỉ số chiều cao, cân nặng và lịch trình tiêm chủng cho con.",
+  "greeting": "Chào mẹ, hôm nay {{name}} thế nào?",
+  "babyInfoFormat": "Bé {{name}} • {{age}}",
+  "addMetric": "Thêm chỉ số mới",
+  "baby": {
+    "name": "Gấu",
+    "age": "tuổi",
+    "ageText": "6 tháng 12 ngày tuổi"
+  },
+  "stats": {
+    "weight": "Cân nặng",
+    "height": "Chiều cao",
+    "comparedToLastMonth": "so với tháng trước",
+    "chartTitle": "Biểu đồ tăng trưởng",
+    "whoStandard": "Đạt chuẩn WHO",
+    "whoStandardLegend": "Chuẩn WHO"
+  },
+  "months": {
+    "march": "Tháng 3",
+    "april": "Tháng 4",
+    "may": "Tháng 5",
+    "current": "Hiện tại"
+  },
+  "log": {
+    "title": "Nhật ký sinh hoạt hôm nay",
+    "quickActions": "Ghi chép nhanh",
+    "types": {
+      "feed": "Ăn uống",
+      "sleep": "Giấc ngủ",
+      "diaper": "Tã bỉm",
+      "note": "Ghi chú"
+    },
+    "duration": "thời lượng",
+    "time": "thời gian",
+    "timeSuffix": {
+      "morning": "Sáng",
+      "afternoon": "Chiều",
+      "justNow": "Vừa xong"
+    }
+  },
+  "logs": {
+    "feed15m": "Bú mẹ (15 phút)",
+    "sleep45m": "Ngủ giấc ngắn (45p)",
+    "diaperWet": "Thay tã (Ướt)",
+    "feed20m": "Bú mẹ (20 phút)",
+    "time1030": "10:30 Sáng",
+    "time0815": "08:15 Sáng",
+    "time0745": "07:45 Sáng",
+    "time0600": "06:00 Sáng"
+  },
+  "vaccine": {
+    "title": "Lịch tiêm phòng sắp tới",
+    "status": {
+      "upcoming": "Sắp tới hạn",
+      "done": "Đã tiêm",
+      "overdue": "Quá hạn"
+    }
+  },
+  "vaccines": {
+    "v6in1": {
+      "name": "Vắc-xin 6 trong 1 (Mũi 3)",
+      "desc": "Phòng Bạch hầu, Ho gà, Uốn ván, Bại liệt, Hib, Viêm gan B",
+      "dueDate": "Trong tuần này"
+    },
+    "rota": {
+      "name": "Vắc-xin Rota (Mũi 3)",
+      "desc": "Phòng Tiêu chảy do Rotavirus",
+      "dueDate": "3 tuần nữa"
+    },
+    "je": {
+      "name": "Vắc-xin Viêm não Nhật Bản (Mũi 1)",
+      "desc": "Phòng Viêm não Nhật Bản",
+      "dueDate": "Tháng 9/2025"
+    }
+  },
+  "doctor": {
+    "title": "Lời khuyên từ Bác sĩ",
+    "name": "BS. Nguyễn Thu Hà",
+    "text": "Giai đoạn 6 tháng tuổi, bé bắt đầu ăn dặm. Mẹ hãy thử cho bé làm quen với các loại rau củ nghiền mịn trước nhé. Đừng quên theo dõi phản ứng của bé sau mỗi loại thức ăn mới."
+  },
+  "modal": {
+    "title": "Ghi chép sinh hoạt",
+    "timeLabel": "Thời gian",
+    "durationLabel": "Thời lượng / Lượng ăn",
+    "diaperType": "Loại tã",
+    "placeholderFeed": "VD: 15 phút / 120ml",
+    "placeholderSleep": "VD: 45 phút",
+    "placeholderDiaper": "VD: Ướt / Bẩn",
+    "noteLabel": "Ghi chú thêm",
+    "notePlaceholder": "Ghi chú bất kỳ điều gì thêm...",
+    "cancel": "Hủy",
+    "submit": "Lưu ghi chép"
+  }
+}

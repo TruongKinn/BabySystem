@@ -1,0 +1,79 @@
+{
+  "hero": {
+    "label": "Hành trình làm mẹ",
+    "title": "Đồng hành cùng mẹ, nuôi con hạnh phúc",
+    "desc": "Khám phá không gian bình yên với những kiến thức chuyên sâu, cộng đồng sẻ chia và các sản phẩm chăm sóc bé yêu an toàn nhất.",
+    "exploreHandbook": "Khám phá cẩm nang",
+    "joinCommunity": "Tham gia cộng đồng"
+  },
+  "categories": {
+    "title": "Không gian của mẹ và bé",
+    "subtitle": "Mọi thứ bạn cần cho một thai kỳ khỏe mạnh và em bé vui vẻ",
+    "health": {
+      "title": "Theo dõi Sức khỏe",
+      "desc": "Ghi lại chỉ số phát triển, lịch tiêm phòng và nhật ký giấc ngủ của bé dễ dàng.",
+      "link": "Bắt đầu theo dõi"
+    },
+    "community": {
+      "title": "Cộng đồng",
+      "desc": "Chia sẻ kinh nghiệm và nhận lời khuyên từ các mẹ bỉm sữa.",
+      "link": "Tham gia ngay"
+    },
+    "handbook": {
+      "title": "Cẩm nang",
+      "desc": "Bài viết chuyên sâu từ chuyên gia y tế.",
+      "link": "Xem cẩm nang"
+    },
+    "shop": {
+      "title": "Cửa hàng An Toàn",
+      "desc": "Tuyển chọn các sản phẩm organic, an toàn tuyệt đối cho làn da nhạy cảm của bé.",
+      "link": "Mua sắm ngay"
+    }
+  },
+  "articles": {
+    "title": "Cẩm nang mới nhất",
+    "subtitle": "Kiến thức khoa học nuôi con dễ dàng hơn",
+    "viewAll": "Xem tất cả",
+    "easy": {
+      "alt": "Giấc ngủ của bé",
+      "category": "Giấc ngủ",
+      "title": "Phương pháp luyện ngủ Easy cho trẻ sơ sinh",
+      "desc": "Hướng dẫn chi tiết cách thiết lập chu kỳ Ăn - Chơi - Ngủ giúp bé ngoan, mẹ nhàn trong những tháng đầu đời.",
+      "author": "BS. Nguyễn Anh",
+      "readTime": "5 phút đọc"
+    },
+    "blw": {
+      "alt": "Dinh dưỡng cho bé",
+      "category": "Dinh dưỡng",
+      "title": "Thực đơn ăn dặm BLW cho bé 6 tháng",
+      "desc": "Gợi ý các món ăn dặm tự chỉ huy an toàn, giàu dinh dưỡng và cách xử lý khi bé bị hóc.",
+      "author": "Chuyên gia Dinh dưỡng",
+      "readTime": "8 phút đọc"
+    },
+    "play": {
+      "alt": "Phát triển tư duy",
+      "category": "Phát triển",
+      "title": "Trò chơi phát triển trí não giai đoạn 1-2 tuổi",
+      "desc": "Các hoạt động tương tác đơn giản tại nhà giúp kích thích sự tò mò và khả năng ngôn ngữ của trẻ.",
+      "author": "ThS. Tâm lý học",
+      "readTime": "6 phút đọc"
+    }
+  },
+  "products": {
+    "title": "Sản phẩm nổi bật",
+    "subtitle": "Được hàng ngàn mẹ bỉm sữa tin dùng",
+    "viewAll": "Xem tất cả sản phẩm",
+    "lotion": {
+      "alt": "Kem dưỡng ẩm hữu cơ cho bé",
+      "category": "Chăm sóc da",
+      "name": "Kem dưỡng ẩm hữu cơ cho bé",
+      "price": "350.000đ"
+    },
+    "bowl": {
+      "alt": "Bộ khay silicon chống lật",
+      "category": "Ăn dặm",
+      "name": "Bộ khay silicon chống lật",
+      "price": "220.000đ"
+    }
+  }
+}
