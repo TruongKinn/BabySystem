@@ -11,6 +11,7 @@
     "pinned": "Pinned",
     "likes": "Likes",
     "comments": "Comments",
+    "commentsLabel": "comments",
     "save": "Save Post",
     "saved": "Saved",
     "joinPrompt": "Join the community to comment and write posts",
@@ -69,6 +70,7 @@
     "views": "views"
   },
   "recent": {
+    "commentOn": "commented on",
     "comment1": {
       "postTitle": "Pigeon Baby Bottle Review",
       "excerpt": "\"My baby switched to this bottle and loves it, the nipple is so soft...\""

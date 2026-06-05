@@ -948,6 +948,52 @@
 
 .btn-submit .material-symbols-outlined { font-size: 18px; }
 
+/* ── Search Bar ── */
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 28px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 20px;
+  color: var(--color-outline);
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 14px 20px 14px 52px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--color-on-surface);
+  background: var(--color-surface-container-lowest);
+  border: 1px solid rgba(137, 78, 79, 0.15);
+  border-radius: var(--radius-full);
+  outline: none;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-input::placeholder {
+  color: var(--color-outline);
+  opacity: 0.8;
+}
+
+.search-input:hover {
+  border-color: var(--color-primary-container);
+}
+
+.search-input:focus {
+  border-color: var(--color-primary);
+  background: var(--color-surface-container-lowest);
+  box-shadow: 0 0 0 3px rgba(137, 78, 79, 0.15), var(--shadow-sm);
+}
+
 
 /* ════════════════════════════════════
    ANIMATIONS

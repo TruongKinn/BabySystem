@@ -11,6 +11,7 @@
     "pinned": "Đã ghim",
     "likes": "Lượt thích",
     "comments": "Bình luận",
+    "commentsLabel": "bình luận",
     "save": "Lưu bài viết",
     "saved": "Đã lưu",
     "joinPrompt": "Tham gia cộng đồng để bình luận và đăng bài",
@@ -69,6 +70,7 @@
     "views": "lượt xem"
   },
   "recent": {
+    "commentOn": "đã bình luận trên",
     "comment1": {
       "postTitle": "Review bình sữa Pigeon",
       "excerpt": "\"Bé nhà mình đổi sang bình này trộm vía hợp tác hẳn, núm ty mềm lắm...\""

@@ -3037,7 +3037,8 @@
           "hoursAgo": "小时前",
           "justNow": "刚刚",
           "daysAgo": "天前"
-        }
+        },
+        "commentsLabel": "条评论"
       },
       "form": {
         "modalTitle": "发布新讨论帖",
@@ -3101,7 +3102,8 @@
         },
         "time": {
           "minsAgo": "分钟前"
-        }
+        },
+        "commentOn": "评论了"
       }
     },
     "handbook": {

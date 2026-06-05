@@ -3035,7 +3035,8 @@
           "hoursAgo": "時間前",
           "justNow": "たった今",
           "daysAgo": "日前"
-        }
+        },
+        "commentsLabel": "件のコメント"
       },
       "form": {
         "modalTitle": "新しいスレッドを作成",
@@ -3099,7 +3100,8 @@
         },
         "time": {
           "minsAgo": "分前"
-        }
+        },
+        "commentOn": "にコメントしました"
       }
     },
     "handbook": {

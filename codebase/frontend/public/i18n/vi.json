@@ -3042,7 +3042,8 @@
           "hoursAgo": "giờ trước",
           "justNow": "Vừa xong",
           "daysAgo": "ngày trước"
-        }
+        },
+        "commentsLabel": "bình luận"
       },
       "form": {
         "modalTitle": "Tạo bài viết mới",
@@ -3106,7 +3107,8 @@
         },
         "time": {
           "minsAgo": "phút trước"
-        }
+        },
+        "commentOn": "đã bình luận trên"
       }
     },
     "handbook": {

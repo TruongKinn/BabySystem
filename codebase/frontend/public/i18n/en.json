@@ -3044,7 +3044,8 @@
           "hoursAgo": "hours ago",
           "justNow": "Just now",
           "daysAgo": "days ago"
-        }
+        },
+        "commentsLabel": "comments"
       },
       "form": {
         "modalTitle": "Create New Discussion",
@@ -3108,7 +3109,8 @@
         },
         "time": {
           "minsAgo": "mins ago"
-        }
+        },
+        "commentOn": "commented on"
       }
     },
     "handbook": {

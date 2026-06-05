@@ -11,6 +11,7 @@
     "pinned": "置顶",
     "likes": "点赞",
     "comments": "回复",
+    "commentsLabel": "条评论",
     "save": "收藏帖子",
     "saved": "已收藏",
     "joinPrompt": "加入社区以参与回复和发帖",
@@ -69,6 +70,7 @@
     "views": "次浏览"
   },
   "recent": {
+    "commentOn": "评论了",
     "comment1": {
       "postTitle": "贝亲（Pigeon）奶瓶评测",
       "excerpt": "\"我给宝宝换了这个奶瓶，效果特别好，奶嘴真的很柔软...\""
