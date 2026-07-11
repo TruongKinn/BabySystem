@@ -8,6 +8,8 @@ import { AdminPermissionsComponent } from './admin/permissions/admin-permissions
 import { AdminUsersComponent } from './admin/users/admin-users.component';
 import { AdminFinanceComponent } from './admin/finance/admin-finance.component';
 import { AdminPremiumComponent } from './admin/premium/admin-premium.component';
+import { AdminRateLimitComponent } from './admin/rate-limit/admin-rate-limit.component';
+import { AdminIpBlacklistComponent } from './admin/ip-blacklist/admin-ip-blacklist.component';
 import { LoginComponent } from './auth/login/login.component';
 import { RegisterComponent } from './auth/register/register.component';
 import { BabyComponent } from './baby/baby.component';
@@ -81,7 +83,9 @@ export const routes: Routes = [
       { path: 'export-passwords', component: AdminExportPasswordsComponent },
       { path: 'settings/theme', component: SettingsComponent },
       { path: 'access', component: AdminAccessComponent },
-      { path: 'permissions', component: AdminPermissionsComponent }
+      { path: 'permissions', component: AdminPermissionsComponent },
+      { path: 'rate-limit', component: AdminRateLimitComponent },
+      { path: 'ip-blacklist', component: AdminIpBlacklistComponent }
     ]
   },
 

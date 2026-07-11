@@ -126,7 +126,9 @@ export class App implements OnInit, OnDestroy {
       children: [
         { labelKey: 'momApp.admin.menu.access', icon: 'check-square', route: '/admin/access' },
         { labelKey: 'momApp.admin.menu.permissions', icon: 'settings', route: '/admin/permissions' },
-        { labelKey: 'momApp.admin.menu.exportPasswords', icon: 'key', route: '/admin/export-passwords' }
+        { labelKey: 'momApp.admin.menu.exportPasswords', icon: 'key', route: '/admin/export-passwords' },
+        { labelKey: 'momApp.admin.menu.rateLimit', icon: 'shield', route: '/admin/rate-limit' },
+        { labelKey: 'momApp.admin.menu.ipBlacklist', icon: 'shield', route: '/admin/ip-blacklist' }
       ]
     },
     {

@@ -1,6 +1,11 @@
-.site-footer {
-  background: var(--color-surface-container-highest);
+/* =================================================================
+   Guest Footer - Shared Component - Mẹ Bé Yêu
+   ================================================================= */
+
+.site-footer.ant-layout-footer {
+  background: var(--color-surface-container-highest) !important;
   border-top: 1px solid rgba(213, 194, 193, 0.3);
+  padding: 0 !important;
 }
 
 .footer-inner {
@@ -8,15 +13,11 @@
   max-width: var(--container-max);
   margin: 0 auto;
   padding: 64px var(--padding-x-mobile);
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 40px;
 }
 
 @media (min-width: 768px) {
   .footer-inner {
     padding: 64px var(--padding-x-desktop);
-    grid-template-columns: 1fr 3fr;
   }
 }
 
@@ -51,18 +52,6 @@
 
 .social-link:hover {
   color: var(--color-primary);
-}
-
-.footer-links-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 32px;
-}
-
-@media (min-width: 640px) {
-  .footer-links-grid {
-    grid-template-columns: repeat(3, 1fr);
-  }
 }
 
 .footer-col-title {

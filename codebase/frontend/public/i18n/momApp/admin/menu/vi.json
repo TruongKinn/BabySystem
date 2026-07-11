@@ -2,5 +2,7 @@
   "systemOverview": "Giám sát & Tài khoản",
   "business": "Kinh doanh & Tài chính",
   "security": "Bảo mật & Phân quyền",
-  "config": "Cấu hình hệ thống"
+  "config": "Cấu hình hệ thống",
+  "rateLimit": "Mô phỏng Rate Limit",
+  "ipBlacklist": "Danh sách chặn IP"
 }

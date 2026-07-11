@@ -14,6 +14,7 @@ import { NzSelectModule } from 'ng-zorro-antd/select';
 import { NzTableModule } from 'ng-zorro-antd/table';
 import { NzTagModule } from 'ng-zorro-antd/tag';
 import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { I18nService } from '../../i18n/i18n.service';
 import { API_CONFIG } from '../../shared/constants/api.constant';
 
@@ -76,7 +77,8 @@ interface UserPageResponse {
     NzSelectModule,
     NzTableModule,
     NzTagModule,
-    NzToolTipModule
+    NzToolTipModule,
+    NzDatePickerModule
   ],
   templateUrl: './admin-export-passwords.component.html',
   styleUrl: './admin-export-passwords.component.css'
@@ -100,7 +102,7 @@ export class AdminExportPasswordsComponent implements OnInit {
 
   selectedUserId: number | null = null;
   familyIdFilter = '';
-  monthFilter = '';
+  monthFilter: Date | null = null;
 
   pageIndex = 1;
   pageSize = 10;
@@ -182,7 +184,7 @@ export class AdminExportPasswordsComponent implements OnInit {
   resetFilters(): void {
     this.selectedUserId = null;
     this.familyIdFilter = '';
-    this.monthFilter = '';
+    this.monthFilter = null;
     this.pageIndex = 1;
     this.loadRecords();
   }
@@ -301,6 +303,15 @@ export class AdminExportPasswordsComponent implements OnInit {
       });
   }
 
+  formatYearMonth(date: Date | null): string {
+    if (!date) {
+      return '';
+    }
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}`;
+  }
+
   private buildQueryParams(): HttpParams {
     let params = new HttpParams()
       .set('page', String(Math.max(this.pageIndex - 1, 0)))
@@ -315,7 +326,7 @@ export class AdminExportPasswordsComponent implements OnInit {
       params = params.set('familyId', familyId);
     }
 
-    const month = String(this.monthFilter ?? '').trim();
+    const month = this.formatYearMonth(this.monthFilter);
     if (month) {
       params = params.set('month', month);
     }

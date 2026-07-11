@@ -8,28 +8,38 @@
         {{ 'guest.common.brand' | translate }}
       </a>
 
-      <!-- Desktop Nav Links -->
-      <div class="nav-links" [class.open]="isMobileMenuOpen">
-        <a
+      <!-- Desktop Nav Links using nz-menu -->
+      <ul nz-menu nzMode="horizontal" class="nav-links-menu hidden-mobile-menu">
+        <li
+          nz-menu-item
           *ngFor="let item of navItems"
           [routerLink]="item.route"
-          routerLinkActive="active"
-          class="nav-link"
-          (click)="isMobileMenuOpen = false"
-        >{{ item.label | translate }}</a>
-      </div>
+          routerLinkActive="ant-menu-item-selected"
+          [routerLinkActiveOptions]="{ exact: item.route === '/guest/home' }"
+        >
+          {{ item.label | translate }}
+        </li>
+      </ul>
     </div>
 
     <!-- Actions -->
     <div class="nav-actions">
-      <button class="btn-icon" [attr.aria-label]="'guest.common.navbar.search' | translate">
+      <!-- Ant Design Button Icon -->
+      <button nz-button nzType="text" nzShape="circle" class="btn-icon-antd" [attr.aria-label]="'guest.common.navbar.search' | translate">
         <span class="material-symbols-outlined">search</span>
       </button>
-      <button class="btn-login" (click)="navigateToLogin()" id="navbar-btn-login">
+
+      <!-- Ant Design Button Login -->
+      <button nz-button nzType="primary" nzShape="round" class="btn-login-antd" (click)="navigateToLogin()" id="navbar-btn-login">
         {{ 'guest.common.navbar.login' | translate }}
       </button>
+
+      <!-- Mobile Menu Trigger -->
       <button
-        class="btn-icon btn-menu"
+        nz-button
+        nzType="text"
+        nzShape="circle"
+        class="btn-icon-antd btn-menu-antd"
         (click)="toggleMobileMenu()"
         [attr.aria-expanded]="isMobileMenuOpen"
         [attr.aria-label]="'guest.common.navbar.menu' | translate"
@@ -38,5 +48,21 @@
       </button>
     </div>
 
+  </div>
+
+  <!-- Mobile Nav Links using nz-menu overlay -->
+  <div class="mobile-menu-overlay" *ngIf="isMobileMenuOpen">
+    <ul nz-menu nzMode="inline" class="nav-links-menu-mobile">
+      <li
+        nz-menu-item
+        *ngFor="let item of navItems"
+        [routerLink]="item.route"
+        routerLinkActive="ant-menu-item-selected"
+        [routerLinkActiveOptions]="{ exact: item.route === '/guest/home' }"
+        (click)="isMobileMenuOpen = false"
+      >
+        {{ item.label | translate }}
+      </li>
+    </ul>
   </div>
 </nav>

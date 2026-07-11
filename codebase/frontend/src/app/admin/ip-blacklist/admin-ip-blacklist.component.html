@@ -1,0 +1,204 @@
+<section class="admin-ip-blacklist-page admin-theme">
+  <!-- Hero Header -->
+  <header class="ip-blacklist-hero">
+    <div class="hero-copy">
+      <span class="hero-kicker">{{ 'admin.ip-blacklist.heroKicker' | translate }}</span>
+      <h1>{{ 'admin.ip-blacklist.title' | translate }}</h1>
+      <p>{{ 'admin.ip-blacklist.subtitle' | translate }}</p>
+    </div>
+  </header>
+
+  <div nz-row [nzGutter]="24">
+    <!-- Left Column: Block Form & Simulator -->
+    <div nz-col [nzXs]="24" [nzLg]="9">
+      <!-- Block Form Card -->
+      <nz-card class="premium-card block-form-card" [nzTitle]="formTitleTpl">
+        <ng-template #formTitleTpl>
+          <span class="card-header-title">
+            <i nz-icon nzType="safety-certificate" nzTheme="outline" class="red-icon"></i>
+            {{ 'admin.ip-blacklist.blockIpForm' | translate }}
+          </span>
+        </ng-template>
+
+        <form (ngSubmit)="blockIp()" class="block-form">
+          <div class="form-group">
+            <label class="form-label">{{ 'admin.ip-blacklist.ipAddressLabel' | translate }}</label>
+            <input 
+              nz-input 
+              [(ngModel)]="ipInput" 
+              name="ip" 
+              [placeholder]="'admin.ip-blacklist.ipAddressPlaceholder' | translate"
+              [disabled]="submitting"
+              class="custom-input"
+              required />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{{ 'admin.ip-blacklist.reasonLabel' | translate }}</label>
+            <input 
+              nz-input 
+              [(ngModel)]="reasonInput" 
+              name="reason" 
+              [placeholder]="'admin.ip-blacklist.reasonPlaceholder' | translate"
+              [disabled]="submitting"
+              class="custom-input" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{{ 'admin.ip-blacklist.durationLabel' | translate }}</label>
+            <nz-select [(ngModel)]="durationInput" name="duration" [nzDisabled]="submitting" class="custom-select">
+              @for (opt of durationOptions; track opt.value) {
+                <nz-option [nzValue]="opt.value" [nzLabel]="opt.labelKey | translate"></nz-option>
+              }
+            </nz-select>
+          </div>
+
+          <button 
+            nz-button 
+            nzType="primary" 
+            [nzLoading]="submitting" 
+            type="submit" 
+            [disabled]="!ipInput"
+            class="block-submit-btn">
+            <i nz-icon nzType="lock" nzTheme="outline" *ngIf="!submitting"></i>
+            {{ 'admin.ip-blacklist.blockBtn' | translate }}
+          </button>
+        </form>
+      </nz-card>
+
+      <!-- Simulator Card -->
+      <nz-card class="premium-card simulator-card" [nzTitle]="simTitleTpl">
+        <ng-template #simTitleTpl>
+          <span class="card-header-title">
+            <i nz-icon nzType="api" nzTheme="outline" class="blue-icon"></i>
+            {{ 'admin.ip-blacklist.simulatorTitle' | translate }}
+          </span>
+        </ng-template>
+
+        <div class="sim-form">
+          <div class="form-group">
+            <label class="form-label">{{ 'admin.ip-blacklist.simIpLabel' | translate }}</label>
+            <input 
+              nz-input 
+              [(ngModel)]="simIp" 
+              [placeholder]="'admin.ip-blacklist.simIpPlaceholder' | translate"
+              [disabled]="simRunning"
+              class="custom-input" />
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{{ 'admin.ip-blacklist.simEndpointLabel' | translate }}</label>
+            <nz-select [(ngModel)]="simEndpoint" [nzDisabled]="simRunning" class="custom-select">
+              @for (ep of endpoints; track ep.value) {
+                <nz-option [nzValue]="ep.value" [nzLabel]="ep.label"></nz-option>
+              }
+            </nz-select>
+          </div>
+
+          <button 
+            nz-button 
+            nzType="primary" 
+            [nzLoading]="simRunning" 
+            [disabled]="!simIp"
+            (click)="runIpSimulation()"
+            class="sim-submit-btn">
+            <i nz-icon nzType="send" nzTheme="outline" *ngIf="!simRunning"></i>
+            {{ 'admin.ip-blacklist.simSendBtn' | translate }}
+          </button>
+        </div>
+
+        <!-- Simulation Result (Terminal Style) -->
+        <div class="sim-result-box" *ngIf="simResult">
+          <h4 class="result-title">{{ 'admin.ip-blacklist.simResultTitle' | translate }}</h4>
+          <div class="result-terminal" [class.success]="simResult.success" [class.danger]="!simResult.success">
+            <div class="terminal-line">
+              <span class="lbl">HTTP Status:</span>
+              <span class="status-badge-sim" [class.success]="simResult.success" [class.danger]="!simResult.success">
+                {{ simResult.status }} {{ simResult.statusText }}
+              </span>
+            </div>
+            <div class="terminal-line">
+              <span class="lbl">{{ 'admin.ip-blacklist.simLatency' | translate }}:</span>
+              <span class="val">{{ simResult.latency }} ms</span>
+            </div>
+            <div class="terminal-line message-line">
+              <span class="lbl">{{ 'admin.ip-blacklist.simResponseMsg' | translate }}:</span>
+              <p class="val-msg">{{ simResult.message }}</p>
+            </div>
+            <div class="terminal-footer">
+              <span>Time: {{ simResult.timestamp }}</span>
+            </div>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+
+    <!-- Right Column: Blacklist Table -->
+    <div nz-col [nzXs]="24" [nzLg]="15">
+      <nz-card class="premium-card list-card" [nzTitle]="listTitleTpl">
+        <ng-template #listTitleTpl>
+          <span class="card-header-title">
+            <i nz-icon nzType="unordered-list" nzTheme="outline"></i>
+            {{ 'admin.ip-blacklist.listTitle' | translate }}
+          </span>
+        </ng-template>
+
+        <nz-table 
+          #ipTable 
+          [nzData]="blockedIps" 
+          [nzLoading]="loading" 
+          [nzPageSize]="10" 
+          nzSize="middle" 
+          class="custom-table">
+          <thead>
+            <tr>
+              <th>{{ 'admin.ip-blacklist.colIp' | translate }}</th>
+              <th>{{ 'admin.ip-blacklist.colReason' | translate }}</th>
+              <th width="180px">{{ 'admin.ip-blacklist.colBlockedAt' | translate }}</th>
+              <th width="150px">{{ 'admin.ip-blacklist.colExpiry' | translate }}</th>
+              <th width="120px" nzAlign="center">{{ 'admin.ip-blacklist.colActions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (data of ipTable.data; track data.ip) {
+              <tr>
+                <td class="ip-cell">
+                  <span class="ip-badge"><i nz-icon nzType="global" nzTheme="outline"></i> {{ data.ip }}</span>
+                </td>
+                <td class="reason-cell" [title]="data.reason">{{ data.reason }}</td>
+                <td class="time-cell">{{ formatDateTime(data.blockedAt) }}</td>
+                <td class="expiry-cell">
+                  <span class="expiry-badge" [class.permanent]="data.ttl <= 0">
+                    {{ formatTtl(data.ttl) }}
+                  </span>
+                </td>
+                <td nzAlign="center">
+                  <button 
+                    nz-button 
+                    nzType="default" 
+                    nzDanger
+                    [nzLoading]="unblockingIp === data.ip"
+                    (click)="unblockIp(data.ip)"
+                    class="unblock-action-btn">
+                    <i nz-icon nzType="unlock" nzTheme="outline" *ngIf="unblockingIp !== data.ip"></i>
+                    {{ (unblockingIp === data.ip ? 'admin.ip-blacklist.unblocking' : 'admin.ip-blacklist.unblockBtn') | translate }}
+                  </button>
+                </td>
+              </tr>
+            }
+            @if (blockedIps.length === 0 && !loading) {
+              <tr>
+                <td colspan="5">
+                  <div class="no-data-placeholder">
+                    <i nz-icon nzType="security-scan" class="placeholder-icon"></i>
+                    <p>{{ 'admin.ip-blacklist.emptyList' | translate }}</p>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </nz-table>
+      </nz-card>
+    </div>
+  </div>
+</section>

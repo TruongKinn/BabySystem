@@ -4,11 +4,23 @@ import { RouterModule } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { GuestNavbarComponent } from '../shared/guest-navbar/guest-navbar.component';
 import { GuestFooterComponent } from '../shared/guest-footer/guest-footer.component';
+import { NzButtonModule } from 'ng-zorro-antd/button';
+import { NzCardModule } from 'ng-zorro-antd/card';
+import { NzGridModule } from 'ng-zorro-antd/grid';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, TranslateModule, GuestNavbarComponent, GuestFooterComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    TranslateModule,
+    GuestNavbarComponent,
+    GuestFooterComponent,
+    NzButtonModule,
+    NzCardModule,
+    NzGridModule
+  ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })

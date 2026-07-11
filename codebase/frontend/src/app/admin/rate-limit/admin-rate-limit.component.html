@@ -1,0 +1,331 @@
+<section class="admin-rate-limit-page admin-theme">
+  <!-- Hero Header -->
+  <header class="rate-limit-hero">
+    <div class="hero-copy">
+      <span class="hero-kicker">{{ 'admin.rate-limit.heroKicker' | translate }}</span>
+      <h1>{{ 'admin.rate-limit.title' | translate }}</h1>
+      <p>{{ 'admin.rate-limit.subtitle' | translate }}</p>
+    </div>
+
+    <!-- Hero Stats -->
+    <div class="hero-stats" *ngIf="results.length > 0">
+      <div class="hero-stat">
+        <span>{{ 'admin.rate-limit.successCount' | translate }}</span>
+        <strong class="success-text">{{ successCount }}</strong>
+      </div>
+      <div class="hero-stat">
+        <span>{{ 'admin.rate-limit.limitedCount' | translate }}</span>
+        <strong class="limited-text">{{ limitedCount }}</strong>
+      </div>
+      <div class="hero-stat">
+        <span>{{ 'admin.rate-limit.successRate' | translate }}</span>
+        <strong class="rate-text">{{ successRate }}%</strong>
+      </div>
+    </div>
+  </header>
+
+  <div nz-row [nzGutter]="24">
+    <!-- Left Column: Settings and Simulator -->
+    <div nz-col [nzXs]="24" [nzLg]="9">
+      <!-- Config Card -->
+      <nz-card class="premium-card config-card" [nzTitle]="configTitleTpl">
+        <ng-template #configTitleTpl>
+          <span class="card-header-title">
+            <i nz-icon nzType="setting" nzTheme="outline"></i>
+            {{ 'admin.rate-limit.systemConfig' | translate }}
+          </span>
+        </ng-template>
+
+        <div class="config-grid">
+          <div class="config-item">
+            <span class="config-label">{{ 'admin.rate-limit.replenishRate' | translate }}</span>
+            <span class="config-value cyan-text">{{ replenishRate }} req/s</span>
+          </div>
+          <div class="config-item">
+            <span class="config-label">{{ 'admin.rate-limit.burstCapacity' | translate }}</span>
+            <span class="config-value blue-text">{{ burstCapacity }} req</span>
+          </div>
+          <div class="config-item">
+            <span class="config-label">{{ 'admin.rate-limit.requestedTokens' | translate }}</span>
+            <span class="config-value slate-text">{{ requestedTokens }} token</span>
+          </div>
+          <div class="config-item">
+            <span class="config-label">{{ 'admin.rate-limit.redisStatus' | translate }}</span>
+            <span class="config-value">
+              <nz-badge nzStatus="success" [nzText]="'admin.rate-limit.connected' | translate"></nz-badge>
+            </span>
+          </div>
+        </div>
+        <p class="config-note"><i nz-icon nzType="info-circle"></i> {{ 'admin.rate-limit.configNote' | translate }}</p>
+      </nz-card>
+
+      <!-- Simulator Card -->
+      <nz-card class="premium-card simulator-card" [nzTitle]="simTitleTpl">
+        <ng-template #simTitleTpl>
+          <span class="card-header-title">
+            <i nz-icon nzType="rocket" nzTheme="outline"></i>
+            {{ 'admin.rate-limit.simulator' | translate }}
+          </span>
+        </ng-template>
+
+        <div class="sim-form">
+          <div class="form-group">
+            <label class="form-label">{{ 'admin.rate-limit.selectEndpoint' | translate }}</label>
+            <nz-select [(ngModel)]="selectedEndpoint" [nzDisabled]="running" class="custom-select">
+              @for (ep of endpoints; track ep.value) {
+                <nz-option [nzValue]="ep.value" [nzLabel]="ep.label"></nz-option>
+              }
+            </nz-select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">{{ 'admin.rate-limit.requestCount' | translate }} ({{ requestCount }})</label>
+            <nz-slider 
+              [(ngModel)]="requestCount" 
+              [nzMin]="10" 
+              [nzMax]="100" 
+              [nzStep]="5" 
+              [nzDisabled]="running"
+              class="custom-slider">
+            </nz-slider>
+          </div>
+
+          <div class="sim-actions">
+            <button 
+              nz-button 
+              nzType="primary" 
+              [nzLoading]="running" 
+              (click)="runSimulation()" 
+              [class.btn-half]="running"
+              class="run-btn">
+              <i nz-icon nzType="play-circle" nzTheme="outline" *ngIf="!running"></i>
+              {{ (running ? 'admin.rate-limit.running' : 'admin.rate-limit.runTest') | translate }}
+            </button>
+            <button 
+              nz-button 
+              nzType="default" 
+              *ngIf="running" 
+              (click)="cancelSimulation()" 
+              class="cancel-btn">
+              <i nz-icon nzType="close-circle" nzTheme="outline"></i>
+              {{ 'admin.rate-limit.cancel' | translate }}
+            </button>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+
+    <!-- Right Column: Visualization and Statistics -->
+    <div nz-col [nzXs]="24" [nzLg]="15">
+      <!-- Results Card -->
+      <nz-card class="premium-card results-card" [nzTitle]="resultsTitleTpl">
+        <ng-template #resultsTitleTpl>
+          <span class="card-header-title">
+            <i nz-icon nzType="dashboard" nzTheme="outline"></i>
+            {{ 'admin.rate-limit.testResult' | translate }}
+          </span>
+        </ng-template>
+
+        <div class="results-layout" *ngIf="results.length > 0; else noDataTpl">
+          <!-- Donut SVG & Counters -->
+          <div class="donut-and-stats">
+            <div class="donut-wrapper">
+              <svg viewBox="0 0 80 80" class="donut-svg">
+                <!-- Track circle -->
+                <circle cx="40" cy="40" r="36" class="donut-track"></circle>
+                <!-- Indicator circle -->
+                <circle 
+                  cx="40" 
+                  cy="40" 
+                  r="36" 
+                  class="donut-indicator" 
+                  [ngClass]="{'donut-warning': successRate < 70, 'donut-danger': successRate < 40}"
+                  [style.stroke-dashoffset]="donutDashOffset">
+                </circle>
+              </svg>
+              <div class="donut-text">
+                <span class="donut-num">{{ successRate }}%</span>
+                <span class="donut-label">Success</span>
+              </div>
+            </div>
+
+            <div class="stats-mini">
+              <div class="stat-mini success">
+                <span class="dot"></span>
+                <span class="lbl">{{ 'admin.rate-limit.successCount' | translate }}</span>
+                <strong class="val">{{ successCount }}</strong>
+              </div>
+              <div class="stat-mini limited">
+                <span class="dot"></span>
+                <span class="lbl">{{ 'admin.rate-limit.limitedCount' | translate }}</span>
+                <strong class="val">{{ limitedCount }}</strong>
+              </div>
+              <div class="stat-mini error" *ngIf="errorCount > 0">
+                <span class="dot"></span>
+                <span class="lbl">Error</span>
+                <strong class="val">{{ errorCount }}</strong>
+              </div>
+            </div>
+          </div>
+
+          <div class="progress-wrapper" *ngIf="running">
+            <nz-progress [nzPercent]="progressPercent" nzStatus="active" [nzStrokeWidth]="4" class="custom-progress"></nz-progress>
+          </div>
+
+          <!-- Real-time SVG Latency Chart -->
+          <div class="latency-chart-wrapper" *ngIf="latencyPath">
+            <div class="chart-header">
+              <span class="chart-title"><i nz-icon nzType="line-chart"></i> {{ 'admin.rate-limit.latencyChart' | translate }}</span>
+              <span class="chart-max">{{ 'admin.rate-limit.maxLatency' | translate: {max: maxObservedLatency} }}</span>
+            </div>
+            <div class="chart-svg-container">
+              <svg [attr.viewBox]="'0 0 ' + svgWidth + ' ' + svgHeight" class="chart-svg" preserveAspectRatio="none">
+                <!-- Grid Lines -->
+                <line x1="0" y1="25" [attr.x2]="svgWidth" y2="25" class="grid-line" />
+                <line x1="0" y1="50" [attr.x2]="svgWidth" y2="50" class="grid-line" />
+                <line x1="0" y1="75" [attr.x2]="svgWidth" y2="75" class="grid-line" />
+                
+                <!-- Area Gradient -->
+                <defs>
+                  <linearGradient id="chartGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="#0ea5e9" stop-opacity="0.3"/>
+                    <stop offset="100%" stop-color="#0ea5e9" stop-opacity="0.0"/>
+                  </linearGradient>
+                </defs>
+                
+                <!-- Area -->
+                <path [attr.d]="latencyAreaPath" fill="url(#chartGrad)" class="chart-area" />
+                <!-- Line -->
+                <path [attr.d]="latencyPath" fill="none" stroke="#0ea5e9" stroke-width="2" class="chart-line" />
+              </svg>
+            </div>
+          </div>
+
+          <!-- Visualization Grid -->
+          <div class="grid-section">
+            <div class="grid-header">
+              <h4 class="grid-title">{{ 'admin.rate-limit.visualization' | translate }}</h4>
+              
+              <!-- Tab filters -->
+              <div class="grid-filters">
+                <button 
+                  type="button" 
+                  class="filter-tab-btn" 
+                  [class.active]="activeTab === 'all'" 
+                  (click)="activeTab = 'all'">
+                  {{ 'admin.rate-limit.tabAll' | translate }} ({{ results.length }})
+                </button>
+                <button 
+                  type="button" 
+                  class="filter-tab-btn" 
+                  [class.active]="activeTab === 'success'" 
+                  (click)="activeTab = 'success'">
+                  {{ 'admin.rate-limit.tabSuccess' | translate }} ({{ successCount }})
+                </button>
+                <button 
+                  type="button" 
+                  class="filter-tab-btn" 
+                  [class.active]="activeTab === 'limited'" 
+                  (click)="activeTab = 'limited'">
+                  {{ 'admin.rate-limit.tabLimited' | translate }} ({{ limitedCount }})
+                </button>
+              </div>
+            </div>
+
+            <div class="grid-container">
+              <div class="grid-wrapper">
+                @for (res of filteredResults; track res.index) {
+                  <div 
+                    class="grid-item" 
+                    [ngClass]="res.status"
+                    nz-tooltip 
+                    [nzTooltipTitle]="tooltipContent"
+                    [nzTooltipColor]="res.status === 'success' ? '#10b981' : (res.status === 'limited' ? '#f43f5e' : '#6b7280')">
+                    
+                    <ng-template #tooltipContent>
+                      <div class="tooltip-body">
+                        <strong>{{ 'admin.rate-limit.tooltipRequest' | translate: {index: res.index} }}</strong>
+                        <div *ngIf="res.status !== 'pending' && res.status !== 'running'">
+                          <span>{{ 'admin.rate-limit.tooltipStatus' | translate: {status: res.statusCode} }}</span><br/>
+                          <span>{{ 'admin.rate-limit.tooltipLatency' | translate: {latency: res.latency} }}</span>
+                        </div>
+                        <div *ngIf="res.status === 'pending'">
+                          <span>{{ 'admin.rate-limit.idle' | translate }}</span>
+                        </div>
+                        <div *ngIf="res.status === 'running'">
+                          <span>{{ 'admin.rate-limit.running' | translate }}</span>
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <!-- Icon / Text inside grid item -->
+                    <span class="item-content">
+                      <i nz-icon nzType="loading" nzTheme="outline" *ngIf="res.status === 'running'" class="spinner-icon"></i>
+                      <i nz-icon nzType="check" nzTheme="outline" *ngIf="res.status === 'success'"></i>
+                      <i nz-icon nzType="lock" nzTheme="outline" *ngIf="res.status === 'limited'"></i>
+                      <i nz-icon nzType="close" nzTheme="outline" *ngIf="res.status === 'error'"></i>
+                      <span *ngIf="res.status === 'pending'">{{ res.index }}</span>
+                    </span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noDataTpl>
+          <div class="no-data-placeholder">
+            <i nz-icon nzType="inbox" class="placeholder-icon"></i>
+            <p>{{ 'admin.rate-limit.noData' | translate }}</p>
+          </div>
+        </ng-template>
+      </nz-card>
+    </div>
+  </div>
+
+  <!-- Bottom: Table Log -->
+  <nz-card class="premium-card log-card" [nzTitle]="logTitleTpl" *ngIf="results.length > 0">
+    <ng-template #logTitleTpl>
+      <span class="card-header-title">
+        <i nz-icon nzType="unordered-list" nzTheme="outline"></i>
+        {{ 'admin.rate-limit.log' | translate }}
+      </span>
+    </ng-template>
+
+    <nz-table #logTable [nzData]="filteredResults" [nzPageSize]="10" nzSize="middle" class="custom-table">
+      <thead>
+        <tr>
+          <th width="80px">{{ 'admin.rate-limit.colIndex' | translate }}</th>
+          <th>{{ 'admin.rate-limit.colEndpoint' | translate }}</th>
+          <th width="150px">{{ 'admin.rate-limit.colStatus' | translate }}</th>
+          <th width="120px">{{ 'admin.rate-limit.colLatency' | translate }}</th>
+          <th>{{ 'admin.rate-limit.colMessage' | translate }}</th>
+          <th width="150px">{{ 'admin.rate-limit.colTime' | translate }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (data of logTable.data; track data.index) {
+          <tr>
+            <td>{{ data.index }}</td>
+            <td class="endpoint-cell"><code>{{ selectedEndpoint }}</code></td>
+            <td>
+              <span class="status-badge" [ngClass]="data.status">
+                {{ data.statusCode || '-' }}
+              </span>
+            </td>
+            <td>
+              <span *ngIf="data.latency !== undefined" [class.latency-warn]="data.latency > 80">
+                {{ data.latency }} ms
+              </span>
+              <span *ngIf="data.latency === undefined">-</span>
+            </td>
+            <td class="message-cell" [title]="data.message || ''">
+              {{ data.message || '-' }}
+            </td>
+            <td>{{ data.time || '-' }}</td>
+          </tr>
+        }
+      </tbody>
+    </nz-table>
+  </nz-card>
+</section>

@@ -14,6 +14,7 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { NzDrawerModule } from 'ng-zorro-antd/drawer';
 import { NzSpinModule } from 'ng-zorro-antd/spin';
 import { NzAvatarModule } from 'ng-zorro-antd/avatar';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { forkJoin, Observable, of, Subject } from 'rxjs';
 import { catchError, debounceTime, distinctUntilChanged, map, switchMap } from 'rxjs/operators';
 import { I18nService } from '../../i18n/i18n.service';
@@ -74,7 +75,8 @@ export interface FamilyFinanceItem {
     NzToolTipModule,
     NzDrawerModule,
     NzSpinModule,
-    NzAvatarModule
+    NzAvatarModule,
+    NzDatePickerModule
   ],
   templateUrl: './admin-finance.component.html',
   styleUrl: './admin-finance.component.css'
@@ -88,7 +90,7 @@ export class AdminFinanceComponent implements OnInit {
   readonly Math = Math;
   loading = false;
   searchText = '';
-  monthKey = ''; // YYYY-MM
+  monthKey: Date | null = null;
 
   // Dữ liệu trang hiện tại sau tổng hợp
   familiesFinance: FamilyFinanceItem[] = [];
@@ -119,10 +121,7 @@ export class AdminFinanceComponent implements OnInit {
 
   ngOnInit(): void {
     // Mặc định lấy tháng hiện tại
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    this.monthKey = `${year}-${month}`;
+    this.monthKey = new Date();
 
     this.searchSubject.pipe(
       debounceTime(400),
@@ -198,8 +197,8 @@ export class AdminFinanceComponent implements OnInit {
             const expensesUrl = `${API_CONFIG.GATEWAY_URL}/expense/expenses`;
 
             const budgetParams = new HttpParams().set('familyId', String(family.id));
-            const summaryParams = new HttpParams().set('familyId', String(family.id)).set('month', this.monthKey);
-            const expenseParams = new HttpParams().set('familyId', String(family.id)).set('month', this.monthKey);
+            const summaryParams = new HttpParams().set('familyId', String(family.id)).set('month', this.formatYearMonth(this.monthKey));
+            const expenseParams = new HttpParams().set('familyId', String(family.id)).set('month', this.formatYearMonth(this.monthKey));
 
             // Gọi song song các API của mỗi gia đình (bao gồm cả API lấy thông tin creator nếu thiếu)
             return forkJoin({
@@ -207,7 +206,7 @@ export class AdminFinanceComponent implements OnInit {
                 catchError(() => of({ success: false, message: '', data: [] as ExpenseBudgetApi[] }))
               ),
               summaryRes: this.http.get<ApiEnvelope<ExpenseSummaryApi>>(summaryUrl, { params: summaryParams }).pipe(
-                catchError(() => of({ success: false, message: '', data: { month: this.monthKey, totalAmount: 0, byCategories: [] } as ExpenseSummaryApi }))
+                catchError(() => of({ success: false, message: '', data: { month: this.formatYearMonth(this.monthKey), totalAmount: 0, byCategories: [] } as ExpenseSummaryApi }))
               ),
               expensesRes: this.http.get<ApiEnvelope<ExpenseApi[]>>(expensesUrl, { params: expenseParams }).pipe(
                 catchError(() => of({ success: false, message: '', data: [] as ExpenseApi[] }))
@@ -216,13 +215,13 @@ export class AdminFinanceComponent implements OnInit {
             }).pipe(
               map(({ budgetsRes, summaryRes, expensesRes, creatorInfo }) => {
                 const budgets = budgetsRes.data ?? [];
-                const summary = summaryRes.data ?? { month: this.monthKey, totalAmount: 0, byCategories: [] };
+                const summary = summaryRes.data ?? { month: this.formatYearMonth(this.monthKey), totalAmount: 0, byCategories: [] };
                 const expenses = expensesRes.data ?? [];
 
                 const creatorName = creatorInfo.displayName;
 
                 // Lấy ngân sách của tháng hiện tại
-                const currentBudgetRecord = budgets.find((b) => b.month === this.monthKey);
+                const currentBudgetRecord = budgets.find((b) => b.month === this.formatYearMonth(this.monthKey));
                 const monthlyBudget = currentBudgetRecord ? currentBudgetRecord.limitAmount : 0;
                 
                 const totalSpent = summary.totalAmount ?? 0;
@@ -284,11 +283,24 @@ export class AdminFinanceComponent implements OnInit {
       });
   }
 
-  onMonthChange(newMonth: string): void {
-    if (newMonth && newMonth !== this.monthKey) {
-      this.monthKey = newMonth;
-      this.pageIndex = 1;
-      this.loadFinanceData();
+  formatYearMonth(date: Date | null): string {
+    if (!date) {
+      return '';
+    }
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    return `${year}-${month}`;
+  }
+
+  onMonthChange(newMonth: Date | null): void {
+    if (newMonth) {
+      const newMonthStr = this.formatYearMonth(newMonth);
+      const currentMonthStr = this.formatYearMonth(this.monthKey);
+      if (newMonthStr !== currentMonthStr) {
+        this.monthKey = newMonth;
+        this.pageIndex = 1;
+        this.loadFinanceData();
+      }
     }
   }
 

@@ -2,5 +2,7 @@
   "systemOverview": "System & Accounts",
   "business": "Business & Finance",
   "security": "Security & Access",
-  "config": "System Settings"
+  "config": "System Settings",
+  "rateLimit": "Rate Limit Simulator",
+  "ipBlacklist": "IP Blacklist Manager"
 }

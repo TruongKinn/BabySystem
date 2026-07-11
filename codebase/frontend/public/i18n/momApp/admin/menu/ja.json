@@ -2,5 +2,7 @@
   "systemOverview": "システムとアカウント",
   "business": "ビジネスと財務",
   "security": "セキュリティと権限",
-  "config": "システム設定"
+  "config": "システム設定",
+  "rateLimit": "レート制限シミュレータ",
+  "ipBlacklist": "IPブラックリスト管理"
 }

@@ -1,39 +1,44 @@
-<footer class="site-footer">
+<nz-footer class="site-footer">
   <div class="footer-inner">
-    <!-- Brand Column -->
-    <div class="footer-brand">
-      <div class="footer-logo">🌸 {{ 'guest.common.brand' | translate }}</div>
-      <p class="footer-tagline">
-        {{ 'guest.common.footer.tagline' | translate }}
-      </p>
-      <div class="footer-socials">
-        <a href="#" class="social-link" [attr.aria-label]="'guest.common.brand' | translate">
-          <span class="material-symbols-outlined">language</span>
-        </a>
+    <div nz-row [nzGutter]="[32, 32]">
+      <!-- Brand Column -->
+      <div nz-col [nzXs]="24" [nzLg]="8" class="footer-brand">
+        <div class="footer-logo">🌸 {{ 'guest.common.brand' | translate }}</div>
+        <p class="footer-tagline">
+          {{ 'guest.common.footer.tagline' | translate }}
+        </p>
+        <div class="footer-socials">
+          <a href="#" class="social-link" [attr.aria-label]="'guest.common.brand' | translate">
+            <span class="material-symbols-outlined">language</span>
+          </a>
+        </div>
       </div>
-    </div>
-    <!-- Links Columns -->
-    <div class="footer-links-grid">
-      <div>
-        <h4 class="footer-col-title">{{ 'guest.common.footer.explore' | translate }}</h4>
-        <ul class="footer-list">
-          <li><a href="#" class="footer-link">{{ 'guest.common.footer.aboutUs' | translate }}</a></li>
-          <li><a href="#" class="footer-link">{{ 'guest.common.footer.support247' | translate }}</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="footer-col-title">{{ 'guest.common.footer.legal' | translate }}</h4>
-        <ul class="footer-list">
-          <li><a href="#" class="footer-link">{{ 'guest.common.footer.privacyPolicy' | translate }}</a></li>
-          <li><a href="#" class="footer-link">{{ 'guest.common.footer.termsOfService' | translate }}</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4 class="footer-col-title">{{ 'guest.common.footer.cooperate' | translate }}</h4>
-        <ul class="footer-list">
-          <li><a href="#" class="footer-link">{{ 'guest.common.footer.contactAd' | translate }}</a></li>
-        </ul>
+
+      <!-- Links Columns -->
+      <div nz-col [nzXs]="24" [nzLg]="16">
+        <div nz-row [nzGutter]="[16, 24]">
+          <div nz-col [nzXs]="24" [nzSm]="8">
+            <h4 class="footer-col-title">{{ 'guest.common.footer.explore' | translate }}</h4>
+            <ul class="footer-list">
+              <li><a href="#" class="footer-link">{{ 'guest.common.footer.aboutUs' | translate }}</a></li>
+              <li><a href="#" class="footer-link">{{ 'guest.common.footer.support247' | translate }}</a></li>
+            </ul>
+          </div>
+          <div nz-col [nzXs]="24" [nzSm]="8">
+            <h4 class="footer-col-title">{{ 'guest.common.footer.legal' | translate }}</h4>
+            <ul class="footer-list">
+              <li><a href="#" class="footer-link">{{ 'guest.common.footer.privacyPolicy' | translate }}</a></li>
+              <li><a href="#" class="footer-link">{{ 'guest.common.footer.termsOfService' | translate }}</a></li>
+            </ul>
+          </div>
+          <div nz-col [nzXs]="24" [nzSm]="8">
+            <h4 class="footer-col-title">{{ 'guest.common.footer.cooperate' | translate }}</h4>
+            <ul class="footer-list">
+              <li><a href="#" class="footer-link">{{ 'guest.common.footer.contactAd' | translate }}</a></li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</footer>
+</nz-footer>

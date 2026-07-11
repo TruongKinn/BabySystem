@@ -1,7 +1,6 @@
 <!-- Shared Navbar -->
 <app-guest-navbar></app-guest-navbar>
 
-
 <!-- Main Content -->
 <main class="main-content">
 
@@ -15,8 +14,12 @@
         {{ 'guest.home.hero.desc' | translate }}
       </p>
       <div class="hero-actions">
-        <button class="btn-primary" routerLink="/guest/handbook">{{ 'guest.home.hero.exploreHandbook' | translate }}</button>
-        <button class="btn-outline" routerLink="/guest/community">{{ 'guest.home.hero.joinCommunity' | translate }}</button>
+        <button nz-button nzType="primary" nzSize="large" nzShape="round" class="btn-hero-primary" routerLink="/guest/handbook">
+          {{ 'guest.home.hero.exploreHandbook' | translate }}
+        </button>
+        <button nz-button nzType="default" nzSize="large" nzShape="round" class="btn-hero-outline" routerLink="/guest/community">
+          {{ 'guest.home.hero.joinCommunity' | translate }}
+        </button>
       </div>
     </div>
     <div class="hero-image-wrapper">
@@ -38,7 +41,7 @@
     </div>
     <div class="bento-grid">
       <!-- Health Tracking Card - Wide -->
-      <a routerLink="/guest/health" class="bento-card bento-wide health-card">
+      <a routerLink="/guest/health" nz-card nzHoverable="true" class="bento-card bento-wide health-card-antd">
         <div class="bento-blob"></div>
         <div class="bento-content">
           <div class="card-icon icon-health">
@@ -54,7 +57,7 @@
       </a>
 
       <!-- Community Card -->
-      <a routerLink="/guest/community" class="bento-card community-card">
+      <a routerLink="/guest/community" nz-card nzHoverable="true" class="bento-card community-card-antd">
         <div class="bento-content">
           <div class="card-icon icon-community">
             <span class="material-symbols-outlined fill-icon">forum</span>
@@ -69,7 +72,7 @@
       </a>
 
       <!-- Knowledge Base Card -->
-      <a routerLink="/guest/handbook" class="bento-card knowledge-card">
+      <a routerLink="/guest/handbook" nz-card nzHoverable="true" class="bento-card knowledge-card-antd">
         <div class="bento-content">
           <div class="card-icon icon-knowledge">
             <span class="material-symbols-outlined fill-icon">menu_book</span>
@@ -84,7 +87,7 @@
       </a>
 
       <!-- Shop Card - Wide -->
-      <a routerLink="/guest/shop" class="bento-card bento-wide shop-card">
+      <a routerLink="/guest/shop" nz-card nzHoverable="true" class="bento-card bento-wide shop-card-antd">
         <div class="shop-bg-img">
           <img src="images/home/shop-background.jpg" [alt]="'guest.home.categories.shop.title' | translate" loading="lazy" />
         </div>
@@ -116,11 +119,18 @@
       </a>
     </div>
     <div class="articles-grid">
-      <article class="article-card" *ngFor="let article of articles">
-        <div class="article-image-wrap">
-          <img [src]="article.image" [alt]="article.alt | translate" class="article-image" loading="lazy" />
-          <div class="article-badge" [ngClass]="article.categoryClass">{{ article.category | translate }}</div>
-        </div>
+      <nz-card
+        *ngFor="let article of articles"
+        [nzCover]="coverTemplate"
+        nzHoverable="true"
+        class="article-card-antd"
+      >
+        <ng-template #coverTemplate>
+          <div class="article-image-wrap">
+            <img [src]="article.image" [alt]="article.alt | translate" class="article-image" loading="lazy" />
+            <div class="article-badge" [ngClass]="article.categoryClass">{{ article.category | translate }}</div>
+          </div>
+        </ng-template>
         <div class="article-body">
           <h3 class="article-title">{{ article.title | translate }}</h3>
           <p class="article-desc">{{ article.description | translate }}</p>
@@ -130,7 +140,7 @@
             <span>{{ article.readTime | translate }}</span>
           </div>
         </div>
-      </article>
+      </nz-card>
     </div>
     <a routerLink="/guest/handbook" class="view-all-mobile">{{ 'guest.home.articles.viewAll' | translate }}</a>
   </section>
@@ -142,24 +152,33 @@
       <p class="section-subtitle">{{ 'guest.home.products.subtitle' | translate }}</p>
     </div>
     <div class="products-grid">
-      <div class="product-card" *ngFor="let product of products">
-        <div class="product-image-wrap">
-          <img [src]="product.image" [alt]="product.alt | translate" class="product-image" loading="lazy" />
-        </div>
+      <nz-card
+        *ngFor="let product of products"
+        [nzCover]="productCover"
+        nzHoverable="true"
+        class="product-card-antd"
+      >
+        <ng-template #productCover>
+          <div class="product-image-wrap">
+            <img [src]="product.image" [alt]="product.alt | translate" class="product-image" loading="lazy" />
+          </div>
+        </ng-template>
         <div class="product-info">
           <div class="product-category">{{ product.category | translate }}</div>
           <h4 class="product-name">{{ product.name | translate }}</h4>
           <div class="product-footer">
             <span class="product-price">{{ product.price | translate }}</span>
-            <button class="btn-add-cart" [attr.aria-label]="('guest.shop.product.addToCart' | translate) + ' ' + (product.name | translate)">
+            <button nz-button nzType="primary" nzShape="circle" class="btn-add-cart-antd" [attr.aria-label]="('guest.shop.product.addToCart' | translate) + ' ' + (product.name | translate)">
               <span class="material-symbols-outlined">add_shopping_cart</span>
             </button>
           </div>
         </div>
-      </div>
+      </nz-card>
     </div>
     <div class="products-footer">
-      <button class="btn-view-all" routerLink="/guest/shop">{{ 'guest.home.products.viewAll' | translate }}</button>
+      <button nz-button nzType="default" nzSize="large" nzShape="round" class="btn-view-all-antd" routerLink="/guest/shop">
+        {{ 'guest.home.products.viewAll' | translate }}
+      </button>
     </div>
   </section>
 
