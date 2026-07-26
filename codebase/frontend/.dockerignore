@@ -1,0 +1,13 @@
+node_modules/
+dist/
+.angular/
+Dockerfile
+.dockerignore
+*.log
+.env*
+.vscode/
+.idea/
+coverage/
+pnpm-lock.yaml
+yarn.lock
+package-lock.json

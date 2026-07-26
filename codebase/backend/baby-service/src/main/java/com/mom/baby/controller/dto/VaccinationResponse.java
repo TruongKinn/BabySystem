@@ -6,10 +6,15 @@ import java.time.OffsetDateTime;
 public record VaccinationResponse(
         Long id,
         Long babyId,
+        Long vaccineId,
         String vaccineName,
+        int doseNumber,
         LocalDate dueDate,
         boolean completed,
         OffsetDateTime completedAt,
-        String notes
+        String facility,
+        String postReaction,
+        String notes,
+        String status
 ) {
 }

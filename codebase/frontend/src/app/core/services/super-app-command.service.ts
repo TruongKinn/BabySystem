@@ -96,11 +96,16 @@ export interface BabyGrowthRecord {
 export interface BabyVaccination {
   id: number;
   babyId: number;
+  vaccineId: number | null;
   vaccineName: string;
+  doseNumber: number;
   dueDate: string;
   completed: boolean;
   completedAt: string | null;
+  facility: string | null;
+  postReaction: string | null;
   notes: string | null;
+  status: string;
 }
 
 export interface BabyGrowthInsight {
@@ -1305,6 +1310,44 @@ export class SuperAppCommandService {
       completed: input.completed ?? false,
       notes: input.notes ?? ''
     }).pipe(map(() => undefined));
+  }
+
+  completeVaccination(
+    babyId: number,
+    vaccinationId: number,
+    input: {
+      actualDate: string;
+      facility?: string;
+      postReaction?: string;
+      notes?: string;
+    }
+  ): Observable<void> {
+    return this.post(`/baby/babies/${babyId}/vaccinations/${vaccinationId}/complete`, {
+      actualDate: input.actualDate,
+      facility: input.facility,
+      postReaction: input.postReaction,
+      notes: input.notes
+    }).pipe(map(() => undefined));
+  }
+
+  postponeVaccination(
+    babyId: number,
+    vaccinationId: number,
+    input: {
+      newDueDate: string;
+      reason?: string;
+    }
+  ): Observable<void> {
+    return this.post(`/baby/babies/${babyId}/vaccinations/${vaccinationId}/postpone`, {
+      newDueDate: input.newDueDate,
+      reason: input.reason
+    }).pipe(map(() => undefined));
+  }
+
+  scanVaccinations(babyId: number, fileId: number): Observable<BabyVaccination[]> {
+    return this.post<BabyVaccination[]>(`/baby/babies/${babyId}/vaccinations/scan`, {
+      fileId: fileId
+    });
   }
 
   getGrowthRecords(babyId: number): Observable<BabyGrowthRecord[]> {

@@ -25,6 +25,11 @@ import com.mom.baby.event.BabyEventPublisher;
 import com.mom.baby.event.BabyLogCreatedPayload;
 import com.mom.baby.forecast.event.BabyForecastEventPublisher;
 import com.mom.baby.premium.PremiumFeatures;
+import com.mom.baby.controller.dto.CompleteVaccinationRequest;
+import com.mom.baby.controller.dto.PostponeVaccinationRequest;
+import com.mom.baby.domain.VaccineScheduleConfigEntity;
+import com.mom.baby.repository.VaccineRepository;
+import com.mom.baby.repository.VaccineScheduleConfigRepository;
 import com.mom.baby.repository.BabyLogRepository;
 import com.mom.baby.repository.BabyRepository;
 import com.mom.baby.repository.GrowthRecordRepository;
@@ -65,6 +70,8 @@ public class BabyService {
     private final BabyEventPublisher babyEventPublisher;
     private final BabyForecastEventPublisher babyForecastEventPublisher;
     private final PremiumAccessService premiumAccessService;
+    private final VaccineRepository vaccineRepository;
+    private final VaccineScheduleConfigRepository vaccineScheduleConfigRepository;
 
     @Transactional
     public BabyResponse createBaby(CreateBabyRequest request) {
@@ -76,7 +83,11 @@ public class BabyService {
         baby.setBirthDate(request.birthDate());
         baby.setGender(request.gender());
         baby.setNotes(trimToNull(request.notes()));
-        return toBabyResponse(babyRepository.save(baby));
+        
+        BabyEntity saved = babyRepository.save(baby);
+        generateDefaultVaccinationSchedule(saved);
+        
+        return toBabyResponse(saved);
     }
 
     public List<BabyResponse> getBabies(Long familyId) {
@@ -156,10 +167,16 @@ public class BabyService {
         VaccinationEntity vaccination = new VaccinationEntity();
         vaccination.setBabyId(babyId);
         vaccination.setVaccineName(request.vaccineName().trim());
+
+        vaccineRepository.findByName(request.vaccineName().trim())
+                .ifPresent(vaccination::setVaccine);
+
         vaccination.setDueDate(request.dueDate());
         vaccination.setCompleted(Boolean.TRUE.equals(request.completed()));
         vaccination.setCompletedAt(vaccination.isCompleted() ? OffsetDateTime.now(ZoneOffset.UTC) : null);
         vaccination.setNotes(trimToNull(request.notes()));
+        vaccination.setDoseNumber(1);
+        vaccination.setStatus(vaccination.isCompleted() ? "COMPLETED" : "PENDING");
         return toVaccinationResponse(vaccinationRepository.save(vaccination));
     }
 
@@ -168,6 +185,88 @@ public class BabyService {
         return vaccinationRepository.findByBabyIdOrderByDueDateAsc(babyId).stream()
                 .map(this::toVaccinationResponse)
                 .toList();
+    }
+
+    private void generateDefaultVaccinationSchedule(BabyEntity baby) {
+        List<VaccineScheduleConfigEntity> configs = vaccineScheduleConfigRepository.findAll();
+        for (VaccineScheduleConfigEntity config : configs) {
+            if (config.getVaccine().isActive()) {
+                VaccinationEntity vaccination = new VaccinationEntity();
+                vaccination.setBabyId(baby.getId());
+                vaccination.setVaccine(config.getVaccine());
+                vaccination.setVaccineName(config.getVaccine().getName());
+                vaccination.setDoseNumber(config.getDoseNumber());
+                vaccination.setDueDate(baby.getBirthDate().plusMonths(config.getRecommendedAgeMonths()));
+                vaccination.setCompleted(false);
+                vaccination.setStatus("PENDING");
+                vaccinationRepository.save(vaccination);
+            }
+        }
+    }
+
+    @Transactional
+    public VaccinationResponse completeVaccination(Long babyId, Long vaccinationId, CompleteVaccinationRequest request) {
+        BabyEntity baby = getBabyEntity(babyId);
+        VaccinationEntity vaccination = vaccinationRepository.findById(vaccinationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vaccination record not found"));
+
+        if (!vaccination.getBabyId().equals(babyId)) {
+            throw new IllegalArgumentException("Vaccination record does not belong to this baby");
+        }
+
+        vaccination.setCompleted(true);
+        vaccination.setCompletedAt(request.actualDate().atStartOfDay(ZoneOffset.UTC).toOffsetDateTime());
+        vaccination.setFacility(trimToNull(request.facility()));
+        vaccination.setPostReaction(trimToNull(request.postReaction()));
+        vaccination.setNotes(trimToNull(request.notes()));
+        vaccination.setStatus("COMPLETED");
+
+        VaccinationEntity saved = vaccinationRepository.save(vaccination);
+
+        // Tự động tính toán và dời lịch mũi tiếp theo
+        if (vaccination.getVaccine() != null) {
+            int nextDose = vaccination.getDoseNumber() + 1;
+            vaccineScheduleConfigRepository.findByVaccineIdAndDoseNumber(vaccination.getVaccine().getId(), nextDose)
+                    .ifPresent(nextConfig -> {
+                        vaccinationRepository.findByBabyIdAndVaccineIdAndDoseNumber(babyId, vaccination.getVaccine().getId(), nextDose)
+                                .ifPresent(nextVaccination -> {
+                                    if (!nextVaccination.isCompleted()) {
+                                        LocalDate newDueDate = request.actualDate().plusDays(nextConfig.getMinDaysSincePreviousDose());
+                                        nextVaccination.setDueDate(newDueDate);
+                                        vaccinationRepository.save(nextVaccination);
+                                    }
+                                });
+                    });
+        }
+
+        return toVaccinationResponse(saved);
+    }
+
+    @Transactional
+    public VaccinationResponse postponeVaccination(Long babyId, Long vaccinationId, PostponeVaccinationRequest request) {
+        getBabyEntity(babyId);
+        VaccinationEntity vaccination = vaccinationRepository.findById(vaccinationId)
+                .orElseThrow(() -> new ResourceNotFoundException("Vaccination record not found"));
+
+        if (!vaccination.getBabyId().equals(babyId)) {
+            throw new IllegalArgumentException("Vaccination record does not belong to this baby");
+        }
+
+        if (vaccination.isCompleted()) {
+            throw new IllegalStateException("Cannot postpone a completed vaccination");
+        }
+
+        vaccination.setDueDate(request.newDueDate());
+        vaccination.setStatus("POSTPONED");
+        
+        String postponeNote = "Hoãn: " + (request.reason() != null ? request.reason().trim() : "Không có lý do");
+        if (vaccination.getNotes() != null && !vaccination.getNotes().trim().isEmpty()) {
+            vaccination.setNotes(vaccination.getNotes().trim() + "; " + postponeNote);
+        } else {
+            vaccination.setNotes(postponeNote);
+        }
+
+        return toVaccinationResponse(vaccinationRepository.save(vaccination));
     }
 
     @Transactional
@@ -435,11 +534,16 @@ public class BabyService {
         return new VaccinationResponse(
                 vaccination.getId(),
                 vaccination.getBabyId(),
-                vaccination.getVaccineName(),
+                vaccination.getVaccine() != null ? vaccination.getVaccine().getId() : null,
+                vaccination.getVaccine() != null ? vaccination.getVaccine().getName() : vaccination.getVaccineName(),
+                vaccination.getDoseNumber(),
                 vaccination.getDueDate(),
                 vaccination.isCompleted(),
                 vaccination.getCompletedAt(),
-                vaccination.getNotes()
+                vaccination.getFacility(),
+                vaccination.getPostReaction(),
+                vaccination.getNotes(),
+                vaccination.getStatus()
         );
     }
 

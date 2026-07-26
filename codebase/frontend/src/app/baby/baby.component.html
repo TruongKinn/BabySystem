@@ -28,6 +28,11 @@
         <span nz-icon nzType="medicine-box"></span>
         {{ 'momApp.baby.actions.addVaccination' | translate }}
       </button>
+      <button nz-button nzType="default" (click)="vaccineFilePrivate.click()" class="btn-user-outline" [nzLoading]="isScanningVaccination">
+        <span nz-icon nzType="scan"></span>
+        {{ 'momApp.baby.actions.scanVaccination' | translate }}
+      </button>
+      <input type="file" style="display:none" #vaccineFilePrivate accept="image/*" (change)="onVaccineFileSelected($event)">
       <button nz-button nzType="primary" class="btn-user-primary" (click)="openCreateLogModal()">
         <span nz-icon nzType="plus"></span>
         {{ 'momApp.baby.actions.addLog' | translate }}
@@ -445,15 +450,37 @@
 
     <div class="vaccine-list" *ngIf="!isLoadingVaccinations && vaccinations.length > 0">
       <div class="vaccine-item" *ngFor="let vaccine of vaccinations | slice:0:8">
-        <div>
-          <div class="vaccine-name">{{ vaccine.vaccineName }}</div>
-          <div class="vaccine-date">{{ 'momApp.baby.vaccination.dueLabel' | translate }}: {{ formatDate(vaccine.dueDate) }}</div>
+        <div style="flex: 1;">
+          <div class="vaccine-name">
+            {{ vaccine.vaccineName }} 
+            <span *ngIf="vaccine.doseNumber > 0" class="vaccine-dose-badge" style="font-size: 0.85em; opacity: 0.75; font-weight: normal; margin-left: 4px;">
+              (Mũi {{ vaccine.doseNumber }})
+            </span>
+          </div>
+          <div class="vaccine-date" style="font-size: 0.9em; opacity: 0.7; margin-top: 2px;">
+            {{ 'momApp.baby.vaccination.dueLabel' | translate }}: {{ formatDate(vaccine.dueDate) }}
+          </div>
+          <div class="vaccine-details" style="font-size: 0.85em; margin-top: 4px; display: flex; flex-wrap: wrap;" *ngIf="vaccine.completed && (vaccine.facility || vaccine.postReaction)">
+            <span *ngIf="vaccine.facility" style="margin-right: 8px; color: rgba(255,255,255,0.6);"><i nz-icon nzType="environment"></i> {{ vaccine.facility }}</span>
+            <span *ngIf="vaccine.postReaction" style="color: #ff4d4f;"><i nz-icon nzType="warning"></i> {{ vaccine.postReaction }}</span>
+          </div>
         </div>
-        <nz-tag
-          [nzColor]="vaccinationStatus(vaccine) === 'completed' ? 'green' : (vaccinationStatus(vaccine) === 'overdue' ? 'red' : 'blue')"
-        >
-          {{ vaccinationStatusLabel(vaccine) }}
-        </nz-tag>
+        <div class="vaccine-status-actions" style="display: flex; flex-direction: column; align-items: flex-end;">
+          <nz-tag
+            [nzColor]="vaccinationStatus(vaccine) === 'completed' ? 'green' : (vaccinationStatus(vaccine) === 'overdue' ? 'red' : 'blue')"
+            style="margin-bottom: 4px;"
+          >
+            {{ vaccinationStatusLabel(vaccine) }}
+          </nz-tag>
+          <div class="vaccine-action-buttons" *ngIf="!vaccine.completed" style="display: flex; gap: 4px;">
+            <button nz-button nzType="primary" nzSize="small" (click)="openCompleteModal(vaccine)">
+              {{ 'momApp.baby.vaccination.actions.complete' | translate }}
+            </button>
+            <button nz-button nzType="default" nzSize="small" (click)="openPostponeModal(vaccine)">
+              {{ 'momApp.baby.vaccination.actions.postpone' | translate }}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </nz-card>
@@ -746,6 +773,72 @@
         <nz-form-label>{{ 'momApp.baby.modal.noteLabel' | translate }}</nz-form-label>
         <nz-form-control>
           <textarea nz-input rows="3" formControlName="notes" [placeholder]="'momApp.baby.modal.notePlaceholder' | translate"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<!-- Complete Vaccination Modal -->
+<nz-modal
+  [(nzVisible)]="isCompleteModalVisible"
+  [nzTitle]="'momApp.baby.modal.completeTitle' | translate"
+  (nzOnCancel)="closeCompleteModal()"
+  (nzOnOk)="submitCompleteVaccination()"
+  [nzOkText]="'momApp.common.save' | translate"
+  [nzCancelText]="'momApp.common.cancel' | translate"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="completeVaccinationForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.baby.modal.actualDateLabel' | translate }}</nz-form-label>
+        <nz-form-control nzErrorTip="Vui lòng chọn ngày tiêm thực tế">
+          <nz-date-picker formControlName="actualDate" nzFormat="yyyy-MM-dd" style="width: 100%;"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.baby.modal.facilityLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="facility" [placeholder]="'momApp.baby.modal.facilityPlaceholder' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.baby.modal.postReactionLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="postReaction" [placeholder]="'momApp.baby.modal.postReactionPlaceholder' | translate" />
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.baby.modal.noteLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input rows="3" formControlName="notes" [placeholder]="'momApp.baby.modal.notePlaceholder' | translate"></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<!-- Postpone Vaccination Modal -->
+<nz-modal
+  [(nzVisible)]="isPostponeModalVisible"
+  [nzTitle]="'momApp.baby.modal.postponeTitle' | translate"
+  (nzOnCancel)="closePostponeModal()"
+  (nzOnOk)="submitPostponeVaccination()"
+  [nzOkText]="'momApp.common.save' | translate"
+  [nzCancelText]="'momApp.common.cancel' | translate"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="postponeVaccinationForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.baby.modal.newDueDateLabel' | translate }}</nz-form-label>
+        <nz-form-control nzErrorTip="Vui lòng chọn ngày hẹn mới">
+          <nz-date-picker formControlName="newDueDate" nzFormat="yyyy-MM-dd" style="width: 100%;"></nz-date-picker>
+        </nz-form-control>
+      </nz-form-item>
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.baby.modal.postponeReasonLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input rows="3" formControlName="reason" [placeholder]="'momApp.baby.modal.postponeReasonPlaceholder' | translate"></textarea>
         </nz-form-control>
       </nz-form-item>
     </form>

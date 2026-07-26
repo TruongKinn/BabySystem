@@ -14,6 +14,8 @@ import com.mom.ai.controller.dto.AiChatResponse;
 import com.mom.ai.controller.dto.AiStatusResponse;
 import com.mom.ai.controller.dto.OcrReceiptRequest;
 import com.mom.ai.controller.dto.OcrReceiptResponse;
+import com.mom.ai.controller.dto.OcrVaccinationRequest;
+import com.mom.ai.controller.dto.OcrVaccinationResponse;
 import com.mom.ai.controller.dto.SuggestMealsRequest;
 import com.mom.ai.controller.dto.SuggestMealsResponse;
 import com.mom.ai.controller.dto.GenerateTravelPlanRequest;
@@ -381,6 +383,100 @@ public class FamilyCopilotService {
         } catch (Exception e) {
             log.error("Failed to parse generate travel plan JSON response: {}", jsonResult, e);
             throw new RuntimeException("Lỗi định dạng kết quả tạo chuyến đi từ AI: " + e.getMessage());
+        }
+    }
+
+    public OcrVaccinationResponse ocrVaccinations(OcrVaccinationRequest request, UserAccessContext accessContext) {
+        enforceFamilyAccess(request.familyId(), accessContext);
+
+        Long fileId = request.fileId();
+        String fileServiceUrl = "http://localhost:8092"; 
+        
+        log.info("Fetching file metadata for fileId: {} from file-service for vaccination OCR", fileId);
+        
+        WebClient webClient = WebClient.builder()
+                .baseUrl(fileServiceUrl)
+                .codecs(configurer -> configurer.defaultCodecs().maxInMemorySize(10 * 1024 * 1024))
+                .build();
+        
+        JsonNode fileMetadata;
+        try {
+            org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec<?> requestSpec = webClient.get()
+                    .uri("/api/files/" + fileId);
+            
+            if (accessContext.userId() != null) {
+                requestSpec = requestSpec.header("X-User-Id", String.valueOf(accessContext.userId()));
+            }
+            if (StringUtils.hasText(accessContext.familyIds())) {
+                requestSpec = requestSpec.header("X-Family-Ids", accessContext.familyIds());
+            }
+            requestSpec = requestSpec.header("X-User-Admin", String.valueOf(accessContext.admin()));
+
+            fileMetadata = requestSpec.retrieve()
+                    .bodyToMono(JsonNode.class)
+                    .block();
+        } catch (Exception e) {
+            log.error("Failed to fetch file metadata for fileId: {}", fileId, e);
+            throw new RuntimeException("Không thể lấy thông tin tệp tin từ file-service: " + e.getMessage());
+        }
+
+        if (fileMetadata == null || !fileMetadata.path("success").asBoolean()) {
+            throw new RuntimeException("Tệp tin không tồn tại hoặc lỗi file-service");
+        }
+
+        JsonNode dataNode = fileMetadata.path("data");
+        String contentType = dataNode.path("contentType").asText();
+
+        log.info("Fetching file content for fileId: {} for vaccination OCR", fileId);
+        byte[] fileBytes;
+        try {
+            org.springframework.web.reactive.function.client.WebClient.RequestHeadersSpec<?> requestSpec = webClient.get()
+                    .uri("/api/files/" + fileId + "/view");
+            
+            if (accessContext.userId() != null) {
+                requestSpec = requestSpec.header("X-User-Id", String.valueOf(accessContext.userId()));
+            }
+            if (StringUtils.hasText(accessContext.familyIds())) {
+                requestSpec = requestSpec.header("X-Family-Ids", accessContext.familyIds());
+            }
+            requestSpec = requestSpec.header("X-User-Admin", String.valueOf(accessContext.admin()));
+
+            fileBytes = requestSpec.retrieve()
+                    .bodyToMono(byte[].class)
+                    .block();
+        } catch (Exception e) {
+            log.error("Failed to fetch file content for fileId: {}", fileId, e);
+            throw new RuntimeException("Không thể tải nội dung tệp tin từ file-service: " + e.getMessage());
+        }
+
+        if (fileBytes == null || fileBytes.length == 0) {
+            throw new RuntimeException("Nội dung tệp tin trống hoặc không hợp lệ");
+        }
+
+        String base64Data = java.util.Base64.getEncoder().encodeToString(fileBytes);
+
+        String prompt = """
+                Bạn là trợ lý AI chuyên nghiệp phân tích Sổ tiêm chủng của hệ thống quản lý gia đình BabySystem.
+                Hãy đọc và phân tích kỹ ảnh chụp Sổ tiêm chủng y tế được đính kèm này.
+                
+                Nhiệm vụ của bạn:
+                1. Đọc và trích xuất danh sách tất cả các mũi vắc-xin đã tiêm hoặc được hẹn tiêm hiển thị trên sổ.
+                2. Với mỗi mũi tiêm, hãy trích xuất:
+                   - vaccineName: Tên vắc-xin (ví dụ: "Lao BCG", "6-trong-1 Hexaxim", "Phế cầu Synflorix").
+                   - doseNumber: Mũi tiêm số mấy (Mũi 1, Mũi 2, Mũi 3...). Trả về kiểu số nguyên (ví dụ: 1, 2, 3). Nếu không rõ thì mặc định trả về 1.
+                   - dueDate: Ngày tiêm hoặc ngày hẹn tiêm hiển thị trong ảnh (định dạng YYYY-MM-DD). Nếu không thấy rõ ngày, hãy nội suy hoặc bỏ qua.
+                   - notes: Các ghi chú đi kèm (ví dụ: Phản ứng sốt nhẹ, cơ sở tiêm...).
+                3. Trả về đúng định dạng JSON theo schema đã chỉ định.
+                """;
+
+        String jsonResult = geminiClient.ocrVaccinations(base64Data, contentType, prompt);
+        log.info("AI suggested vaccination OCR response: {}", jsonResult);
+
+        try {
+            return objectMapper.readValue(jsonResult, OcrVaccinationResponse.class);
+        } catch (Exception e) {
+            log.error("Failed to parse OCR vaccinations JSON response: {}", jsonResult, e);
+            throw new RuntimeException("Lỗi định dạng kết quả nhận diện sổ tiêm chủng từ AI: " + e.getMessage());
         }
     }
 }

@@ -41,5 +41,7 @@ create_topic "baby.log.created"
 create_topic "task.created"
 create_topic "task.completed"
 create_topic "notification.requested"
+create_topic "vaccination-reminder-topic"
+create_topic "vaccination-reminder-topic.dlq"
 
 echo "Kafka topic bootstrap completed."

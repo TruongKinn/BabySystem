@@ -190,4 +190,37 @@ Khi hệ thống đang hoạt động, bạn có thể giám sát trạng thái 
   2. Đảm bảo cổng `8080` không bị chiếm dụng bởi các ứng dụng khác trên máy tính của bạn trước khi chạy Docker Compose.
 
 ---
+
+## 9. Vận Hành Tính Năng Tiêm Chủng & Quét Sổ Tiêm AI (OCR)
+
+Phân hệ quản lý tiêm chủng cung cấp các công cụ theo dõi lộ trình tiêm cho bé, nhắc lịch tự động qua Kafka, quản lý danh mục vắc-xin cho Admin và quét ảnh sổ tiêm giấy bằng AI Gemini OCR.
+
+### A. Thiết lập & Luồng Nghiệp vụ
+1. **Quản lý Danh mục (Admin Portal):**
+   * Admin hệ thống truy cập `/admin/vaccines` để quản lý danh mục vắc-xin (`POST /api/vaccines`) và cấu hình các lộ trình tiêm chuẩn (`POST /api/vaccines/{vaccineId}/schedule-configs`).
+   * Các cấu hình lộ trình bao gồm: số mũi tiêm bắt buộc, tuổi tiêm khuyến nghị (tháng tuổi) và khoảng cách tối thiểu giữa các mũi tiêm.
+2. **Theo dõi lịch tiêm (User Portal):**
+   * Khi thêm mới hồ sơ bé, hệ thống tự động sinh lộ trình tiêm chủng mẫu dựa trên ngày sinh của bé.
+   * Người dùng xem lộ trình dưới dạng Bento Layout tại màn hình Baby, thực hiện **Đã tiêm** hoặc **Hoãn tiêm** thủ công.
+3. **Quét sổ tiêm bằng AI (OCR):**
+   * Người dùng tải ảnh chụp sổ tiêm chủng giấy lên. Hệ thống tải tệp tin lên `file-service` nhận về `fileId`.
+   * Gửi request `POST /api/babies/{id}/vaccinations/scan` kèm `fileId` sang `baby-service`.
+   * `baby-service` forward yêu cầu sang `ai-service` (`POST /api/copilot/ocr-vaccinations`) để phân tích bằng mô hình Gemini AI, trích xuất danh sách các mũi tiêm (tên vắc-xin, mũi số mấy, ngày tiêm).
+   * Hệ thống tự động so khớp tên vắc-xin, lọc trùng lặp và tự động import các mũi tiêm thành công vào cơ sở dữ liệu của bé.
+4. **Nhắc lịch tự động (Daily Scheduler):**
+   * Hằng ngày vào lúc **07:00 sáng**, một tác vụ lập lịch (`VaccinationScheduler`) tự động quét các mũi tiêm chưa hoàn thành đến hạn trong vòng 1 ngày tới.
+   * Tạo payload nhắc nhở và gửi qua Kafka topic `vaccination-reminder-topic`.
+   * `notification-service` lắng nghe topic này, tự động phân phối thông báo nhắc nhở song song qua hai kênh: **Web Push** (đẩy lên trình duyệt qua WebSocket/SSE) và **Email** cho gia đình.
+
+### B. Chạy Kiểm Thử Tiêm Chủng
+Để chạy toàn bộ các Unit Test và Integration Test của tính năng tiêm chủng tại backend `baby-service`, thực hiện lệnh sau trong thư mục `codebase/backend/baby-service`:
+```powershell
+# Chạy trên Windows PowerShell:
+.\mvnw.cmd test -Dtest="VaccinationEventPublisherTest,VaccinationOcrServiceTest,BabyVaccinationIntegrationTest"
+
+# Chạy trên Linux / macOS Bash:
+./mvnw test -Dtest="VaccinationEventPublisherTest,VaccinationOcrServiceTest,BabyVaccinationIntegrationTest"
+```
+
+---
 *Tài liệu này được biên soạn nhằm giúp các nhà phát triển nhanh chóng làm quen và kiểm soát toàn diện quy trình vận hành của dự án **BabySystem**.*

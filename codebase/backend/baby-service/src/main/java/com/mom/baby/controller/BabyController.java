@@ -13,7 +13,11 @@ import com.mom.baby.controller.dto.UpdateBabyRequest;
 import com.mom.baby.controller.dto.VaccinationResponse;
 import com.mom.baby.controller.dto.BatchImportBabiesRequest;
 import com.mom.baby.controller.dto.BatchImportResponse;
+import com.mom.baby.controller.dto.CompleteVaccinationRequest;
+import com.mom.baby.controller.dto.PostponeVaccinationRequest;
+import com.mom.baby.controller.dto.OcrScanRequest;
 import com.mom.baby.service.BabyService;
+import com.mom.baby.service.VaccinationOcrService;
 import com.mom.common.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,6 +41,7 @@ import java.util.List;
 public class BabyController {
 
     private final BabyService babyService;
+    private final VaccinationOcrService vaccinationOcrService;
 
     @PostMapping("/babies")
     public ApiResponse<BabyResponse> createBaby(@Valid @RequestBody CreateBabyRequest request) {
@@ -94,6 +99,32 @@ public class BabyController {
     @GetMapping("/babies/{id}/vaccinations")
     public ApiResponse<List<VaccinationResponse>> getVaccinations(@PathVariable("id") Long babyId) {
         return ApiResponse.ok("Success", babyService.getVaccinations(babyId));
+    }
+
+    @PostMapping("/babies/{id}/vaccinations/{vaccinationId}/complete")
+    public ApiResponse<VaccinationResponse> completeVaccination(
+            @PathVariable("id") Long babyId,
+            @PathVariable("vaccinationId") Long vaccinationId,
+            @Valid @RequestBody CompleteVaccinationRequest request
+    ) {
+        return ApiResponse.ok("Vaccination completed", babyService.completeVaccination(babyId, vaccinationId, request));
+    }
+
+    @PostMapping("/babies/{id}/vaccinations/{vaccinationId}/postpone")
+    public ApiResponse<VaccinationResponse> postponeVaccination(
+            @PathVariable("id") Long babyId,
+            @PathVariable("vaccinationId") Long vaccinationId,
+            @Valid @RequestBody PostponeVaccinationRequest request
+    ) {
+        return ApiResponse.ok("Vaccination postponed", babyService.postponeVaccination(babyId, vaccinationId, request));
+    }
+
+    @PostMapping("/babies/{id}/vaccinations/scan")
+    public ApiResponse<List<VaccinationResponse>> scanVaccinations(
+            @PathVariable("id") Long babyId,
+            @Valid @RequestBody OcrScanRequest request
+    ) {
+        return ApiResponse.ok("OCR vaccination extraction complete", vaccinationOcrService.scanAndImport(babyId, request));
     }
 
     @PostMapping("/babies/{id}/growth-records")

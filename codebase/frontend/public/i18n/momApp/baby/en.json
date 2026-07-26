@@ -57,5 +57,33 @@
       "resolveSuccess": "Anomaly resolved successfully.",
       "resolveFailed": "Failed to resolve anomaly."
     }
+  },
+  "vaccination": {
+    "actions": {
+      "complete": "Complete",
+      "postpone": "Postpone"
+    }
+  },
+  "modal": {
+    "completeTitle": "Confirm Vaccination Dose",
+    "actualDateLabel": "Actual Date",
+    "facilityLabel": "Medical Facility",
+    "facilityPlaceholder": "Enter hospital or clinic name",
+    "postReactionLabel": "Post-vaccination Reaction",
+    "postReactionPlaceholder": "E.g., Mild fever, swelling at injection site...",
+    "postponeTitle": "Postpone Vaccination",
+    "newDueDateLabel": "New Due Date",
+    "postponeReasonLabel": "Reason for Postponement",
+    "postponeReasonPlaceholder": "E.g., Baby has a fever, postponed per doctor advice..."
+  },
+  "messages": {
+    "vaccinationUpdateSuccess": "Vaccination record updated successfully",
+    "vaccinationUpdateFailed": "Failed to update vaccination record",
+    "vaccinationPostponeSuccess": "Vaccination postponed successfully",
+    "vaccinationPostponeFailed": "Failed to postpone vaccination"
+  },
+  "actions": {
+    "addVaccination": "Add Vaccination",
+    "scanVaccination": "Scan Vaccine Card"
   }
 }

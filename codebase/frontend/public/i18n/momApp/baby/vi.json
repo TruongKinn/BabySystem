@@ -57,5 +57,33 @@
       "resolveSuccess": "Đã giải quyết bất thường thành công.",
       "resolveFailed": "Không thể giải quyết bất thường."
     }
+  },
+  "vaccination": {
+    "actions": {
+      "complete": "Đã Tiêm",
+      "postpone": "Hoãn"
+    }
+  },
+  "modal": {
+    "completeTitle": "Xác nhận đã tiêm",
+    "actualDateLabel": "Ngày tiêm thực tế",
+    "facilityLabel": "Cơ sở tiêm",
+    "facilityPlaceholder": "Nhập tên bệnh viện/trung tâm y tế",
+    "postReactionLabel": "Phản ứng sau tiêm",
+    "postReactionPlaceholder": "Ví dụ: Sốt nhẹ, đỏ tại chỗ tiêm...",
+    "postponeTitle": "Hoãn lịch tiêm",
+    "newDueDateLabel": "Ngày hẹn tiêm mới",
+    "postponeReasonLabel": "Lý do hoãn",
+    "postponeReasonPlaceholder": "Ví dụ: Bé đang sốt, hoãn theo chỉ định bác sĩ..."
+  },
+  "messages": {
+    "vaccinationUpdateSuccess": "Cập nhật lịch tiêm thành công",
+    "vaccinationUpdateFailed": "Cập nhật lịch tiêm thất bại",
+    "vaccinationPostponeSuccess": "Hoãn lịch tiêm thành công",
+    "vaccinationPostponeFailed": "Hoãn lịch tiêm thất bại"
+  },
+  "actions": {
+    "addVaccination": "Thêm lịch tiêm",
+    "scanVaccination": "Quét ảnh sổ tiêm"
   }
 }

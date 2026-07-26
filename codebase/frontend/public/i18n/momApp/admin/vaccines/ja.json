@@ -1,0 +1,44 @@
+{
+  "title": "ワクチン＆接種スケジュール管理",
+  "subtitle": "医療用ワクチンのリストおよび推奨される子供向け接種スケジュールの構成",
+  "addBtn": "ワクチン追加",
+  "listTitle": "ワクチン目録",
+  "configTitle": "接種スケジュール",
+  "addConfigBtn": "接種構成追加",
+  "selectPrompt": "リストからワクチンを選択して、接種スケジュール構成を表示します",
+  "noConfigs": "このワクチンの接種スケジュール構成が見つかりません。",
+  "table": {
+    "name": "ワクチン名",
+    "manufacturer": "メーカー",
+    "disease": "予防疾患",
+    "totalDoses": "総接種回数",
+    "status": "ステータス",
+    "actions": "操作"
+  },
+  "status": {
+    "active": "適用中",
+    "inactive": "停止中"
+  },
+  "modal": {
+    "createTitle": "新規ワクチン追加",
+    "editTitle": "ワクチン情報の編集",
+    "configTitle": "接種スケジュールの設定",
+    "nameLabel": "ワクチン名",
+    "manufacturerLabel": "メーカー",
+    "diseaseLabel": "予防疾患",
+    "totalDosesLabel": "必要な総接種回数",
+    "descLabel": "詳細説明",
+    "doseNumberLabel": "接種回目",
+    "recommendedAgeLabel": "推奨接種年齢（月齢）",
+    "minDaysLabel": "前回の接種からの最小日数"
+  },
+  "messages": {
+    "loadFailed": "ワクチン一覧の読み込みに失敗しました",
+    "loadConfigFailed": "接種スケジュール設定の読み込みに失敗しました",
+    "createSuccess": "ワクチンが正常に追加されました",
+    "updateSuccess": "ワクチンが正常に更新されました",
+    "submitFailed": "ワクチン詳細の保存に失敗しました",
+    "createConfigSuccess": "接種スケジュールが正常に追加されました",
+    "submitConfigFailed": "接種スケジュール設定の保存に失敗しました"
+  }
+}

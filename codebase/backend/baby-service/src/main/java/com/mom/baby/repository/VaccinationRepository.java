@@ -19,4 +19,10 @@ public interface VaccinationRepository extends JpaRepository<VaccinationEntity, 
     long countByBabyIdAndCompletedFalseAndDueDateGreaterThanEqual(Long babyId, LocalDate date);
 
     long countByBabyIdAndCompletedFalseAndDueDateLessThan(Long babyId, LocalDate date);
+
+    List<VaccinationEntity> findByBabyIdAndVaccineId(Long babyId, Long vaccineId);
+
+    Optional<VaccinationEntity> findByBabyIdAndVaccineIdAndDoseNumber(Long babyId, Long vaccineId, int doseNumber);
+
+    List<VaccinationEntity> findByCompletedFalseAndDueDateLessThanEqual(LocalDate date);
 }

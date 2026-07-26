@@ -738,6 +738,50 @@
           "deleteFailed": "Không thể xóa permission.",
           "loadMissingApiFailed": "Không thể tải danh sách API chưa đăng ký permission."
         }
+      },
+      "vaccines": {
+        "title": "Quản lý vắc-xin & lộ trình",
+        "subtitle": "Cấu hình danh mục vắc-xin y tế và lộ trình tiêm chủng khuyến nghị cho trẻ",
+        "addBtn": "Thêm vắc-xin",
+        "listTitle": "Danh mục vắc-xin",
+        "configTitle": "Lộ trình tiêm chủng",
+        "addConfigBtn": "Thêm cấu hình mũi",
+        "selectPrompt": "Chọn một vắc-xin từ danh sách để xem cấu hình lộ trình",
+        "noConfigs": "Vắc-xin này chưa được cấu hình lộ trình mũi tiêm.",
+        "table": {
+          "name": "Tên vắc-xin",
+          "manufacturer": "Nhà sản xuất",
+          "disease": "Bệnh phòng ngừa",
+          "totalDoses": "Số mũi tiêm",
+          "status": "Trạng thái",
+          "actions": "Thao tác"
+        },
+        "status": {
+          "active": "Đang áp dụng",
+          "inactive": "Tạm ngưng"
+        },
+        "modal": {
+          "createTitle": "Thêm vắc-xin mới",
+          "editTitle": "Cập nhật vắc-xin",
+          "configTitle": "Cấu hình lộ trình mũi tiêm",
+          "nameLabel": "Tên vắc-xin",
+          "manufacturerLabel": "Nhà sản xuất",
+          "diseaseLabel": "Bệnh phòng ngừa",
+          "totalDosesLabel": "Tổng số mũi tiêm",
+          "descLabel": "Mô tả chi tiết",
+          "doseNumberLabel": "Mũi tiêm số mấy",
+          "recommendedAgeLabel": "Độ tuổi tiêm khuyến cáo (tháng tuổi)",
+          "minDaysLabel": "Khoảng cách tối thiểu từ mũi trước (ngày)"
+        },
+        "messages": {
+          "loadFailed": "Không thể tải danh sách vắc-xin",
+          "loadConfigFailed": "Không thể tải cấu hình lộ trình",
+          "createSuccess": "Thêm vắc-xin thành công",
+          "updateSuccess": "Cập nhật vắc-xin thành công",
+          "submitFailed": "Không thể cập nhật thông tin vắc-xin",
+          "createConfigSuccess": "Thêm cấu hình lộ trình thành công",
+          "submitConfigFailed": "Không thể thêm cấu hình lộ trình"
+        }
       }
     },
     "dashboard": {
@@ -1171,7 +1215,8 @@
         "addProfile": "Thêm hồ sơ bé",
         "addLog": "Thêm nhật ký",
         "addGrowth": "Thêm tăng trưởng",
-        "addVaccination": "Thêm vắc xin"
+        "addVaccination": "Thêm lịch tiêm",
+        "scanVaccination": "Quét ảnh sổ tiêm"
       },
       "nextVaccine": "Lịch tiêm tiếp theo",
       "profileTitle": "Hồ sơ",
@@ -1220,6 +1265,10 @@
           "completed": "Đã tiêm",
           "overdue": "Quá hạn",
           "upcoming": "Sắp tới"
+        },
+        "actions": {
+          "complete": "Đã Tiêm",
+          "postpone": "Hoãn"
         }
       },
       "gender": {
@@ -1256,7 +1305,17 @@
         "createVaccinationTitle": "Thêm lịch tiêm",
         "vaccineNameLabel": "Tên vắc xin",
         "vaccineNamePlaceholder": "Ví dụ: 6 trong 1 mũi 1",
-        "dueDateLabel": "Ngày hẹn tiêm"
+        "dueDateLabel": "Ngày hẹn tiêm",
+        "completeTitle": "Xác nhận đã tiêm",
+        "actualDateLabel": "Ngày tiêm thực tế",
+        "facilityLabel": "Cơ sở tiêm",
+        "facilityPlaceholder": "Nhập tên bệnh viện/trung tâm y tế",
+        "postReactionLabel": "Phản ứng sau tiêm",
+        "postReactionPlaceholder": "Ví dụ: Sốt nhẹ, đỏ tại chỗ tiêm...",
+        "postponeTitle": "Hoãn lịch tiêm",
+        "newDueDateLabel": "Ngày hẹn tiêm mới",
+        "postponeReasonLabel": "Lý do hoãn",
+        "postponeReasonPlaceholder": "Ví dụ: Bé đang sốt, hoãn theo chỉ định bác sĩ..."
       },
       "logs": {
         "title": "Nhật ký hôm nay",
@@ -1277,7 +1336,11 @@
         "vaccinationCreateFailed": "Không thể tạo lịch tiêm.",
         "growthLoadFailed": "Không thể tải dữ liệu tăng trưởng.",
         "vaccinationLoadFailed": "Không thể tải dữ liệu tiêm chủng.",
-        "premiumGrowthRequired": "Tính năng theo dõi tăng trưởng nâng cao chỉ dành cho gói Premium."
+        "premiumGrowthRequired": "Tính năng theo dõi tăng trưởng nâng cao chỉ dành cho gói Premium.",
+        "vaccinationUpdateSuccess": "Cập nhật lịch tiêm thành công",
+        "vaccinationUpdateFailed": "Cập nhật lịch tiêm thất bại",
+        "vaccinationPostponeSuccess": "Hoãn lịch tiêm thành công",
+        "vaccinationPostponeFailed": "Hoãn lịch tiêm thất bại"
       },
       "gallery": {
         "title": "Thư viện ảnh em bé",

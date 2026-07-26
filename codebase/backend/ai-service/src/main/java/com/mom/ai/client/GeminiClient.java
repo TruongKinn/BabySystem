@@ -248,6 +248,102 @@ public class GeminiClient {
         }
     }
 
+    public String ocrVaccinations(String base64Data, String mimeType, String promptText) {
+        String apiKey = properties.getApiKey();
+        if (!StringUtils.hasText(apiKey)) {
+            throw new OpenAiConfigurationException("GEMINI/OPENAI_API_KEY is not configured");
+        }
+
+        String geminiModel = properties.getModel();
+        if (geminiModel.contains("gpt-") || geminiModel.equals("gpt-5.4-mini") || "gemini-1.5-flash".equals(geminiModel)) {
+            geminiModel = "gemini-3.5-flash";
+        }
+
+        String url = String.format("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent?key=%s",
+                geminiModel, apiKey);
+
+        try {
+            ObjectNode root = objectMapper.createObjectNode();
+            ArrayNode contentsNode = root.putArray("contents");
+            ObjectNode turnNode = contentsNode.addObject();
+            turnNode.put("role", "user");
+            ArrayNode partsNode = turnNode.putArray("parts");
+            
+            // Text part
+            partsNode.addObject().put("text", promptText);
+            
+            // InlineData part
+            ObjectNode inlineDataNode = partsNode.addObject().putObject("inlineData");
+            inlineDataNode.put("mimeType", mimeType);
+            inlineDataNode.put("data", base64Data);
+
+            // Generation config
+            ObjectNode generationConfig = root.putObject("generationConfig");
+            generationConfig.put("responseMimeType", "application/json");
+            
+            // Schema
+            ObjectNode schemaNode = generationConfig.putObject("responseSchema");
+            schemaNode.put("type", "OBJECT");
+            ObjectNode propertiesNode = schemaNode.putObject("properties");
+            
+            ObjectNode vaccinationsArray = propertiesNode.putObject("vaccinations");
+            vaccinationsArray.put("type", "ARRAY");
+            
+            ObjectNode itemsNode = vaccinationsArray.putObject("items");
+            itemsNode.put("type", "OBJECT");
+            
+            ObjectNode itemProperties = itemsNode.putObject("properties");
+            itemProperties.putObject("vaccineName").put("type", "STRING");
+            itemProperties.putObject("doseNumber").put("type", "INTEGER");
+            itemProperties.putObject("dueDate").put("type", "STRING");
+            itemProperties.putObject("notes").put("type", "STRING");
+            
+            ArrayNode itemRequired = itemsNode.putArray("required");
+            itemRequired.add("vaccineName");
+            itemRequired.add("doseNumber");
+            itemRequired.add("dueDate");
+
+            ArrayNode requiredNode = schemaNode.putArray("required");
+            requiredNode.add("vaccinations");
+
+            Duration timeout = properties.getTimeout();
+            log.info("Calling Gemini OCR Vaccinations API with model: {}", geminiModel);
+            
+            JsonNode responseJson = WebClient.create()
+                    .post()
+                    .uri(url)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .bodyValue(root)
+                    .retrieve()
+                    .onStatus(HttpStatusCode::isError, response -> response.bodyToMono(String.class)
+                            .defaultIfEmpty("Gemini OCR Vaccinations request failed")
+                            .flatMap(body -> Mono.error(new OpenAiApiException(response.statusCode().value(), "Gemini OCR Vaccinations API error: " + body))))
+                    .bodyToMono(JsonNode.class)
+                    .timeout(timeout)
+                    .block();
+
+            if (responseJson == null) {
+                throw new OpenAiApiException(502, "Empty response from Gemini OCR Vaccinations API");
+            }
+
+            String outputText = "";
+            JsonNode candidates = responseJson.path("candidates");
+            if (candidates.isArray() && candidates.size() > 0) {
+                JsonNode firstCandidate = candidates.get(0);
+                JsonNode parts = firstCandidate.path("content").path("parts");
+                if (parts.isArray() && parts.size() > 0) {
+                    outputText = parts.get(0).path("text").asText();
+                }
+            }
+            return outputText;
+        } catch (OpenAiApiException ex) {
+            throw ex;
+        } catch (RuntimeException ex) {
+            log.error("Gemini OCR Vaccinations API call failed", ex);
+            throw new OpenAiApiException(502, "Gemini OCR Vaccinations API request failed: " + ex.getMessage());
+        }
+    }
+
     public String suggestMeals(String ingredients, String language) {
         String apiKey = properties.getApiKey();
         if (!StringUtils.hasText(apiKey)) {

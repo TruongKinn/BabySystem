@@ -1,0 +1,44 @@
+{
+  "title": "Quản lý vắc-xin & lộ trình",
+  "subtitle": "Cấu hình danh mục vắc-xin y tế và lộ trình tiêm chủng khuyến nghị cho trẻ",
+  "addBtn": "Thêm vắc-xin",
+  "listTitle": "Danh mục vắc-xin",
+  "configTitle": "Lộ trình tiêm chủng",
+  "addConfigBtn": "Thêm cấu hình mũi",
+  "selectPrompt": "Chọn một vắc-xin từ danh sách để xem cấu hình lộ trình",
+  "noConfigs": "Vắc-xin này chưa được cấu hình lộ trình mũi tiêm.",
+  "table": {
+    "name": "Tên vắc-xin",
+    "manufacturer": "Nhà sản xuất",
+    "disease": "Bệnh phòng ngừa",
+    "totalDoses": "Số mũi tiêm",
+    "status": "Trạng thái",
+    "actions": "Thao tác"
+  },
+  "status": {
+    "active": "Đang áp dụng",
+    "inactive": "Tạm ngưng"
+  },
+  "modal": {
+    "createTitle": "Thêm vắc-xin mới",
+    "editTitle": "Cập nhật vắc-xin",
+    "configTitle": "Cấu hình lộ trình mũi tiêm",
+    "nameLabel": "Tên vắc-xin",
+    "manufacturerLabel": "Nhà sản xuất",
+    "diseaseLabel": "Bệnh phòng ngừa",
+    "totalDosesLabel": "Tổng số mũi tiêm",
+    "descLabel": "Mô tả chi tiết",
+    "doseNumberLabel": "Mũi tiêm số mấy",
+    "recommendedAgeLabel": "Độ tuổi tiêm khuyến cáo (tháng tuổi)",
+    "minDaysLabel": "Khoảng cách tối thiểu từ mũi trước (ngày)"
+  },
+  "messages": {
+    "loadFailed": "Không thể tải danh sách vắc-xin",
+    "loadConfigFailed": "Không thể tải cấu hình lộ trình",
+    "createSuccess": "Thêm vắc-xin thành công",
+    "updateSuccess": "Cập nhật vắc-xin thành công",
+    "submitFailed": "Không thể cập nhật thông tin vắc-xin",
+    "createConfigSuccess": "Thêm cấu hình lộ trình thành công",
+    "submitConfigFailed": "Không thể thêm cấu hình lộ trình"
+  }
+}

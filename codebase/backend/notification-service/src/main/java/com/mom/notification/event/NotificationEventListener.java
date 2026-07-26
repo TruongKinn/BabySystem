@@ -182,4 +182,57 @@ public class NotificationEventListener {
                 .put("status", payloadNode.path("status").asText(null))
                 .toString();
     }
+
+    @KafkaListener(topics = "vaccination-reminder-topic", groupId = "notification-service")
+    public void onVaccinationReminder(String rawEvent) {
+        try {
+            JsonNode event = objectMapper.readTree(rawEvent);
+            String eventId = event.path("eventId").asText(null);
+            String eventType = event.path("eventType").asText(null);
+            Long familyId = asLong(event.path("familyId"));
+
+            JsonNode payloadNode = event.path("payload");
+            String babyName = payloadNode.path("babyName").asText("");
+            String vaccineName = payloadNode.path("vaccineName").asText("");
+            int doseNumber = payloadNode.path("doseNumber").asInt(1);
+            String dueDate = payloadNode.path("dueDate").asText("");
+
+            String title = "Nhắc lịch tiêm chủng cho bé " + babyName;
+            String message = "Bé " + babyName + " có lịch tiêm vắc-xin " + vaccineName 
+                    + " (Mũi số " + doseNumber + ") vào ngày " + dueDate 
+                    + ". Bố mẹ hãy sắp xếp đưa bé đi tiêm đúng lịch nhé!";
+
+            // 1. Tạo Web Push notification
+            NotificationRequestedPayload pushPayload = new NotificationRequestedPayload(
+                    "PUSH",
+                    "VACCINATION",
+                    title,
+                    message,
+                    objectMapper.createObjectNode()
+                            .put("babyId", payloadNode.path("babyId").asLong())
+                            .put("vaccineId", payloadNode.path("vaccineId").asLong())
+                            .toString(),
+                    OffsetDateTime.now()
+            );
+            notificationService.createFromEventOnce(eventId + "_push", eventType, familyId, null, pushPayload);
+
+            // 2. Tạo Email notification
+            NotificationRequestedPayload emailPayload = new NotificationRequestedPayload(
+                    "EMAIL",
+                    "VACCINATION",
+                    title,
+                    message,
+                    objectMapper.createObjectNode()
+                            .put("babyId", payloadNode.path("babyId").asLong())
+                            .put("vaccineId", payloadNode.path("vaccineId").asLong())
+                            .toString(),
+                    OffsetDateTime.now()
+            );
+            notificationService.createFromEventOnce(eventId + "_email", eventType, familyId, null, emailPayload);
+
+        } catch (Exception ex) {
+            log.error("Failed to consume vaccination-reminder-topic event", ex);
+            throw new IllegalStateException("Failed to consume vaccination-reminder-topic event", ex);
+        }
+    }
 }

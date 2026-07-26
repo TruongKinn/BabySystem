@@ -117,6 +117,7 @@ export class BabyComponent {
   isSubmittingGrowth = false;
   isSubmittingVaccination = false;
   isUploadingGallery = false;
+  isScanningVaccination = false;
 
   isLoadingDashboard = false;
   isLoadingSelectedDateLogs = false;
@@ -144,6 +145,9 @@ export class BabyComponent {
   forecast: BabyForecast | null = null;
   forecastAnomalies: BabyForecastAnomaly[] = [];
   isAnomaliesModalVisible = false;
+  isCompleteModalVisible = false;
+  isPostponeModalVisible = false;
+  selectedVaccinationForAction: BabyVaccination | null = null;
   resolvingAnomalyId: number | null = null;
   selectedBabyAvatarUrl: string | null = null;
 
@@ -185,6 +189,18 @@ export class BabyComponent {
     vaccineName: ['', [Validators.required, Validators.maxLength(160)]],
     dueDate: [null as Date | null, [Validators.required]],
     notes: ['', [Validators.maxLength(500)]]
+  });
+
+  readonly completeVaccinationForm = this.fb.group({
+    actualDate: [new Date(), [Validators.required]],
+    facility: ['', [Validators.maxLength(200)]],
+    postReaction: ['', [Validators.maxLength(500)]],
+    notes: ['', [Validators.maxLength(500)]]
+  });
+
+  readonly postponeVaccinationForm = this.fb.group({
+    newDueDate: [null as Date | null, [Validators.required]],
+    reason: ['', [Validators.maxLength(500)]]
   });
 
   constructor() {
@@ -337,6 +353,62 @@ export class BabyComponent {
       return;
     }
     this.isCreateVaccinationModalVisible = true;
+  }
+
+  onVaccineFileSelected(event: any): void {
+    if (!this.selectedBabyId) {
+      this.notifySelectBabyFirst();
+      return;
+    }
+    const file = event.target?.files?.[0];
+    if (!file) return;
+
+    if (file.size > this.maxUploadImageSizeBytes) {
+      this.notification.warning(
+        this.i18n.translate('common.errorTitle'),
+        this.i18n.translate('momApp.profile.messages.fileTooLarge')
+      );
+      return;
+    }
+
+    this.isScanningVaccination = true;
+    this.command.uploadFile(file, 'baby-temp', `scan-vaccine:${this.selectedBabyId}`).subscribe({
+      next: (metadata) => {
+        this.command.scanVaccinations(this.selectedBabyId!, metadata.id).subscribe({
+          next: (imported) => {
+            this.isScanningVaccination = false;
+            this.notification.success(
+              this.i18n.translate('momApp.common.success'),
+              `Đã quét và tự động nhập thành công ${imported.length} mũi tiêm chủng từ ảnh!`
+            );
+            this.loadDashboardData();
+            this.loadVaccinations();
+          },
+          error: (err) => {
+            this.isScanningVaccination = false;
+            this.notification.create(
+              'error',
+              this.i18n.translate('common.errorTitle'),
+              `Nhận diện sổ tiêm thất bại: ${err?.message || 'Lỗi không xác định'}. Nhấp vào đây để nhập lịch thủ công.`,
+              {
+                nzDuration: 10000,
+                nzPauseOnHover: true,
+                nzAnimate: true
+              }
+            );
+            this.openCreateVaccinationModal();
+          }
+        });
+      },
+      error: (err) => {
+        this.isScanningVaccination = false;
+        this.notification.error(
+          this.i18n.translate('common.errorTitle'),
+          err?.message || 'Tải ảnh lên thất bại'
+        );
+      }
+    });
+    event.target.value = '';
   }
 
   closeCreateVaccinationModal(): void {
@@ -543,6 +615,100 @@ export class BabyComponent {
           );
         }
       });
+  }
+
+  openCompleteModal(vaccination: BabyVaccination): void {
+    this.selectedVaccinationForAction = vaccination;
+    this.completeVaccinationForm.reset({
+      actualDate: new Date(),
+      facility: '',
+      postReaction: '',
+      notes: ''
+    });
+    this.isCompleteModalVisible = true;
+  }
+
+  closeCompleteModal(): void {
+    this.isCompleteModalVisible = false;
+    this.selectedVaccinationForAction = null;
+  }
+
+  submitCompleteVaccination(): void {
+    if (this.completeVaccinationForm.invalid || !this.selectedVaccinationForAction || !this.selectedBabyId) {
+      this.completeVaccinationForm.markAllAsTouched();
+      return;
+    }
+
+    const actualDateVal = this.completeVaccinationForm.controls.actualDate.value;
+    if (!actualDateVal) return;
+
+    this.command.completeVaccination(this.selectedBabyId, this.selectedVaccinationForAction.id, {
+      actualDate: this.formatLocalDate(actualDateVal),
+      facility: this.completeVaccinationForm.controls.facility.value?.trim(),
+      postReaction: this.completeVaccinationForm.controls.postReaction.value?.trim(),
+      notes: this.completeVaccinationForm.controls.notes.value?.trim()
+    }).subscribe({
+      next: () => {
+        this.closeCompleteModal();
+        this.loadBabyCareOverview();
+        this.loadMedicalData();
+        this.notification.success(
+          this.i18n.translate('momApp.common.success'),
+          this.i18n.translate('momApp.baby.messages.vaccinationUpdateSuccess')
+        );
+      },
+      error: (err) => {
+        this.notification.error(
+          this.i18n.translate('common.errorTitle'),
+          err?.message || this.i18n.translate('momApp.baby.messages.vaccinationUpdateFailed')
+        );
+      }
+    });
+  }
+
+  openPostponeModal(vaccination: BabyVaccination): void {
+    this.selectedVaccinationForAction = vaccination;
+    this.postponeVaccinationForm.reset({
+      newDueDate: vaccination.dueDate ? new Date(vaccination.dueDate) : null,
+      reason: ''
+    });
+    this.isPostponeModalVisible = true;
+  }
+
+  closePostponeModal(): void {
+    this.isPostponeModalVisible = false;
+    this.selectedVaccinationForAction = null;
+  }
+
+  submitPostponeVaccination(): void {
+    if (this.postponeVaccinationForm.invalid || !this.selectedVaccinationForAction || !this.selectedBabyId) {
+      this.postponeVaccinationForm.markAllAsTouched();
+      return;
+    }
+
+    const newDueDateVal = this.postponeVaccinationForm.controls.newDueDate.value;
+    if (!newDueDateVal) return;
+
+    this.command.postponeVaccination(this.selectedBabyId, this.selectedVaccinationForAction.id, {
+      newDueDate: this.formatLocalDate(newDueDateVal),
+      reason: this.postponeVaccinationForm.controls.reason.value?.trim()
+    }).subscribe({
+      next: () => {
+        this.closePostponeModal();
+        this.loadBabyCareOverview();
+        this.loadMedicalData();
+        this.notification.success(
+          this.i18n.translate('momApp.common.success'),
+          this.i18n.translate('momApp.baby.messages.vaccinationPostponeSuccess')
+        );
+      },
+      error: (err) => {
+        this.notification.error(
+          this.i18n.translate('common.errorTitle'),
+          err?.message || this.i18n.translate('momApp.baby.messages.vaccinationPostponeFailed')
+        );
+      }
+    });
   }
 
   quickLog(logType: BabyLogType): void {

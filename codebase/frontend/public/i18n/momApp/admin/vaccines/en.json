@@ -1,0 +1,44 @@
+{
+  "title": "Vaccines & Schedule Management",
+  "subtitle": "Configure medical vaccines list and recommended vaccination schedule for children",
+  "addBtn": "Add Vaccine",
+  "listTitle": "Vaccines Directory",
+  "configTitle": "Vaccination Schedule",
+  "addConfigBtn": "Add Dose Config",
+  "selectPrompt": "Select a vaccine from the list to view its schedule configuration",
+  "noConfigs": "No schedule configuration found for this vaccine.",
+  "table": {
+    "name": "Vaccine Name",
+    "manufacturer": "Manufacturer",
+    "disease": "Disease Prevented",
+    "totalDoses": "Total Doses",
+    "status": "Status",
+    "actions": "Actions"
+  },
+  "status": {
+    "active": "Active",
+    "inactive": "Inactive"
+  },
+  "modal": {
+    "createTitle": "Add New Vaccine",
+    "editTitle": "Edit Vaccine Profile",
+    "configTitle": "Configure Dose Schedule",
+    "nameLabel": "Vaccine Name",
+    "manufacturerLabel": "Manufacturer",
+    "diseaseLabel": "Disease Prevented",
+    "totalDosesLabel": "Total Doses Required",
+    "descLabel": "Detailed Description",
+    "doseNumberLabel": "Dose Number",
+    "recommendedAgeLabel": "Recommended Age (in months)",
+    "minDaysLabel": "Min Days Since Previous Dose"
+  },
+  "messages": {
+    "loadFailed": "Failed to load vaccines list",
+    "loadConfigFailed": "Failed to load schedule configurations",
+    "createSuccess": "Vaccine added successfully",
+    "updateSuccess": "Vaccine updated successfully",
+    "submitFailed": "Failed to save vaccine details",
+    "createConfigSuccess": "Schedule configuration added successfully",
+    "submitConfigFailed": "Failed to save schedule configuration"
+  }
+}

@@ -740,6 +740,50 @@
           "deleteFailed": "无法删除权限。",
           "loadMissingApiFailed": "无法加载未注册的权限 API。"
         }
+      },
+      "vaccines": {
+        "title": "疫苗与接种流程管理",
+        "subtitle": "配置医疗疫苗目录及推荐的儿童接种流程",
+        "addBtn": "添加疫苗",
+        "listTitle": "疫苗目录",
+        "configTitle": "接种流程",
+        "addConfigBtn": "添加剂量配置",
+        "selectPrompt": "从列表中选择疫苗以查看其接种流程配置",
+        "noConfigs": "未找到此疫苗的接种流程配置。",
+        "table": {
+          "name": "疫苗名称",
+          "manufacturer": "生产商",
+          "disease": "预防疾病",
+          "totalDoses": "总剂量",
+          "status": "状态",
+          "actions": "操作"
+        },
+        "status": {
+          "active": "生效中",
+          "inactive": "已停用"
+        },
+        "modal": {
+          "createTitle": "添加新疫苗",
+          "editTitle": "编辑疫苗信息",
+          "configTitle": "配置剂量接种日程",
+          "nameLabel": "疫苗名称",
+          "manufacturerLabel": "生产商",
+          "diseaseLabel": "预防疾病",
+          "totalDosesLabel": "所需总剂量",
+          "descLabel": "详细描述",
+          "doseNumberLabel": "剂次",
+          "recommendedAgeLabel": "推荐接种年龄（月龄）",
+          "minDaysLabel": "距离前一剂的最少天数"
+        },
+        "messages": {
+          "loadFailed": "加载疫苗列表失败",
+          "loadConfigFailed": "加载接种日程配置失败",
+          "createSuccess": "疫苗成功添加",
+          "updateSuccess": "疫苗成功更新",
+          "submitFailed": "无法保存疫苗详细信息",
+          "createConfigSuccess": "接种日程配置成功添加",
+          "submitConfigFailed": "无法保存接种日程配置"
+        }
       }
     },
     "dashboard": {
@@ -1276,7 +1320,8 @@
         "addProfile": "添加个人资料",
         "addLog": "添加日志",
         "addGrowth": "添加成长",
-        "addVaccination": "添加疫苗"
+        "addVaccination": "添加接种",
+        "scanVaccination": "扫描接种卡"
       },
       "nextVaccine": "下一种疫苗",
       "profileTitle": "简介",
@@ -1325,6 +1370,10 @@
           "completed": "已完成",
           "overdue": "逾期",
           "upcoming": "即将推出"
+        },
+        "actions": {
+          "complete": "已接种",
+          "postpone": "推迟"
         }
       },
       "gender": {
@@ -1361,7 +1410,17 @@
         "createVaccinationTitle": "添加疫苗接种",
         "vaccineNameLabel": "疫苗名称",
         "vaccineNamePlaceholder": "例如：6 合 1 剂量 1",
-        "dueDateLabel": "截止日期"
+        "dueDateLabel": "截止日期",
+        "completeTitle": "确认接种剂量",
+        "actualDateLabel": "实际接种日期",
+        "facilityLabel": "接种机构",
+        "facilityPlaceholder": "请输入医院或诊所名称",
+        "postReactionLabel": "接种后反应",
+        "postReactionPlaceholder": "例如：轻微发烧、注射部位红肿...",
+        "postponeTitle": "推迟接种",
+        "newDueDateLabel": "新预约日期",
+        "postponeReasonLabel": "推迟原因",
+        "postponeReasonPlaceholder": "例如：宝宝发烧，根据医生建议推迟..."
       },
       "logs": {
         "title": "今天的日志",
@@ -1382,7 +1441,11 @@
         "vaccinationCreateFailed": "无法创建疫苗接种项目。",
         "growthLoadFailed": "无法加载成长记录。",
         "vaccinationLoadFailed": "无法加载疫苗接种。",
-        "premiumGrowthRequired": "高级生长跟踪仅适用于高级家庭。"
+        "premiumGrowthRequired": "高级生长跟踪仅适用于高级家庭。",
+        "vaccinationUpdateSuccess": "接种记录更新成功",
+        "vaccinationUpdateFailed": "更新接种记录失败",
+        "vaccinationPostponeSuccess": "推迟接种成功",
+        "vaccinationPostponeFailed": "推迟接种失败"
       },
       "gallery": {
         "title": "婴儿照片库",

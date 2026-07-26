@@ -1,0 +1,44 @@
+{
+  "title": "疫苗与接种流程管理",
+  "subtitle": "配置医疗疫苗目录及推荐的儿童接种流程",
+  "addBtn": "添加疫苗",
+  "listTitle": "疫苗目录",
+  "configTitle": "接种流程",
+  "addConfigBtn": "添加剂量配置",
+  "selectPrompt": "从列表中选择疫苗以查看其接种流程配置",
+  "noConfigs": "未找到此疫苗的接种流程配置。",
+  "table": {
+    "name": "疫苗名称",
+    "manufacturer": "生产商",
+    "disease": "预防疾病",
+    "totalDoses": "总剂量",
+    "status": "状态",
+    "actions": "操作"
+  },
+  "status": {
+    "active": "生效中",
+    "inactive": "已停用"
+  },
+  "modal": {
+    "createTitle": "添加新疫苗",
+    "editTitle": "编辑疫苗信息",
+    "configTitle": "配置剂量接种日程",
+    "nameLabel": "疫苗名称",
+    "manufacturerLabel": "生产商",
+    "diseaseLabel": "预防疾病",
+    "totalDosesLabel": "所需总剂量",
+    "descLabel": "详细描述",
+    "doseNumberLabel": "剂次",
+    "recommendedAgeLabel": "推荐接种年龄（月龄）",
+    "minDaysLabel": "距离前一剂的最少天数"
+  },
+  "messages": {
+    "loadFailed": "加载疫苗列表失败",
+    "loadConfigFailed": "加载接种日程配置失败",
+    "createSuccess": "疫苗成功添加",
+    "updateSuccess": "疫苗成功更新",
+    "submitFailed": "无法保存疫苗详细信息",
+    "createConfigSuccess": "接种日程配置成功添加",
+    "submitConfigFailed": "无法保存接种日程配置"
+  }
+}

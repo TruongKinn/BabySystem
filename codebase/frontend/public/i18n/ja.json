@@ -740,6 +740,50 @@
           "deleteFailed": "権限を削除できません。",
           "loadMissingApiFailed": "未登録の権限 API をロードできません。"
         }
+      },
+      "vaccines": {
+        "title": "ワクチン＆接種スケジュール管理",
+        "subtitle": "医療用ワクチンのリストおよび推奨される子供向け接種スケジュールの構成",
+        "addBtn": "ワクチン追加",
+        "listTitle": "ワクチン目録",
+        "configTitle": "接種スケジュール",
+        "addConfigBtn": "接種構成追加",
+        "selectPrompt": "リストからワクチンを選択して、接種スケジュール構成を表示します",
+        "noConfigs": "このワクチンの接種スケジュール構成が見つかりません。",
+        "table": {
+          "name": "ワクチン名",
+          "manufacturer": "メーカー",
+          "disease": "予防疾患",
+          "totalDoses": "総接種回数",
+          "status": "ステータス",
+          "actions": "操作"
+        },
+        "status": {
+          "active": "適用中",
+          "inactive": "停止中"
+        },
+        "modal": {
+          "createTitle": "新規ワクチン追加",
+          "editTitle": "ワクチン情報の編集",
+          "configTitle": "接種スケジュールの設定",
+          "nameLabel": "ワクチン名",
+          "manufacturerLabel": "メーカー",
+          "diseaseLabel": "予防疾患",
+          "totalDosesLabel": "必要な総接種回数",
+          "descLabel": "詳細説明",
+          "doseNumberLabel": "接種回目",
+          "recommendedAgeLabel": "推奨接種年齢（月齢）",
+          "minDaysLabel": "前回の接種からの最小日数"
+        },
+        "messages": {
+          "loadFailed": "ワクチン一覧の読み込みに失敗しました",
+          "loadConfigFailed": "接種スケジュール設定の読み込みに失敗しました",
+          "createSuccess": "ワクチンが正常に追加されました",
+          "updateSuccess": "ワクチンが正常に更新されました",
+          "submitFailed": "ワクチン詳細の保存に失敗しました",
+          "createConfigSuccess": "接種スケジュールが正常に追加されました",
+          "submitConfigFailed": "接種スケジュール設定の保存に失敗しました"
+        }
       }
     },
     "dashboard": {
@@ -1274,7 +1318,8 @@
         "addProfile": "プロフィールを追加",
         "addLog": "ログを追加",
         "addGrowth": "成長を追加",
-        "addVaccination": "ワクチンを追加"
+        "addVaccination": "接種予定追加",
+        "scanVaccination": "接種手帳スキャン"
       },
       "nextVaccine": "次のワクチン",
       "profileTitle": "プロフィール",
@@ -1323,6 +1368,10 @@
           "completed": "完了",
           "overdue": "期限切れ",
           "upcoming": "今後の予定"
+        },
+        "actions": {
+          "complete": "接種済",
+          "postpone": "延期"
         }
       },
       "gender": {
@@ -1359,7 +1408,17 @@
         "createVaccinationTitle": "ワクチン接種を追加",
         "vaccineNameLabel": "ワクチン名",
         "vaccineNamePlaceholder": "例: 6-in-1 用量 1",
-        "dueDateLabel": "期限"
+        "dueDateLabel": "期限",
+        "completeTitle": "接種完了の確認",
+        "actualDateLabel": "実際の接種日",
+        "facilityLabel": "接種医療機関",
+        "facilityPlaceholder": "病院またはクリニック名を入力",
+        "postReactionLabel": "接種後の副反応",
+        "postReactionPlaceholder": "例：軽度の発熱、接種部位の赤みなど...",
+        "postponeTitle": "予防接種の延期",
+        "newDueDateLabel": "新しい接種予定日",
+        "postponeReasonLabel": "延期理由",
+        "postponeReasonPlaceholder": "例：赤ちゃんが発熱しているため、医師の指示により延期..."
       },
       "logs": {
         "title": "今日の記録",
@@ -1380,7 +1439,11 @@
         "vaccinationCreateFailed": "ワクチン接種アイテムを作成できません。",
         "growthLoadFailed": "成長記録をロードできません。",
         "vaccinationLoadFailed": "ワクチン接種を読み込めません。",
-        "premiumGrowthRequired": "高度な成長追跡は、プレミアム世帯のみが利用できます。"
+        "premiumGrowthRequired": "高度な成長追跡は、プレミアム世帯のみが利用できます。",
+        "vaccinationUpdateSuccess": "接種記録が正常に更新されました",
+        "vaccinationUpdateFailed": "接種記録の更新に失敗しました",
+        "vaccinationPostponeSuccess": "予防接種が正常に延期されました",
+        "vaccinationPostponeFailed": "予防接種の延期に失敗しました"
       },
       "gallery": {
         "title": "赤ちゃんのフォトギャラリー",

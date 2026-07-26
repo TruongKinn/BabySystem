@@ -1,0 +1,211 @@
+<div class="admin-vaccines-container animate-fade-in">
+  <div class="header-section">
+    <div class="header-content">
+      <h1>{{ 'momApp.admin.vaccines.title' | translate }}</h1>
+      <p class="subtitle">{{ 'momApp.admin.vaccines.subtitle' | translate }}</p>
+    </div>
+    <button nz-button nzType="primary" (click)="openCreateVaccineModal()">
+      <i nz-icon nzType="plus"></i> {{ 'momApp.admin.vaccines.addBtn' | translate }}
+    </button>
+  </div>
+
+  <div class="bento-grid">
+    <!-- Cột trái: Danh sách vắc-xin -->
+    <div class="bento-card main-list-card">
+      <nz-card [nzTitle]="'momApp.admin.vaccines.listTitle' | translate" [nzExtra]="vaccinesCountTpl">
+        <ng-template #vaccinesCountTpl>
+          <span class="count-badge">{{ vaccines.length }} vắc-xin</span>
+        </ng-template>
+
+        <nz-table
+          #vaccinesTable
+          [nzData]="vaccines"
+          [nzLoading]="isLoadingVaccines"
+          [nzPageSize]="8"
+          nzSize="middle"
+        >
+          <thead>
+            <tr>
+              <th>{{ 'momApp.admin.vaccines.table.name' | translate }}</th>
+              <th>{{ 'momApp.admin.vaccines.table.manufacturer' | translate }}</th>
+              <th>{{ 'momApp.admin.vaccines.table.disease' | translate }}</th>
+              <th>{{ 'momApp.admin.vaccines.table.totalDoses' | translate }}</th>
+              <th>{{ 'momApp.admin.vaccines.table.status' | translate }}</th>
+              <th nzWidth="120px">{{ 'momApp.admin.vaccines.table.actions' | translate }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let data of vaccinesTable.data"
+              (click)="selectVaccine(data)"
+              [class.selected-row]="selectedVaccine?.id === data.id"
+              class="clickable-row"
+            >
+              <td>
+                <span class="vaccine-name-text">{{ data.name }}</span>
+              </td>
+              <td>{{ data.manufacturer || '-' }}</td>
+              <td>{{ data.diseasePrevented }}</td>
+              <td>
+                <nz-tag nzColor="blue">{{ data.totalDoses }} mũi</nz-tag>
+              </td>
+              <td>
+                <nz-tag [nzColor]="data.active ? 'success' : 'default'">
+                  {{ (data.active ? 'momApp.admin.vaccines.status.active' : 'momApp.admin.vaccines.status.inactive') | translate }}
+                </nz-tag>
+              </td>
+              <td>
+                <button
+                  nz-button
+                  nzType="text"
+                  nzShape="circle"
+                  (click)="openEditVaccineModal(data); $event.stopPropagation()"
+                >
+                  <i nz-icon nzType="edit"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </nz-table>
+      </nz-card>
+    </div>
+
+    <!-- Cột phải: Cấu hình lộ trình của vắc-xin được chọn -->
+    <div class="bento-card detail-card">
+      <nz-card [nzTitle]="configTitleTpl" [nzExtra]="addConfigBtnTpl">
+        <ng-template #configTitleTpl>
+          <span class="detail-title">
+            {{ 'momApp.admin.vaccines.configTitle' | translate }}
+            <small *ngIf="selectedVaccine" class="selected-name"> - {{ selectedVaccine.name }}</small>
+          </span>
+        </ng-template>
+
+        <ng-template #addConfigBtnTpl>
+          <button
+            *ngIf="selectedVaccine"
+            nz-button
+            nzType="primary"
+            nzSize="small"
+            (click)="openCreateConfigModal()"
+          >
+            <i nz-icon nzType="plus"></i> {{ 'momApp.admin.vaccines.addConfigBtn' | translate }}
+          </button>
+        </ng-template>
+
+        <div *ngIf="!selectedVaccine" class="empty-detail-state">
+          <nz-empty [nzNotFoundContent]="'momApp.admin.vaccines.selectPrompt' | translate"></nz-empty>
+        </div>
+
+        <div *ngIf="selectedVaccine">
+          <div *ngIf="isLoadingConfigs" class="spin-wrap">
+            <nz-spin nzSimple></nz-spin>
+          </div>
+
+          <div *ngIf="!isLoadingConfigs && scheduleConfigs.length === 0" class="empty-configs">
+            <p>{{ 'momApp.admin.vaccines.noConfigs' | translate }}</p>
+          </div>
+
+          <div class="config-list-wrap" *ngIf="!isLoadingConfigs && scheduleConfigs.length > 0">
+            <div class="config-item-card" *ngFor="let config of scheduleConfigs">
+              <div class="config-header">
+                <h3>Mũi {{ config.doseNumber }}</h3>
+                <span class="age-tag">{{ config.recommendedAgeMonths }} tháng tuổi</span>
+              </div>
+              <div class="config-body">
+                <p>Khoảng cách tối thiểu từ mũi trước: <strong>{{ config.minDaysSincePreviousDose }} ngày</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nz-card>
+    </div>
+  </div>
+</div>
+
+<!-- Vaccine Form Modal -->
+<nz-modal
+  [(nzVisible)]="isVaccineModalVisible"
+  [nzTitle]="(modalMode === 'create' ? 'momApp.admin.vaccines.modal.createTitle' : 'momApp.admin.vaccines.modal.editTitle') | translate"
+  (nzOnCancel)="closeVaccineModal()"
+  (nzOnOk)="submitVaccine()"
+  [nzOkLoading]="isSubmittingVaccine"
+  [nzOkText]="'momApp.common.save' | translate"
+  [nzCancelText]="'momApp.common.cancel' | translate"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="vaccineForm" nzLayout="vertical">
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.admin.vaccines.modal.nameLabel' | translate }}</nz-form-label>
+        <nz-form-control nzErrorTip="Vui lòng nhập tên vắc-xin">
+          <input nz-input formControlName="name" placeholder="Ví dụ: 6-trong-1 Hexaxim" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.admin.vaccines.modal.manufacturerLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <input nz-input formControlName="manufacturer" placeholder="Ví dụ: Sanofi Pasteur (Pháp)" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.admin.vaccines.modal.diseaseLabel' | translate }}</nz-form-label>
+        <nz-form-control nzErrorTip="Vui lòng nhập bệnh phòng ngừa">
+          <input nz-input formControlName="diseasePrevented" placeholder="Ví dụ: Bạch hầu, Ho gà, Uốn ván, Bại liệt..." />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.admin.vaccines.modal.totalDosesLabel' | translate }}</nz-form-label>
+        <nz-form-control nzErrorTip="Số mũi tiêm tối thiểu là 1">
+          <input nz-input type="number" formControlName="totalDoses" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label>{{ 'momApp.admin.vaccines.modal.descLabel' | translate }}</nz-form-label>
+        <nz-form-control>
+          <textarea nz-input rows="3" formControlName="description" placeholder="Nhập mô tả thêm về vắc-xin..."></textarea>
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>
+
+<!-- Config Form Modal -->
+<nz-modal
+  [(nzVisible)]="isConfigModalVisible"
+  [nzTitle]="'momApp.admin.vaccines.modal.configTitle' | translate"
+  (nzOnCancel)="closeConfigModal()"
+  (nzOnOk)="submitConfig()"
+  [nzOkLoading]="isSubmittingConfig"
+  [nzOkText]="'momApp.common.save' | translate"
+  [nzCancelText]="'momApp.common.cancel' | translate"
+>
+  <ng-container *nzModalContent>
+    <form nz-form [formGroup]="configForm" nzLayout="vertical">
+      <p *ngIf="selectedVaccine">Vắc-xin: <strong>{{ selectedVaccine.name }}</strong></p>
+
+      <nz-form-item style="margin-top: 12px;">
+        <nz-form-label nzRequired>{{ 'momApp.admin.vaccines.modal.doseNumberLabel' | translate }}</nz-form-label>
+        <nz-form-control nzErrorTip="Mũi tiêm số mấy (ví dụ: 1, 2, 3)">
+          <input nz-input type="number" formControlName="doseNumber" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.admin.vaccines.modal.recommendedAgeLabel' | translate }}</nz-form-label>
+        <nz-form-control nzErrorTip="Độ tuổi khuyến cáo tính bằng tháng">
+          <input nz-input type="number" formControlName="recommendedAgeMonths" placeholder="Ví dụ: 2 tháng" />
+        </nz-form-control>
+      </nz-form-item>
+
+      <nz-form-item>
+        <nz-form-label nzRequired>{{ 'momApp.admin.vaccines.modal.minDaysLabel' | translate }}</nz-form-label>
+        <nz-form-control nzErrorTip="Khoảng cách tối thiểu từ mũi tiêm trước (ngày)">
+          <input nz-input type="number" formControlName="minDaysSincePreviousDose" placeholder="Ví dụ: 28 ngày" />
+        </nz-form-control>
+      </nz-form-item>
+    </form>
+  </ng-container>
+</nz-modal>

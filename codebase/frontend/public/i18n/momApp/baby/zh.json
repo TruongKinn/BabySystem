@@ -57,5 +57,33 @@
       "resolveSuccess": "异常已成功处理。",
       "resolveFailed": "无法处理异常。"
     }
+  },
+  "vaccination": {
+    "actions": {
+      "complete": "已接种",
+      "postpone": "推迟"
+    }
+  },
+  "modal": {
+    "completeTitle": "确认接种剂量",
+    "actualDateLabel": "实际接种日期",
+    "facilityLabel": "接种机构",
+    "facilityPlaceholder": "请输入医院或诊所名称",
+    "postReactionLabel": "接种后反应",
+    "postReactionPlaceholder": "例如：轻微发烧、注射部位红肿...",
+    "postponeTitle": "推迟接种",
+    "newDueDateLabel": "新预约日期",
+    "postponeReasonLabel": "推迟原因",
+    "postponeReasonPlaceholder": "例如：宝宝发烧，根据医生建议推迟..."
+  },
+  "messages": {
+    "vaccinationUpdateSuccess": "接种记录更新成功",
+    "vaccinationUpdateFailed": "更新接种记录失败",
+    "vaccinationPostponeSuccess": "推迟接种成功",
+    "vaccinationPostponeFailed": "推迟接种失败"
+  },
+  "actions": {
+    "addVaccination": "添加接种",
+    "scanVaccination": "扫描接种卡"
   }
 }

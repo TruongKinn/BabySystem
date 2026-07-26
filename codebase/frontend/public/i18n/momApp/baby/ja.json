@@ -57,5 +57,33 @@
       "resolveSuccess": "異常が正常に処理されました。",
       "resolveFailed": "異常の処理に失敗しました。"
     }
+  },
+  "vaccination": {
+    "actions": {
+      "complete": "接種済",
+      "postpone": "延期"
+    }
+  },
+  "modal": {
+    "completeTitle": "接種完了の確認",
+    "actualDateLabel": "実際の接種日",
+    "facilityLabel": "接種医療機関",
+    "facilityPlaceholder": "病院またはクリニック名を入力",
+    "postReactionLabel": "接種後の副反応",
+    "postReactionPlaceholder": "例：軽度の発熱、接種部位の赤みなど...",
+    "postponeTitle": "予防接種の延期",
+    "newDueDateLabel": "新しい接種予定日",
+    "postponeReasonLabel": "延期理由",
+    "postponeReasonPlaceholder": "例：赤ちゃんが発熱しているため、医師の指示により延期..."
+  },
+  "messages": {
+    "vaccinationUpdateSuccess": "接種記録が正常に更新されました",
+    "vaccinationUpdateFailed": "接種記録の更新に失敗しました",
+    "vaccinationPostponeSuccess": "予防接種が正常に延期されました",
+    "vaccinationPostponeFailed": "予防接種の延期に失敗しました"
+  },
+  "actions": {
+    "addVaccination": "接種予定追加",
+    "scanVaccination": "接種手帳スキャン"
   }
 }

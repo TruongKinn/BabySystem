@@ -1,13 +1,6 @@
 package com.mom.baby.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +10,9 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @Entity
-@Table(name = "vaccinations")
+@Table(name = "vaccinations", uniqueConstraints = {
+    @UniqueConstraint(columnNames = {"baby_id", "vaccine_id", "dose_number"})
+})
 public class VaccinationEntity {
 
     @Id
@@ -27,8 +22,15 @@ public class VaccinationEntity {
     @Column(name = "baby_id", nullable = false)
     private Long babyId;
 
-    @Column(name = "vaccine_name", nullable = false, length = 160)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vaccine_id")
+    private VaccineEntity vaccine;
+
+    @Column(name = "vaccine_name", length = 160)
     private String vaccineName;
+
+    @Column(name = "dose_number", nullable = false)
+    private int doseNumber = 1;
 
     @Column(name = "due_date", nullable = false)
     private LocalDate dueDate;
@@ -39,8 +41,17 @@ public class VaccinationEntity {
     @Column(name = "completed_at")
     private OffsetDateTime completedAt;
 
+    @Column(length = 200)
+    private String facility;
+
+    @Column(name = "post_reaction", length = 500)
+    private String postReaction;
+
     @Column(length = 500)
     private String notes;
+
+    @Column(nullable = false, length = 20)
+    private String status = "PENDING";
 
     @Column(name = "created_at", nullable = false)
     private OffsetDateTime createdAt;
@@ -48,6 +59,9 @@ public class VaccinationEntity {
     @PrePersist
     void onCreate() {
         createdAt = OffsetDateTime.now();
+        if (completed && completedAt == null) {
+            completedAt = OffsetDateTime.now();
+        }
     }
 
     @PreUpdate
