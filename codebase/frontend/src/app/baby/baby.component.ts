@@ -381,8 +381,8 @@ export class BabyComponent {
               this.i18n.translate('momApp.common.success'),
               `Đã quét và tự động nhập thành công ${imported.length} mũi tiêm chủng từ ảnh!`
             );
-            this.loadDashboardData();
-            this.loadVaccinations();
+            this.loadBabyCareOverview();
+            this.loadMedicalData();
           },
           error: (err) => {
             this.isScanningVaccination = false;
