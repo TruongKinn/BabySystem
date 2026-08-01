@@ -32,9 +32,6 @@ ALTER TABLE vaccinations ADD COLUMN IF NOT EXISTS status varchar(20) NOT NULL DE
 -- Create foreign key constraint
 ALTER TABLE vaccinations ADD CONSTRAINT fk_vaccinations_vaccine FOREIGN KEY (vaccine_id) REFERENCES vaccines(id) ON DELETE SET NULL;
 
--- Create unique constraint to prevent duplicate entry
-ALTER TABLE vaccinations ADD CONSTRAINT uq_baby_vaccine_dose UNIQUE (baby_id, vaccine_id, dose_number);
-
 -- Insert sample vaccines
 INSERT INTO vaccines (name, manufacturer, disease_prevented, total_doses, description) VALUES
 ('Lao (BCG)', 'IVAC (Việt Nam)', 'Lao phổi và lao màng não', 1, 'Tiêm trong vòng 30 ngày đầu sau sinh.'),
@@ -62,5 +59,27 @@ INSERT INTO vaccine_schedule_configs (vaccine_id, dose_number, recommended_age_m
 ((SELECT id FROM vaccines WHERE name = 'Phế cầu Synflorix'), 2, 4, 60),
 ((SELECT id FROM vaccines WHERE name = 'Phế cầu Synflorix'), 3, 6, 60);
 
--- Update existing vaccination records with first vaccine ID as a fallback (if any exist)
-UPDATE vaccinations SET vaccine_id = (SELECT id FROM vaccines WHERE name = 'Lao (BCG)') WHERE vaccine_id IS NULL;
+-- Update existing vaccination records based on name matching
+UPDATE vaccinations v
+SET vaccine_id = vac.id
+FROM vaccines vac
+WHERE v.vaccine_id IS NULL AND (
+  LOWER(TRIM(v.vaccine_name)) = LOWER(TRIM(vac.name))
+  OR (vac.name = 'Lao (BCG)' AND LOWER(TRIM(v.vaccine_name)) IN ('lao', 'lao bcg', 'bcg'))
+  OR (vac.name = 'Viêm gan B sơ sinh' AND LOWER(TRIM(v.vaccine_name)) IN ('viêm gan b', 'hepa b', 'hepatitis b'))
+);
+
+-- Recalculate dose_number sequentially for old records of same baby + same vaccine to avoid duplicates
+WITH ranked_vaccinations AS (
+    SELECT id, ROW_NUMBER() OVER (PARTITION BY baby_id, vaccine_id ORDER BY due_date ASC) as rn
+    FROM vaccinations
+    WHERE vaccine_id IS NOT NULL
+)
+UPDATE vaccinations v
+SET dose_number = r.rn
+FROM ranked_vaccinations r
+WHERE v.id = r.id;
+
+-- Create unique constraint to prevent duplicate entry (placed at the end after data migration is clean)
+ALTER TABLE vaccinations ADD CONSTRAINT uq_baby_vaccine_dose UNIQUE (baby_id, vaccine_id, dose_number);
+
