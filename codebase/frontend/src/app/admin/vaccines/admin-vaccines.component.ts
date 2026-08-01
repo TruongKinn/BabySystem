@@ -104,7 +104,7 @@ export class AdminVaccinesComponent implements OnInit {
 
   loadVaccines(): void {
     this.isLoadingVaccines = true;
-    this.http.get<ApiEnvelope<Vaccine[]>>('/api/vaccines?activeOnly=false')
+    this.http.get<ApiEnvelope<Vaccine[]>>('/baby/vaccines?activeOnly=false')
       .subscribe({
         next: (res) => {
           this.vaccines = res.data || [];
@@ -124,7 +124,7 @@ export class AdminVaccinesComponent implements OnInit {
 
   loadScheduleConfigs(vaccineId: number): void {
     this.isLoadingConfigs = true;
-    this.http.get<ApiEnvelope<VaccineScheduleConfig[]>>(`/api/vaccines/${vaccineId}/schedule-configs`)
+    this.http.get<ApiEnvelope<VaccineScheduleConfig[]>>(`/baby/vaccines/${vaccineId}/schedule-configs`)
       .subscribe({
         next: (res) => {
           this.scheduleConfigs = res.data || [];
@@ -176,8 +176,8 @@ export class AdminVaccinesComponent implements OnInit {
     this.isSubmittingVaccine = true;
 
     const request$ = this.modalMode === 'create'
-      ? this.http.post<ApiEnvelope<Vaccine>>('/api/vaccines', payload)
-      : this.http.put<ApiEnvelope<Vaccine>>(`/api/vaccines/${this.selectedVaccine?.id}`, payload);
+      ? this.http.post<ApiEnvelope<Vaccine>>('/baby/vaccines', payload)
+      : this.http.put<ApiEnvelope<Vaccine>>(`/baby/vaccines/${this.selectedVaccine?.id}`, payload);
 
     request$.subscribe({
       next: () => {
@@ -220,7 +220,7 @@ export class AdminVaccinesComponent implements OnInit {
     const payload = this.configForm.value;
     this.isSubmittingConfig = true;
 
-    this.http.post<ApiEnvelope<VaccineScheduleConfig>>(`/api/vaccines/${this.selectedVaccine.id}/schedule-configs`, payload)
+    this.http.post<ApiEnvelope<VaccineScheduleConfig>>(`/baby/vaccines/${this.selectedVaccine.id}/schedule-configs`, payload)
       .subscribe({
         next: () => {
           this.isSubmittingConfig = false;
