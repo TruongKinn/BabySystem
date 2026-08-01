@@ -84,7 +84,8 @@
         "security": "セキュリティと権限",
         "config": "システム設定",
         "rateLimit": "レート制限シミュレータ",
-        "ipBlacklist": "IPブラックリスト管理"
+        "ipBlacklist": "IPブラックリスト管理",
+        "vaccines": "ワクチン管理"
       },
       "brandTitle": "ママコントロール",
       "brandSubtitle": "運用コンソール",

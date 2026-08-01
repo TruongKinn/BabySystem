@@ -84,7 +84,8 @@
         "security": "Bảo mật & Phân quyền",
         "config": "Cấu hình hệ thống",
         "rateLimit": "Mô phỏng Rate Limit",
-        "ipBlacklist": "Danh sách chặn IP"
+        "ipBlacklist": "Danh sách chặn IP",
+        "vaccines": "Quản lý Vắc-xin"
       },
       "brandTitle": "MOM CONTROL",
       "brandSubtitle": "Ops Console",

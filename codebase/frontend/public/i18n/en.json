@@ -84,7 +84,8 @@
         "security": "Security & Access",
         "config": "System Settings",
         "rateLimit": "Rate Limit Simulator",
-        "ipBlacklist": "IP Blacklist Manager"
+        "ipBlacklist": "IP Blacklist Manager",
+        "vaccines": "Vaccine Management"
       },
       "brandTitle": "MOM CONTROL",
       "brandSubtitle": "Ops Console",

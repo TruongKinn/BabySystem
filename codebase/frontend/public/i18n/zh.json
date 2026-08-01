@@ -84,7 +84,8 @@
         "security": "安全与权限",
         "config": "系统配置",
         "rateLimit": "限流模拟器",
-        "ipBlacklist": "IP 黑名单管理"
+        "ipBlacklist": "IP 黑名单管理",
+        "vaccines": "疫苗管理"
       },
       "brandTitle": "妈妈控制",
       "brandSubtitle": "操作控制台",
